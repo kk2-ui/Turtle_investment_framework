@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment_architecture_experiment.schema.json",
+  "title": "Turtle Preregistered Paired Judgment Architecture Experiment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "protocol",
+    "readiness_contract",
+    "paired_units",
+    "freeze"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-architecture-experiment-plan.v1"},
+    "experiment_id": {"type": "string", "pattern": "^JAX:"},
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "comparison_unit",
+        "control_condition",
+        "treatment_condition",
+        "report_standard",
+        "company_evidence",
+        "arm_isolation",
+        "quality_review",
+        "outcome_boundary",
+        "retention"
+      ],
+      "properties": {
+        "comparison_unit": {"const": "PAIRED_MATERIAL_JUDGMENT"},
+        "control_condition": {"const": "COMPANY_ONLY"},
+        "treatment_condition": {"const": "INDUSTRY_MACRO_ENHANCED"},
+        "report_standard": {"const": "SAME_GOLDEN_STANDARD"},
+        "company_evidence": {"const": "SAME_CUTOFF_AND_PACKAGE"},
+        "arm_isolation": {"const": "FREEZE_BEFORE_CROSS_ARM_ACCESS"},
+        "quality_review": {"const": "BLIND_SEPARATE_FROM_OUTCOME"},
+        "outcome_boundary": {"const": "NON_PRICE_OPERATING_ONLY"},
+        "retention": {"const": "RETAIN_ALL_PAIRED_UNITS_AND_UNRESOLVED"}
+      }
+    },
+    "readiness_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimum_independent_company_clusters_for_domain_comparison",
+        "minimum_unseen_company_clusters",
+        "minimum_unseen_time_company_clusters"
+      ],
+      "properties": {
+        "minimum_independent_company_clusters_for_domain_comparison": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "minimum_unseen_company_clusters": {"type": "integer", "minimum": 2},
+        "minimum_unseen_time_company_clusters": {"type": "integer", "minimum": 2}
+      }
+    },
+    "paired_units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/paired_unit"}
+    },
+    "freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frozen", "preregistered_at", "fingerprint"],
+      "properties": {
+        "frozen": {"const": true},
+        "preregistered_at": {"type": "string", "format": "date-time"},
+        "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  },
+  "$defs": {
+    "paired_unit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "paired_unit_id",
+        "report_pair_id",
+        "company_id",
+        "company_cluster_id",
+        "period_cluster_id",
+        "information_cutoff",
+        "holdout_axis",
+        "material_judgment_object",
+        "outcome_contract",
+        "arms",
+        "blind_packets"
+      ],
+      "properties": {
+        "paired_unit_id": {"type": "string", "pattern": "^JAXUNIT:"},
+        "report_pair_id": {"type": "string", "pattern": "^JAXREPORT:"},
+        "company_id": {"type": "string", "minLength": 1},
+        "company_cluster_id": {"type": "string", "minLength": 1},
+        "period_cluster_id": {"type": "string", "minLength": 1},
+        "information_cutoff": {"type": "string", "format": "date-time"},
+        "holdout_axis": {
+          "enum": ["DOMAIN_DEVELOPMENT", "UNSEEN_COMPANY", "UNSEEN_TIME"]
+        },
+        "material_judgment_object": {
+          "enum": [
+            "NORMALIZED_EARNINGS",
+            "OWNER_CASH",
+            "PERMANENT_LOSS",
+            "CAPITAL_RETURN"
+          ]
+        },
+        "outcome_contract": {"$ref": "#/$defs/outcome_contract"},
+        "arms": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["company_only", "industry_macro_enhanced"],
+          "properties": {
+            "company_only": {
+              "allOf": [
+                {"$ref": "#/$defs/arm"},
+                {
+                  "properties": {
+                    "condition": {"const": "COMPANY_ONLY"},
+                    "industry_mechanism_refs": {"maxItems": 0},
+                    "macro_scenario_refs": {"maxItems": 0}
+                  }
+                }
+              ]
+            },
+            "industry_macro_enhanced": {
+              "allOf": [
+                {"$ref": "#/$defs/arm"},
+                {"properties": {"condition": {"const": "INDUSTRY_MACRO_ENHANCED"}}},
+                {
+                  "anyOf": [
+                    {"properties": {"industry_mechanism_refs": {"minItems": 1}}},
+                    {"properties": {"macro_scenario_refs": {"minItems": 1}}}
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "blind_packets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["blind_a_packet_ref", "blind_b_packet_ref"],
+          "properties": {
+            "blind_a_packet_ref": {"type": "string", "minLength": 1},
+            "blind_b_packet_ref": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "outcome_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome_target_id",
+        "source_contract_ref",
+        "measurement_contract_ref",
+        "outcome_observation_identity",
+        "outcome_not_before",
+        "simple_baseline"
+      ],
+      "properties": {
+        "outcome_target_id": {"type": "string", "minLength": 1},
+        "source_contract_ref": {"type": "string", "minLength": 1},
+        "measurement_contract_ref": {"type": "string", "minLength": 1},
+        "outcome_observation_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["observation_id", "metric", "unit"],
+          "properties": {
+            "observation_id": {"type": "string", "minLength": 1},
+            "metric": {"type": "string", "minLength": 1},
+            "unit": {"type": "string", "minLength": 1}
+          }
+        },
+        "outcome_not_before": {"type": "string", "format": "date-time"},
+        "simple_baseline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["baseline_id", "method", "prediction_ref", "prediction"],
+          "properties": {
+            "baseline_id": {"type": "string", "minLength": 1},
+            "method": {"type": "string", "minLength": 1},
+            "prediction_ref": {"type": "string", "minLength": 1},
+            "prediction": {"type": "object", "minProperties": 1}
+          }
+        }
+      }
+    },
+    "arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "condition",
+        "case_id",
+        "freeze_id",
+        "claim_id",
+        "forward_judgment_id",
+        "report_artifact_ref",
+        "company_evidence_package_ref",
+        "author_agent_id",
+        "author_context_id",
+        "frozen_at",
+        "other_arm_access_before_freeze",
+        "industry_mechanism_refs",
+        "macro_scenario_refs"
+      ],
+      "properties": {
+        "condition": {"enum": ["COMPANY_ONLY", "INDUSTRY_MACRO_ENHANCED"]},
+        "case_id": {"type": "string", "minLength": 1},
+        "freeze_id": {"type": "string", "minLength": 1},
+        "claim_id": {"type": "string", "minLength": 1},
+        "forward_judgment_id": {"type": "string", "minLength": 1},
+        "report_artifact_ref": {"type": "string", "minLength": 1},
+        "company_evidence_package_ref": {"type": "string", "minLength": 1},
+        "author_agent_id": {"type": "string", "minLength": 1},
+        "author_context_id": {"type": "string", "minLength": 1},
+        "frozen_at": {"type": "string", "format": "date-time"},
+        "other_arm_access_before_freeze": {"const": false},
+        "industry_mechanism_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "macro_scenario_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

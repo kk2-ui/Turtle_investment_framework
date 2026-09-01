@@ -1,0 +1,118 @@
+{
+  "schema_version": "enterprise-judgment-episode-manifest.v1",
+  "episode_id": "EJE:CN002083:20190501",
+  "company_id": "CN:002083",
+  "issuer_id": "ISSUER:CN:002083",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "decision_contract_ref": {"contract_id": "DC:CN002083:20190501:J1", "contract_version": 1},
+  "component_refs": [
+    {"component_type": "ENTERPRISE_CONTEXT_SNAPSHOT", "component_id": "ECS:CN002083:20190501", "component_version": "1", "admission_level": "E0_CONTEXT", "read_only": true},
+    {"component_type": "ENTERPRISE_SYSTEM_MODEL", "component_id": "ESM:CN002083:20190501", "component_version": "1", "admission_level": "E1_RECONSTRUCTION", "read_only": true},
+    {"component_type": "MANAGEMENT_DECISION_LEDGER", "component_id": "MDL:CN002083:20190501", "component_version": "management-decision-ledger.v1", "admission_level": "E1_RECONSTRUCTION", "read_only": true},
+    {"component_type": "MANAGEMENT_DECISION_OBSERVATION", "component_id": "MDO:CN002083:20190501", "component_version": "1", "admission_level": "E1_RECONSTRUCTION", "read_only": true}
+  ],
+  "question_set": [
+    {
+      "question_id": "Q:CN002083:OPERATING_SYSTEM",
+      "role": "PRIMARY",
+      "question": "What issuer-consolidated operating system can be reconstructed at the cutoff from product/channel, export-exposure, earnings and operating-cash disclosures?",
+      "claim_ids": ["CLAIM:CN002083:OPERATING_SYSTEM"]
+    },
+    {
+      "question_id": "Q:CN002083:EXPORT_EARNINGS",
+      "role": "SUPPORTING",
+      "question": "What limited same-boundary link can be reconstructed between disclosed export exposure and consolidated earnings?",
+      "claim_ids": ["CLAIM:CN002083:EXPORT_EARNINGS"]
+    },
+    {
+      "question_id": "Q:CN002083:CASH",
+      "role": "SUPPORTING",
+      "question": "What limited same-boundary link can be reconstructed between audited earnings and operating cash?",
+      "claim_ids": ["CLAIM:CN002083:CASH"]
+    },
+    {
+      "question_id": "Q:CN002083:MANAGEMENT",
+      "role": "SUPPORTING",
+      "question": "What material management decision sequence is observable from the current source packet?",
+      "claim_ids": ["CLAIM:CN002083:MANAGEMENT"]
+    },
+    {
+      "question_id": "Q:CN002083:PERMANENT_LOSS",
+      "role": "SUPPORTING",
+      "question": "Which permanent-loss questions remain outside this source packet?",
+      "claim_ids": ["CLAIM:CN002083:PERMANENT_LOSS"]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "CLAIM:CN002083:OPERATING_SYSTEM",
+      "question_id": "Q:CN002083:OPERATING_SYSTEM",
+      "domain": "OPERATIONS",
+      "statement": "The cutoff-visible issuer-consolidated operating system includes disclosed home-textile product/channel scope, export exposure, audited earnings and audited operating cash; it is a state reconstruction, not a management-attribution or investment conclusion.",
+      "cell_status": "OBSERVED",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": ["CNINFO:002083:ANN:20190428:1206124458"],
+      "dependent_outcome_cell_ids": []
+    },
+    {
+      "claim_id": "CLAIM:CN002083:EXPORT_EARNINGS",
+      "question_id": "Q:CN002083:EXPORT_EARNINGS",
+      "domain": "OPERATIONS",
+      "statement": "Reported export exposure is reconstructed as a bounded input to the same issuer-consolidated earnings history, while causal attribution to management, customers or competitors remains unmade.",
+      "cell_status": "INFERRED",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": ["CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"],
+      "dependent_outcome_cell_ids": []
+    },
+    {
+      "claim_id": "CLAIM:CN002083:CASH",
+      "question_id": "Q:CN002083:CASH",
+      "domain": "CASH",
+      "statement": "Audited earnings and operating cash form a repeated same-boundary historical bridge, not an owner-cash, valuation or return conclusion.",
+      "cell_status": "INFERRED",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": ["CNINFO:002083:ANN:20150427:1200918435", "CNINFO:002083:ANN:20160330:1202112583", "CNINFO:002083:ANN:20170407:1203261862", "CNINFO:002083:ANN:20180402:1204575099", "CNINFO:002083:ANN:20190428:1206124458"],
+      "dependent_outcome_cell_ids": []
+    },
+    {
+      "claim_id": "CLAIM:CN002083:MANAGEMENT",
+      "question_id": "Q:CN002083:MANAGEMENT",
+      "domain": "ORGANIZATION",
+      "statement": "The current source packet is insufficient to reconstruct a material management decision sequence for the selected mechanisms.",
+      "cell_status": "UNKNOWN",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": [],
+      "dependent_outcome_cell_ids": [],
+      "decision_observation_ref": "MDO:CN002083:20190501",
+      "decision_observation_treatment": "OBSERVATION_BOUNDARY"
+    },
+    {
+      "claim_id": "CLAIM:CN002083:PERMANENT_LOSS",
+      "question_id": "Q:CN002083:PERMANENT_LOSS",
+      "domain": "PERMANENT_LOSS",
+      "statement": "Permanent-loss, capital-allocation and customer-response conclusions remain outside the current source packet.",
+      "cell_status": "UNKNOWN",
+      "admission_level": "E1_RECONSTRUCTION",
+      "evidence_refs": [],
+      "dependent_outcome_cell_ids": []
+    }
+  ],
+  "mechanism_threads": [],
+  "outcome_cells": [
+    {
+      "outcome_cell_id": "CELL:CN002083:OPERATING_CASH",
+      "dimension": "CASH",
+      "status": "UNKNOWN",
+      "measurement_contract_ref": "",
+      "custodian_receipt_ref": ""
+    }
+  ],
+  "roles": {
+    "judgment_owner_id": "ROLE:CN002083:20190501:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CN002083:20190501:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CN002083:20190501:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_EPISODE_MANIFEST",
+  "claim_class": "COMPOSITE_ENTERPRISE_JUDGMENT",
+  "allowed_outputs": ["EPISODE_READ_MODEL", "RESEARCH_AGENDA"]
+}

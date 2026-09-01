@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/industry_experience_pack_v1.schema.json",
+  "title": "Industry Experience Pack v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_id",
+    "industry_id",
+    "version",
+    "state",
+    "knowledge_cutoff_at",
+    "source_objects",
+    "current_synthesis",
+    "role_coverage",
+    "settlement_plan",
+    "transfer_reviews",
+    "next_sampling_decision",
+    "revision",
+    "boundary"
+  ],
+  "properties": {
+    "schema_version": {"const": "industry-experience-pack.v1"},
+    "pack_id": {"$ref": "#/$defs/nonempty"},
+    "industry_id": {"$ref": "#/$defs/nonempty"},
+    "version": {"type": "integer", "minimum": 1},
+    "state": {"enum": ["DRAFT", "TRAINING_READY", "TRANSFER_CANDIDATE", "RELEASED"]},
+    "knowledge_cutoff_at": {"type": "string", "format": "date-time"},
+    "source_objects": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/source_object"}
+    },
+    "current_synthesis": {"$ref": "#/$defs/current_synthesis"},
+    "role_coverage": {"$ref": "#/$defs/role_coverage"},
+    "settlement_plan": {"$ref": "#/$defs/settlement_plan"},
+    "transfer_reviews": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/transfer_review"}
+    },
+    "next_sampling_decision": {"$ref": "#/$defs/next_sampling_decision"},
+    "revision": {"$ref": "#/$defs/revision"},
+    "boundary": {"$ref": "#/$defs/boundary"}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "strings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonempty"}
+    },
+    "source_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "object_id", "ref", "available_at", "knowledge_role", "use_status"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "INDUSTRY_LEARNING_BLOCK",
+            "INDUSTRY_UNDERWRITING_CONTEXT",
+            "OFFICIAL_INDUSTRY_OBSERVATION",
+            "INDUSTRY_MECHANISM",
+            "WORKED_CASE",
+            "NEAR_MISS_OR_FAILURE",
+            "FEEDBACK_OR_REVIEW"
+          ]
+        },
+        "object_id": {"$ref": "#/$defs/nonempty"},
+        "ref": {"$ref": "#/$defs/nonempty"},
+        "available_at": {"type": "string", "format": "date-time"},
+        "knowledge_role": {
+          "enum": [
+            "CUTOFF_SAFE_EVIDENCE",
+            "CUTOFF_SAFE_PROJECTION",
+            "TRAINING_MEMORY",
+            "REPLAY_AUDIT_ONLY"
+          ]
+        },
+        "use_status": {"enum": ["INCLUDED", "BOUNDARY_ONLY", "SUPERSEDED"]}
+      }
+    },
+    "current_synthesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "central_industry_path",
+        "strongest_rival",
+        "profit_pool_transmission",
+        "scope_conditions",
+        "break_conditions",
+        "source_refs",
+        "evidence_ceiling"
+      ],
+      "properties": {
+        "central_industry_path": {"$ref": "#/$defs/nonempty"},
+        "strongest_rival": {"$ref": "#/$defs/nonempty"},
+        "profit_pool_transmission": {"$ref": "#/$defs/nonempty"},
+        "scope_conditions": {"$ref": "#/$defs/strings"},
+        "break_conditions": {"$ref": "#/$defs/strings"},
+        "source_refs": {"$ref": "#/$defs/strings"},
+        "evidence_ceiling": {"enum": ["RESEARCH_AGENDA", "TEACHING_ONLY", "TRAINING_CONTEXT", "TRANSFER_CANDIDATE", "RELEASED"]}
+      }
+    },
+    "company_path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_id", "archetype_id", "roles", "source_refs"],
+      "properties": {
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "archetype_id": {"$ref": "#/$defs/nonempty"},
+        "roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["CENTRAL", "HETEROGENEOUS", "FAILURE_OR_NEAR_MISS", "SHARED_SHOCK_DIVERGENCE"]
+          }
+        },
+        "source_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "epoch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["epoch_id", "cutoff_at", "source_refs"],
+      "properties": {
+        "epoch_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "source_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "shared_shock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["shock", "company_ids", "discriminator", "source_refs"],
+      "properties": {
+        "shock": {"$ref": "#/$defs/nonempty"},
+        "company_ids": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "discriminator": {"$ref": "#/$defs/nonempty"},
+        "source_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "role_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_paths", "structural_epochs", "shared_shock_comparisons"],
+      "properties": {
+        "company_paths": {"type": "array", "items": {"$ref": "#/$defs/company_path"}},
+        "structural_epochs": {"type": "array", "items": {"$ref": "#/$defs/epoch"}},
+        "shared_shock_comparisons": {"type": "array", "items": {"$ref": "#/$defs/shared_shock"}}
+      }
+    },
+    "settlement_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "claim", "measurement_sources", "unresolved_treatment"],
+      "properties": {
+        "claim_id": {"$ref": "#/$defs/nonempty"},
+        "claim": {"$ref": "#/$defs/nonempty"},
+        "measurement_sources": {"$ref": "#/$defs/strings"},
+        "unresolved_treatment": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "settlement_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["industry_claims", "company_transmission_claims"],
+      "properties": {
+        "industry_claims": {"type": "array", "items": {"$ref": "#/$defs/settlement_claim"}},
+        "company_transmission_claims": {"type": "array", "items": {"$ref": "#/$defs/settlement_claim"}}
+      }
+    },
+    "transfer_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_id", "axis", "verdict", "independent", "ref"],
+      "properties": {
+        "review_id": {"$ref": "#/$defs/nonempty"},
+        "axis": {"enum": ["COMPANY_HOLDOUT", "TIME_HOLDOUT"]},
+        "verdict": {"enum": ["MATERIAL_UTILITY", "NO_MATERIAL_UTILITY", "WORSE", "INCONCLUSIVE_DATA"]},
+        "independent": {"type": "boolean"},
+        "ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "next_sampling_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question",
+        "discriminator",
+        "if_central_supported",
+        "if_rival_supported",
+        "unaffected_claims",
+        "candidate_company_or_epoch_refs"
+      ],
+      "properties": {
+        "question": {"$ref": "#/$defs/nonempty"},
+        "discriminator": {"$ref": "#/$defs/nonempty"},
+        "if_central_supported": {"$ref": "#/$defs/nonempty"},
+        "if_rival_supported": {"$ref": "#/$defs/nonempty"},
+        "unaffected_claims": {"$ref": "#/$defs/strings"},
+        "candidate_company_or_epoch_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_pack_ref", "revision_class", "change_summary"],
+      "properties": {
+        "prior_pack_ref": {"type": ["string", "null"]},
+        "revision_class": {"enum": ["INITIAL", "SUPPORT", "NARROW", "BREAK", "NEW_ARCHETYPE", "ACQUISITION_GAP"]},
+        "change_summary": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "creates_fact_store",
+        "establishes_target_company_facts",
+        "grants_valuation_or_investment_authority",
+        "replay_proves_agent_capability"
+      ],
+      "properties": {
+        "creates_fact_store": {"const": false},
+        "establishes_target_company_facts": {"const": false},
+        "grants_valuation_or_investment_authority": {"const": false},
+        "replay_proves_agent_capability": {"const": false}
+      }
+    }
+  }
+}

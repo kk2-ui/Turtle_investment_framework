@@ -1,0 +1,33 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-static-evidence.v1",
+  "evidence_receipt_id": "MHE:EVIDENCE:CN002003:FY2018:V1",
+  "evidence_receipt_version": 1,
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CONTRACT:CN002003:FY2020:V1",
+    "measurement_contract_version": 1
+  },
+  "company_id": "CN:002003",
+  "issuer_id": "ISSUER:CN:002003",
+  "cutoff_at": "2019-12-31T23:59:59+08:00",
+  "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+  "window_id": "ONE_YEAR",
+  "curator_id": "CURATOR:CN002003:REVENUE:20260826",
+  "source": {
+    "source_id": "CNINFO:002003:ANN:20190416:1206040618",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2019-04-17/1206040618.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2019-04-16",
+    "issuer_id": "ISSUER:CN:002003",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2018 Zhejiang Weixing Industrial Development annual report, consolidated income statement, PDF p. 71, 营业收入.",
+    "numeric_value": 2711568243.99
+  },
+  "object_class": "MINIMAL_HISTORICAL_STATIC_EVIDENCE",
+  "claim_class": "CUTOFF_VISIBLE_OFFICIAL_FIELD",
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

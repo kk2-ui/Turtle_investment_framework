@@ -1,0 +1,121 @@
+{
+  "schema_version": "enterprise-underwriting-course-roster.v1",
+  "roster_id": "EUCR:COURSE1:WORKED:20260829",
+  "frozen_at": "2026-08-29T18:40:00+08:00",
+  "base_commit": "eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0",
+  "track": "WORKED_CASE",
+  "selection_basis": "FOUR_INDUSTRY_REFERENCE_CLASSES_WITH_ADVANTAGE_ORDINARY_AND_FAILURE_OR_NEAR_MISS",
+  "result_access": "RESULT_KNOWN_TEACHING_ONLY",
+  "members": [
+    {
+      "rank": 1,
+      "industry_id": "CN_PROPERTY_SERVICES",
+      "company_id": "HK:02669",
+      "company_name": "China Overseas Property Holdings",
+      "cutoff_at": "2022-12-31T23:59:59+08:00",
+      "role": "ADVANTAGE_COMPANY",
+      "learning_question": "第三方增长、成熟住宅底盘与回款怎样共同决定轻资产物业平台的 owner cash。"
+    },
+    {
+      "rank": 2,
+      "industry_id": "CN_PROPERTY_SERVICES",
+      "company_id": "HK:01502",
+      "company_name": "Financial Street Property",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "role": "ORDINARY_OR_TRANSITION_COMPANY",
+      "learning_question": "非住宅客户续约、人工密度、收款和有限规模如何约束正常盈利。"
+    },
+    {
+      "rank": 3,
+      "industry_id": "CN_PROPERTY_SERVICES",
+      "company_id": "CN:001914",
+      "company_name": "China Merchants Property Operation & Service",
+      "cutoff_at": "2021-05-01T00:00:00+08:00",
+      "role": "CAPITAL_AND_COLLECTION_NEAR_MISS",
+      "learning_question": "重组并表后的规模何时才算被利润和现金吸收，遗留地产损失怎样进入永久损失。"
+    },
+    {
+      "rank": 4,
+      "industry_id": "CN_CEMENT",
+      "company_id": "CN:600585",
+      "company_name": "Anhui Conch Cement",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "role": "ADVANTAGE_COMPANY",
+      "learning_question": "跨周期成本与资产负债表优势何时能保护 owner cash，何时只是延缓结构性需求损伤。"
+    },
+    {
+      "rank": 5,
+      "industry_id": "CN_CEMENT",
+      "company_id": "CN:600801",
+      "company_name": "Huaxin Cement",
+      "cutoff_at": "2017-04-12T00:00:00+08:00",
+      "role": "ORDINARY_OR_TRANSITION_COMPANY",
+      "learning_question": "并购推进、实际控制、并表、产品参与和客户响应必须怎样分开，才能判断适应而不是规模。"
+    },
+    {
+      "rank": 6,
+      "industry_id": "CN_CEMENT",
+      "company_id": "CN:600802",
+      "company_name": "Fujian Cement",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "role": "FAILURE_OR_NEAR_MISS",
+      "learning_question": "缺乏实际控制的统一销售安排、弱单位经济、现金下降和借款上升如何形成永久损失路径。"
+    },
+    {
+      "rank": 7,
+      "industry_id": "CN_HOME_APPLIANCE",
+      "company_id": "CN:000651",
+      "company_name": "Gree Electric Appliances",
+      "cutoff_at": "2020-05-01T00:00:00+08:00",
+      "role": "ADVANTAGE_COMPANY",
+      "learning_question": "渠道、定价、制造效率和现金创造怎样支持成熟核心，哪些多元化只能视为选择权。"
+    },
+    {
+      "rank": 8,
+      "industry_id": "CN_HOME_APPLIANCE",
+      "company_id": "CN:600690",
+      "company_name": "Haier Smart Home",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "role": "ORDINARY_OR_TRANSITION_COMPANY",
+      "learning_question": "全球并购后的场景、品牌、组织整合与现金吸收怎样区别于简单收入并表。"
+    },
+    {
+      "rank": 9,
+      "industry_id": "CN_HOME_APPLIANCE",
+      "company_id": "CN:000100:TTE",
+      "company_name": "TCL-Thomson / TTE",
+      "cutoff_at": "2004-08-27T00:00:00+08:00",
+      "role": "FAILURE_COMPANY",
+      "learning_question": "取得资产和全球规模为何未必形成端到端经营控制、正常利润和可回收现金。"
+    },
+    {
+      "rank": 10,
+      "industry_id": "CN_FRANCHISE_EXPRESS",
+      "company_id": "CN:002120",
+      "company_name": "Yunda Holding",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "role": "ADVANTAGE_COMPANY",
+      "learning_question": "份额、网络密度、服务、总部现金和加盟商经济怎样共同决定网络优势。"
+    },
+    {
+      "rank": 11,
+      "industry_id": "CN_FRANCHISE_EXPRESS",
+      "company_id": "CN:600233",
+      "company_name": "YTO Express",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "role": "ORDINARY_OR_CAPITAL_HEAVY_COMPANY",
+      "learning_question": "自营枢纽、航空和国际延伸带来的服务能力是否覆盖新增资本与复杂度。"
+    },
+    {
+      "rank": 12,
+      "industry_id": "CN_FRANCHISE_EXPRESS",
+      "company_id": "CN:002468",
+      "company_name": "STO Express",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "role": "TRANSITION_NEAR_MISS",
+      "learning_question": "收购枢纽和提高直营率何时形成真实控制与单位经济，何时只是合并范围和资本投入。"
+    }
+  ],
+  "order_policy": "RANK_ASCENDING_IMMUTABLE",
+  "authority": "TEACHING_ONLY_NO_METHOD_VALUATION_REPORT_OR_INVESTMENT_AUTHORITY"
+}

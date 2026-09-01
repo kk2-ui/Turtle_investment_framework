@@ -1,0 +1,266 @@
+{
+  "schema_version": "judgment-selection-candidate.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "experiment_id": "R-104",
+  "company_id": "CN:600132",
+  "company_cluster_id": "COMPANY:chongqing-brewery",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600132",
+  "industry_id": "CN_BEER_REGIONAL_BREWER",
+  "training_role": "HISTORICAL_SELECTION_CANDIDATE",
+  "program_lane": "HISTORICAL_TRAINING",
+  "provenance_role": "HISTORICAL_SELF_REPLAY",
+  "cutoff_at": "2016-04-30T23:59:59+08:00",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "freeze_recorded_at": "2026-08-24T01:22:40+08:00",
+  "probability_mode": "NO_PROBABILITY",
+  "selection_status": "SELECTION_ADMITTED",
+  "selection_effective_gate": "PENDING_INDEPENDENT_PRE_OUTCOME_REVIEW",
+  "learning_eligibility": "NONE_PENDING_REVIEW",
+  "registration_status": "NOT_REGISTERED",
+  "candidate_verdict": "PROPOSED_PRIMARY_PENDING_INDEPENDENT_REVIEW",
+  "decisive_question": "在行业与公司销量收缩时，已经实施的六厂生产网络裁减、已实现的收入结构改善和营运资本释放，是否会让全上市公司正常经营贡献与 owner cash 每年增加到足以在五年内回收关厂固定资产损失的幅度，而不是让销量去杠杆和销售投入继续吞噬收益？",
+  "responsibility_unit_boundary": {
+    "included": [
+      "all subsidiaries consolidated by listed issuer CN:600132",
+      "annual listed-group beer sales volume",
+      "consolidated operating revenue, operating cost, taxes and surcharges, selling expense and administrative expense",
+      "consolidated operating cash flow, all cash paid to acquire fixed/intangible/other long-term assets and compatible working-capital accounts",
+      "production-network closures and capital employed inside the same consolidated perimeter"
+    ],
+    "excluded": [
+      "any individual brewery treated as if it remained separately reportable",
+      "Carlsberg China entities outside the listed issuer",
+      "brand-level profitability without an issuer allocation bridge",
+      "management sales or revenue plan",
+      "security price, valuation and investment return"
+    ],
+    "identity_rationale": "The responsibility unit is the legal consolidated listed issuer. FY2013-FY2015 ordinary annual reports repeat the central D3 and D4 fields at this perimeter; no acquired-subsidiary disclosure continuation is assumed."
+  },
+  "cutoff_before_facts": [
+    {
+      "fact_id": "R104-F1",
+      "statement": "2013、2014、2015 年年报连续披露公司啤酒销量分别为 120.20、104.76、98.95 万千升，并连续披露合并营业收入、营业成本、营业税金及附加、销售费用、管理费用、经营现金流和购建固定资产、无形资产及其他长期资产支付的现金。",
+      "source_ids": [
+        "CNINFO:600132:ANN:20140409:63807671",
+        "CNINFO:600132:ANN:20150410:1200803967",
+        "CNINFO:600132:ANN:20160409:1202154919"
+      ],
+      "selection_classification": "RECURRING_DISCLOSURE_IDENTITY"
+    },
+    {
+      "fact_id": "R104-F2",
+      "statement": "按合并营业收入除以年报经营情况首页啤酒销量，单位收入从 2013 年 2,817.68 元/千升升至 2014 年 3,024.63 元/千升及 2015 年 3,359.01 元/千升；同期销量连续下降。",
+      "source_ids": [
+        "CNINFO:600132:ANN:20140409:63807671",
+        "CNINFO:600132:ANN:20150410:1200803967",
+        "CNINFO:600132:ANN:20160409:1202154919"
+      ],
+      "selection_classification": "ASYMMETRIC_REALIZED_PRICE_MIX_SIGNAL"
+    },
+    {
+      "fact_id": "R104-F3",
+      "statement": "截至 2015 年年报，綦江、柳州、九华山、永川、黔江及六盘水六家酒厂的生产性业务已经关闭；这是已实施资源退出，不是未来经营计划。",
+      "source_ids": [
+        "CNINFO:600132:ANN:20160409:1202154919"
+      ],
+      "selection_classification": "ASYMMETRIC_IMPLEMENTED_RESOURCE_COMMITMENT"
+    },
+    {
+      "fact_id": "R104-F4",
+      "statement": "合并应收账款、预付款、存货减应付账款和预收款形成的现金营运资本从 2013 年 10.6187 亿元降至 2014 年 8.5957 亿元及 2015 年 7.3650 亿元，占收入比例从 31.35% 降至 22.16%；2015 年 OCF 减全部长期资产购建现金后为 3.1939 亿元，再剔除当年正向营运资本释放后为 1.9633 亿元。",
+      "source_ids": [
+        "CNINFO:600132:ANN:20150410:1200803967",
+        "CNINFO:600132:ANN:20160409:1202154919"
+      ],
+      "selection_classification": "ASYMMETRIC_REALIZED_CASH_RELEASE"
+    },
+    {
+      "fact_id": "R104-F5",
+      "statement": "按营业收入减营业成本、营业税金及附加、销售费用和管理费用计算的同口径经营贡献率从 2013 年 7.95% 降至 2015 年 6.96%；2015 年销售费用同比增加 16.62%，且六家关停工厂固定资产减值合计 204,449,973.25 元。",
+      "source_ids": [
+        "CNINFO:600132:ANN:20140409:63807671",
+        "CNINFO:600132:ANN:20150410:1200803967",
+        "CNINFO:600132:ANN:20160409:1202154919"
+      ],
+      "selection_classification": "STRONGEST_RIVAL_EVIDENCE"
+    },
+    {
+      "fact_id": "R104-F6",
+      "statement": "2015 年供应链费用从管理费用转入制造成本，单独毛利率出现披露断点；把营业成本、营业税金及附加、销售费用和管理费用合并后，单位经营贡献不受该账户间重分类影响。",
+      "source_ids": [
+        "CNINFO:600132:ANN:20160409:1202154919"
+      ],
+      "selection_classification": "MEASUREMENT_BREAK_WITH_FROZEN_INVARIANT"
+    }
+  ],
+  "enterprise_system_evidence_map": [
+    {
+      "layer": "STATE_AND_CONSTRAINT",
+      "fact_ids": [
+        "R104-F5"
+      ],
+      "classification": "RIVAL_ACCOMMODATION_REQUIRED",
+      "connection": "Industry and company volume pressure can defeat a cost-reduction mechanism if route spending and fixed-cost absorption worsen faster."
+    },
+    {
+      "layer": "ACTUAL_RESOURCE_COMMITMENT",
+      "fact_ids": [
+        "R104-F3"
+      ],
+      "classification": "ASYMMETRIC",
+      "connection": "Six completed production closures are the costly action required by H-A; a no-change continuation baseline contains no such efficiency step."
+    },
+    {
+      "layer": "CUSTOMER_AND_MIX_RESPONSE",
+      "fact_ids": [
+        "R104-F2"
+      ],
+      "classification": "ASYMMETRIC",
+      "connection": "Realized revenue per kl rose through two volume contractions. H-B can retain this fact only by asserting that later selling or fixed costs overwhelm it."
+    },
+    {
+      "layer": "UNIT_ECONOMICS",
+      "fact_ids": [
+        "R104-F5",
+        "R104-F6"
+      ],
+      "classification": "RIVAL_ACCOMMODATION_REQUIRED",
+      "connection": "Whole-issuer operating contribution fell 5.39% in FY2015, so H-A must deliver a material RMB improvement after the closure rather than claim an already completed win."
+    },
+    {
+      "layer": "CASH_AND_CAPITAL_OCCUPANCY",
+      "fact_ids": [
+        "R104-F4"
+      ],
+      "classification": "ASYMMETRIC",
+      "connection": "Three years of working-capital release and positive conservative owner cash make cash efficiency more consistent with H-A than with a channel-fill story, while not proving future capital return."
+    }
+  ],
+  "rival_hypothesis_pair": {
+    "pair_id": "RHP:R-104:network-pruning-vs-volume-deleveraging",
+    "primary_hypothesis": {
+      "hypothesis_id": "R104-H-A",
+      "name": "NETWORK_PRUNING_CONVERTS_MIX_TO_UNIT_CONTRIBUTION_AND_CASH",
+      "role": "SELECTED_PRIMARY",
+      "mechanism": "已实施的低效率产能退出降低生产和组织负担，产品／价格结构已实现的收入提升不再被同等幅度的固定成本和管理负担吞噬；即使销量不增长，全上市公司正常经营贡献和剔除正向营运资本释放后的 owner cash 每年至少增加关厂固定资产减值的 20%。"
+    },
+    "strongest_rival": {
+      "hypothesis_id": "R104-H-B",
+      "name": "VOLUME_DELEVERAGING_AND_ROUTE_SPEND_OVERWHELM_NETWORK_SAVINGS",
+      "role": "STRONGEST_RIVAL",
+      "mechanism": "关厂反映的是需求和区域竞争恶化而非主动效率优势；销量继续下降造成固定成本吸收恶化，销售费用和产能迁移成本吞噬收入结构提升，现金改善主要来自不可重复的存货与应付款释放，最终全上市公司经营贡献和 owner cash 以相对关厂资本损失同样材料的幅度回落。"
+    },
+    "selection_basis": {
+      "directional_preference": "R104-H-A",
+      "why_not_common": "方向偏好来自三个 cutoff 前已实现而非承诺的连接事实：六厂生产业务已经关闭、两次销量收缩中每千升收入连续上升、现金营运资本占收入连续三年下降且 OCF 为正。简单基线只保持 FY2015 的 whole-issuer 经营贡献和剔除正向营运资本释放后的 owner cash 点值，不包含每年回收 20% 关厂固定资产损失的增量；H-B 要容纳这些事实，必须额外主张销量去杠杆和渠道投入将超过已经发生的价格／组合与现金释放。",
+      "why_rival_remains_live": "2013-2015 经营贡献率连续下降，2015 销售费用增长 16.62%，销量继续下降，关厂发生大额减值；营运资本释放也可能不可重复。",
+      "prohibited_support": [
+        "2016 management sales or revenue plan",
+        "future plant closure or reopening",
+        "company survival",
+        "post-cutoff annual-report availability or field continuity",
+        "security price, valuation or return"
+      ]
+    }
+  },
+  "fair_simple_baseline": {
+    "baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+    "rule": "Mechanically carry the FY2015 whole-issuer operating state forward for FY2016 without interpreting the six closures: beer volume 989,500 kl, operating contribution RMB231.4790m and owner cash excluding positive working-capital release RMB196.3266m.",
+    "formulae": {
+      "beer_sales_volume_kl": "98.95 * 10000 = 989500",
+      "operating_contribution_rmb": "3323745277.75 - 2096464876.31 - 273275182.23 - 489868548.23 - 232657686.10 = 231478984.88",
+      "opening_cash_working_capital_rmb": "FY2014 ending identity = 859572252.38",
+      "ending_cash_working_capital_rmb": "59946542.91 + 9957803.74 + 1074501975.87 - 293533776.69 - 114368117.87 = 736504427.96",
+      "owner_cash_ex_working_capital_release_rmb": "448312450.68 - 128918019.25 - max(859572252.38 - 736504427.96, 0) = 196326607.01"
+    },
+    "comparison_predictions": {
+      "D3": {
+        "operator": "EQUAL_POINT_FORECAST",
+        "metric_id": "operating_contribution_rmb",
+        "value": 231478984.88,
+        "unit": "RMB"
+      },
+      "D4": {
+        "operator": "EQUAL_POINT_FORECAST",
+        "metric_id": "owner_cash_ex_working_capital_release_rmb",
+        "value": 196326607.01,
+        "unit": "RMB"
+      }
+    },
+    "selection_use": "FAIR_COMPARISON"
+  },
+  "central_discriminators": [
+    "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+    "R104-D4-CASH-AND-WORKING-CAPITAL"
+  ],
+  "known_unobservable_layers": [
+    {
+      "layer": "D3_PRODUCT_VOLUME_OR_FIXED_COST_ABSORPTION",
+      "state": "UNKNOWN_NOT_RECURRING_AT_CUTOFF",
+      "reason": "FY2013-FY2014 annual reports do not disclose whole-issuer production throughput, sell-through or capacity utilization; FY2015 supplies only one direct production total and a rounded year-on-year change.",
+      "effect": "D3 whole-issuer operating-contribution amount remains observable and central, but no separate claim may attribute its change to plant utilization or fixed-cost absorption.",
+      "voting_role": "OPTIONAL_NON_VOTER"
+    }
+  ],
+  "frozen_prediction_order": [
+    {
+      "predicate_id": "R104-D1-NETWORK-IMPLEMENTATION",
+      "stage": "D1_IMPLEMENTATION",
+      "primary_prediction": "六厂生产业务退出不发生材料性逆转，上市公司在不重建同等冗余产能的情况下完成合并口径生产网络承接。",
+      "rival_prediction": "同样允许关厂维持；若出现同等产能重建、重大供应中断或一次性迁移负担，则削弱 H-A，但 D1 单独不决定选择。",
+      "baseline_prediction": "不解释关厂，只延续 FY2015 上市公司法定合并边界。"
+    },
+    {
+      "predicate_id": "R104-D2-BEER-VOLUME-AND-PRICE-MIX",
+      "stage": "D2_CUSTOMER_ABSORPTION",
+      "primary_prediction": "FY2016 啤酒销量可以低于 989,500 kl，但降幅不超过 FY2014 的 12.85%，且合并收入/千升不低于 FY2015 的 3,359.01 元。",
+      "rival_prediction": "FY2016 销量降幅达到或超过 FY2014 的 12.85%，或收入/千升跌破 FY2015，表明客户／组合吸收弱于 H-A。",
+      "baseline_prediction": "FY2016 啤酒销量点预测 989,500 kl，收入/千升点预测 3,359.01 元。"
+    },
+    {
+      "predicate_id": "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+      "stage": "D3_UNIT_ECONOMICS",
+      "primary_prediction": "FY2016 全上市公司同口径经营贡献不低于 272,368,979.53 元，即较 FY2015 增加至少 40,889,994.65 元；该增量等于六厂固定资产减值的 20%，对应五年税前回收，并在 25% 税率下约为 30,667,495.99 元税后正常利润。",
+      "rival_prediction": "FY2016 同口径经营贡献不高于 190,588,990.23 元，即较 FY2015 减少至少 40,889,994.65 元；两端之间为 MIXED。",
+      "baseline_prediction": "FY2016 点预测为 FY2015 的 231,478,984.88 元。"
+    },
+    {
+      "predicate_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+      "stage": "D4_WORKING_CAPITAL_AND_CASH",
+      "comparison_shape": "SCALAR_OWNER_CASH_EX_POSITIVE_WORKING_CAPITAL_RELEASE",
+      "primary_prediction": "FY2016 owner cash（OCF 减全部长期资产购建现金，再减 max[期初现金营运资本 - 期末现金营运资本, 0]）不低于 237,216,601.66 元，即较 FY2015 基线增加 40,889,994.65 元。",
+      "rival_prediction": "FY2016 同口径 owner cash 不高于 155,436,612.36 元，即较 FY2015 基线减少 40,889,994.65 元；两端之间为 MIXED。",
+      "baseline_prediction": "FY2016 点预测为 FY2015 的 196,326,607.01 元。"
+    },
+    {
+      "predicate_id": "R104-D5-CAPITAL-RETURN",
+      "stage": "D5_CAPITAL_RETURN",
+      "primary_prediction": "2016-2018 累计 owner cash 为正，并相对 FY2015 期初经营资本形成正的连续资本回收读数；本层不设二元命中阈值。",
+      "rival_prediction": "用相同资本与现金恒等式观察网络裁减是否只释放一次性现金或伴随永久损失；不设置反方二元阈值。",
+      "baseline_prediction": "最后一年经营尺度不足以给三年资本回收作公平点预测，记为 UNKNOWN。"
+    }
+  ],
+  "measurement_boundary": {
+    "D1": "Only implemented or reversed production-network changes inside the consolidated listed issuer. Closure announcements and audited annual reports are allowed; management intentions are not implementation.",
+    "D2": "Annual headline company beer sales volume and consolidated revenue per headline kl. Brand claims or industry volume cannot replace the issuer observations.",
+    "D3": "Whole-issuer operating-contribution amount after taxes and surcharges: revenue less cost, taxes and surcharges, selling expense and administrative expense. Every component has the same consolidated issuer perimeter. Gross margin and beer-volume denominators are non-central. Production throughput/fixed-cost absorption is separately UNKNOWN and non-voting.",
+    "D4": "Whole-issuer owner cash excluding positive working-capital release equals consolidated OCF less all cash paid to acquire fixed, intangible and other long-term assets, less max(opening cash working capital - ending cash working capital, 0). Beginning and ending five-account working capital remain required formula inputs. Parent-only cash, net profit, debt reduction, unadjusted OCF less capex or survival cannot substitute.",
+    "D5": "Cumulative OCF less maintenance-oriented capital expenditure and permanent closure loss over a clearly bridged operating-capital base. It is continuous diagnostic only and cannot become a selection hit/miss."
+  },
+  "recurring_disclosure_identity_ref": "00_cohort_screen_and_source_selection.json#pre_admission_recurring_disclosure_gate",
+  "outcome_access_attestation": {
+    "state": "PIT_OUTCOME_SEALED",
+    "attestation": "The selector used only official CNINFO materials with publication dates no later than 2016-04-30. No post-cutoff title, filename, snippet, body, later operating value, security price, valuation or return was queried or read.",
+    "metadata_leakage_detected": false,
+    "outcome_acquisition_authorized": false
+  },
+  "prohibited_claims_until_review": [
+    "effective SELECTION_METHOD_ELIGIBLE status",
+    "training-program or feedback-control registration",
+    "outcome inventory enumeration, acquisition or settlement",
+    "post-cutoff disclosure continuity",
+    "method win, accuracy or probability calibration",
+    "investment value, price or return"
+  ],
+  "capability_boundary": "The file-level outcome firewall prevents deliberate result access but cannot erase model or researcher latent memory. This episode can train a historical PIT selection method after review; it cannot prove unknown-outcome deployment skill, accuracy or calibration."
+}

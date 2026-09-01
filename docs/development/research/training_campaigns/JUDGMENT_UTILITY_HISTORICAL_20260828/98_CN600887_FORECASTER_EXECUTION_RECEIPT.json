@@ -1,0 +1,81 @@
+{
+  "receipt_type": "preoutcome-forecaster-execution-receipt.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "issuer": {
+    "ticker": "CN:600887",
+    "name": "内蒙古伊利实业集团股份有限公司"
+  },
+  "preoutcome_cutoff": "2024-05-01T00:00:00+08:00",
+  "outcome_period_sealed": "FY2024",
+  "role": {
+    "name": "fresh_result_isolated_preoutcome_forecaster",
+    "role_status": "FRESH_AND_RESULT_ISOLATED",
+    "authority": "Create and repair only the preoutcome enterprise-judgment contract; no formal valuation, investment action, outcome settlement, or post-outcome synthesis authority."
+  },
+  "exact_allowed_read_set": {
+    "worktree_instruction": "AGENTS.md",
+    "selection_register": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/95_CN600887_BLIND_EXTENSION_SELECTION_REGISTER.json",
+    "source_packet_receipt": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/96_CN600887_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+    "official_original_annual_reports": [
+      {
+        "period": "FY2021",
+        "direct_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2022-04-28/1213169501.PDF"
+      },
+      {
+        "period": "FY2022",
+        "direct_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2023-04-28/1216664083.PDF"
+      },
+      {
+        "period": "FY2023",
+        "direct_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2024-04-30/1219916433.PDF"
+      }
+    ],
+    "additional_company_or_market_source_read": false
+  },
+  "work_performed": {
+    "judgment_first_enterprise_reconstruction": "Reconstructed how the branded dairy enterprise earns money through raw-milk supply, manufacturing, product groups, distribution and cash/capital conversion; identified the primary current constraint; assessed management's product, channel, supply-chain and capital-allocation direction with bounded execution credit; and stated falsifiable countercases, owner-cash treatment, permanent-loss treatment, scenarios and directional valuation implications without formal valuation or action authority.",
+    "supported_fact_boundary": "Used only exact FY2021-FY2023 annual-report facts with PDF page citations; localized undisclosed customer, channel, organic-comparability and project-return facts rather than turning them into a whole-company UNKNOWN.",
+    "frozen_non_substitutable_settlement_axes": [
+      {
+        "axis_id": "A1_customer_absorption_product_sales_volume",
+        "responsibility_boundary": "Customer absorption",
+        "measure": "Same-product sales volumes from the annual-report production/sales/inventory table; revenue, OCF and cash balance are not substitutes."
+      },
+      {
+        "axis_id": "A2_unit_economics_product_gross_margin",
+        "responsibility_boundary": "Product unit economics",
+        "measure": "Same-product gross margins from the annual-report product table; revenue growth, group margin and OCF are not substitutes."
+      },
+      {
+        "axis_id": "A3_owner_cash_after_long_term_asset_cash_spend",
+        "responsibility_boundary": "Enterprise owner-cash proxy",
+        "measure": "Consolidated operating cash flow less cash paid to acquire/construct fixed assets, intangible assets and other long-term assets; it is not customer absorption, unit economics, project cash recovery, free cash flow or project IRR."
+      },
+      {
+        "axis_id": "A4_enterprise_capital_return_weighted_average_ROE",
+        "responsibility_boundary": "Enterprise capital return",
+        "measure": "Disclosed weighted average ROE on the same listed-company/equity boundary; it is not a channel, factory, acquisition or product project return."
+      }
+    ],
+    "review_driven_repair": "Applied an exclusivity-only repair to A1 and A2: first record each affected product as LOCAL_MISMATCH and retain comparable products' local comparisons; if any product is mismatched, the aggregate result is solely PARTIAL_UNKNOWN and cannot also be SUCCESS, MIXED or FAILURE. The pre-existing three-product thresholds apply only when all three products are comparable. No company facts, judgment, threshold, A3 or A4 were changed.",
+    "final_preoutcome_contract": "/tmp/YILI_ROUND8_FORECASTER/97_CN600887_PREOUTCOME_JUDGMENT_V2.json",
+    "independent_preoutcome_review_disposition": "AUTHORIZE"
+  },
+  "isolation_attestation": {
+    "FY2024_or_later_source_metadata_or_result_opened": false,
+    "price_or_return_accessed": false,
+    "formal_valuation_or_investment_action_taken": false,
+    "analyst_or_derived_company_material_accessed": false,
+    "prior_case_result_or_method_material_accessed": false,
+    "new_browser_or_network_read_after_preoutcome_contract": false,
+    "attestation": "The forecaster remained result-isolated. No FY2024-or-later source, metadata or result was read; no market, price, return, valuation, analyst, derived-company, prior-case-result or method material was used."
+  },
+  "excluded_outputs": [
+    "FY2024 outcome observation or settlement",
+    "price, return, market-performance or valuation result",
+    "formal valuation range, security recommendation, maximum purchase price or investment action",
+    "post-outcome enterprise synthesis or training-effectiveness conclusion",
+    "new source acquisition, browser work or source-packet expansion"
+  ],
+  "status": "MAINTAINED"
+}

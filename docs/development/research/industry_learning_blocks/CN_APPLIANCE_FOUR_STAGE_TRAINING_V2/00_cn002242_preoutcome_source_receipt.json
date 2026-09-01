@@ -1,0 +1,86 @@
+{
+  "schema_version": "appliance-four-stage-round2-preoutcome-source-receipt.v1",
+  "receipt_id": "APPLIANCE-R12:CN002242:FY2017:PREOUTCOME-SOURCE:V1",
+  "company_id": "CN:002242",
+  "issuer_id": "ISSUER:CN:002242",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "curator_id": "ROLE:APPLIANCE-R12:CN002242:STATIC_EVIDENCE_CURATOR_FUNCTION",
+  "source": {
+    "source_id": "CNINFO:002242:ANN:20180421:1204680243",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204680243.PDF",
+    "publication_date": "2018-04-21",
+    "period_end": "2017-12-31",
+    "title": "2017年年度报告",
+    "annual_report_version_policy": "ORIGINAL_ONLY"
+  },
+  "frozen_fields": [
+    {
+      "metric_id": "CONSOLIDATED_REVENUE_RMB",
+      "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED:CN002242",
+      "unit": "RMB",
+      "numeric_value": 7247524855.71,
+      "physical_pdf_page": 60,
+      "exact_quote": "其中：营业收入                     7,247,524,855.71    7,314,804,589.33"
+    },
+    {
+      "metric_id": "PRODUCT_REVENUE_RMB:食品加工机系列",
+      "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED:CN002242:DISCLOSED_PRODUCT_CATEGORY:食品加工机系列",
+      "unit": "RMB",
+      "numeric_value": 3149788827.0,
+      "physical_pdf_page": 13,
+      "exact_quote": "食品加工机系列     3,149,788,827.00       43.46%     3,063,179,010.42        41.88%      2.83%"
+    },
+    {
+      "metric_id": "CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+      "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED:CN002242",
+      "unit": "RMB",
+      "numeric_value": 48903264.69,
+      "physical_pdf_page": 64,
+      "exact_quote": "经营活动产生的现金流量净额                      48,903,264.69    1,006,736,608.98"
+    }
+  ],
+  "cutoff_visible_operating_context": [
+    {
+      "status": "IMPLEMENTED_RESULT_UNKNOWN",
+      "physical_pdf_pages": [9, 12],
+      "fact": "渠道优化、Shopping Mall门店、数百家地标店改造和线上线下融合已在报告期推进，但增量收入、客户忠诚和行动因果均未识别。"
+    },
+    {
+      "status": "GENERIC_RIVAL_NAMED_RIVAL_UNKNOWN",
+      "physical_pdf_page": 21,
+      "fact": "进入、仿制和渠道竞争可能压低利润率；官方资料未给出可冻结的最强具名竞争者。"
+    },
+    {
+      "status": "PERIMETER_BRIDGE_UNKNOWN",
+      "physical_pdf_pages": [73, 129, 131],
+      "fact": "一家公司于2017年被处置并出表，另有少数股权收购；没有同口径收入或经营现金流桥。"
+    }
+  ],
+  "future_route": {
+    "security_code": "002242",
+    "organization_id": "9900004732",
+    "begin_date": "2019-01-01",
+    "end_date": "2019-06-30",
+    "announcement_category": "ANNUAL_REPORT",
+    "annual_report_version_policy": "ORIGINAL_ONLY",
+    "future_source_enumerated": false,
+    "future_pdf_opened": false
+  },
+  "known_unknowns": [
+    "ACTION_INCREMENTAL_REVENUE",
+    "CUSTOMER_LOYALTY_OR_SHARE",
+    "PRODUCT_UNIT_ECONOMICS",
+    "ORDINARY_SHARE_OWNER_CASH",
+    "CONSTANT_PERIMETER_REVENUE_AND_OCF_BRIDGE",
+    "STRONGEST_NAMED_RIVAL"
+  ],
+  "allowed_outputs": ["PREOUTCOME_EVIDENCE_ONLY"],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

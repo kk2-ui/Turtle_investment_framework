@@ -1,0 +1,32 @@
+{
+  "schema_version": "enterprise-judgment-round3-transfer-validation.v1",
+  "validation_id": "R3TV:CN:CEMENT:PERIMETER_FIRST:V1",
+  "method_rule_id": "PERIMETER_FIRST_MEASUREMENT_GATE",
+  "source_feedback_ref": "FBS:600801:20170412:001",
+  "round2_application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "round2_review_ref": "TRR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "round2_completion_ref": "R2COMP:CN:CEMENT:000401:20170412:V1",
+  "round3_selection_ref": "R3SEL:CN:CEMENT:600425:20140416:V1",
+  "round3_application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:600425:20140416:R3:V1",
+  "round3_settlement_ref": "R3FBS:600425:20140416:V1",
+  "round3_review_ref": "R3TRR:CN:CEMENT:600425:20140416:V1",
+  "transfer_status": "TRANSFER_VALIDATED",
+  "authority_scope": "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY",
+  "denied_authorities": [
+    "ENTERPRISE_JUDGMENT",
+    "COMPARATIVE",
+    "METHOD_WIDE_RELEASE",
+    "CJO",
+    "VALUATION",
+    "REPORT",
+    "INVESTMENT_AUTHORIZATION",
+    "R-61",
+    "R-103"
+  ],
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND3_TRANSFER_VALIDATION",
+  "claim_class": "NARROW_MEASUREMENT_METHOD_AUTHORITY",
+  "allowed_outputs": [
+    "TRANSFER_VALIDATED",
+    "PERIMETER_FIRST_MEASUREMENT_METHOD_ONLY"
+  ]
+}

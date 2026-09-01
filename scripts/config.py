@@ -8,10 +8,12 @@ import glob
 from typing import Optional
 
 
+PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+
+
 def _load_env_file() -> None:
     """Load .env file from project root if it exists."""
-    env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
-    env_path = os.path.normpath(env_path)
+    env_path = os.path.join(PROJECT_ROOT, ".env")
     if not os.path.isfile(env_path):
         return
     with open(env_path, encoding="utf-8") as f:
@@ -25,6 +27,128 @@ def _load_env_file() -> None:
                 value = value.strip().strip("'\"")
                 if key and key not in os.environ:
                     os.environ[key] = value
+
+
+def get_project_root() -> str:
+    """Return the Turtle framework project root."""
+    return PROJECT_ROOT
+
+
+def _iter_data_roots() -> list[str]:
+    """Return candidate base directories for external datasets."""
+    _load_env_file()
+    candidates = []
+    data_root = os.environ.get("TURTLE_DATA_ROOT", "").strip()
+    if data_root:
+        candidates.append(os.path.abspath(os.path.expanduser(data_root)))
+    candidates.append(PROJECT_ROOT)
+    candidates.append(os.path.dirname(PROJECT_ROOT))
+
+    seen = set()
+    roots = []
+    for candidate in candidates:
+        norm = os.path.normpath(candidate)
+        if norm in seen:
+            continue
+        seen.add(norm)
+        roots.append(norm)
+    return roots
+
+
+def _resolve_candidate_path(
+    env_var: str,
+    relative_candidates: list[str],
+    description: str,
+    required: bool = True,
+) -> Optional[str]:
+    """Resolve a configurable file or directory path with repo-local fallbacks."""
+    _load_env_file()
+
+    env_value = os.environ.get(env_var, "").strip()
+    candidates = []
+    if env_value:
+        candidates.append(os.path.abspath(os.path.expanduser(env_value)))
+
+    for base in _iter_data_roots():
+        for rel in relative_candidates:
+            candidates.append(os.path.normpath(os.path.join(base, rel)))
+
+    seen = set()
+    unique_candidates = []
+    for candidate in candidates:
+        if candidate in seen:
+            continue
+        seen.add(candidate)
+        unique_candidates.append(candidate)
+        if os.path.exists(candidate):
+            return candidate
+
+    if not required:
+        return None
+
+    joined = "\n".join(f"  - {path}" for path in unique_candidates)
+    raise RuntimeError(
+        f"{description} not found.\n"
+        f"Set {env_var} explicitly or place the dataset under a standard location.\n"
+        f"Checked:\n{joined}"
+    )
+
+
+def get_output_dir() -> str:
+    """Return the analysis output directory."""
+    _load_env_file()
+    raw = os.environ.get("TURTLE_OUTPUT_DIR", "").strip()
+    if raw:
+        return os.path.abspath(os.path.expanduser(raw))
+    return os.path.join(PROJECT_ROOT, "output")
+
+
+def get_base_rate_library_dir() -> str:
+    """Return the append-only cross-company base-rate case library."""
+    _load_env_file()
+    raw = os.environ.get("TURTLE_BASE_RATE_LIBRARY_DIR", "").strip()
+    if raw:
+        return os.path.abspath(os.path.expanduser(raw))
+    return os.path.join(get_output_dir(), ".base_rate_library")
+
+
+def get_db_path() -> str:
+    """Return the SQLite database path."""
+    _load_env_file()
+    raw = os.environ.get("TURTLE_DB_PATH", "").strip()
+    if raw:
+        return os.path.abspath(os.path.expanduser(raw))
+    return os.path.join(PROJECT_ROOT, "stock_analysis.db")
+
+
+def get_csmar_a_xlsx(required: bool = True) -> Optional[str]:
+    """Return the CSMAR A-share annual panel workbook path."""
+    return _resolve_candidate_path(
+        "TURTLE_CSMAR_A_PATH",
+        ["cn_financials_panel_raw/上市公司-财务报表年度面板数据.xlsx"],
+        "CSMAR A-share workbook",
+        required=required,
+    )
+
+
+def get_hk_new_financials_dir(required: bool = True) -> Optional[str]:
+    """Return the HK CSMAR workbook directory."""
+    return _resolve_candidate_path(
+        "TURTLE_CSMAR_HK_DIR",
+        ["hk_new_financials"],
+        "CSMAR HK workbook directory",
+        required=required,
+    )
+
+
+def get_hk_financials_dir(required: bool = True) -> Optional[str]:
+    """Return the legacy HK financials directory."""
+    return _resolve_candidate_path(
+        "TURTLE_HK_FINANCIALS_DIR",
+        ["hk_financials"],
+        "Legacy HK financials directory",
+        required=required,
+    )
 
 
 def get_token() -> str:
@@ -49,13 +173,29 @@ def get_token() -> str:
 
 
 def get_api_url() -> Optional[str]:
-    """Return custom Tushare API URL if TUSHARE_API_URL is set.
+    """Return custom Tushare API URL from supported environment variables.
 
     When a broker API URL is configured, TushareClient will route all calls
     through it and auto-upgrade to VIP endpoints for better rate limits.
     """
     _load_env_file()
-    return os.environ.get("TUSHARE_API_URL") or None
+    return (
+        os.environ.get("TUSHARE_API_URL")
+        or os.environ.get("TUSHARE_HTTP_URL")
+        or os.environ.get("API_URL")
+        or None
+    )
+
+
+def get_vip_mode() -> bool:
+    """Return whether VIP endpoint auto-upgrade is enabled.
+
+    Default True (backward compatible). Set VIP_MODE=false in .env to disable
+    for broker/proxy APIs that don't support _vip endpoints.
+    """
+    _load_env_file()
+    val = os.environ.get("VIP_MODE", "true").strip().lower()
+    return val not in ("false", "0", "no", "off")
 
 
 def validate_stock_code(code: str) -> str:
@@ -176,3 +316,102 @@ def validate_pdf(filepath: str) -> "tuple[bool, str]":
             return False, "File does not start with %PDF- magic bytes"
 
     return True, "Valid PDF"
+
+
+def normalize_holding_channel(channel: Optional[str]) -> str:
+    """Normalize user-provided holding-channel text into internal categories."""
+    if not channel:
+        return ""
+    raw = str(channel).strip().lower()
+    if not raw:
+        return ""
+
+    if raw in {"southbound", "hk_local_direct", "hk_local_direct_tax0", "hk_local_direct_tax10", "us_broker", "direct"}:
+        return raw
+    if any(k in raw for k in ("港股通", "southbound", "southbound connect")):
+        return "southbound"
+    if any(k in raw for k in ("香港", "hk local", "hong kong local", "香港券商", "本地直投")):
+        if "10%" in raw or "10％" in raw or "tax10" in raw:
+            return "hk_local_direct_tax10"
+        if "0%" in raw or "0％" in raw or "tax0" in raw:
+            return "hk_local_direct_tax0"
+        return "hk_local_direct"
+    if any(k in raw for k in ("w-8ben", "美股券商", "us broker")):
+        return "us_broker"
+    if any(k in raw for k in ("直接", "direct")):
+        return "direct"
+    return raw
+
+
+def infer_listing_structure(ts_code: str, basic_info: Optional[dict] = None) -> str:
+    """Best-effort listing-structure inference for tax handling."""
+    code = (ts_code or "").upper()
+    if code.endswith(".HK"):
+        market = str((basic_info or {}).get("market", "")).strip()
+        fullname = str((basic_info or {}).get("fullname", "")).strip().lower()
+        enname = str((basic_info or {}).get("enname", "")).strip().lower()
+        name_blob = " ".join(part for part in [market, fullname, enname] if part).lower()
+        if "cayman" in name_blob or "开曼" in name_blob:
+            return "red_chip_cayman"
+        if "bermuda" in name_blob or "百慕大" in name_blob:
+            return "red_chip_bermuda"
+        return "hk"
+    if code.endswith(".US"):
+        return "us"
+    if code.endswith(".SH") or code.endswith(".SZ"):
+        return "a_share"
+    return ""
+
+
+def resolve_shareholder_dividend_tax_rate(
+    ts_code: str,
+    holding_channel: Optional[str] = None,
+    listing_structure: Optional[str] = None,
+) -> tuple[Optional[float], str]:
+    """Resolve shareholder-level dividend tax rate for throughput-return analysis.
+
+    Returns:
+        (tax_rate_decimal_or_none, explanation)
+    """
+    code = (ts_code or "").upper()
+    channel = normalize_holding_channel(holding_channel)
+    structure = (listing_structure or "").strip().lower()
+    override = os.environ.get("DIVIDEND_TAX_RATE", "").strip()
+    if override:
+        raw = override.replace("%", "")
+        try:
+            value = float(raw)
+            rate = value / 100.0 if value > 1 else value
+            if 0.0 <= rate <= 0.5:
+                return rate, f"DIVIDEND_TAX_RATE 显式覆盖为 {rate * 100:.2f}%"
+        except ValueError:
+            pass
+
+    if code.endswith(".SH") or code.endswith(".SZ"):
+        return 0.0, "A股默认长期持有，股东层面股息税率 0%"
+
+    if code.endswith(".US"):
+        if channel == "us_broker":
+            return 0.10, "美股 W-8BEN 口径，股东层面股息税率 10%"
+        return 0.30, "美股默认非协定口径，股东层面股息税率 30%"
+
+    if code.endswith(".HK"):
+        if channel == "southbound":
+            return 0.20, "港股通（内地个人）口径，股东层面股息税率 20%"
+        if channel == "hk_local_direct_tax0":
+            return 0.0, "香港券商直投，用户显式指定股东层面股息税率 0%"
+        if channel == "hk_local_direct_tax10":
+            return 0.10, "香港券商直投，用户显式指定股东层面股息税率 10%"
+
+        if structure in {"red_chip_cayman", "red_chip_bermuda", "red_chip"}:
+            if channel == "hk_local_direct":
+                return None, "红筹/离岸架构 + 香港券商直投需确认实际预扣安排；不可默认 0%，建议列示 0%/10% 情景"
+            if channel in {"direct", ""}:
+                return None, "红筹/离岸架构直接持有需按税务居民身份确认，不能默认 20%"
+
+        if structure in {"h_share", "hk"} and channel in {"direct", "hk_local_direct"}:
+            return None, "港股直接持有税率依赖税务居民身份和发行人安排，需个案确认"
+
+        return None, "港股股东层面股息税率需结合上市结构与持有人身份确认"
+
+    return None, "未知市场，无法解析股东层面股息税率"

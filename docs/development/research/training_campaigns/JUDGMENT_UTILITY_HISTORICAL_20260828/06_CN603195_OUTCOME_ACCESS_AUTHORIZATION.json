@@ -1,0 +1,125 @@
+{
+  "schema_version": "historical-outcome-access-authorization.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN603195:20240501:FY2024",
+  "company_id": "CN:603195",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "preoutcome_freeze_commit": "1dd9032",
+  "custodian_id": "/root/cn603195_outcome_custodian",
+  "authorized_source": {
+    "period": "FY2024",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-04-25/1223284030.PDF",
+    "maximum_documents": 1
+  },
+  "authorization": "FY2024_OUTCOME_FACT_EXTRACTION_AND_CELL_SETTLEMENT",
+  "cells": [
+    {
+      "cell_id": "FY2024_CORE_EARNINGS_DELIVERY",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable revenue and cost for electrical connection",
+        "FY2024 and FY2023-comparable revenue and cost for smart electrical and lighting",
+        "FY2024 and FY2023 adjusted parent profit only as an optional cross-check",
+        "reported segment-definition or perimeter changes"
+      ],
+      "formulas": {
+        "core_revenue_growth": "FY2024 combined core revenue / FY2023 comparable combined core revenue - 1",
+        "core_weighted_gross_margin": "1 - combined core cost / combined core revenue",
+        "core_weighted_gross_margin_change_pp": "FY2024 weighted margin minus FY2023 comparable weighted margin in percentage points"
+      },
+      "first_match": [
+        "LOCAL_UNKNOWN if a required numeric field is undisclosed or a required denominator is invalid",
+        "COMPARABILITY_MISMATCH if segment definitions, period, perimeter, or FY2023 comparatives cannot be bridged",
+        "CORE_COMPOUNDING if valid comparable inputs show revenue growth >= 8% and margin change >= -1.0pp",
+        "CORE_HOLDING if not compounding and revenue growth >= 0% and margin change >= -2.0pp",
+        "CORE_EROSION for the remaining complete, valid, comparable numeric cases"
+      ]
+    },
+    {
+      "cell_id": "FY2024_CONSERVATIVE_CASH_FLOOR_AND_IMMEDIATE_LIQUIDITY",
+      "allowed_fields": [
+        "consolidated operating cash flow",
+        "cash paid to acquire fixed, intangible, and other long-term assets",
+        "adjusted parent profit",
+        "NCI equity and any material non-wholly-owned subsidiary cash attribution",
+        "identified maintenance, expansion, fund-raising-project, and unallocated capex",
+        "unrestricted cash and cash equivalents",
+        "verified assets redeemable before matched short debt maturity",
+        "short borrowings and interest-bearing debt due within one year",
+        "terms or maturity of closed-end trusts, asset-management plans, and other financial products"
+      ],
+      "formulas": {
+        "consolidated_conservative_cash_floor": "consolidated OCF - all cash long-term-asset purchases",
+        "cash_floor_conversion": "conservative cash floor / adjusted parent profit",
+        "ocf_profit_conversion": "consolidated OCF / adjusted parent profit",
+        "nci_equity_ratio": "NCI equity / total equity",
+        "nci_immaterial_gate": "ratio < 5% and no evidence that material OCF arises in non-wholly-owned subsidiaries",
+        "immediate_liquidity": "unrestricted cash and equivalents + assets verified redeemable before matched debt maturity; closed-end products are excluded unless maturity is verified",
+        "immediate_debt_coverage": "immediate liquidity / interest-bearing debt due within one year"
+      },
+      "first_match": [
+        "LOCAL_UNKNOWN if required OCF, long-term-asset cash purchase, or adjusted-profit denominator is undisclosed or invalid",
+        "COMPARABILITY_MISMATCH if the OCF, capex, or profit responsibility boundary cannot be bridged",
+        "PARENT_ATTRIBUTION_UNKNOWN if NCI is material and attributable cash is unavailable",
+        "LOCAL_UNKNOWN_IMMEDIATE_LIQUIDITY if immediate liquidity or matched one-year debt cannot be identified",
+        "CAPEX_PURPOSE_UNKNOWN if conservative cash floor <= 0 and capex purpose cannot be separated",
+        "DURABLE_CONSERVATIVE_CASH_FLOOR if valid inputs show cash floor > 0, conversion >= 80%, and immediate debt coverage >= 1",
+        "POSITIVE_BUT_MIXED_CASH_FLOOR if not durable, cash floor > 0, and immediate debt coverage >= 1",
+        "EXPANSION_FUNDED_CASH if cash floor <= 0, OCF/profit >= 80%, identified growth capex covers the negative floor, and immediate debt coverage >= 1",
+        "WEAK_CONSERVATIVE_CASH_FLOOR_OR_LIQUIDITY for the remaining complete, valid, comparable cases"
+      ]
+    },
+    {
+      "cell_id": "FY2024_NEW_ENERGY_GROWTH_OPTION",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable new-energy revenue and cost",
+        "FY2024 and FY2023-comparable new-energy production, sales volume, and inventory with units and scope",
+        "terminal installations or B-end repeat purchases if disclosed",
+        "new-energy operating profit and operating cash investment if disclosed",
+        "after-sales and warranty cost if disclosed",
+        "new-energy impairment, operating loss plus cash outflow, or irrevocable material capital commitment if disclosed",
+        "reported product-definition or perimeter changes"
+      ],
+      "formulas": {
+        "revenue_growth": "FY2024 new-energy revenue / FY2023 comparable revenue - 1",
+        "gross_margin": "1 - FY2024 new-energy cost / FY2024 new-energy revenue",
+        "production_growth": "FY2024 production / FY2023 comparable production - 1",
+        "sales_growth": "FY2024 sales volume / FY2023 comparable sales volume - 1",
+        "production_sales_gap_pp": "production growth minus sales growth in percentage points"
+      },
+      "first_match": [
+        "LOCAL_UNKNOWN if required revenue or cost is undisclosed or a required denominator is invalid",
+        "COMPARABILITY_MISMATCH if the product definition, period, perimeter, or FY2023 comparable cannot be bridged",
+        "VALUE_DESTRUCTION_EVIDENCED only if an allowed explicit loss, cash-outflow, impairment, warranty, or irrevocable-capital carrier is observed",
+        "INCOMPLETE_SCALE_PROOF if revenue and margin are comparable but production, sales, inventory, units, or scope are unavailable or incomparable",
+        "QUALITY_SCALE_OPTION_RETAINED if valid scale inputs show revenue growth >= 50%, margin >= 30%, and production-sales growth gap <= 15pp",
+        "GROWTH_OPTION_RETAINED_BUT_UNPROVEN if not quality scale, revenue growth > 0%, and margin >= 20%",
+        "STALLED_GROWTH_OPTION if not above and revenue growth <= 0%",
+        "LOW_QUALITY_OR_INVENTORY_RISK_OPTION for the remaining complete, valid, comparable scale cases"
+      ]
+    }
+  ],
+  "output_requirements": [
+    "Record raw reported values, units, responsibility boundary, printed page, and source locator before derived values.",
+    "Apply first-match in the listed order and state which condition matched.",
+    "Keep UNKNOWN and mismatch local; continue settling the other cells.",
+    "Do not infer management quality, investment utility, valuation, or enterprise conclusions."
+  ],
+  "forbidden_inputs": [
+    "preoutcome judgment narrative or treatment mapping",
+    "prices or returns",
+    "old reports or derived research",
+    "any source other than the one authorized official annual report"
+  ],
+  "permissions": {
+    "training_utility": "NONE",
+    "transfer_validated": false,
+    "method_freeze": false,
+    "comparative": false,
+    "cjo": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "report": false,
+    "investment_action": false
+  }
+}

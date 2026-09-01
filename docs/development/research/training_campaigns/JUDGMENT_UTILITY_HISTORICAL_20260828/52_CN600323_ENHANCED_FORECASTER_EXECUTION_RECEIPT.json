@@ -1,0 +1,21 @@
+{
+  "agent_id": "/root/cn600323_holdout_enhanced_forecaster",
+  "packet_path": "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN600323_PAIRED_HOLDOUT_V2/enhanced/FORECASTER_PACKET.json",
+  "actual_input_files": [
+    "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN600323_PAIRED_HOLDOUT_V2/enhanced/FORECASTER_PACKET.json",
+    "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN600323_PAIRED_HOLDOUT_V2/enhanced/FROZEN_METHOD_PACK.json",
+    "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN600323_PAIRED_HOLDOUT_V2/enhanced/CN600323_FY2021.pdf",
+    "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN600323_PAIRED_HOLDOUT_V2/enhanced/CN600323_FY2022.pdf",
+    "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN600323_PAIRED_HOLDOUT_V2/enhanced/CN600323_FY2023.pdf"
+  ],
+  "outcome_read": false,
+  "method_pack_received": true,
+  "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V2",
+  "method_version": "judgment-first-blind-feedback.v2",
+  "revision": "independent-preoutcome-review-r1",
+  "review_ref": "/tmp/turtle-cn600323-holdout-materials/INDEPENDENT_PREOUTCOME_PAIR_REVIEW.md",
+  "canonicalized_after_independent_review": true,
+  "created_at": "2026-08-28T20:25:52+08:00",
+  "output_path": "/Users/xiami/workspace/analy/_turtle_training_packets/JUDGMENT_UTILITY_HISTORICAL_20260828/CN600323_PAIRED_HOLDOUT_V2/enhanced/PREOUTCOME_JUDGMENT.json",
+  "authority": "NONE"
+}

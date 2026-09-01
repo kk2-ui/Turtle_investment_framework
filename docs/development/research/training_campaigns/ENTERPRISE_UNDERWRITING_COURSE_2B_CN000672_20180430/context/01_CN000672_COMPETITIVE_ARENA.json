@@ -1,0 +1,71 @@
+{
+  "schema_version": "company-competitive-arena.v1",
+  "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+  "competitive_arenas": [
+    {
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "product_or_service_scope": "Cement and clinker sold through regional production, grinding, storage and transport assets.",
+      "customer_task": "Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price.",
+      "economic_scope": "China regional delivered markets; national statistics are context rather than a target-company price.",
+      "value_driver": "Regional realized price and volume relative to limestone, fuel, power, environmental, grinding and logistics costs, with capital utilization and cash conversion.",
+      "failure_mode": "National supply discipline may not reach the target region, or idle capacity and cost inflation may compress the recovered margin.",
+      "profit_pool_direction": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+      "evidence_refs": [
+        "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+        "CNINFO:000672:FY2017:PRODUCT_ECONOMICS"
+      ],
+      "required_overlap_dimensions": [
+        {
+          "dimension": "regional_delivered_price_and_volume",
+          "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+          "rationale": "National output and price cannot settle East China or the company's realized transmission.",
+          "target_evidence_source_ids": [
+            "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+            "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL"
+          ]
+        },
+        {
+          "dimension": "unit_cost_and_product_conversion",
+          "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+          "rationale": "Fuel, power, environmental cost and clinker-to-cement conversion determine how much industry price reaches margin.",
+          "target_evidence_source_ids": [
+            "CNINFO:000672:FY2015:CYCLE_AND_COST",
+            "CNINFO:000672:FY2017:PRODUCT_ECONOMICS"
+          ]
+        },
+        {
+          "dimension": "capital_intensity_financing_and_owner_cash",
+          "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+          "rationale": "Maintenance, all capital allocation, restricted cash, debt and growth-capital return must remain distinct.",
+          "target_evidence_source_ids": [
+            "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+          ]
+        }
+      ]
+    },
+    {
+      "arena_id": "ARENA:CN:CEMENT:EAST_CHINA_YANGTZE_DELIVERED_MARKET",
+      "product_or_service_scope": "Clinker, cement, aggregate and concrete produced or converted in Anhui and Zhejiang and delivered through Yangtze-region logistics.",
+      "customer_task": "Regional customers require dependable bulk building material supply within an economical transport radius.",
+      "economic_scope": "East China and the middle/lower Yangtze, with Xinjiang and overseas projects treated as separate growth cohorts.",
+      "value_driver": "Limestone and river-logistics position, local price discipline, grinding/storage utilization, product mix and cost control.",
+      "failure_mode": "Regional competition, coal and environmental costs, debt or capital absorbed outside the mature arena can prevent national profit-pool recovery from becoming ordinary-common cash.",
+      "profit_pool_direction": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+      "evidence_refs": [
+        "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+        "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+      ],
+      "required_overlap_dimensions": [
+        {
+          "dimension": "mature_core_vs_growth_cohorts",
+          "relation": "SEPARATE_RESPONSIBILITY_BOUNDARIES",
+          "rationale": "East China mature assets, Xinjiang grinding, Kyrgyz construction and real estate cannot share one untested earnings or cash conclusion.",
+          "target_evidence_source_ids": [
+            "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+            "CNINFO:000672:FY2017:EXPANSION"
+          ]
+        }
+      ]
+    }
+  ]
+}

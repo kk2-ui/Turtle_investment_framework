@@ -1,0 +1,52 @@
+{
+  "schema_version": "judgment-training-program.v1",
+  "program_state": "ACTIVE",
+  "program_id": "JTP:turtle-selection-development-candidate-v2",
+  "method_version": "enterprise-judgment-selection-candidate-v2",
+  "method_scope": "SELECTION_AND_BOUNDARY",
+  "registered_at": "2026-08-24T01:40:05+08:00",
+  "method_frozen_at": null,
+  "sampling_policy": {
+    "universe_ref": "../docs/development/research/HISTORICAL_PIT_TRAINING_COHORT_REGISTER.md",
+    "cohort_formed_as_of_cutoff": true,
+    "outcome_used_for_selection": false,
+    "terminal_status_coverage": "ALL_CUTOFF_ELIGIBLE_STATES",
+    "same_company_periods_count_as_independent": false
+  },
+  "episodes": [
+    {
+      "training_episode_id": "JTE:R-104:chongqing-beer-selection-development-2016",
+      "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+      "company_id": "CN:600132",
+      "company_cluster_id": "COMPANY:chongqing-brewery",
+      "industry_id": "CN_BEER_REGIONAL_BREWER",
+      "decision_domain": "PRODUCTION_NETWORK_PRUNING_TO_UNIT_ECONOMICS_AND_OWNER_CASH",
+      "cutoff_at": "2016-04-30T23:59:59+08:00",
+      "outcome_not_before": "2017-05-01T00:00:00+08:00",
+      "lane": "HISTORICAL_TRAINING",
+      "provenance_role": "HISTORICAL_SELF_REPLAY",
+      "outcome_access": "PIT_OUTCOME_SEALED",
+      "artifacts": {
+        "case_ref": "../docs/development/research/experiments/R-104_chongqing_beer_network_pruning_unit_economics_20160430/01_case_freeze.json",
+        "selection_review_ref": "../docs/development/research/experiments/R-104_chongqing_beer_network_pruning_unit_economics_20160430/02_independent_pre_outcome_review.json"
+      }
+    },
+    {
+      "training_episode_id": "JTE:R-61:shanghai-silicon-2025-holdout",
+      "case_id": "HOLDOUT:R-61:shanghai-silicon-2025",
+      "company_id": "CN:688126",
+      "company_cluster_id": "COMPANY:shanghai-silicon",
+      "industry_id": "CN_SEMICONDUCTOR_MATERIALS",
+      "decision_domain": "MINORITY_TO_FULL_OWNERSHIP",
+      "cutoff_at": "2025-05-30T23:59:59+08:00",
+      "outcome_not_before": "2026-04-01T00:00:00+08:00",
+      "lane": "HISTORICAL_HOLDOUT",
+      "provenance_role": "HISTORICAL_SELF_REPLAY",
+      "outcome_access": "PIT_OUTCOME_SEALED",
+      "holdout_axis": "COMPANY_AND_TIME",
+      "artifacts": {
+        "freeze_ref": "../docs/development/research/experiments/R-61_shanghai_silicon_2025_minorities_screen/01_pre_outcome_admission_screen.md"
+      }
+    }
+  ]
+}

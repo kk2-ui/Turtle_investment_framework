@@ -1,0 +1,49 @@
+{
+  "schema_version": "turtle-comparative-comparator-eligibility-predicate.v2",
+  "purpose": "Generic pre-as-of comparator eligibility test for an independent H1 curator.",
+  "blindness": {
+    "entity_specific_content": false,
+    "historical_case_references": false,
+    "citation_references": false,
+    "mechanism_labels": false,
+    "post_as_of_information": false
+  },
+  "input_contract": {
+    "subject_key": "opaque token supplied by the receiving curator",
+    "requested_arena": "opaque arena code supplied by the receiving curator",
+    "as_of": "timestamp supplied by the receiving curator",
+    "attributes": {
+      "arena_membership_at_as_of": "PASS | FAIL | UNKNOWN",
+      "customer_or_operating_geography_at_as_of": "PASS | FAIL | UNKNOWN",
+      "direct_operating_boundary_at_as_of": "PASS | FAIL | UNKNOWN",
+      "business_model_comparability_at_as_of": "PASS | FAIL | UNKNOWN",
+      "pre_as_of_evidence_sufficiency": "PASS | FAIL | UNKNOWN",
+      "post_as_of_contamination": "TRUE | FALSE | UNKNOWN"
+    }
+  },
+  "predicate": {
+    "return_UNKNOWN_if": [
+      "any required attribute is UNKNOWN",
+      "the supplied as_of timestamp is absent"
+    ],
+    "return_FAIL_if": [
+      "post_as_of_contamination is TRUE",
+      "arena_membership_at_as_of is FAIL",
+      "customer_or_operating_geography_at_as_of is FAIL",
+      "direct_operating_boundary_at_as_of is FAIL",
+      "business_model_comparability_at_as_of is FAIL",
+      "pre_as_of_evidence_sufficiency is FAIL"
+    ],
+    "return_PASS_only_if": [
+      "all six required attributes are present",
+      "the first five attributes are PASS",
+      "post_as_of_contamination is FALSE"
+    ]
+  },
+  "curator_constraints": [
+    "Evaluate attributes only as they stood before the supplied as_of timestamp.",
+    "Do not use later operating performance, market quotations, returns, management hindsight, or later commentary to pass or fail the predicate.",
+    "Do not infer a missing operating boundary from ownership, size, or sector label alone.",
+    "A PASS establishes comparator eligibility only; it does not select a panel or support any investment conclusion."
+  ]
+}

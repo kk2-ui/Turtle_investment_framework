@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/decision_ledger.schema.json",
+  "title": "Turtle V3 Decision Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_id",
+    "revision",
+    "lifecycle",
+    "change_reason",
+    "decision",
+    "entries",
+    "freeze"
+  ],
+  "properties": {
+    "schema_version": {"const": "decision-ledger.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "revision": {"type": "integer", "minimum": 1},
+    "lifecycle": {
+      "enum": ["draft", "reviewable", "decision_ready", "monitoring"]
+    },
+    "change_reason": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string"},
+    "updated_at": {"type": "string"},
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qualitative_decision",
+        "quantitative_decision",
+        "unified_decision",
+        "display_label",
+        "decision_family",
+        "position_pct"
+      ],
+      "properties": {
+        "qualitative_decision": {"enum": ["continue", "pause", "abandon"]},
+        "quantitative_decision": {"enum": ["buy", "hold", "avoid", "unresolved"]},
+        "unified_decision": {"type": "string", "minLength": 1},
+        "display_label": {"type": "string", "minLength": 1},
+        "decision_family": {"type": "string", "minLength": 1},
+        "position_pct": {
+          "anyOf": [
+            {"type": "number", "minimum": 0, "maximum": 100},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/entry"}
+    },
+    "freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frozen", "fingerprint", "frozen_at"],
+      "properties": {
+        "frozen": {"type": "boolean"},
+        "fingerprint": {"type": "string"},
+        "frozen_at": {"type": ["string", "null"]}
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entry_id",
+        "metric_id",
+        "value",
+        "unit",
+        "scenario",
+        "basis",
+        "as_of",
+        "version",
+        "status",
+        "chapters",
+        "source_ids",
+        "affects_action"
+      ],
+      "properties": {
+        "entry_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:@/-]+$"},
+        "metric_id": {
+          "enum": [
+            "market.price.current",
+            "return.gg.base",
+            "return.gg.fcfe",
+            "return.gg.normalized",
+            "hurdle.ii",
+            "valuation.v_final",
+            "moat.lambda",
+            "return.required",
+            "moat.decay",
+            "margin.price",
+            "margin.return",
+            "decision.position.recommended",
+            "trigger.buy",
+            "trigger.reduce",
+            "trigger.exit"
+          ]
+        },
+        "value": {"type": ["number", "string", "boolean", "null"]},
+        "unit": {"type": "string", "minLength": 1},
+        "scenario": {"type": "string", "minLength": 1},
+        "basis": {"type": "string", "minLength": 1},
+        "as_of": {"type": "string", "minLength": 1},
+        "version": {"type": "integer", "minimum": 1},
+        "status": {"enum": ["active", "deprecated"]},
+        "chapters": {
+          "type": "array",
+          "items": {"type": "integer", "minimum": 0, "maximum": 14},
+          "uniqueItems": true
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "affects_action": {"type": "boolean"},
+        "canonical": {"type": "boolean"},
+        "rationale": {"type": "string"},
+        "deprecation_reason": {"type": "string"},
+        "superseded_by": {"type": "string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "deprecated"}}},
+          "then": {"required": ["deprecation_reason", "superseded_by"]}
+        }
+      ]
+    }
+  }
+}

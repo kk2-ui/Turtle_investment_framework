@@ -1,0 +1,77 @@
+{
+  "schema_version": "judgment-first-real-feedback-completion.v1",
+  "receipt_id": "JFRFC:CN600570:20180501:FY2018:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_rank": 3,
+  "company_id": "CN:600570",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "outcome_period": "FY2018",
+  "status": "REAL_FEEDBACK_LOOP_3_COMPLETED_NO_MATERIAL_UTILITY",
+  "artifacts": {
+    "selection": "00_SELECTION_AND_PREOUTCOME_SOURCE_RECORD.md",
+    "preoutcome_judgment": "01_PREOUTCOME_EVIDENCE_AND_JUDGMENT_FREEZE.md",
+    "baseline_contract": "02_BASELINE_BEFORE_LEARNING_CONTRACT.json",
+    "enhanced_contract": "03_ENHANCED_AFTER_LEARNING_CONTRACT.json",
+    "application_freeze": "04_TRANSFER_APPLICATION_FREEZE.json",
+    "preoutcome_review": "05_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "outcome_authorization": "06_OUTCOME_ACCESS_AUTHORIZATION.json",
+    "custodian_settlement": "07_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "paired_utility_review": "08_INDEPENDENT_PAIRED_UTILITY_REVIEW.md",
+    "investor_readout": "09_INVESTOR_READOUT.md"
+  },
+  "deterministic_signal_result": {
+    "core_financial_it": "POSITIVE_WITH_REGULATORY_CYCLE_LIMIT",
+    "new_ai_blockchain_cloud_options": "DEPLOYED_ECONOMICS_UNAVAILABLE",
+    "directional_consolidated_post_working_capital_and_all_capex_proxy_rmb": 481348243.02,
+    "post_capex_post_strategic_investment_funding_residual": {
+      "upper_bound_rmb": 26273243.02,
+      "lower_bound": "UNBOUNDED_FROM_DISCLOSURE",
+      "crosses_zero": true
+    },
+    "financing": "DEBT_INCREASED_FROM_ZERO_TO_RMB_60000000",
+    "cash_signal": "MIXED_WITH_FINANCING"
+  },
+  "enterprise_judgment": {
+    "core": "RETAIN_NORMAL_EARNINGS_WITH_REGULATORY_CYCLE_LIMIT",
+    "management_execution": "MEDIUM_HIGH_FOR_CORE_AND_CONDITIONAL_FOR_NEW_OPTIONS",
+    "capital_allocation": "CONDITIONAL",
+    "new_options": "ZERO_SEPARATE_GROWTH_VALUE",
+    "permanent_loss": "LOW_CURRENT_BALANCE_SHEET_AND_MEDIUM_CORE_EROSION_R_AND_D_OR_STRATEGIC_ALLOCATION_RISK"
+  },
+  "baseline_result": {
+    "investment_treatment": "CORE_NORMAL_EARNINGS_OPTIONS_ZERO_GROWTH_VALUE_CAPITAL_ALLOCATION_CONDITIONAL",
+    "next_research": "MATCH_STRATEGIC_INVESTMENT_RETURN_AND_TEST_GROUP_FUNDING_RECURRENCE"
+  },
+  "enhanced_result": {
+    "investment_treatment": "CORE_NORMAL_EARNINGS_OPTIONS_ZERO_GROWTH_VALUE_CAPITAL_ALLOCATION_CONDITIONAL",
+    "next_research": "MATCH_STRATEGIC_INVESTMENT_RETURN_AND_TEST_GROUP_FUNDING_RECURRENCE"
+  },
+  "paired_utility": "NO_MATERIAL_UTILITY",
+  "utility_reason": "THE_BOUND_AND_BUSINESS_MODEL_MATCHED_CARRIERS_WORKED_CORRECTLY_BUT_DID_NOT_CHANGE_THE_FAIR_BASELINE_INVESTMENT_TREATMENT_AVOID_AN_ACTUAL_MATERIAL_ERROR_OR_CREATE_A_DISTINCT_MATERIAL_RESEARCH_ACTION",
+  "rule_resolution": {
+    "business_model_matched_carriers": "RETAIN_AS_RESPONSIBILITY_DISCIPLINE_NOT_PROVEN_UTILITY",
+    "local_unknown": "RETAIN",
+    "bounded_unknown_preserves_direction": "RETAIN_AS_CORRECT_REASONING_PRIMITIVE_NOT_TRANSFER_VALIDATION",
+    "one_period_group_funding_residual": "RETAIN_NARROWLY_AND_NEVER_RELABEL_AS_NORMALIZED_OWNER_CASH_OR_MATCHED_RETURN",
+    "fair_baseline_parity": "RETAIN_AND_DO_NOT_REWARD_STRUCTURE_SPEED_CLARITY_OR_RULE_COMPLIANCE"
+  },
+  "defensive_writing_audit": "PASS_JUDGMENT_CONTINUED_THROUGH_LOCAL_OPTION_UNAVAILABLE_AND_METHOD_CORRECTNESS_WAS_NOT_REWARDED_AS_UTILITY",
+  "campaign_progress": {
+    "real_feedback_loops_completed": 3,
+    "minimum_required": 3,
+    "counterexample_or_no_utility_requirement": "SATISFIED_BY_LOOPS_1_AND_3_NO_MATERIAL_UTILITY_AND_LOOP_2_HARMFUL",
+    "revised_rule_replication_pending": true,
+    "minimum_twelve_hour_window_pending": true,
+    "campaign_complete": false
+  },
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}

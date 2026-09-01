@@ -1,0 +1,102 @@
+{
+  "schema_version": "industry-learning-block.v1",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "competitive_arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+  "history_series_ref": {
+    "series_id": "HISTORY_SERIES:COHORT:CN:CEMENT_LISTED:20180430:H1_STATIC:2014-04-16T00:00:00+08:00:2018-04-30T23:59:59+08:00",
+    "h1_receipt_ref": {"receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1", "receipt_version": 1}
+  },
+  "cutoffs": [
+    "2014-04-16T00:00:00+08:00",
+    "2015-04-15T00:00:00+08:00",
+    "2016-04-27T00:00:00+08:00",
+    "2017-04-12T00:00:00+08:00",
+    "2018-04-22T00:00:00+08:00",
+    "2018-04-30T23:59:59+08:00"
+  ],
+  "industry_epoch_map": [
+    {"epoch_id": "EPOCH:CEMENT:2014", "cutoff_at": "2014-04-16T00:00:00+08:00", "statement": "The H1 risk set contains five listed-consolidated cement issuers with date-only official annual-report material visible before the cutoff.", "status": "OBSERVED", "evidence_refs": ["CNINFO:600585:ANN:20140325:63719331"]},
+    {"epoch_id": "EPOCH:CEMENT:2015", "cutoff_at": "2015-04-15T00:00:00+08:00", "statement": "The same five issuer identifiers remain in the H1 static risk set; this is a source-coverage state rather than a survival conclusion.", "status": "OBSERVED", "evidence_refs": ["CNINFO:600585:ANN:20150324:1200733224"]},
+    {"epoch_id": "EPOCH:CEMENT:2016", "cutoff_at": "2016-04-27T00:00:00+08:00", "statement": "The H1 static risk set continues to preserve all five issuer-consolidated boundaries before any later outcome access.", "status": "OBSERVED", "evidence_refs": ["CNINFO:600585:ANN:20160324:1202069257"]},
+    {"epoch_id": "EPOCH:CEMENT:2017", "cutoff_at": "2017-04-12T00:00:00+08:00", "statement": "A disclosed 15-plant acquisition approval makes Huaxin perimeter continuity an explicit measurement question while retaining it in the risk set.", "status": "INFERRED", "evidence_refs": ["CNINFO:600801:ANN:20170324:1203190337"]},
+    {"epoch_id": "EPOCH:CEMENT:2018:ANNUAL", "cutoff_at": "2018-04-22T00:00:00+08:00", "statement": "The five H1 issuers remain in the static risk set, with Jidong restructuring and Huaxin perimeter continuity retained as lifecycle boundaries rather than removed observations.", "status": "INFERRED", "evidence_refs": ["CNINFO:000401:ANN:20180323:1204506085"]},
+    {"epoch_id": "EPOCH:CEMENT:2018:SELECTION", "cutoff_at": "2018-04-30T23:59:59+08:00", "statement": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.", "status": "OBSERVED", "evidence_refs": ["CNINFO:600425:ANN:20180421:1204677754"]}
+  ],
+  "company_cluster_map": [
+    {"company_id": "CN:600585", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585"},
+    {"company_id": "CN:600801", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801"},
+    {"company_id": "CN:000401", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401"},
+    {"company_id": "CN:600425", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425"},
+    {"company_id": "CN:600802", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802"}
+  ],
+  "e1_selection_rule": {
+    "selection_rule_id": "SEL:CN:CEMENT:E1:V1",
+    "criterion": "CUTOFF_VISIBLE_MATERIALITY_STATE_DIFFERENCE_AND_FIELD_COVERAGE",
+    "prohibited_selection_inputs": "POST_CUTOFF_RESULTS_OR_EASE_OF_PASSING"
+  },
+  "model_memory_status": "MODEL_MEMORY_MITIGATED",
+  "company_archetype_map": [
+    {"company_id": "CN:600585", "archetype_id": "ARCHETYPE:CONSOLIDATED_OPERATING_AND_CASH_TRACK", "condition": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.", "evidence_refs": ["CNINFO:600585:ANN:20180323:1204507132"], "boundary_status": "PENDING_ACTION_WINDOW_REVIEW"},
+    {"company_id": "CN:600801", "archetype_id": "ARCHETYPE:ACQUISITION_PERIMETER_CONTINUITY", "condition": "The annual-report record identifies approval for 15 cement plants, making perimeter continuity a first-order measurement condition.", "evidence_refs": ["CNINFO:600801:ANN:20180326:1204514309"], "boundary_status": "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK"},
+    {"company_id": "CN:000401", "archetype_id": "ARCHETYPE:RESTRUCTURING_AND_JV_PERIMETER", "condition": "The annual-report record identifies major restructuring and a Jinyu joint-venture context, leaving a stable operating perimeter unresolved.", "evidence_refs": ["CNINFO:000401:ANN:20180323:1204506085"], "boundary_status": "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK"},
+    {"company_id": "CN:600425", "archetype_id": "ARCHETYPE:REGIONAL_OVERCAPACITY_CONTEXT", "condition": "The packet describes a Xinjiang delivered-market setting with capacity and competition pressure, without a customer or peer-control result.", "evidence_refs": ["CNINFO:600425:ANN:20180421:1204677754"], "boundary_status": "PENDING_ACTION_WINDOW_REVIEW"},
+    {"company_id": "CN:600802", "archetype_id": "ARCHETYPE:REGIONAL_MANUFACTURING_CONTEXT", "condition": "The listed-consolidated packet identifies cement manufacturing and sales fields in a Fujian regional context; action and adaptation detail is not reconstructed.", "evidence_refs": ["CNINFO:600802:ANN:20180417:1204639756"], "boundary_status": "PENDING_ACTION_WINDOW_REVIEW"}
+  ],
+  "episode_roster": [
+    {"episode_id": "EJE:CN:600425:20180430:E0", "company_id": "CN:600425", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425", "cutoff_at": "2018-04-30T23:59:59+08:00", "admission_level": "E0_CONTEXT"},
+    {"episode_id": "EJE:CN:600585:20170412", "company_id": "CN:600585", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585", "cutoff_at": "2017-04-12T00:00:00+08:00", "admission_level": "E1_RECONSTRUCTION"},
+    {"episode_id": "EJE:CN:600801:20170412", "company_id": "CN:600801", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801", "cutoff_at": "2017-04-12T00:00:00+08:00", "admission_level": "E1_RECONSTRUCTION"},
+    {"episode_id": "EJE:CN:600801:20180422", "company_id": "CN:600801", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801", "cutoff_at": "2018-04-22T00:00:00+08:00", "admission_level": "E1_RECONSTRUCTION"}
+  ],
+  "decision_heterogeneity_matrix": [
+    {"company_id": "CN:600585", "company_conditions": "Multi-region listed-consolidated operating and cash fields are visible.", "feasible_alternatives": "Not reconstructed from the H1 annual-report packet.", "decision_state": "INSUFFICIENT_EVIDENCE", "execution_state": "UNKNOWN", "adaptation_state": "UNKNOWN", "external_conditions": "Industry and regional conditions cannot be used as an individual counterfactual.", "evidence_ceiling": "TEACHING_ONLY"},
+    {"company_id": "CN:600801", "company_conditions": "The disclosed acquisition approval introduces a perimeter-continuity constraint.", "feasible_alternatives": "Not reconstructed from the H1 annual-report packet.", "decision_state": "INSUFFICIENT_EVIDENCE", "execution_state": "UNKNOWN", "adaptation_state": "UNKNOWN", "external_conditions": "A perimeter change can make later aggregate operating fields non-comparable.", "evidence_ceiling": "TEACHING_ONLY"},
+    {"company_id": "CN:000401", "company_conditions": "Restructuring and joint-venture context make the listed-consolidated state boundary material.", "feasible_alternatives": "Not reconstructed from the H1 annual-report packet.", "decision_state": "INSUFFICIENT_EVIDENCE", "execution_state": "UNKNOWN", "adaptation_state": "UNKNOWN", "external_conditions": "Perimeter continuity must precede any operating comparison.", "evidence_ceiling": "TEACHING_ONLY"},
+    {"company_id": "CN:600425", "company_conditions": "Regional overcapacity and delivered-market competition are reported context.", "feasible_alternatives": "Not reconstructed from the H1 annual-report packet.", "decision_state": "INSUFFICIENT_EVIDENCE", "execution_state": "UNKNOWN", "adaptation_state": "UNKNOWN", "external_conditions": "Regional capacity pressure may be shared but is not a treatment-control field.", "evidence_ceiling": "CONTEXT_ONLY"},
+    {"company_id": "CN:600802", "company_conditions": "Regional cement manufacturing and sales fields are reported at issuer-consolidated boundary.", "feasible_alternatives": "Not reconstructed from the H1 annual-report packet.", "decision_state": "INSUFFICIENT_EVIDENCE", "execution_state": "UNKNOWN", "adaptation_state": "UNKNOWN", "external_conditions": "Regional market context does not identify customer response or competitive causality.", "evidence_ceiling": "CONTEXT_ONLY"}
+  ],
+  "conditional_mechanism_synthesis": [
+    {"synthesis_id": "SYN:CEMENT:PERIMETER_BEFORE_COMPARISON", "when": "A listed-consolidated cement issuer discloses an acquisition, restructuring or joint-venture perimeter condition.", "decision": "No company decision sequence is asserted from the H1 packet.", "mechanism": "A change in the reporting perimeter may alter the composition of a reported operating or cash series.", "observed_as": "A perimeter-continuity question attached to the affected issuer and cutoff.", "unless": "A cutoff-visible bridge establishes the same responsibility boundary and field definition.", "counterexamples": "A stable reported field alone is not evidence that the business state, management action or cash mechanism is comparable.", "evidence_ceiling": "TEACHING_ONLY", "evidence_refs": ["CNINFO:600801:ANN:20170324:1203190337", "CNINFO:000401:ANN:20180323:1204506085"]},
+    {"synthesis_id": "SYN:CEMENT:OPERATING_TO_CASH_BOUNDARY", "when": "Issuer-consolidated product, sales and audited cash fields are all cutoff-visible.", "decision": "No management decision or adaptation effect is asserted.", "mechanism": "The statements can support a bounded operating-to-cash reconstruction at the same issuer perimeter.", "observed_as": "An accounting-boundary learning thread rather than owner-cash, competitive advantage or causal effect.", "unless": "A material perimeter, accounting or working-capital change makes the selected field non-diagnostic.", "counterexamples": "Aggregate volume, revenue or cash cannot identify customer response, pricing, management quality or a peer counterfactual.", "evidence_ceiling": "TEACHING_ONLY", "evidence_refs": ["CNINFO:600585:ANN:20170324:1203189438", "CNINFO:600425:ANN:20180421:1204677754"]}
+  ],
+  "unresolved_questions": [
+    {"question_id": "AGENDA:CEMENT:ACTION_WINDOW", "question": "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?", "materiality": "Without it, management quality, capital allocation and action-effect conclusions remain unsupported.", "next_evidence": "Board, implementation or other official disclosure that identifies the action, responsible unit, timing and perimeter.", "status": "OPEN"},
+    {"question_id": "AGENDA:CEMENT:PERIMETER_BRIDGE", "question": "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?", "materiality": "A missing bridge can change the interpretation of operating cash and permanent-loss conditions.", "next_evidence": "Official annual-report reconciliation that names transferred assets, scope, timing and same-boundary fields.", "status": "OPEN"}
+  ],
+  "next_sampling_decision": {
+    "decision": "Sample a later cutoff only after preserving the five-company risk set and retaining scope-break issuers as distinct lifecycle archetypes.",
+    "rationale": "The next sample should discriminate boundary continuity or add a bounded operating-to-cash field, not seek an easy Comparative pass.",
+    "next_company_cutoff_refs": ["CN:600801@2018-04-22T00:00:00+08:00", "CN:600585@2018-04-22T00:00:00+08:00"]
+  },
+  "company_cutoff_transition_roster": [
+    {"rank": 1, "transition_id": "CCR:600801:20160427:20170412", "company_id": "CN:600801", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801", "cutoff_at": "2016-04-27T00:00:00+08:00", "next_cutoff_at": "2017-04-12T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 2, "transition_id": "CCR:600585:20170412:20180422", "company_id": "CN:600585", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585", "cutoff_at": "2017-04-12T00:00:00+08:00", "next_cutoff_at": "2018-04-22T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 3, "transition_id": "CCR:600585:20140416:20150415", "company_id": "CN:600585", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585", "cutoff_at": "2014-04-16T00:00:00+08:00", "next_cutoff_at": "2015-04-15T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 4, "transition_id": "CCR:600585:20150415:20160427", "company_id": "CN:600585", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585", "cutoff_at": "2015-04-15T00:00:00+08:00", "next_cutoff_at": "2016-04-27T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 5, "transition_id": "CCR:600585:20160427:20170412", "company_id": "CN:600585", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585", "cutoff_at": "2016-04-27T00:00:00+08:00", "next_cutoff_at": "2017-04-12T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 6, "transition_id": "CCR:600801:20140416:20150415", "company_id": "CN:600801", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801", "cutoff_at": "2014-04-16T00:00:00+08:00", "next_cutoff_at": "2015-04-15T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 7, "transition_id": "CCR:600801:20150415:20160427", "company_id": "CN:600801", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801", "cutoff_at": "2015-04-15T00:00:00+08:00", "next_cutoff_at": "2016-04-27T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 8, "transition_id": "CCR:600801:20170412:20180422", "company_id": "CN:600801", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801", "cutoff_at": "2017-04-12T00:00:00+08:00", "next_cutoff_at": "2018-04-22T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 9, "transition_id": "CCR:000401:20140416:20150415", "company_id": "CN:000401", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401", "cutoff_at": "2014-04-16T00:00:00+08:00", "next_cutoff_at": "2015-04-15T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 10, "transition_id": "CCR:000401:20150415:20160427", "company_id": "CN:000401", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401", "cutoff_at": "2015-04-15T00:00:00+08:00", "next_cutoff_at": "2016-04-27T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 11, "transition_id": "CCR:000401:20160427:20170412", "company_id": "CN:000401", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401", "cutoff_at": "2016-04-27T00:00:00+08:00", "next_cutoff_at": "2017-04-12T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 12, "transition_id": "CCR:000401:20170412:20180422", "company_id": "CN:000401", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:000401", "cutoff_at": "2017-04-12T00:00:00+08:00", "next_cutoff_at": "2018-04-22T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 13, "transition_id": "CCR:600425:20140416:20150415", "company_id": "CN:600425", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425", "cutoff_at": "2014-04-16T00:00:00+08:00", "next_cutoff_at": "2015-04-15T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 14, "transition_id": "CCR:600425:20150415:20160427", "company_id": "CN:600425", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425", "cutoff_at": "2015-04-15T00:00:00+08:00", "next_cutoff_at": "2016-04-27T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 15, "transition_id": "CCR:600425:20160427:20170412", "company_id": "CN:600425", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425", "cutoff_at": "2016-04-27T00:00:00+08:00", "next_cutoff_at": "2017-04-12T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 16, "transition_id": "CCR:600425:20170412:20180422", "company_id": "CN:600425", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425", "cutoff_at": "2017-04-12T00:00:00+08:00", "next_cutoff_at": "2018-04-22T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 17, "transition_id": "CCR:600802:20140416:20150415", "company_id": "CN:600802", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802", "cutoff_at": "2014-04-16T00:00:00+08:00", "next_cutoff_at": "2015-04-15T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 18, "transition_id": "CCR:600802:20150415:20160427", "company_id": "CN:600802", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802", "cutoff_at": "2015-04-15T00:00:00+08:00", "next_cutoff_at": "2016-04-27T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 19, "transition_id": "CCR:600802:20160427:20170412", "company_id": "CN:600802", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802", "cutoff_at": "2016-04-27T00:00:00+08:00", "next_cutoff_at": "2017-04-12T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 20, "transition_id": "CCR:600802:20170412:20180422", "company_id": "CN:600802", "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600802", "cutoff_at": "2017-04-12T00:00:00+08:00", "next_cutoff_at": "2018-04-22T00:00:00+08:00", "outcome_access_status": "SEALED"}
+  ],
+  "transition_roster": [
+    {"rank": 1, "transition_id": "TRN:600801:20170412:20180422:PERIMETER", "episode_id": "EJE:CN:600801:20170412", "company_id": "CN:600801", "cutoff_at": "2017-04-12T00:00:00+08:00", "outcome_cell_ids": ["CELL:600801:20170412:OPERATIONS"], "next_cutoff_at": "2018-04-22T00:00:00+08:00", "outcome_access_status": "SEALED"},
+    {"rank": 2, "transition_id": "TRN:600585:20170412:20180422:CASH", "episode_id": "EJE:CN:600585:20170412", "company_id": "CN:600585", "cutoff_at": "2017-04-12T00:00:00+08:00", "outcome_cell_ids": ["CELL:600585:20170412:CASH"], "next_cutoff_at": "2018-04-22T00:00:00+08:00", "outcome_access_status": "SEALED"}
+  ],
+  "roles": {"judgment_owner_id": "ROLE:CEMENT:JUDGMENT_OWNER", "independent_challenger_id": "ROLE:CEMENT:INDEPENDENT_CHALLENGER", "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"},
+  "object_class": "INDUSTRY_LEARNING_BLOCK",
+  "claim_class": "CONDITIONAL_INDUSTRY_TEACHING",
+  "allowed_outputs": ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
+}

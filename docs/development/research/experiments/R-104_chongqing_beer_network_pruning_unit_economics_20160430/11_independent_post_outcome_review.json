@@ -1,0 +1,66 @@
+{
+  "schema_version": "judgment-selection-post-outcome-review.v1",
+  "review_id": "JSELPOSTREVIEW:R-104:INDEPENDENT:20260824:V1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "settlement_id": "JSELOUTCOME:R-104:20260824:V1",
+  "outcome_ref": "10_independent_outcome.json",
+  "feedback_ref": "selection_feedback/JSELOUTCOME_R-104_20260824_V1/feedback.json",
+  "reviewer_id": "codex-independent-post-outcome-reviewer-r104-20260824",
+  "reviewed_at": "2026-08-24T11:09:35+08:00",
+  "recorded_at": "2026-08-24T11:09:36+08:00",
+  "review_status": "INDEPENDENTLY_ACCEPTED_POST_OUTCOME",
+  "joint_selection_verdict": "MIXED",
+  "review_verdict": "MIXED_MECHANISM_BOUNDARY",
+  "learning_authorization": "NONE",
+  "root_cause_classes": [
+    "REASONING",
+    "DATA_COVERAGE"
+  ],
+  "economic_impact": "FY2016 consolidated operating contribution exceeded the H-A threshold while owner cash, after the frozen removal of positive cash-working-capital release, met H-B. The operating improvement therefore did not demonstrate the required same-period cash conversion. Treating the D3 observation as a successful selection would overstate recurring earnings quality and could distort a future permanent-loss or valuation assessment.",
+  "missing_facts": [
+    "The FY2016-FY2018 official reports do not allocate long-term-asset cash spending between maintenance and expansion capital expenditure.",
+    "The disclosures do not supply one fully compatible bridge from closures, disposal proceeds and permanent loss to opening or average operating capital for the continuous D5 reading."
+  ],
+  "prohibited_assumptions": [
+    "Do not let D3 operating-contribution improvement override the contrary D4 owner-cash result.",
+    "Do not treat the observed working-capital release as recurring owner cash or infer that it proves network-pruning economics.",
+    "Do not use D1 implementation, D2 customer context or D5 UNKNOWN as a substitute vote for either central discriminator.",
+    "Do not infer maintenance capital expenditure, double deduct impairment, or use security price, valuation or return as a substitute for the frozen D3 and D4 identities."
+  ],
+  "executable_remediation": [
+    "Record R-104 only as a MIXED mechanism-boundary episode; do not emit directional selection learning from this receipt.",
+    "Require a separate, validated learning gate before any method-field change, and require that gate to preserve the D3-versus-D4 conflict in its rationale.",
+    "Do not freeze the selection method, apply the linked R-103 holdout, or release report use on the basis of this single MIXED settlement."
+  ],
+  "acceptance_criteria": [
+    "The R-104 feedback remains bound to JSELOUTCOME:R-104:20260824:V1 with the joint verdict MIXED and learning_authorization NONE.",
+    "Any future method freeze has a separately validated method-application and independent review path; this receipt is not used as its substitute.",
+    "The R-103 holdout remains sealed and un-applied until a later valid frozen method exists.",
+    "No golden-report workflow receives report-use authorization from R-104 alone."
+  ],
+  "independence_attestation": {
+    "independent": true,
+    "excluded_role_ids": [
+      "codex-r104-cutoff-selector",
+      "codex-independent-pre-outcome-reviewer-r104-v2-20260824",
+      "turtle-main-r104-resolution-author",
+      "codex-r104-independent-outcome-custodian-20260824"
+    ]
+  },
+  "prohibited_outputs": [
+    "accuracy",
+    "directionality",
+    "directional_learning",
+    "expected_return",
+    "investment_return",
+    "portfolio_conclusion",
+    "probability",
+    "security_return",
+    "selection_accuracy",
+    "selection_direction",
+    "target_price",
+    "valuation",
+    "win_rate"
+  ]
+}

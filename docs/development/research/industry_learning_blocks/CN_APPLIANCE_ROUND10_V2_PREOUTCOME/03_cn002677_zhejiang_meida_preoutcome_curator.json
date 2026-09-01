@@ -1,0 +1,178 @@
+{
+  "artifact_type": "ROUND10_PREOUTCOME_CURATOR_EVIDENCE_V1",
+  "artifact_id": "ROUND10-CN002677-PREOUTCOME-CURATOR-V1",
+  "status": "CURATED_CUTOFF_BEFORE_EVIDENCE_ONLY",
+  "candidate": {
+    "company_id": "CN:002677",
+    "issuer_legal_name": "浙江美大实业股份有限公司",
+    "cninfo_org_id": "9900022709",
+    "listed_responsibility_boundary": "浙江美大实业股份有限公司合并集团",
+    "operating_arena": "中国集成灶及厨房配套设施",
+    "boundary_limits": [
+      "本工件只登记上市公司合并口径，不能把合并经营现金流解释为普通股股东可得现金。",
+      "集成灶为收入主体，但本工件不把集团合并结果自动归因于单一产品、渠道或客户群。"
+    ]
+  },
+  "time_boundary": {
+    "forecast_cutoff": "2018-09-30T23:59:59+08:00",
+    "precutoff_report_period": "FY2017",
+    "future_outcome_period": "FY2019",
+    "cutoff_rule": "只使用于 cutoff 前公开的官方静态 PDF；本 curator 未枚举、下载或阅读 FY2019 及以后结果期资料。"
+  },
+  "official_static_source": {
+    "publisher": "巨潮资讯网（CNINFO，深圳证券交易所信息披露官方网站）",
+    "announcement_id": "1204441828",
+    "announcement_title": "浙江美大：2017年年度报告",
+    "publication_date": "2018-03-01",
+    "publication_date_precision": "DAY",
+    "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-03-01/1204441828.PDF",
+    "document_title": "浙江美大实业股份有限公司2017年年度报告全文",
+    "physical_pdf_page_count": 156,
+    "cutoff_eligibility": "ELIGIBLE: 2018-03-01 is before 2018-09-30.",
+    "metadata_locator": {
+      "endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+      "stock": "002677,9900022709",
+      "category": "category_ndbg_szsh",
+      "date_window": "2018-01-01~2018-09-30"
+    }
+  },
+  "consolidated_measurement_evidence": [
+    {
+      "measurement_id": "CN002677-FY2017-CONSOLIDATED-OPERATING-REVENUE-RMB",
+      "metric": "operating_revenue",
+      "statement": "合并利润表",
+      "period_kind": "FLOW",
+      "reporting_period": "2017-01-01/2017-12-31",
+      "basis": "CONSOLIDATED",
+      "unit": "RMB",
+      "current_value": "1026358726.69",
+      "comparative_period": "2016-01-01/2016-12-31",
+      "comparative_value": "665683621.52",
+      "physical_pdf_page": 63,
+      "locator": "合并利润表；一、营业总收入，其中：营业收入",
+      "short_quote": "其中：营业收入 1,026,358,726.69",
+      "scope_note": "合并利润表以人民币元列示；此为集团合并营业收入，不是集成灶终端消费者收入。"
+    },
+    {
+      "measurement_id": "CN002677-FY2017-CONSOLIDATED-OPERATING-CASH-FLOW-RMB",
+      "metric": "net_cash_from_operating_activities",
+      "statement": "合并现金流量表",
+      "period_kind": "FLOW",
+      "reporting_period": "2017-01-01/2017-12-31",
+      "basis": "CONSOLIDATED",
+      "unit": "RMB",
+      "current_value": "448060977.53",
+      "comparative_period": "2016-01-01/2016-12-31",
+      "comparative_value": "266508353.09",
+      "physical_pdf_page": 68,
+      "locator": "合并现金流量表；经营活动产生的现金流量净额",
+      "short_quote": "经营活动产生的现金流量净额 448,060,977.53",
+      "scope_note": "合并经营现金流是可观察的现金形成指标；不可替代 owner cash、维护性资本开支或普通股可分配现金。"
+    },
+    {
+      "measurement_id": "CN002677-FY2017-CONSOLIDATED-TOTAL-ASSETS-RMB",
+      "metric": "total_assets",
+      "statement": "合并资产负债表",
+      "period_kind": "STOCK",
+      "reporting_period": "2017-12-31",
+      "basis": "CONSOLIDATED",
+      "unit": "RMB",
+      "current_value": "1675684054.70",
+      "comparative_period": "2016-12-31",
+      "comparative_value": "1397628601.54",
+      "physical_pdf_page": 59,
+      "locator": "合并资产负债表；资产总计",
+      "short_quote": "资产总计 1,675,684,054.70",
+      "scope_note": "2017-12-31 合并资产存量；不能单独衡量资本效率或未来产能利用率。"
+    }
+  ],
+  "accounting_scope_and_restatement": {
+    "consolidation_status": "所有上述字段均来自名称明确为“合并” 的三大报表。",
+    "reported_restatement_status": "报告称不需追溯调整或重述以前年度主要会计数据（PDF 第6页），且未发生重大会计差错更正需追溯重述（PDF 第28页）。",
+    "reported_presentation_change": "报告披露对资产处置收益的列报作追溯调整；该列报变更不是本工件三项字段的映射授权。",
+    "settlement_instruction": "后续 custodian 必须为 FY2019 字段单独确认合并主体、期间、单位和年报版本；不得因 FY2017 的口径记录而跳过结果期核验。"
+  },
+  "implemented_action_evidence": [
+    {
+      "action_id": "CN002677-2017-AUTOMATION-CAPACITY-IMPLEMENTED",
+      "status": "IMPLEMENTED",
+      "responsibility_boundary": "浙江美大合并集团的生产制造活动",
+      "physical_pdf_page": 12,
+      "short_quote": "年新增20万台集成灶的技改项目……已建设完毕并投入生产。",
+      "mechanism_hypothesis_only": "自动化生产线和物流项目可能影响产能、劳动生产率与交付能力；本工件不把它当作已证明的客户响应或财务效果。"
+    },
+    {
+      "action_id": "CN002677-2017-CHANNEL-EXPANSION-IMPLEMENTED",
+      "status": "IMPLEMENTED",
+      "responsibility_boundary": "浙江美大合并集团的经销、电商、KA 与工程渠道",
+      "physical_pdf_page": 12,
+      "short_quote": "新增经销商200多家，经销网络门店新增400多家。",
+      "mechanism_hypothesis_only": "渠道覆盖扩大可能改变获客与销售能力；它不能自动证明终端客户忠诚、经销库存健康或利润质量。"
+    }
+  ],
+  "strongest_rival_evidence": [
+    {
+      "evidence_id": "CN002677-2017-INDUSTRY-TAILWIND",
+      "physical_pdf_page": 9,
+      "short_quote": "集成灶行业处高速增长阶段，较上年同比增长高达50%。",
+      "interpretation_limit": "行业扩张是公司增长的可替代解释，不能将其直接归因于单项管理行动。"
+    },
+    {
+      "evidence_id": "CN002677-2017-DISTRIBUTOR-REVENUE-RECOGNITION-RISK",
+      "physical_pdf_page": 55,
+      "short_quote": "在经销商模式下，收入确认存在重大错报的固有风险。",
+      "interpretation_limit": "这是审计报告所列收入确认风险，不是对虚增收入的事实判断；它要求后续观察合同区分发货、回款和终端需求。"
+    }
+  ],
+  "dimension_local_unknowns": [
+    {
+      "dimension": "customer_response",
+      "status": "UNKNOWN",
+      "reason": "报告陈述渠道建设和销量变化，但本工件没有独立、可结算的终端复购、投诉或同店需求字段。"
+    },
+    {
+      "dimension": "owner_cash_and_maintenance_capex",
+      "status": "UNKNOWN",
+      "reason": "合并经营现金流不能唯一分解为维护性资本开支、增长性资本开支或普通股可得现金。"
+    },
+    {
+      "dimension": "110m_capacity_project_effect",
+      "status": "UNKNOWN",
+      "reason": "报告仅称110万台扩建项目已启动且基础工程验收；它不是 cutoff 前已完成、可当作经营效果的行动。"
+    }
+  ],
+  "value_free_future_outcome_route": {
+    "status": "ROUTE_DECLARED_NOT_ENUMERATED",
+    "target_report_period": "FY2019",
+    "issuer_code": "002677",
+    "issuer_org_id": "9900022709",
+    "official_disclosure_system": "CNINFO",
+    "query_endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "required_query_constraints_for_custodian": {
+      "stock": "002677,9900022709",
+      "category": "category_ndbg_szsh",
+      "required_title_identity": "2019年年度报告",
+      "version_policy": "选择正式年报全文；摘要、取消、撤回、更正及订正版本按既有年报版本政策处理。"
+    },
+    "access_prohibition": "本 pre-outcome curator 未执行该查询，未定位、下载或阅读任何结果期 PDF。"
+  },
+  "handoff": {
+    "allowed_next_actor": "Round10 batch freeze agent",
+    "allowed_use": "将三项合并字段、责任边界、action 与 rival evidence 作为同一事实预算的来源候选；必须由 freeze agent 决定预测与 measurement contract。",
+    "prohibited_use": [
+      "不得把本工件转换为 FY2019 结果、方向标签或投资结论。",
+      "不得以渠道、产能或行业增长叙述替代客户响应、单位经济或 owner cash 的观察。",
+      "不得用于同行排名、因果胜负、CJO、估值、BuyBand 或报告授权。"
+    ]
+  },
+  "curator_attestation": {
+    "role": "PRE_OUTCOME_CURATOR",
+    "read_scope": "仅阅读 2018-03-01 公开的浙江美大2017年年度报告全文及用于定位其身份的官方CNINFO公告元数据。",
+    "not_read": [
+      "FY2019 或任何 cutoff 后结果期年报正文",
+      "股价、回报或投资结果",
+      "其他 Round10 候选的结果工件",
+      "H2、R-103、CJO 或报告工件"
+    ]
+  }
+}

@@ -1,0 +1,510 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enterprise-judgment-forecast-projection.v1",
+  "title": "Turtle J3 Enterprise Judgment Forecast Projection",
+  "description": "Request-only projection from cells routed through an internally compiled J2 thread set. It grants no causal, comparative, CJO, method-freeze, report, valuation or investment authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "projection_id",
+    "projection_state",
+    "episode_ref",
+    "mechanism_thread_set_ref",
+    "decision_contract_ref",
+    "source_packet_refs",
+    "forecast_requests",
+    "cell_rejections",
+    "preserved_admission",
+    "rights",
+    "object_class",
+    "claim_class",
+    "allowed_outputs"
+  ],
+  "properties": {
+    "schema_version": {"const": "enterprise-judgment-forecast-projection.v1"},
+    "projection_id": {"$ref": "#/$defs/nonempty"},
+    "projection_state": {"enum": ["FORECAST_REQUESTS_READY", "NO_FORECAST_ELIGIBLE_CELLS"]},
+    "episode_ref": {"$ref": "#/$defs/episode_ref"},
+    "mechanism_thread_set_ref": {"$ref": "#/$defs/mechanism_thread_set_ref"},
+    "decision_contract_ref": {"$ref": "#/$defs/decision_contract_ref"},
+    "source_packet_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/source_packet_ref"}
+    },
+    "forecast_requests": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/forecast_request"}
+    },
+    "cell_rejections": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/cell_rejection"}
+    },
+    "preserved_admission": {"$ref": "#/$defs/preserved_admission"},
+    "rights": {"$ref": "#/$defs/rights"},
+    "object_class": {"const": "ENTERPRISE_JUDGMENT_FORECAST_PROJECTION"},
+    "claim_class": {"const": "FORECAST_REQUEST_ROUTING"},
+    "allowed_outputs": {"const": ["FORECAST_REQUESTS_ONLY", "RESEARCH_AGENDA"]}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "episode_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["episode_id", "company_id", "issuer_id", "cutoff_at"],
+      "properties": {
+        "episode_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "decision_contract_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_id", "contract_version"],
+      "properties": {
+        "contract_id": {"$ref": "#/$defs/nonempty"},
+        "contract_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "mechanism_thread_set_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thread_set_id", "schema_version"],
+      "properties": {
+        "thread_set_id": {"$ref": "#/$defs/nonempty"},
+        "schema_version": {"const": "enterprise-judgment-mechanism-thread-set.v1"}
+      }
+    },
+    "source_packet_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_id", "receipt_version"],
+      "properties": {
+        "receipt_id": {"$ref": "#/$defs/nonempty"},
+        "receipt_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "measurement_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measurement_contract_id", "measurement_contract_version", "measurement_id"],
+      "properties": {
+        "measurement_contract_id": {"$ref": "#/$defs/nonempty"},
+        "measurement_contract_version": {"type": "integer", "minimum": 1},
+        "measurement_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "published_at", "available_at", "field_ref"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "published_at": {"type": "string", "format": "date"},
+        "available_at": {"type": "string", "format": "date-time"},
+        "field_ref": {"$ref": "#/$defs/nonempty"},
+        "field_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "ordinal_probability_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_kind", "evidence_status", "labels", "probabilities_must_sum_to_one"],
+      "properties": {
+        "request_kind": {"const": "ORDINAL_PROBABILITY"},
+        "evidence_status": {"const": "MODEL_UNCERTAIN"},
+        "labels": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {"enum": ["DETERIORATE", "STABLE", "IMPROVE", "LOW", "BASELINE", "HIGH"]}
+        },
+        "probabilities_must_sum_to_one": {"const": true}
+      }
+    },
+    "binary_probability_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_kind", "evidence_status", "event_statement"],
+      "properties": {
+        "request_kind": {"const": "BINARY_PROBABILITY"},
+        "evidence_status": {"const": "MODEL_UNCERTAIN"},
+        "event_statement": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "numeric_interval_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_kind", "evidence_status", "interval_coverage", "unit", "engine_adapter_state"],
+      "properties": {
+        "request_kind": {"const": "NUMERIC_INTERVAL"},
+        "evidence_status": {"const": "MODEL_UNCERTAIN"},
+        "interval_coverage": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "engine_adapter_state": {"const": "REQUEST_ONLY"}
+      }
+    },
+    "abstain_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_kind", "evidence_status", "reason"],
+      "properties": {
+        "request_kind": {"const": "ABSTAIN"},
+        "evidence_status": {"const": "EVIDENCE_INELIGIBLE"},
+        "reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "response_contract": {
+      "oneOf": [
+        {"$ref": "#/$defs/ordinal_probability_response"},
+        {"$ref": "#/$defs/binary_probability_response"},
+        {"$ref": "#/$defs/numeric_interval_response"},
+        {"$ref": "#/$defs/abstain_response"}
+      ]
+    },
+    "coverage_permission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locality", "settlement_statuses"],
+      "properties": {
+        "locality": {"const": "CELL_LOCAL"},
+        "settlement_statuses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "OBSERVED",
+              "CENSORED",
+              "UNKNOWN",
+              "NOT_DIAGNOSTIC",
+              "MEASUREMENT_MISMATCH",
+              "EVIDENCE_INELIGIBLE"
+            ]
+          }
+        }
+      }
+    },
+    "error_attribution_permission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "direct_learning_scopes",
+        "candidate_learning_scopes",
+        "failure_loci",
+        "candidate_disposition",
+        "activation_gate",
+        "causal_attribution"
+      ],
+      "properties": {
+        "direct_learning_scopes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["CALIBRATION", "COVERAGE", "STATE_DEFINITION", "UNCERTAINTY_POLICY", "BASELINE_PERFORMANCE"]
+          }
+        },
+        "candidate_learning_scopes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["EVIDENCE_PRIORITY", "RIVAL_HYPOTHESIS_METHOD"]}
+        },
+        "failure_loci": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "CALIBRATION",
+              "COVERAGE",
+              "STATE_DEFINITION",
+              "UNCERTAINTY",
+              "BASELINE_PERFORMANCE",
+              "EVIDENCE_PRIORITY",
+              "RIVAL_HYPOTHESIS_METHOD",
+              "OUTCOME_MEASUREMENT"
+            ]
+          }
+        },
+        "candidate_disposition": {"enum": ["CANDIDATE_REQUIRES_PAIRED_HOLDOUT", "NONE"]},
+        "activation_gate": {"const": "EXISTING_FORECAST_SETTLEMENT_REQUIRED"},
+        "causal_attribution": {"const": "NOT_AUTHORIZED"}
+      }
+    },
+    "forecast_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "thread_id",
+        "outcome_cell_id",
+        "forecast_dimension_id",
+        "window_id",
+        "measurement_ref",
+        "evidence_refs",
+        "response_contract",
+        "coverage_permission",
+        "error_attribution_permission"
+      ],
+      "properties": {
+        "request_id": {"$ref": "#/$defs/nonempty"},
+        "thread_id": {"$ref": "#/$defs/nonempty"},
+        "outcome_cell_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_dimension_id": {
+          "enum": [
+            "NORMAL_EARNINGS",
+            "ROIC_OR_OPERATING_MARGIN",
+            "CASH_CONVERSION_AND_CAPEX_BURDEN",
+            "LEVERAGE_AND_FINANCIAL_RESILIENCE",
+            "COMPETITIVE_POSITION",
+            "PERMANENT_LOSS_RISK"
+          ]
+        },
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "measurement_ref": {"$ref": "#/$defs/measurement_ref"},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence_ref"}
+        },
+        "baseline_reference": {"$ref": "#/$defs/nonempty"},
+        "response_contract": {"$ref": "#/$defs/response_contract"},
+        "coverage_permission": {"$ref": "#/$defs/coverage_permission"},
+        "error_attribution_permission": {"$ref": "#/$defs/error_attribution_permission"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "response_contract": {
+                "properties": {"request_kind": {"const": "ABSTAIN"}},
+                "required": ["request_kind"]
+              }
+            }
+          },
+          "then": {"not": {"required": ["baseline_reference"]}},
+          "else": {"required": ["baseline_reference"]}
+        }
+      ]
+    },
+    "cell_rejection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thread_id", "request_id", "outcome_cell_id", "reasons"],
+      "properties": {
+        "thread_id": {"$ref": "#/$defs/nonempty"},
+        "request_id": {"$ref": "#/$defs/nonempty"},
+        "outcome_cell_id": {"$ref": "#/$defs/nonempty"},
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        }
+      }
+    },
+    "preserved_admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["E0_CONTEXT", "E1_RECONSTRUCTION"],
+      "properties": {
+        "E0_CONTEXT": {"const": "PRESERVED"},
+        "E1_RECONSTRUCTION": {"const": "PRESERVED"}
+      }
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["causal", "comparative", "cjo", "method_freeze", "report", "valuation", "investment"],
+      "properties": {
+        "causal": {"const": "NOT_AUTHORIZED"},
+        "comparative": {"const": "NOT_AUTHORIZED"},
+        "cjo": {"const": "NOT_AUTHORIZED"},
+        "method_freeze": {"const": "NOT_AUTHORIZED"},
+        "report": {"const": "NOT_AUTHORIZED"},
+        "valuation": {"const": "NOT_AUTHORIZED"},
+        "investment": {"const": "NOT_AUTHORIZED"}
+      }
+    },
+    "projection_source_protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "projection_id",
+        "episode_ref",
+        "mechanism_thread_set_ref",
+        "source_packet_refs",
+        "threads",
+        "object_class",
+        "claim_class",
+        "allowed_outputs"
+      ],
+      "properties": {
+        "schema_version": {"const": "enterprise-judgment-forecast-projection-source.v1"},
+        "projection_id": {"$ref": "#/$defs/nonempty"},
+        "episode_ref": {"$ref": "#/$defs/episode_ref"},
+        "mechanism_thread_set_ref": {"$ref": "#/$defs/mechanism_thread_set_ref"},
+        "source_packet_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/source_packet_ref"}
+        },
+        "threads": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/projection_source_thread"}
+        },
+        "object_class": {"const": "ENTERPRISE_JUDGMENT_FORECAST_PROJECTION_SOURCE"},
+        "claim_class": {"const": "J2_FORECAST_ELIGIBILITY_ROUTING"},
+        "allowed_outputs": {"const": ["FORECAST_REQUESTS_ONLY", "RESEARCH_AGENDA"]}
+      }
+    },
+    "projection_source_thread": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thread_id", "cells"],
+      "properties": {
+        "thread_id": {"$ref": "#/$defs/nonempty"},
+        "cells": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/projection_source_cell"}
+        }
+      }
+    },
+    "projection_source_cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "outcome_cell_id",
+        "forecast_eligible",
+        "forecast_dimension_id",
+        "window_id",
+        "request_kind",
+        "measurement_ref",
+        "evidence_refs"
+      ],
+      "properties": {
+        "request_id": {"$ref": "#/$defs/nonempty"},
+        "outcome_cell_id": {"$ref": "#/$defs/nonempty"},
+        "forecast_eligible": {"type": "boolean"},
+        "forecast_dimension_id": {
+          "enum": [
+            "NORMAL_EARNINGS",
+            "ROIC_OR_OPERATING_MARGIN",
+            "CASH_CONVERSION_AND_CAPEX_BURDEN",
+            "LEVERAGE_AND_FINANCIAL_RESILIENCE",
+            "COMPETITIVE_POSITION",
+            "PERMANENT_LOSS_RISK"
+          ]
+        },
+        "window_id": {"enum": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"]},
+        "request_kind": {"enum": ["ORDINAL_PROBABILITY", "BINARY_PROBABILITY", "NUMERIC_INTERVAL", "ABSTAIN"]},
+        "measurement_ref": {"$ref": "#/$defs/measurement_ref"},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence_ref"}
+        },
+        "baseline_reference": {"$ref": "#/$defs/nonempty"},
+        "event_statement": {"$ref": "#/$defs/nonempty"},
+        "interval_coverage": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
+        "interval_unit": {"$ref": "#/$defs/nonempty"},
+        "abstain_reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "mechanism_thread_read_model_protocol": {
+      "description": "Fields consumed only from the internal J2 compiler result; this is not a caller-supplied public input.",
+      "type": "object",
+      "required": [
+        "schema_version",
+        "thread_set_id",
+        "company_id",
+        "issuer_id",
+        "cutoff_at",
+        "source_packet_refs",
+        "thread_views",
+        "forecast_authorization",
+        "comparative_authorization"
+      ],
+      "properties": {
+        "schema_version": {"const": "enterprise-judgment-mechanism-thread-set.v1"},
+        "thread_set_id": {"$ref": "#/$defs/nonempty"},
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "source_packet_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/source_packet_ref"}
+        },
+        "thread_views": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/mechanism_thread_view_protocol"}
+        },
+        "forecast_authorization": {"const": "NOT_AUTHORIZED"},
+        "comparative_authorization": {"const": "NOT_AUTHORIZED"}
+      }
+    },
+    "mechanism_thread_view_protocol": {
+      "type": "object",
+      "required": [
+        "thread_id",
+        "claim_type",
+        "claim_ids",
+        "outcome_cell_refs",
+        "source_refs",
+        "local_status",
+        "evidence_ceiling",
+        "resolution_status",
+        "j3_forecast_eligible",
+        "forecast_performed"
+      ],
+      "properties": {
+        "thread_id": {"$ref": "#/$defs/nonempty"},
+        "claim_type": {
+          "enum": ["DESCRIPTIVE_STRUCTURE", "WITHIN_CASE_MECHANISM", "LIFECYCLE_TRANSITION", "RELATIVE_CAUSAL"]
+        },
+        "claim_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "outcome_cell_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/j2_source_ref"}
+        },
+        "local_status": {"enum": ["OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE"]},
+        "evidence_ceiling": {"enum": ["CONTEXT", "TEACHING", "MECHANISM"]},
+        "resolution_status": {"enum": ["RESOLVED", "BOUNDARY_ONLY"]},
+        "j3_forecast_eligible": {"type": "boolean"},
+        "forecast_performed": {"const": false}
+      }
+    },
+    "j2_source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_ref", "available_at", "information_role"],
+      "properties": {
+        "source_ref": {"$ref": "#/$defs/nonempty"},
+        "available_at": {"type": "string", "format": "date-time"},
+        "information_role": {"const": "CUTOFF_VISIBLE"}
+      }
+    }
+  }
+}

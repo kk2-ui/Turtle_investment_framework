@@ -1,0 +1,67 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN000672:20180430:COURSE2B:BASELINE:V1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:000672",
+  "company_name": "Gansu Shangfeng Cement Co., Ltd.",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {
+      "source_id": "SOURCE:CN:CEMENT:20180430:COMMON_OFFICIAL_CONTEXT",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/00_COMMON_CEMENT_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2017-08-04T15:25:00+08:00",
+      "time_role": "PRE_CUTOFF"
+    },
+    {
+      "source_id": "SOURCE:CN000672:20180430:PRE_CUTOFF",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "available_at": "2018-04-27T23:59:59+08:00",
+      "time_role": "PRE_CUTOFF"
+    }
+  ],
+  "feedback_clocks": [
+    {
+      "clock_id": "CLOCK:CN000672:FY2018",
+      "horizon": "EARLY_SIGNAL",
+      "opens_at": "2019-05-30T00:00:00+08:00",
+      "episode_claims": [
+        "INDUSTRY_AND_SITUATION",
+        "BUSINESS_POSITION_AND_ADAPTATION",
+        "SURVIVAL_AND_FINANCING"
+      ],
+      "discriminating_observation": "全国量价利润池是否延续，以及上峰华东销量、售价/毛利、单位成本和受限现金/债务是否显示同向或背离。"
+    },
+    {
+      "clock_id": "CLOCK:CN000672:FY2019",
+      "horizon": "NORMALIZATION_AND_CASH",
+      "opens_at": "2020-04-15T00:00:00+08:00",
+      "episode_claims": [
+        "BUSINESS_POSITION_AND_ADAPTATION",
+        "NORMAL_EARNINGS",
+        "OWNER_CASH"
+      ],
+      "discriminating_observation": "价格纪律和区域位置能否在同口径销量、毛利、经营现金、必要资本与债务后形成可重复的正常经济。"
+    },
+    {
+      "clock_id": "CLOCK:CN000672:FY2020",
+      "horizon": "LONG_TERM_PERMANENT_LOSS",
+      "opens_at": "2021-04-28T00:00:00+08:00",
+      "episode_claims": [
+        "INDUSTRY_AND_SITUATION",
+        "NORMAL_EARNINGS",
+        "OWNER_CASH",
+        "PERMANENT_LOSS",
+        "VALUE_ROUTE"
+      ],
+      "discriminating_observation": "在需求、供给纪律和价格波动后，成熟核心是否仍产生资本后现金，还是债务与新疆/境外/其他扩张把周期收益转为低回报资本。"
+    }
+  ],
+  "primary_training_product": {
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "schema_version": "enterprise-underwriting-episode.v2",
+    "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"
+  },
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

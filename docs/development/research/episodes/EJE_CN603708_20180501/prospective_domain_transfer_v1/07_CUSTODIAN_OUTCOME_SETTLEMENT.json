@@ -1,0 +1,743 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-settlement.v1",
+  "settlement_id": "PEJOS:CN603708:20180501:FY2018:DOMAIN_TRANSFER:V1",
+  "authorization_id": "PEJOA:CN603708:20180501:FY2018:DOMAIN_TRANSFER:V1",
+  "company_id": "CN:603708",
+  "issuer_id": "ISSUER:CN:603708",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "period": "FY2018",
+  "settlement_boundary": {
+    "authorized_field_set": "UNION_OF_02_BASELINE_AND_03_ENHANCED_CONTRACT_FIELDS_ONLY",
+    "settlement_order": "OBJECTIVE_SUBDOMAIN_DEPLOYMENT_EVENTS_THEN_AUTHORIZED_FIELDS",
+    "investment_classification_performed": false,
+    "utility_judgment_performed": false,
+    "price_return_comparative_valuation_or_report_material_accessed": false
+  },
+  "source_receipt": {
+    "publisher": "CNINFO",
+    "query_endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "query_parameters": {
+      "stock": "603708,9900029040",
+      "column": "sse",
+      "plate": "sh",
+      "category": "category_ndbg_szsh;",
+      "seDate": "2019-01-01~2019-05-01",
+      "sortName": "time",
+      "sortType": "asc"
+    },
+    "query_result": {
+      "total_announcements": 2,
+      "full_report_candidates": 1,
+      "summary_candidates_excluded": 1,
+      "corrected_or_revised_full_report_candidates_within_window": 0
+    },
+    "selected_document": {
+      "announcement_id": "1206055176",
+      "title": "2018年年度报告",
+      "announcement_date": "2019-04-19",
+      "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+      "url": "https://static.cninfo.com.cn/finalpage/2019-04-19/1206055176.PDF",
+      "page_count": 194
+    },
+    "excluded_document": {
+      "announcement_id": "1206055177",
+      "title": "2018年年度报告摘要",
+      "reason": "SUMMARY_EXCLUDED_BY_AUTHORIZATION"
+    },
+    "selection_reason": "UNIQUE_QUALIFYING_FULL_FY2018_REPORT_PUBLISHED_NO_LATER_THAN_2019_05_01"
+  },
+  "deployed_event_settlement": [
+    {
+      "subdomain_id": "QINGDAO_WEIKE",
+      "status": "DEPLOYED",
+      "objective_event": {
+        "ownership_percent": 51,
+        "control_and_consolidation_date": "2018-03-01",
+        "acquisition_method": "PURCHASE"
+      },
+      "evidence_pages": [90, 168],
+      "short_paraphrase": "The 51% Weike acquisition obtained control and entered consolidation on 2018-03-01.",
+      "scope_limit": "Deployment is the control-and-consolidation event only; it does not settle Weike operating economics."
+    },
+    {
+      "subdomain_id": "ORGANIC_NEW_REGION_AND_MICRO_STORE",
+      "status": "DEPLOYED",
+      "objective_event": {
+        "shandong_other_region_additions_reported": 22,
+        "convenience_store_additions_reported": 12,
+        "actual_fy2018_opening_list_present": true
+      },
+      "evidence_pages": [9, 16, 20],
+      "short_paraphrase": "The report lists actual FY2018 store additions outside Jiaodong and actual convenience-store additions and opening dates.",
+      "scope_limit": "The 22 regional additions and 12 convenience additions are overlapping views of the 85 reported additions, and the 85 also includes stores added through Weike consolidation."
+    },
+    {
+      "subdomain_id": "NEW_LOGISTICS_CAPACITY",
+      "status": "DEPLOYED",
+      "objective_event": {
+        "qingdao_acquired_ambient_and_fresh_logistics_in_use": true,
+        "yantai_new_project_in_operation": false,
+        "laiwu_new_project_in_operation": false,
+        "weike_logistics_standardization_completed": false
+      },
+      "evidence_pages": [9, 22, 168],
+      "short_paraphrase": "The acquired Qingdao ambient and fresh logistics facilities were within the in-use network, while the Yantai and Laiwu projects and the Weike standardization work were not complete at year-end.",
+      "scope_limit": "Deployment applies to the in-use acquired Qingdao facilities only; construction progress, operation, area and throughput do not establish economic contribution."
+    }
+  ],
+  "field_settlements": [
+    {
+      "field_id": "CORE_METRIC_REPORTING_PERIMETER_CONTINUITY_EVENT",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_UNRECONCILED_PERIMETER_CHANGE",
+      "value": {
+        "weike_entered_group_consolidation": "2018-03-01",
+        "mature_store_metric_store_count": 583,
+        "member_metric_weike_inclusion_explicitly_reconciled": false,
+        "commercial_metric_is_consolidated_group_commercial_business": true
+      },
+      "unit": "EVENT",
+      "evidence_pages": [10, 15, 20, 22],
+      "short_paraphrase": "FY2018 group reporting added Weike from March; the report gives current mature-store, member and commercial metrics without a field-by-field legacy-core perimeter bridge.",
+      "scope_limit": "Mature-store, member and commercial gross-margin fields must each retain their own perimeter limit and cannot be treated as a fixed legacy-core cohort."
+    },
+    {
+      "field_id": "MATURE_OVER_TWO_YEAR_STORE_REVENUE_CHANGE_FY2018_LEVEL",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 2.72,
+      "unit": "PERCENT",
+      "evidence_pages": [20, 21],
+      "short_paraphrase": "The 583 stores open for more than two years reported aggregate main-business revenue growth of 2.72%.",
+      "scope_limit": "This is a moving threshold cohort, not fixed stores; the report does not separately reconcile acquired Weike stores in the cohort."
+    },
+    {
+      "field_id": "MATURE_OVER_TWO_YEAR_STORE_REVENUE_CHANGE",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 2.72,
+      "unit": "PERCENT",
+      "evidence_pages": [20, 21],
+      "short_paraphrase": "The 583 stores open for more than two years reported aggregate main-business revenue growth of 2.72%.",
+      "scope_limit": "This is a moving threshold cohort, not fixed stores; the report does not separately reconcile acquired Weike stores in the cohort."
+    },
+    {
+      "field_id": "MEMBER_TRAFFIC_CHANGE_FY2018_LEVEL",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 5.03,
+      "unit": "PERCENT",
+      "evidence_pages": [22],
+      "short_paraphrase": "Member traffic was reported at 168 million visits, up 5.03% year on year.",
+      "scope_limit": "Member transactions only; the report does not reconcile Weike member-system inclusion or provide a legacy-core-only comparator."
+    },
+    {
+      "field_id": "MEMBER_TRAFFIC_CHANGE",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 5.03,
+      "unit": "PERCENT",
+      "evidence_pages": [22],
+      "short_paraphrase": "Member traffic was reported at 168 million visits, up 5.03% year on year.",
+      "scope_limit": "Member transactions only; the report does not reconcile Weike member-system inclusion or provide a legacy-core-only comparator."
+    },
+    {
+      "field_id": "MEMBER_TICKET_CHANGE_FY2018_LEVEL",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 5.17,
+      "unit": "PERCENT",
+      "evidence_pages": [22],
+      "short_paraphrase": "Member average ticket was reported up 5.17% year on year.",
+      "scope_limit": "Member transactions only; the report does not reconcile Weike member-system inclusion or provide a legacy-core-only comparator."
+    },
+    {
+      "field_id": "MEMBER_TICKET_CHANGE",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 5.17,
+      "unit": "PERCENT",
+      "evidence_pages": [22],
+      "short_paraphrase": "Member average ticket was reported up 5.17% year on year.",
+      "scope_limit": "Member transactions only; the report does not reconcile Weike member-system inclusion or provide a legacy-core-only comparator."
+    },
+    {
+      "field_id": "MEMBER_SALES_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "UNKNOWN_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [22],
+      "short_paraphrase": "The report gives a 75.73% member contribution rate to store sales but no member-sales RMB amount.",
+      "scope_limit": "No RMB amount is derived because the denominator and Weike member perimeter are not reconciled."
+    },
+    {
+      "field_id": "MEMBER_SALES_RMB",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "UNKNOWN_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [22],
+      "short_paraphrase": "The report gives a 75.73% member contribution rate to store sales but no member-sales RMB amount.",
+      "scope_limit": "No RMB amount is derived because the denominator and Weike member perimeter are not reconciled."
+    },
+    {
+      "field_id": "COMMERCIAL_GROSS_MARGIN_FY2018_LEVEL",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 17.42,
+      "unit": "PERCENT",
+      "evidence_pages": [11],
+      "short_paraphrase": "Consolidated commercial main-business gross margin was 17.42% in FY2018.",
+      "scope_limit": "This is consolidated commercial business, not a legacy-core-only margin; Weike was consolidated from March 2018."
+    },
+    {
+      "field_id": "COMMERCIAL_GROSS_MARGIN_PERCENT",
+      "responsibility_scope": "CORE_DIRECT_FIELD_REPORTING_PERIMETER",
+      "status": "DISCLOSED_WITH_SCOPE_LIMIT",
+      "value": 17.42,
+      "unit": "PERCENT",
+      "evidence_pages": [11],
+      "short_paraphrase": "Consolidated commercial main-business gross margin was 17.42% in FY2018.",
+      "scope_limit": "This is consolidated commercial business, not a legacy-core-only margin; Weike was consolidated from March 2018."
+    },
+    {
+      "field_id": "ENDING_STORE_COUNT_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_STORE_NETWORK",
+      "status": "DISCLOSED",
+      "value": 732,
+      "unit": "STORES",
+      "evidence_pages": [8, 15, 16],
+      "short_paraphrase": "The consolidated network ended FY2018 with 732 stores.",
+      "scope_limit": "Group ending count includes Weike after March consolidation and is not a measure of store economics."
+    },
+    {
+      "field_id": "ENDING_STORE_COUNT",
+      "responsibility_scope": "CONSOLIDATED_STORE_NETWORK",
+      "status": "DISCLOSED",
+      "value": 732,
+      "unit": "STORES",
+      "evidence_pages": [8, 15, 16],
+      "short_paraphrase": "The consolidated network ended FY2018 with 732 stores.",
+      "scope_limit": "Group ending count includes Weike after March consolidation and is not a measure of store economics."
+    },
+    {
+      "field_id": "STORE_OPENINGS_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_STORE_NETWORK",
+      "status": "DISCLOSED_WITH_PERIMETER_LIMIT",
+      "value": 85,
+      "unit": "STORES",
+      "evidence_pages": [9, 16],
+      "short_paraphrase": "The report labels 85 stores as FY2018 additions.",
+      "scope_limit": "The 85 includes stores added to the reporting perimeter through Weike consolidation and is not a pure organic-opening count or economic result."
+    },
+    {
+      "field_id": "STORE_CLOSURES_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_STORE_NETWORK",
+      "status": "DISCLOSED",
+      "value": 28,
+      "unit": "STORES",
+      "evidence_pages": [16],
+      "short_paraphrase": "The group reported 28 store closures or relocations in FY2018.",
+      "scope_limit": "The closure count is group-wide and is not allocated to the organic-new-region or micro-store responsibility unit."
+    },
+    {
+      "field_id": "STORE_REGION_AND_FORMAT_MIX_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_STORE_NETWORK",
+      "status": "DISCLOSED",
+      "value": {
+        "ending_by_region": {
+          "JIAODONG": 629,
+          "SHANDONG_OTHER": 103,
+          "TOTAL": 732
+        },
+        "ending_by_format": {
+          "HYPERMARKET": 105,
+          "SUPERMARKET": 542,
+          "BABYYUE_AND_OTHER_SPECIALTY": 56,
+          "DEPARTMENT_STORE": 12,
+          "CONVENIENCE_STORE": 17,
+          "TOTAL": 732
+        }
+      },
+      "unit": "STORES_AND_EVENT",
+      "evidence_pages": [8, 15, 16],
+      "short_paraphrase": "The report discloses the 732-store ending mix by broad region and by format.",
+      "scope_limit": "The region table is Jiaodong versus other Shandong only; counts include the changed Weike consolidation perimeter and do not measure economics."
+    },
+    {
+      "field_id": "STORE_ROLL_FORWARD_BY_REGION_AND_FORMAT",
+      "responsibility_scope": "ORGANIC_NEW_REGION_AND_MICRO_STORE",
+      "status": "DISCLOSED_WITH_PERIMETER_LIMIT",
+      "value": {
+        "by_region": {
+          "JIAODONG": {"opening_count": 589, "additions": 63, "closures": 23, "ending_count": 629},
+          "SHANDONG_OTHER": {"opening_count": 86, "additions": 22, "closures": 5, "ending_count": 103},
+          "TOTAL": {"opening_count": 675, "additions": 85, "closures": 28, "ending_count": 732}
+        },
+        "additions_by_format": {
+          "HYPERMARKET": 19,
+          "SUPERMARKET": 40,
+          "BABYYUE_AND_OTHER_SPECIALTY": 14,
+          "CONVENIENCE_STORE": 12,
+          "TOTAL": 85
+        }
+      },
+      "unit": "STORES_AND_EVENT",
+      "evidence_pages": [9, 16],
+      "short_paraphrase": "The report gives the regional roll-forward and the format mix of the 85 additions.",
+      "scope_limit": "Additions include Weike stores entering consolidation; the report does not provide a clean organic-only roll-forward by both region and format."
+    },
+    {
+      "field_id": "CONSOLIDATION_PERIMETER_CONTINUITY_EVENT",
+      "responsibility_scope": "CONSOLIDATED_GROUP",
+      "status": "PERIMETER_CHANGED",
+      "value": {
+        "added_by_acquisition": [
+          "QINGDAO_WEIKE_COMMERCIAL_CHAIN",
+          "QINGDAO_MANJIAHAO_LIFE_SUPERMARKET",
+          "QINGDAO_SIJIGONGFANG_FOOD_DISTRIBUTION",
+          "QINGDAO_PINGDU_WEIKE_SHOPPING_CENTER",
+          "LAIYANG_WEIKE_SHOPPING_CENTER",
+          "QINGDAO_TIANTIAN_DISTRIBUTION_LOGISTICS",
+          "QINGDAO_WEIKE_JIAONAN_SHOPPING_CENTER"
+        ],
+        "added_by_establishment": ["SHANDONG_JIAJIAYUE_SMART_CONVENIENCE_STORE"],
+        "removed_by_deregistration": ["QINGDAO_METRO_CHAIN_SUPERMARKET"]
+      },
+      "unit": "EVENT",
+      "evidence_pages": [89, 90],
+      "short_paraphrase": "The FY2018 consolidation perimeter added the Weike acquisition group and a smart-convenience subsidiary and removed one deregistered subsidiary.",
+      "scope_limit": "The event establishes measurement discontinuity; it does not itself settle operating economics."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_INTEGRATION_STATUS_FY2018",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "DISCLOSED_MILESTONES_ONLY",
+      "value": {
+        "consolidated_from": "2018-03-01",
+        "logistics_standardization_started": "2018-H2",
+        "logistics_standardization_completed_by_year_end": false,
+        "reported_expected_completion": "2019-06"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [9, 22, 168],
+      "short_paraphrase": "Weike entered consolidation and its Qingdao logistics standardization began in the second half, with completion still expected after year-end.",
+      "scope_limit": "Milestones only; no economic direction is inferred from consolidation or integration activity."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_RESPONSIBILITY_AND_CONSOLIDATION_EVENT",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "DISCLOSED",
+      "value": {
+        "acquired_entity": "QINGDAO_WEIKE_COMMERCIAL_CHAIN_CO_LTD",
+        "ownership_percent": 51,
+        "control_date": "2018-03-01",
+        "acquired_group_subsidiaries_in_scope": 6
+      },
+      "unit": "EVENT",
+      "evidence_pages": [89, 90, 168],
+      "short_paraphrase": "The responsibility unit is the 51%-owned Weike parent plus its acquired subsidiaries, consolidated from 2018-03-01.",
+      "scope_limit": "The report's purchase-date-to-year-end financial contribution is for the acquired Weike group, not a legacy-core or whole-company field."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_REVENUE_RMB_FY2018_LEVEL",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "DISCLOSED",
+      "value": 559889723.92,
+      "unit": "RMB",
+      "evidence_pages": [168],
+      "short_paraphrase": "The acquired Weike group's revenue from purchase date through year-end was RMB 559,889,723.92.",
+      "scope_limit": "Purchase-date-to-year-end contribution after 2018-03-01, not a full-calendar-year standalone figure."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_REVENUE_RMB",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "DISCLOSED",
+      "value": 559889723.92,
+      "unit": "RMB",
+      "evidence_pages": [168],
+      "short_paraphrase": "The acquired Weike group's revenue from purchase date through year-end was RMB 559,889,723.92.",
+      "scope_limit": "Purchase-date-to-year-end contribution after 2018-03-01, not a full-calendar-year standalone figure."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_OPERATING_PROFIT_RMB_FY2018_LEVEL",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "UNKNOWN_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [24, 168],
+      "short_paraphrase": "The report gives Weike net profit and purchase-date revenue but no separate operating-profit amount.",
+      "scope_limit": "Net profit is not substituted for operating profit."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_OPERATING_PROFIT_RMB",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "UNKNOWN_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [24, 168],
+      "short_paraphrase": "The report gives Weike net profit and purchase-date revenue but no separate operating-profit amount.",
+      "scope_limit": "Net profit is not substituted for operating profit."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_NET_PROFIT_RMB_FY2018_LEVEL",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "DISCLOSED",
+      "value": 1630594.53,
+      "unit": "RMB",
+      "evidence_pages": [24, 168],
+      "short_paraphrase": "The acquired Weike group's net profit from purchase date through year-end was RMB 1,630,594.53.",
+      "scope_limit": "Purchase-date-to-year-end acquired-group net profit; it is supporting and does not substitute for operating profit."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_NET_PROFIT_RMB",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "DISCLOSED",
+      "value": 1630594.53,
+      "unit": "RMB",
+      "evidence_pages": [24, 168],
+      "short_paraphrase": "The acquired Weike group's net profit from purchase date through year-end was RMB 1,630,594.53.",
+      "scope_limit": "Purchase-date-to-year-end acquired-group net profit; it is supporting and does not substitute for operating profit."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_OCF_RMB_FY2018_LEVEL",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "UNKNOWN_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [77, 78, 168],
+      "short_paraphrase": "The report discloses consolidated group OCF but no Weike responsibility-unit OCF.",
+      "scope_limit": "Group OCF is not allocated to Weike."
+    },
+    {
+      "field_id": "QINGDAO_WEIKE_OCF_RMB",
+      "responsibility_scope": "QINGDAO_WEIKE_RESPONSIBILITY_UNIT",
+      "status": "UNKNOWN_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [77, 78, 168],
+      "short_paraphrase": "The report discloses consolidated group OCF but no Weike responsibility-unit OCF.",
+      "scope_limit": "Group OCF is not allocated to Weike."
+    },
+    {
+      "field_id": "ORGANIC_NEW_REGION_AND_MICRO_STORE_CONTRIBUTION_EVENT",
+      "responsibility_scope": "ORGANIC_NEW_REGION_AND_MICRO_STORE",
+      "status": "PARTIALLY_DISCLOSED_QUALITATIVE_ONLY",
+      "value": {
+        "western_region_management_statement": "OPERATING_LEVEL_AND_PROFITABILITY_SUBSTANTIALLY_IMPROVED",
+        "partnership_pilot_store_count": 89,
+        "pilot_store_sales_growth_vs_company_comparable_store_average": "ABOVE",
+        "separate_rmb_or_operating_contribution": null
+      },
+      "unit": "RMB_OR_EVENT",
+      "evidence_pages": [10],
+      "short_paraphrase": "Management reported improved western-region operations and profitability and above-average sales growth for partnership-pilot stores, but no separate RMB contribution.",
+      "scope_limit": "The qualitative western-region and pilot-store statements do not isolate organic new-region versus micro-store economics and are not converted into an economic classification."
+    },
+    {
+      "field_id": "ORGANIC_NEW_REGION_AND_MICRO_STORE_CLOSURE_OR_IMPAIRMENT_EVENT",
+      "responsibility_scope": "ORGANIC_NEW_REGION_AND_MICRO_STORE",
+      "status": "UNKNOWN_NOT_SEPARATELY_DISCLOSED",
+      "value": null,
+      "unit": "RMB_OR_EVENT",
+      "evidence_pages": [16],
+      "short_paraphrase": "The report gives 28 group-wide closures and group-wide reasons but no separate closure or impairment event for this subdomain.",
+      "scope_limit": "Group closure counts cannot be assigned to organic new regions or micro stores."
+    },
+    {
+      "field_id": "NEW_LOGISTICS_OPERATION_AND_SCOPE_EVENT",
+      "responsibility_scope": "NEW_LOGISTICS_CAPACITY",
+      "status": "DISCLOSED",
+      "value": {
+        "in_use_network": {
+          "ambient_centers": ["WEIHAI", "YANTAI", "JINAN_LAIWU", "QINGDAO"],
+          "fresh_centers": ["WEIHAI", "YANTAI", "QINGDAO", "JINAN_LAIWU", "WENDENG_SONGCUN"]
+        },
+        "yantai_new_project": "UNDER_CONSTRUCTION_EXPECTED_PARTIAL_OPERATION_IN_2019",
+        "laiwu_new_project": "UNDER_CONSTRUCTION_EXPECTED_PARTIAL_OPERATION_IN_2019",
+        "weike_qingdao_standardization": "STARTED_2018_H2_EXPECTED_COMPLETION_2019_06"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [9, 22],
+      "short_paraphrase": "The report separates in-use logistics centers from the unfinished Yantai and Laiwu projects and the unfinished Weike standardization work.",
+      "scope_limit": "The in-use Qingdao acquired facilities establish deployment only for that component; unfinished projects are not treated as deployed."
+    },
+    {
+      "field_id": "NEW_LOGISTICS_LOCAL_ECONOMIC_OR_SERVICE_CONTRIBUTION",
+      "responsibility_scope": "NEW_LOGISTICS_CAPACITY",
+      "status": "UNKNOWN_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB_OR_EVENT",
+      "evidence_pages": [22, 168],
+      "short_paraphrase": "No separate saving, operating result or attributable service contribution is disclosed for the new logistics scope.",
+      "scope_limit": "Integration language, operation status, area and throughput are not treated as economic contribution."
+    },
+    {
+      "field_id": "LOGISTICS_STATUS_AND_THROUGHPUT",
+      "responsibility_scope": "NEW_LOGISTICS_CAPACITY",
+      "status": "DISCLOSED_SUPPORTING_ONLY",
+      "value": {
+        "ambient_in_use_area_sqm_approx": 120000,
+        "ambient_daily_throughput_pieces_approx": 220000,
+        "fresh_in_use_area_sqm_approx": 40000,
+        "fresh_daily_throughput_tonnes_approx": 1734,
+        "distribution_vehicles_approx": 590,
+        "cold_chain_vehicles_approx": 480
+      },
+      "unit": "EVENT",
+      "evidence_pages": [22],
+      "short_paraphrase": "The report lists network-level in-use areas, throughput and vehicle counts.",
+      "scope_limit": "Network-level operating statistics are not attributable economics and are not isolated to the new facilities."
+    },
+    {
+      "field_id": "CONSOLIDATED_INVENTORY_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 1290422020.46,
+      "unit": "RMB",
+      "evidence_pages": [67, 70],
+      "short_paraphrase": "Consolidated net inventory at 2018 year-end was RMB 1,290,422,020.46.",
+      "scope_limit": "Consolidated balance; not allocated among legacy core, Weike, new regions or logistics."
+    },
+    {
+      "field_id": "CONSOLIDATED_INVENTORY_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 1290422020.46,
+      "unit": "RMB",
+      "evidence_pages": [67, 70],
+      "short_paraphrase": "Consolidated net inventory at 2018 year-end was RMB 1,290,422,020.46.",
+      "scope_limit": "Consolidated balance; not allocated among legacy core, Weike, new regions or logistics."
+    },
+    {
+      "field_id": "CONSOLIDATED_OCF_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 613494316.96,
+      "unit": "RMB",
+      "evidence_pages": [77],
+      "short_paraphrase": "FY2018 consolidated operating cash flow was RMB 613,494,316.96.",
+      "scope_limit": "Consolidated group cash flow; no project or responsibility-unit attribution."
+    },
+    {
+      "field_id": "CONSOLIDATED_OCF_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 613494316.96,
+      "unit": "RMB",
+      "evidence_pages": [77],
+      "short_paraphrase": "FY2018 consolidated operating cash flow was RMB 613,494,316.96.",
+      "scope_limit": "Consolidated group cash flow; no project or responsibility-unit attribution."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_CAPEX_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 764293069.12,
+      "unit": "RMB",
+      "evidence_pages": [13, 77],
+      "short_paraphrase": "Cash paid to acquire fixed assets, intangible assets and other long-term assets was RMB 764,293,069.12.",
+      "scope_limit": "Consolidated cash-flow line; not split between maintenance, expansion, acquisitions or new domains."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_CAPEX_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 764293069.12,
+      "unit": "RMB",
+      "evidence_pages": [13, 77],
+      "short_paraphrase": "Cash paid to acquire fixed assets, intangible assets and other long-term assets was RMB 764,293,069.12.",
+      "scope_limit": "Consolidated cash-flow line; not split between maintenance, expansion, acquisitions or new domains."
+    },
+    {
+      "field_id": "CONSOLIDATED_WORKING_CAPITAL_CASH_SUPPORT_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DERIVED_FROM_DISCLOSED_COMPONENTS",
+      "value": -48588965.22,
+      "unit": "RMB",
+      "evidence_pages": [163, 164],
+      "short_paraphrase": "Inventory decrease RMB 19,689,250.63 plus operating-receivable decrease RMB -187,272,798.66 plus operating-payable increase RMB 118,994,582.81 equals RMB -48,588,965.22.",
+      "scope_limit": "Uses the contract formula and cash-flow reconciliation signs; the negative amount denotes net working-capital cash use, without project attribution."
+    },
+    {
+      "field_id": "CONSOLIDATED_WORKING_CAPITAL_CASH_SUPPORT_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DERIVED_FROM_DISCLOSED_COMPONENTS",
+      "value": -48588965.22,
+      "unit": "RMB",
+      "evidence_pages": [163, 164],
+      "short_paraphrase": "Inventory decrease RMB 19,689,250.63 plus operating-receivable decrease RMB -187,272,798.66 plus operating-payable increase RMB 118,994,582.81 equals RMB -48,588,965.22.",
+      "scope_limit": "Uses the contract formula and cash-flow reconciliation signs; the negative amount denotes net working-capital cash use, without project attribution."
+    },
+    {
+      "field_id": "DIRECTIONAL_OCF_LESS_CASH_CAPEX_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DERIVED_FROM_DISCLOSED_COMPONENTS",
+      "value": -150798752.16,
+      "unit": "RMB",
+      "evidence_pages": [77],
+      "short_paraphrase": "RMB 613,494,316.96 OCF minus RMB 764,293,069.12 cash capex equals RMB -150,798,752.16.",
+      "scope_limit": "Directional consolidated arithmetic only; capex is not separated into maintenance and expansion."
+    },
+    {
+      "field_id": "CONSERVATIVE_OCF_LESS_WORKING_CAPITAL_SUPPORT_AND_CAPEX_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DERIVED_FROM_DISCLOSED_COMPONENTS",
+      "value": -102209786.94,
+      "unit": "RMB",
+      "evidence_pages": [77, 163, 164],
+      "short_paraphrase": "OCF minus working-capital support minus cash capex equals RMB -102,209,786.94 using the contract formula.",
+      "scope_limit": "Consolidated directional proxy before acquisition net cash and other non-overlapping new-domain cash; no project attribution."
+    },
+    {
+      "field_id": "CASH_PAID_FOR_ACQUISITION_NET_OF_ACQUIRED_CASH_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 218498644.34,
+      "unit": "RMB",
+      "evidence_pages": [164],
+      "short_paraphrase": "The Weike acquisition paid RMB 241,000,000 in cash less RMB 22,501,355.66 acquired cash, for net acquisition cash of RMB 218,498,644.34.",
+      "scope_limit": "This is the separately disclosed net cash for the Weike acquisition only."
+    },
+    {
+      "field_id": "OTHER_IDENTIFIABLE_NEW_DOMAIN_EXTERNAL_INVESTMENT_CASH_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "UNKNOWN_NOT_FULLY_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [23, 77, 78],
+      "short_paraphrase": "The report identifies RMB 11.25 million actually contributed to Shanghai Shiban and a RMB 156.375 million Zhangjiakou investment arrangement, but does not disclose a complete FY2018 cash total that is demonstrably non-overlapping with capex or acquisition net cash.",
+      "scope_limit": "Unknown is retained rather than zero; investment authorizations or totals are not assumed to equal FY2018 non-overlapping cash paid."
+    },
+    {
+      "field_id": "POST_EXPANSION_CONSERVATIVE_CASH_PROXY_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "UNKNOWN_REQUIRED_COMPONENT_NOT_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [23, 77, 78, 163, 164],
+      "short_paraphrase": "OCF, working-capital support, cash capex and acquisition net cash are settled, but the complete non-overlapping external new-domain cash amount is not.",
+      "scope_limit": "The proxy is not calculated with an assumed zero for the undisclosed required component."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_BALANCE_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 2283710001.96,
+      "unit": "RMB",
+      "evidence_pages": [70, 128, 164, 165],
+      "short_paraphrase": "Consolidated monetary funds were RMB 2,283,710,001.96; cash and cash equivalents were RMB 2,163,195,146.44.",
+      "scope_limit": "The value is the balance-sheet monetary-funds balance and includes RMB 120,514,855.52 of bill deposits and funds in transit; it is group cash, not project cash."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_BALANCE_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED",
+      "value": 2283710001.96,
+      "unit": "RMB",
+      "evidence_pages": [70, 128, 164, 165],
+      "short_paraphrase": "Consolidated monetary funds were RMB 2,283,710,001.96; cash and cash equivalents were RMB 2,163,195,146.44.",
+      "scope_limit": "The value is the balance-sheet monetary-funds balance and includes RMB 120,514,855.52 of bill deposits and funds in transit; it is group cash, not project cash."
+    },
+    {
+      "field_id": "CONSOLIDATED_INTEREST_BEARING_DEBT_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DERIVED_FROM_DISCLOSED_COMPONENTS",
+      "value": 160000000.0,
+      "unit": "RMB",
+      "evidence_pages": [70, 71, 147, 151],
+      "short_paraphrase": "RMB 140 million short-term borrowing plus RMB 20 million long-term borrowing equals RMB 160 million interest-bearing debt.",
+      "scope_limit": "Both borrowings are Weike-related within consolidated debt; no other interest-bearing debt line is reported."
+    },
+    {
+      "field_id": "CONSOLIDATED_INTEREST_BEARING_DEBT_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DERIVED_FROM_DISCLOSED_COMPONENTS",
+      "value": 160000000.0,
+      "unit": "RMB",
+      "evidence_pages": [70, 71, 147, 151],
+      "short_paraphrase": "RMB 140 million short-term borrowing plus RMB 20 million long-term borrowing equals RMB 160 million interest-bearing debt.",
+      "scope_limit": "Both borrowings are Weike-related within consolidated debt; no other interest-bearing debt line is reported."
+    },
+    {
+      "field_id": "CONSOLIDATED_SUPPLIER_AND_CUSTOMER_FLOAT_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED_COMPONENTS_DEFINITION_NOT_FROZEN",
+      "value": {
+        "supplier_trade_float": 1701528077.72,
+        "customer_trade_float": 1528782810.26,
+        "strict_trade_subtotal": 3230310887.98,
+        "balance_sheet_payables_plus_all_advances": 3640814781.55
+      },
+      "unit": "RMB",
+      "evidence_pages": [71, 147, 148],
+      "short_paraphrase": "Bills payable plus merchandise payables were RMB 1,701,528,077.72 and customer advances for goods were RMB 1,528,782,810.26.",
+      "scope_limit": "The contract does not define whether rent, utilities, equipment, property payables and rental advances belong in float, so both the strict trade subtotal and broader balance-sheet aggregate are retained without choosing between them."
+    },
+    {
+      "field_id": "CONSOLIDATED_SUPPLIER_AND_CUSTOMER_FLOAT_RMB",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DISCLOSED_COMPONENTS_DEFINITION_NOT_FROZEN",
+      "value": {
+        "supplier_trade_float": 1701528077.72,
+        "customer_trade_float": 1528782810.26,
+        "strict_trade_subtotal": 3230310887.98,
+        "balance_sheet_payables_plus_all_advances": 3640814781.55
+      },
+      "unit": "RMB",
+      "evidence_pages": [71, 147, 148],
+      "short_paraphrase": "Bills payable plus merchandise payables were RMB 1,701,528,077.72 and customer advances for goods were RMB 1,528,782,810.26.",
+      "scope_limit": "The contract does not define whether rent, utilities, equipment, property payables and rental advances belong in float, so both the strict trade subtotal and broader balance-sheet aggregate are retained without choosing between them."
+    },
+    {
+      "field_id": "MINIMUM_LEASE_COMMITMENT_RMB_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "DERIVED_FROM_DISCLOSED_COMPONENTS",
+      "value": 902624992.69,
+      "unit": "RMB",
+      "evidence_pages": [182],
+      "short_paraphrase": "The next three years' non-cancellable minimum operating-lease payments total RMB 902,624,992.69.",
+      "scope_limit": "Future minimum commitments for years one through three only; not FY2018 cash outflow and not allocated by subdomain."
+    },
+    {
+      "field_id": "ACQUISITION_AND_NEW_DOMAIN_CASH_BURDEN_FY2018_LEVEL",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "PARTIALLY_DISCLOSED_TOTAL_UNKNOWN",
+      "value": {
+        "weike_acquisition_net_cash": 218498644.34,
+        "consolidated_cash_capex": 764293069.12,
+        "future_three_year_minimum_lease_commitments": 902624992.69,
+        "year_end_interest_bearing_debt": 160000000.0,
+        "other_nonoverlapping_external_new_domain_cash": null,
+        "single_nonoverlapping_total": null
+      },
+      "unit": "RMB_AND_EVENT",
+      "evidence_pages": [23, 77, 78, 147, 151, 164, 182],
+      "short_paraphrase": "The report discloses acquisition net cash, group cash capex, year-end debt and future lease commitments, but not a complete non-overlapping new-domain cash total.",
+      "scope_limit": "Components are not added because cash capex lacks project attribution, future leases are not current cash, and other non-overlapping external investment cash remains unknown."
+    },
+    {
+      "field_id": "ACQUISITION_NEW_DOMAIN_AND_LEASE_BURDEN_EVENT",
+      "responsibility_scope": "CONSOLIDATED_GROUP_CASH",
+      "status": "PARTIALLY_DISCLOSED_TOTAL_UNKNOWN",
+      "value": {
+        "weike_acquisition_net_cash": 218498644.34,
+        "weike_purchase_cost": 344370000.0,
+        "future_three_year_minimum_lease_commitments": 902624992.69,
+        "yantai_and_laiwu_projects_unfinished_at_year_end": true,
+        "weike_logistics_standardization_unfinished_at_year_end": true,
+        "other_nonoverlapping_external_new_domain_cash": null
+      },
+      "unit": "RMB_AND_EVENT",
+      "evidence_pages": [22, 23, 164, 168, 182],
+      "short_paraphrase": "Weike purchase cost and net cash, future lease commitments and unfinished logistics projects are disclosed, while the complete other non-overlapping new-domain cash amount is not.",
+      "scope_limit": "Purchase cost, acquisition net cash, capex and future lease commitments are distinct measures and are not summed into a current-period cash burden."
+    }
+  ],
+  "coverage_receipt": {
+    "authorized_union_field_count": 55,
+    "settled_field_count": 55,
+    "extra_field_id_count": 0
+  }
+}

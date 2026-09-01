@@ -1,0 +1,210 @@
+{
+  "adaptation_case": "回购渠道资源、库存共享、类直营、线上/奥莱清货与回归主业，直接回应了渠道失灵和库存堆积；因此管理层不是无行动。然而购买渠道和库存只完成了控制权转移，不能证明客户愿意以可盈利价格吸收。截止日前的收入下滑、扣非亏损和评级观察使执行评价保持“问题识别真实、经济适应未证明”，而非因为行动存在就记为修复成功。",
+  "business_position": "贵人鸟仍拥有一个可能有客户认知的运动鞋服品牌和既有渠道入口，但其可承保位置已被渠道商困难、库存回购、返利和收入下滑削弱。它不是“行业需求存在”就可恢复的公司：品牌、产品与渠道必须在折扣、库存和应收之后重新证明客户经济，且该经济必须先于债务责任恢复。",
+  "company_id": "CN:603555",
+  "company_name": "Guirenniao",
+  "component_treatments": [
+    {
+      "component_id": "CORE_BRAND_AND_CHANNEL",
+      "evidence_ids": [
+        "EV-GRN-INDUSTRY",
+        "EV-GRN-THREE_YEAR",
+        "EV-GRN-Q1"
+      ],
+      "investment_consequence": "保留为恢复路线的条件基础，不以历史利润或行业概念加入正常盈利。",
+      "promotion_or_resolution_condition": "核心销量、价格/毛利、库存/应收与现金在类直营边界共同改善。",
+      "reason": "品牌和既有渠道可构成客户入口，但 FY2018–Q1 收入下降、经销商困难、回购库存和返利使客户经济尚未恢复。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "CHANNEL_RESET_AND_INVENTORY",
+      "evidence_ids": [
+        "EV-GRN-CHANNEL_ACTION",
+        "EV-GRN-Q1"
+      ],
+      "investment_consequence": "不把实施动作写作修复成功；作为上行或继续恶化的关键情景。",
+      "promotion_or_resolution_condition": "销售、折扣/返利、库存、应收和经营现金以同一渠道边界改善。",
+      "reason": "购入 14 个渠道资源、回购约 3.72 亿元库存和线上/奥莱清货是可观察行动，但没有后续客户吸收、价格、周转或现金证据。",
+      "treatment": "SCENARIO_ONLY"
+    },
+    {
+      "component_id": "NONCORE_INVESTMENTS",
+      "evidence_ids": [
+        "EV-GRN-INDUSTRY",
+        "EV-GRN-STRATEGIC_TENSION"
+      ],
+      "investment_consequence": "不把非核心叙事加入基准价值；审查其处置或现金责任。",
+      "promotion_or_resolution_condition": "取得各业务客户、资本占用和现金回报的独立证据。",
+      "reason": "名鞋库、多品牌、体育和投资增加复杂度，但源包没有证明其在融资压力下提供独立普通股现金。",
+      "treatment": "SCENARIO_ONLY"
+    },
+    {
+      "component_id": "MAINTENANCE_OWNER_CASH",
+      "evidence_ids": [
+        "EV-GRN-CASH_AND_CAPITAL",
+        "EV-GRN-FINANCING"
+      ],
+      "investment_consequence": "维护后 owner cash 保持条件化，但不能阻止生存、渠道和永久损失判断。",
+      "promotion_or_resolution_condition": "拆分核心维护、库存/应收释放、渠道重构和非核心资产/融资现金责任。",
+      "reason": "固定资产支出低且维护、渠道重构、库存应收和非核心资本责任未拆分。",
+      "treatment": "CANNOT_BOUND"
+    },
+    {
+      "component_id": "LIQUIDITY_DEBT_AND_GUARANTEES",
+      "evidence_ids": [
+        "EV-GRN-FINANCING",
+        "EV-GRN-Q1"
+      ],
+      "investment_consequence": "将资本结构置于正常盈利之前，明确原普通股可能因债务处置失去经济权利。",
+      "promotion_or_resolution_condition": "以债务到期、展期/融资条款、担保责任和原普通股权利的实际结果结算。",
+      "reason": "低流动和速动比率、短债、债券口径变化、评级观察与担保构成材料性融资边界；源包未提供最终展期或重整结果。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "PERMANENT_LOSS_PATH",
+      "evidence_ids": [
+        "EV-GRN-THREE_YEAR",
+        "EV-GRN-FINANCING",
+        "EV-GRN-STRATEGIC_TENSION"
+      ],
+      "investment_consequence": "以原普通股能否在债务后保有品牌和渠道经济权利作为最重要处理。",
+      "promotion_or_resolution_condition": "若核心经济在融资前恢复且债务处置保留股东权利则收窄风险；反之确认永久损失路径。",
+      "reason": "渠道客户、库存应收和融资责任存在连贯的永久损失机制，但不能用截至 cutoff 的风险直接写成已经失败。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    }
+  ],
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "decision_frame": "在 2019-05-01 起三至五年，判断贵人鸟的品牌、渠道重构和资产处置能否穿过客户需求、库存应收、到期债务和担保责任，保住普通股可得现金；生存与融资优先于把历史利润或正经营现金外推为正常 owner cash。",
+  "episode_id": "UWEP:CN603555:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+  "evidence_trace": [
+    {
+      "evidence_id": "EV-GRN-INDUSTRY",
+      "locator": "行业、公司位置与经营转折",
+      "scope": "业务、竞争、渠道和库存回购背景。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "建立行业未来、公司位置和客户/渠道机制。"
+    },
+    {
+      "evidence_id": "EV-GRN-CHANNEL_ACTION",
+      "locator": "行业、公司位置与经营转折，第 2 段",
+      "scope": "14 个渠道资源、3.72 亿元库存、类直营和清货方案。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "界定管理选择及其尚未结算的客户与现金责任。"
+    },
+    {
+      "evidence_id": "EV-GRN-THREE_YEAR",
+      "locator": "FY2016–FY2018 经营、现金与融资，表格及第 1 段",
+      "scope": "收入、利润、经营现金、应收、库存和减值。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "建立历史锚并拒绝将正 OCF误作恢复。"
+    },
+    {
+      "evidence_id": "EV-GRN-FINANCING",
+      "locator": "FY2016–FY2018 经营、现金与融资，第 2 段",
+      "scope": "流动性、短债、债券、担保和评级风险。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "形成生存、普通股权利与永久损失判断。"
+    },
+    {
+      "evidence_id": "EV-GRN-Q1",
+      "locator": "cutoff 附近的更新与选择，第 1 段",
+      "scope": "FY2019 Q1 收入、利润、现金、短债和低 capex。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "检验压力延续而不把单季外推为终局。"
+    },
+    {
+      "evidence_id": "EV-GRN-CASH_AND_CAPITAL",
+      "locator": "FY2016–FY2018 经营、现金与融资；cutoff 附近的更新与选择",
+      "scope": "经营现金、低固定资产支出与库存应收。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "分开 owner cash、营运资本和资本结构责任。"
+    },
+    {
+      "evidence_id": "EV-GRN-STRATEGIC_TENSION",
+      "locator": "cutoff 附近的更新与选择，第 2 段",
+      "scope": "回归主业、多品牌、资产处置、债务重组及乐观/风险解释。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "构建竞争解释、永久损失和研究顺序。"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603555_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "本 Episode 唯一的截止日前公司事实来源；课程记忆仅改变现金责任的提问顺序，不构成贵人鸟事实。"
+    }
+  ],
+  "investment_treatment": "结果封存训练处理：不为历史利润、行业概念、库存回购、低 capex或正 OCF付持续经营信用；以品牌和渠道恢复作为具名上行，但只有穿过库存应收、债务、担保和原普通股权利后才可加入基准。当前不产生价格、CJO、正式估值、黄金报告或投资权限。",
+  "normalization_case": "不以 FY2016–FY2017 利润、FY2018 正 OCF 或 Q1 的小额利润建立正常范围。当前可承保的是一个条件化的品牌/渠道恢复情景：核心销量、毛利、库存/应收、营运现金以及债务后普通股权利必须同步改善。若这些没有共同改善，正常盈利应视为未建立，而不是用空白代替公司的经济判断。",
+  "permanent_loss_map": "客户吸收失败会使回购库存通过折扣、返利、应收和减值继续损失；这时高杠杆、短债和担保把经营压力传给融资与资产处置，可能让原普通股即使保有品牌也失去现金权利。多品牌、零售、体育和投资是第二层资本错配风险。反方是类直营和清货更快恢复周转、重整赢得时间；它需要看见同边界的销量、毛利、周转和债务后现金，而不是单看低 capex 或 OCF。",
+  "reversal_observations": [
+    "若核心品牌和类直营渠道连续显示销量、价格/毛利、库存与应收周转、经营现金共同恢复，且债务展期/融资不以削弱普通股为代价，则重新建立持续经营与正常盈利的条件化范围。",
+    "若库存清理继续伴随折扣、返利、应收恶化或减值，且债务到期、担保或资产处置先消耗现金，则把生存风险升级为原普通股永久损失。",
+    "若多品牌、名鞋库、体育和投资经拆分后证明产生独立现金而非吸收核心现金，才允许其进入上行情景；否则不将其当作核心修复。"
+  ],
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "situation_model": {
+    "industry_future_thesis": {
+      "adaptation": "管理层选择购入 14 个经销商渠道资源、回购库存，转为部分类直营，并以线上/奥莱清货、回归主业、多品牌、资产处置和债务重组应对。该行动有明确问题指向，但截至 cutoff 只有行动与小额正经营现金，没有证明客户、价格、周转或再融资已经恢复；因此执行评价是有方向但未结算。",
+      "company_exposure": "FY2018 收入降至 28.12 亿元、归母亏损 6.86 亿元，FY2019 Q1 收入再降 37.40%。应收票据及账款约 14.83 亿元、回购库存上升、资产负债率 67.81%、流动比率 0.77、速动比率 0.61；短借约 6.99 亿元、Q1 升至约 7.42 亿元，并有担保责任。品牌与既有渠道仍是可能的客户入口，却不足以抵消这个期限与资产质量暴露。",
+      "horizon": "自 2019-05-01 起先观察 FY2019 的销售、渠道周转、现金与债务处置，再观察 FY2021/FY2023 原有普通股是否仍保有可恢复的品牌、渠道和现金权利。",
+      "most_likely_regime": "运动鞋服仍有需求，但竞争和电商使利润池向有品牌势能、产品能力、渠道效率和库存控制的参与者迁移。对贵人鸟最可能的近程不是行业增长自动修复，而是品牌/类直营渠道能否以可接受的价格和周转重新获得客户，同时融资重整能否避免经营问题先转为资本结构问题。",
+      "normal_economics": "FY2016–FY2017 的 2.93 和 1.57 亿元归母利润不能单独构成正常锚，因为 FY2018 的渠道、返利、库存、商誉/投资减值揭示此前收入与现金可能没有同样的资产质量。基准不承保历史利润或 FY2018 正 OCF；只有恢复的核心销量/毛利、库存应收和债务后普通股现金共同改善时，才重新建立正常盈利范围。",
+      "permanent_loss": "首要永久损失路径是客户需求和渠道周转未恢复，回购库存以折扣、返利、应收或减值继续侵蚀现金，短债、债券和担保迫使资产处置或重整，从而使普通股失去原有核心的经济权利。次要路径是多品牌、零售和投资分散现金与管理注意力。正 OCF 或低固定资产支出都不能否定前一条路径。",
+      "profit_pool_transmission": "客户选择和品牌定位决定销量；经销或类直营渠道的折扣、返利、库存、应收和清货决定毛利与营运现金；到期债务、担保和资产处置则决定这些经营现金是否仍属于普通股。回购渠道资源只是实施，只有后续销售、周转和现金才是经济吸收。",
+      "reversal_observations": [
+        "若核心品牌和类直营渠道连续显示销量、价格/毛利、库存与应收周转、经营现金共同恢复，且债务展期/融资不以削弱普通股为代价，则重新建立持续经营与正常盈利的条件化范围。",
+        "若库存清理继续伴随折扣、返利、应收恶化或减值，且债务到期、担保或资产处置先消耗现金，则把生存风险升级为原普通股永久损失。",
+        "若多品牌、名鞋库、体育和投资经拆分后证明产生独立现金而非吸收核心现金，才允许其进入上行情景；否则不将其当作核心修复。"
+      ],
+      "strongest_rival": "渠道资源购回消除了经销商失灵的中间环节，奥莱和线上可加快库存消化；贵人鸟既有品牌认知、体育消费需求和资产处置/债务重组可为类直营恢复提供时间。FY2018 的减值与 FY2019 Q1 的下滑是一次性渠道重置，正经营现金显示尚有运营承受力。",
+      "valuation_treatment": "价值路线先看生存、债务/担保与原普通股权利，再在已证明的品牌销量、渠道单位经济和营运现金之上讨论持续经营。排除以 FY2016–FY2017 利润、渠道资源购回、低 capex 或行业体育消费概念直接承保正常 earnings 的路线。"
+    },
+    "summary": "截至 cutoff，贵人鸟不是单纯的鞋服制造商，而是依赖品牌和省级经销渠道的运动鞋服公司，同时卷入名鞋库、多品牌、体育和投资。渠道商困难使公司在 FY2018 回购渠道和约 3.72 亿元未售库存，收入、利润和资产质量同时恶化；FY2019 Q1 的更低收入、短债和评级观察令核心问题转为客户恢复能否赶在融资责任之前实现。"
+  },
+  "strongest_rival": "渠道资源购回消除了经销商失灵的中间环节，奥莱和线上可加快库存消化；贵人鸟既有品牌认知、体育消费需求和资产处置/债务重组可为类直营恢复提供时间。FY2018 的减值与 FY2019 Q1 的下滑是一次性渠道重置，正经营现金显示尚有运营承受力。",
+  "survival_case": "公司的经营未立即停止：FY2018 与 FY2019 Q1 均为正经营现金，管理层也提出资产处置、融资和债务重组。但该现金无法与持续经营混同：FY2018 大额亏损、Q1 收入骤降、7 亿级短债、低流动/速动比率、债券口径变化和担保共同显示融资缓冲很薄。最佳当前判断是生存处于重大压力但尚未机械宣告失败；基准必须要求渠道现金恢复与债务处置同时成立。",
+  "underwriting_route": "先判断二三线运动鞋服品牌和经销渠道的客户位置，再将回购库存、类直营、奥莱/线上清货与价格、毛利、应收库存相连；随后把短债、债券、担保和非核心资产的融资责任纳入生存判断。只有品牌/渠道恢复与债务处理共同出现，才可讨论正常盈利或价值路线。",
+  "underwriting_thesis": {
+    "central_path": "最可能路径是渠道重构和清库存尚未证明客户恢复，经营压力先经库存/应收与折扣传导，再遇到短债、担保和再融资约束。品牌和既有渠道仍是条件化上行，而不是基准盈利。当前应把生存、资本结构和原普通股权利置于正常盈利之前；置信度中等，因为截至 cutoff 尚未出现最终债务或渠道结果。",
+    "economic_directions": {
+      "normal_earnings": "DETERIORATES",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "monitoring": "按顺序观察核心销量与价格/毛利、库存和应收、经营现金，再观察债务到期/展期、担保和原普通股权利；多品牌和非核心资产只有证明独立现金时才改变结论。",
+    "normal_earnings_treatment": "不以 FY2016–FY2017 利润或 FY2018 正 OCF设定正常水平。只在核心销量、价格/毛利、库存应收、经营现金和债务后股东权利共同改善后，建立条件化正常能力。",
+    "owner_cash_treatment": "FY2018/2019 Q1 的正经营现金和低固定资产支出不能代表维护后 owner cash：回购库存、应收、返利、渠道重构、债务和担保会决定普通股可得现金。维护/增长/融资责任未拆分，故给条件处理而非集中点估计。",
+    "permanent_loss_treatment": "主要风险是客户恢复赶不上库存、应收和融资压力，债务重整或资产处置使原普通股失去品牌/渠道的经济权利；这是一条明确机制，不等同截至 cutoff 已经破产。",
+    "strongest_rival": "渠道资源购回消除了经销商失灵的中间环节，奥莱和线上可加快库存消化；贵人鸟既有品牌认知、体育消费需求和资产处置/债务重组可为类直营恢复提供时间。FY2018 的减值与 FY2019 Q1 的下滑是一次性渠道重置，正经营现金显示尚有运营承受力。",
+    "thesis_id": "UWTHESIS:CN603555:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+    "value_route_treatment": "先走债务、担保与普通股权利的持续经营/重整路线；核心品牌和类直营渠道只有在客户—单位经济—营运现金闭环后才进入恢复价值路线。"
+  },
+  "value_route": {
+    "excluded_routes": [
+      "将 FY2016–FY2017 历史利润或行业体育消费概念直接年金化",
+      "将回购渠道资源、低固定资产支出或 FY2018 正经营现金等同正常 owner cash",
+      "将多品牌、体育和投资叙事自动加入核心价值"
+    ],
+    "primary_routes": [
+      "债务、担保与普通股权利优先的持续经营/重整条件化路线",
+      "品牌和类直营渠道在客户—价格/毛利—库存应收—经营现金闭环后才进入的恢复路线"
+    ],
+    "route_reasoning": "公司仍有潜在品牌和渠道客户入口，但普通股能否享有任何恢复首先取决于库存/应收、债务和担保责任。持续经营路线不是拒绝判断，而是限定只有经营恢复穿过资本结构后才可形成股东价值。",
+    "valuation_model_roles": {
+      "corroborative": [
+        "渠道清货、经销商/类直营转换和经营现金变化",
+        "非核心资产与多品牌业务的独立现金责任"
+      ],
+      "primary": [
+        "债务、担保、资产处置/重整对原普通股权利的处理",
+        "核心品牌和类直营渠道的销量、毛利、库存应收及债务后现金"
+      ],
+      "stress": [
+        "库存与应收持续恶化、折扣返利和减值",
+        "短债/担保在核心恢复前抽走现金或稀释原普通股"
+      ]
+    }
+  }
+}

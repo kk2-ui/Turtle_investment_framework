@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Phase 2.5 Data Gate — blocks Phase 3 if critical fields are missing."""
+
+import argparse, json, os, sys
+
+CRITICAL = ['营业收入','归母净利润','资产总计','经营活动CF','Capex','固定资产折旧']
+MIN_FIELDS_PER_YEAR = 18
+MIN_YEARS_DEFAULT = 4  # raised from 3
+
+def check(output_dir, min_fields=MIN_FIELDS_PER_YEAR, min_years=MIN_YEARS_DEFAULT):
+    years = []
+    for fname in sorted(os.listdir(output_dir)):
+        if fname.startswith('pdf_sections_') and fname.endswith('.json') and 'interim' not in fname:
+            try:
+                year = int(fname.replace('pdf_sections_','').replace('.json',''))
+                years.append(year)
+            except: pass
+
+    years = sorted(years)
+    if len(years) < min_years:
+        print(f'[BLOCK] 仅 {len(years)} 年年报PDF(需≥{min_years})—返回Phase 0下载')
+        sys.exit(1)
+
+    critical_counts = {c: 0 for c in CRITICAL}
+    warnings = []
+    blocks = []
+
+    for y in years:
+        path = os.path.join(output_dir, f'pdf_sections_{y}.json')
+        try:
+            with open(path) as f:
+                d = json.load(f)
+        except: continue
+        fin = d.get('financials', {})
+        n = len(fin)
+
+        if n < min_fields:
+            warnings.append(f'FY{y}: {n}/{min_fields} fields (below minimum)')
+
+        # v2.18: Per-year critical field coverage check
+        year_critical = sum(1 for c in CRITICAL if fin.get(c, 0) and fin.get(c, 0) > 0)
+        if year_critical < 4:
+            warnings.append(f'FY{y}: only {year_critical}/{len(CRITICAL)} critical fields (weak year)')
+
+        for c in CRITICAL:
+            v = fin.get(c, 0) or 0
+            if v > 0:
+                critical_counts[c] += 1
+
+    for c, cnt in critical_counts.items():
+        if cnt < min_years:
+            blocks.append(f'{c}: {cnt}/{len(years)} years (need ≥{min_years})')
+
+    # v2.18: Check if report already exists and is complete
+    import glob
+    reports = glob.glob(os.path.join(output_dir, '*分析报告*.md'))
+    if reports:
+        for r in reports:
+            with open(r) as f:
+                content = f.read()
+            lines = len(content.split('\n'))
+            has_final = '最终综合输出' in content or 'Final Synthesis' in content
+            has_chain = 'CHAIN_NEXT' in content
+            if has_final:
+                print(f'[INFO] 已有完整报告: {os.path.basename(r)} ({lines}行, 全因子完成)')
+                print(f'[WARN] 重新生成将覆盖现有报告。如非必要请勿重复生成。')
+            elif has_chain:
+                print(f'[INFO] 已有未完成报告: {os.path.basename(r)} ({lines}行, 需继续链)')
+            else:
+                print(f'[INFO] 已有报告片段: {os.path.basename(r)} ({lines}行)')
+
+    if blocks:
+        print(f'[BLOCK] 数据门禁阻断 — 以下关键字段不足{min_years}年:')
+        for b in blocks:
+            print(f'  ❌ {b}')
+        print('→ 返回 Phase 2A 修复 pdf_preprocessor 提取规则，然后重新运行。')
+        sys.exit(1)
+
+    if warnings:
+        print(f'[WARN] 数据门禁通过但有警告:')
+        for w in warnings:
+            print(f'  ⚠️ {w}')
+    else:
+        print(f'[PASS] 数据门禁通过: 所有关键字段 ≥{min_years}/{len(years)} 年')
+
+    # DPS check
+    dps_count = sum(1 for y in years if (json.load(open(os.path.join(output_dir, f'pdf_sections_{y}.json'))).get('financials',{}).get('每股股息', 0) or 0) > 0)
+    if dps_count < 3:
+        print(f'[INFO] DPS仅 {dps_count}/{len(years)} 年 — Phase 1B 需 WebSearch 补充。DDM将降级。')
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser()
+    p.add_argument('--output', required=True)
+    p.add_argument('--min-fields', type=int, default=MIN_FIELDS_PER_YEAR)
+    p.add_argument('--min-years', type=int, default=MIN_YEARS_DEFAULT)
+    args = p.parse_args()
+    check(args.output, args.min_fields, args.min_years)

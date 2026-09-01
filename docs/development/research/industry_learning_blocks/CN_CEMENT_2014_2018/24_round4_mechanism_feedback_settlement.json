@@ -1,0 +1,246 @@
+{
+  "schema_version": "enterprise-mechanism-feedback-settlement.v1",
+  "settlement_id": "EMFS:CN:CEMENT:600802:20140416:V1",
+  "preoutcome_package_ref": {
+    "package_id": "EMFP:CN:CEMENT:600802:20140416:V1",
+    "frozen_commit": "2cb242b",
+    "transition_id": "CCR:600802:20140416:20150415",
+    "selected_rank": 17,
+    "company_id": "CN:600802",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "next_cutoff_at": "2015-04-15T00:00:00+08:00"
+  },
+  "outcome_custody": {
+    "custodian_id": "ROLE:CEMENT:MECHANISM:OUTCOME_CUSTODIAN",
+    "independent_task_ref": "01a03e57-da16-7d12-8904-6723caeaf289",
+    "access_scope": "FROZEN_CONTRACT_CELLS_ONLY",
+    "preoutcome_package_received_without_outcome": true,
+    "outcome_access_after_frozen_commit": true,
+    "forecast_values_visible_to_custodian": false,
+    "comparative_identities_visible_to_custodian": false,
+    "repository_changes_by_custodian": false
+  },
+  "source_receipt": {
+    "source_id": "CNINFO:600802:ANN:20150324:1200733162",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "published_on": "2015-03-24",
+    "official_url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733162.PDF",
+    "responsibility_perimeter": "LISTED_CONSOLIDATED_ISSUER",
+    "audit_opinion": "UNQUALIFIED"
+  },
+  "cell_settlements": [
+    {
+      "cell_id": "CELL:600802:20140416:PLAN_STATUS",
+      "layer": "PLAN",
+      "measurement_contract_id": "MC:600802:20140416:PLAN_STATUS:V1",
+      "status": "OBSERVED_PARTIAL",
+      "observations": [
+        "FY2014 budget targets were 8.00 million tonnes of cement sales, RMB 2,317.80 million of revenue and RMB 2,293.50 million of costs and expenses.",
+        "Reported completion was 94.30% of the volume target, 88.96% of the revenue target and 88.78% of the cost-and-expense budget."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 12-13"],
+      "interpretation": "The filing reports plan progress, but target completion does not establish implementation or execution of the frozen channel, terminal-partner and logistics mechanism.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:IMPLEMENTATION",
+      "layer": "IMPLEMENTED",
+      "measurement_contract_id": "MC:600802:20140416:IMPLEMENTATION:V1",
+      "status": "OBSERVED_PARTIAL",
+      "observations": [
+        "Several production and efficiency projects were commissioned or entered trial production during FY2014.",
+        "The filing does not identify a qualifying FY2014 launch, opening, signing or committed-resource event for the frozen channel, terminal-partner or logistics mechanism.",
+        "Unified sales through the Furun venture began in February 2015, after the FY2014 operating period."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 9 and 17-18"],
+      "interpretation": "Project implementation is observed locally, while implementation of the primary commercial mechanism remains unverified.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:EXECUTION",
+      "layer": "EXECUTED",
+      "measurement_contract_id": "MC:600802:20140416:EXECUTION:V1",
+      "status": "OBSERVED_PARTIAL",
+      "observations": [
+        "The filing reports production projects operating or entering trial operation.",
+        "It provides no FY2014 channel count, terminal-partner count, logistics coverage or other meaningful operating scope for the frozen commercial mechanism."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 9-10 and 17"],
+      "interpretation": "Execution is visible for production projects but remains unknown for the channel, terminal-partner and logistics mechanism under review.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:CUSTOMER_RESPONSE",
+      "layer": "CUSTOMER_RESPONSE",
+      "measurement_contract_id": "MC:600802:20140416:CUSTOMER_RESPONSE:V1",
+      "status": "UNKNOWN",
+      "observations": [
+        "The top five customers represented 12.98% of revenue."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 10 and 15"],
+      "missing_facts": [
+        "customer or channel-count change",
+        "customer retention or orders",
+        "market-share change",
+        "directly attributed demand response"
+      ],
+      "interpretation": "Customer response cannot be inferred from aggregate sales volume or customer concentration.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:SALES_VOLUME",
+      "layer": "CUSTOMER_RESPONSE",
+      "measurement_contract_id": "MC:600802:20140416:SALES_VOLUME:V1",
+      "status": "MEASUREMENT_MISMATCH",
+      "observations": [
+        "Aggregate cement-plus-clinker sales were 7.8314 million tonnes, up 21.88% year on year."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 9 and 12-13"],
+      "missing_facts": [
+        "separate cement sales volume",
+        "separate clinker sales volume"
+      ],
+      "interpretation": "The aggregate observation supports volume progress only. It cannot settle the frozen component measurement or attribute volume to channel execution.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:UNIT_ECONOMICS",
+      "layer": "UNIT_ECONOMICS",
+      "measurement_contract_id": "MC:600802:20140416:UNIT_ECONOMICS:V1",
+      "status": "OBSERVED",
+      "observations": [
+        "Average pretax cement price fell 5.19%, aggregate product price fell 6.95%, and average cement price fell RMB 14.84 per tonne.",
+        "Selling expense rose 14.68% to RMB 58.884 million.",
+        "Cement gross margin was 16.73%, up 4.16 percentage points because reported cost reduction exceeded the price decline."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 9-13 and 102-103"],
+      "interpretation": "Unit economics improved under price pressure, supporting the unit-economics H-A at the issuer boundary. This does not establish channel causality or management-action effect.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:CASH",
+      "layer": "CASH",
+      "measurement_contract_id": "MC:600802:20140416:CASH:V1",
+      "status": "OBSERVED_MIXED",
+      "observations": [
+        "Receivables fell 39.86% to RMB 7.769 million while inventory rose 23.30% to RMB 224.431 million.",
+        "Audited consolidated operating cash flow rose 18.87% to RMB 295.226 million.",
+        "Operating-cash-to-revenue was 14.32%, compared with 13.65% in FY2013.",
+        "Management attributed part of the cash improvement to lower input prices and greater use of bills for raw-material settlement."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 10, 12, 14, 45 and 51-52"],
+      "interpretation": "Cash and receivables improved, inventory moved against that progress, and the stated drivers include procurement prices and settlement method. The channel plan's cash effect and owner cash remain unknown.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:CAPITAL_RETURN",
+      "layer": "CAPITAL_RETURN",
+      "measurement_contract_id": "MC:600802:20140416:CAPITAL_RETURN:V1",
+      "status": "UNKNOWN",
+      "observations": [
+        "Cash paid for fixed assets, intangible assets and other long-term assets was RMB 334.225 million, exceeding operating cash flow of RMB 295.226 million.",
+        "Short-term borrowings rose to RMB 1.815 billion and the company added finance-lease and sale-and-leaseback obligations.",
+        "Management stated that operating cash was insufficient for project development and that current liquidity depended on controller support."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 14, 19, 45-46, 52, 98, 103 and 107"],
+      "missing_facts": [
+        "compatible invested-capital bridge",
+        "durable project-level cash returns",
+        "causal attribution between the frozen commercial plan and capital productivity"
+      ],
+      "interpretation": "The evidence supports a material capital-burden counterargument but cannot settle causal or durable capital return.",
+      "action_attribution": "NOT_AUTHORIZED"
+    },
+    {
+      "cell_id": "CELL:600802:20140416:PERMANENT_LOSS",
+      "layer": "PERMANENT_LOSS",
+      "measurement_contract_id": "MC:600802:20140416:PERMANENT_LOSS:V1",
+      "status": "UNKNOWN",
+      "observations": [
+        "The company recorded RMB 17.987 million of impairment, including RMB 5.315 million of construction-in-progress impairment associated with cancelled projects.",
+        "The report states that short-term and long-term borrowings had no overdue issuer obligations and contains an unqualified audit opinion."
+      ],
+      "evidence_locators": ["FY2014 annual report PDF pp. 1, 44, 59, 93, 98 and 103-104"],
+      "interpretation": "Local realized capital losses are observed, but one filing does not establish issuer-level permanent loss or remove the financing risk.",
+      "action_attribution": "NOT_AUTHORIZED"
+    }
+  ],
+  "thread_feedback": [
+    {
+      "thread_id": "THREAD:600802:CHANNEL_VOLUME",
+      "resolution": "INCONCLUSIVE_WITH_PRIMARY_EXECUTION_UNVERIFIED",
+      "statement": "Aggregate volume progress is real, but the frozen channel, terminal-partner and logistics action is not shown as implemented or executed during FY2014 and customer response is unobserved. H-A is therefore not established; H-B remains a live rival rather than a proven cause."
+    },
+    {
+      "thread_id": "THREAD:600802:UNIT_ECONOMICS",
+      "resolution": "LOCAL_H_A_SUPPORTED_WITHOUT_ACTION_ATTRIBUTION",
+      "statement": "Cement margin improved despite falling price because reported cost reduction more than offset price pressure. The result supports the local unit-economics mechanism, not the commercial-plan attribution."
+    },
+    {
+      "thread_id": "THREAD:600802:CASH_CAPITAL_LOSS",
+      "resolution": "MIXED_AND_CAPITAL_BURDEN_UNRESOLVED",
+      "statement": "Operating cash and receivables improved, while inventory rose, capex exceeded operating cash and financing dependence remained material. Capital return and permanent loss remain unknown."
+    }
+  ],
+  "forecast_request_settlement": [
+    {
+      "request_id": "REQ:600802:SALES_VOLUME:ONE_YEAR",
+      "state": "REQUEST_ONLY_NOT_SCORED",
+      "outcome_cell_status": "MEASUREMENT_MISMATCH",
+      "observed_direction": "AGGREGATE_VOLUME_UP"
+    },
+    {
+      "request_id": "REQ:600802:UNIT_ECONOMICS:ONE_YEAR",
+      "state": "REQUEST_ONLY_NOT_SCORED",
+      "outcome_cell_status": "OBSERVED",
+      "observed_direction": "IMPROVED"
+    },
+    {
+      "request_id": "REQ:600802:CASH:ONE_YEAR",
+      "state": "REQUEST_ONLY_NOT_SCORED",
+      "outcome_cell_status": "OBSERVED_MIXED",
+      "observed_value": 0.143186,
+      "unit": "OPERATING_CASH_TO_REVENUE_RATIO"
+    },
+    {
+      "request_id": "REQ:600802:PERMANENT_LOSS:ABSTAIN",
+      "state": "ABSTENTION_PRESERVED",
+      "outcome_cell_status": "UNKNOWN"
+    }
+  ],
+  "next_cutoff_research_agenda_delta": [
+    {
+      "priority": 1,
+      "change": "Require explicit launch date and operating scope for channel, terminal-partner and logistics actions before treating later sales as execution evidence."
+    },
+    {
+      "priority": 2,
+      "change": "Collect direct customer or channel response and separate cement from clinker volume before testing the first commercial transmission link."
+    },
+    {
+      "priority": 3,
+      "change": "Decompose unit-economics improvement into input-price, operating-efficiency, utilization and commercial effects before attributing margin progress to management action."
+    },
+    {
+      "priority": 4,
+      "change": "Read operating cash together with inventory, capex, debt and financing support before making owner-cash, capital-return or permanent-loss claims."
+    }
+  ],
+  "investor_conclusion": "Fujian Cement's FY2014 operating results improved, especially volume, cement margin and operating cash, but the filing does not prove that the frozen channel, terminal-partner and logistics mechanism was implemented or executed during FY2014. Customer response is still unobserved, while capex and financing dependence keep the capital-return question open.",
+  "episode_status": "REAL_CELL_LEVEL_MECHANISM_FEEDBACK_COMPLETED",
+  "enterprise_learning_status": "NOT_YET_CANDIDATE",
+  "enterprise_learning_reason": "This settlement changes the next cutoff research agenda for CN:600802, but it has not yet changed another company-cutoff's pre-outcome mechanism or forecast fields and has not received an independent learning-transfer review.",
+  "rights": {
+    "comparative": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_YET_CANDIDATE",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "allowed_outputs": [
+    "MECHANISM_FEEDBACK",
+    "TEACHING_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

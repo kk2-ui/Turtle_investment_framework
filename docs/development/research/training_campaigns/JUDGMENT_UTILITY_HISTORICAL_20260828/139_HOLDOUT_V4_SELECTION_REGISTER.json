@@ -1,0 +1,133 @@
+{
+  "schema_version": "historical-holdout-v4-selection-register.v1",
+  "register_id": "HOLDOUT_V4_SELECTION:CN300059:FY2021_FY2023:CUTOFF_2024-05-01",
+  "selection_status": "SELECTED",
+  "candidate_identity": {
+    "case_id": "HOLDOUT:CN300059:20240501:FY2021_FY2023:PAIR_V4",
+    "company_cluster_id": "COMPANY:CN300059",
+    "issuer_code": "CN300059",
+    "issuer_name": "东方财富",
+    "issuer_market": "CNINFO_SZSE",
+    "broad_structure": "Wealth-distribution and platform group with securities and fund-distribution activity; this is a selection premise, not a finding from a report."
+  },
+  "selection_order": {
+    "ordinal": 1,
+    "selection_rule": "First qualifying fresh company cluster considered under the permitted pre-outcome inputs. No ordering used price, return, analyst, outcome, or prior-artifact attractiveness."
+  },
+  "structure_mechanism_rationale": {
+    "v4_rule_under_test": "COMPOSITE_METRIC_SCOPE_BEFORE_CONVERSION_CLAIM",
+    "why_materially_testable": "In a wealth-distribution/platform structure, a customer, assets, users, or activity carrier can plausibly be stated for a product, affiliate, company, or other responsibility perimeter while fee income, recurring profit, cash, or capital efficiency is stated for another perimeter. The V4 behavior is therefore capable of changing whether a composite conversion claim is granted, withheld, or kept local-only.",
+    "required_holdout_behavior": "Name each reported perimeter before combining the activity and economic carriers; combine only identical perimeters or an issuer-provided explicit bridge. Otherwise retain the independent facts and localize the conversion proposition.",
+    "selection_basis_boundary": "This rationale uses only the broad business-category premise and the V4 rule. It does not assert that any particular carrier, perimeter, bridge, or conversion result appears in the annual-report packet."
+  },
+  "prior_curriculum_cluster_exclusion": {
+    "curriculum_fields_reviewed": [
+      "case_id",
+      "track",
+      "company_cluster_id"
+    ],
+    "excluded_company_cluster_ids": [
+      "COMPANY:CN002080",
+      "COMPANY:CN603708",
+      "COMPANY:CN600570",
+      "COMPANY:CN603939",
+      "COMPANY:CN603589",
+      "COMPANY:HK00184",
+      "COMPANY:HK03990",
+      "COMPANY:HK01522",
+      "COMPANY:CN002027",
+      "COMPANY:HK02688",
+      "COMPANY:CN000651",
+      "COMPANY:HK00882",
+      "COMPANY:HK00506",
+      "COMPANY:ERDOS",
+      "COMPANY:CN001914",
+      "COMPANY:HK01858",
+      "COMPANY:HK06186",
+      "COMPANY:HAIER",
+      "COMPANY:CN200596",
+      "COMPANY:HK03658",
+      "COMPANY:CN603195",
+      "COMPANY:CN601598",
+      "COMPANY:CN600549",
+      "COMPANY:CN603338",
+      "COMPANY:HK00816",
+      "COMPANY:CN600161",
+      "COMPANY:CN600323",
+      "COMPANY:CN601899",
+      "COMPANY:HK00696",
+      "COMPANY:HK06668",
+      "COMPANY:CN600309",
+      "COMPANY:CN600585",
+      "COMPANY:CN600519",
+      "COMPANY:HK06862",
+      "COMPANY:CN600887",
+      "COMPANY:HK02669",
+      "COMPANY:HK01502",
+      "COMPANY:CN600660",
+      "COMPANY:MICROSOFT",
+      "COMPANY:CN600276",
+      "COMPANY:ADOBE",
+      "COMPANY:TCL_THOMSON_TTE",
+      "COMPANY:KRAFT_HEINZ",
+      "COMPANY:CN600036",
+      "COMPANY:CN002475"
+    ],
+    "freshness_result": "COMPANY:CN300059 is absent from the reviewed curriculum company-cluster set."
+  },
+  "cutoff": {
+    "cutoff_date": "2024-05-01",
+    "strict_publication_rule": "Each admitted annual-report metadata record has an official publication date strictly before 2024-05-01."
+  },
+  "official_packet_metadata": {
+    "issuer_org_id": "9900010488",
+    "official_metadata_source": "CNINFO historical-announcement query",
+    "query_scope": "CN300059 annual-report metadata, category_ndbg_szsh, publication dates 2021-01-01 through 2024-05-01; report bodies were not requested or opened.",
+    "packet_status": "CLEAN_THREE_REPORT_PACKET",
+    "admitted_full_annual_reports": [
+      {
+        "fiscal_year": "FY2021",
+        "source_id": "CNINFO:1212623862",
+        "announcement_title": "2021年年度报告",
+        "publication_date": "2022-03-19"
+      },
+      {
+        "fiscal_year": "FY2022",
+        "source_id": "CNINFO:1216145341",
+        "announcement_title": "2022年年度报告",
+        "publication_date": "2023-03-18"
+      },
+      {
+        "fiscal_year": "FY2023",
+        "source_id": "CNINFO:1219307793",
+        "announcement_title": "2023年年度报告",
+        "publication_date": "2024-03-15"
+      }
+    ],
+    "clean_packet_basis": "The official index returned one full annual-report metadata record for each of FY2021, FY2022, and FY2023, all before the cutoff. Summaries were not admitted as packet reports."
+  },
+  "permitted_selection_inputs": [
+    "The frozen V4 method pack, including its scope-matched composite-metric behavior and paired-holdout contract.",
+    "Only the curriculum case identity, track, and company-cluster fields used to exclude previously seen clusters.",
+    "Candidate identifier, issuer name, and broad non-outcome business-category premise needed to test the V4 scope behavior.",
+    "Official CNINFO announcement metadata used only to confirm the clean FY2021-FY2023 pre-cutoff packet."
+  ],
+  "prohibitions_and_firewall": [
+    "Do not open, download, parse, summarize, or infer from annual-report, announcement, or PDF bodies during selection.",
+    "Do not identify or read FY2024 outcome metadata or any post-cutoff announcement metadata or bodies.",
+    "Do not read campaign artifacts, historical reports, Method Pack V3, price data, return data, analyst data, or outcome material.",
+    "Do not use a browser or any selection signal tied to realized performance, valuation, subsequent events, or outcome attractiveness.",
+    "Baseline and Enhanced must later receive the same cutoff-bounded, result-unseen packet, tools, and stated budget."
+  ],
+  "negative_attestations": {
+    "selected_for_outcome_attractiveness": false,
+    "annual_report_or_announcement_body_read": false,
+    "fy2024_outcome_metadata_or_body_identified_or_read": false,
+    "campaign_artifact_or_historical_report_read": false,
+    "method_pack_v3_read": false,
+    "price_return_or_analyst_data_read": false,
+    "browser_used": false,
+    "company_judgment_or_investment_action_created": false,
+    "method_transfer_validated": false
+  }
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "schema_version": "enterprise-judgment-episode.v2",
+    "episode_id": "EJE:CN:600425:20180430:E0",
+    "company_id": "CN:600425",
+    "issuer_id": "ISSUER:CN:600425",
+    "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600425",
+    "cutoff_at": "2018-04-30T23:59:59+08:00",
+    "admission_level": "E0_CONTEXT",
+    "industry_block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+    "risk_set_snapshot_ref": {
+      "universe_id": "UNIVERSE:COHORT:CN:CEMENT_LISTED:20180430:H1_STATIC:2018-04-30T23:59:59+08:00",
+      "cutoff_at": "2018-04-30T23:59:59+08:00",
+      "company_id": "CN:600425"
+    },
+    "source_packet_ref": {"receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1", "receipt_version": 1},
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+    },
+    "enterprise_system_model_ref": null,
+    "management_decision_observation": {
+      "status": "INSUFFICIENT_EVIDENCE",
+      "reviewed_source_refs": ["CNINFO:600425:ANN:20180421:1204677754"],
+      "materiality_scope": "A company-level alternative, commitment, implementation and adaptation sequence within the listed-consolidated boundary.",
+      "next_discriminating_evidence": "A cutoff-visible board, project or implementation record with a responsible unit and timing."
+    },
+    "lifecycle_state": {
+      "risk_status": "IN_RISK_SET",
+      "note": "Risk-set membership is a static-source observation, not a survival, quality or investment conclusion."
+    },
+    "question_set": [
+      {
+        "question_id": "Q:600425:E0:ARENA",
+        "role": "PRIMARY",
+        "question": "What regional delivered-market and overcapacity context is visible for the listed-consolidated issuer?",
+        "claim_ids": ["CLAIM:600425:E0:ARENA"]
+      },
+      {
+        "question_id": "Q:600425:E0:OPERATING",
+        "role": "SUPPORTING",
+        "question": "Which product, sales and audited operating fields are visible without causal attribution?",
+        "claim_ids": ["CLAIM:600425:E0:OPERATING"]
+      },
+      {
+        "question_id": "Q:600425:E0:DECISION",
+        "role": "SUPPORTING",
+        "question": "What management decision sequence is established by the packet?",
+        "claim_ids": ["CLAIM:600425:E0:DECISION"]
+      }
+    ],
+    "claims": [
+      {
+        "claim_id": "CLAIM:600425:E0:ARENA",
+        "question_id": "Q:600425:E0:ARENA",
+        "domain": "COMPETITION",
+        "statement": "The FY2017 annual report identifies a regional delivered-market setting with overcapacity pressure; it does not establish a peer counterfactual or a company advantage.",
+        "cell_status": "OBSERVED",
+        "admission_level": "E0_CONTEXT",
+        "evidence_refs": ["CNINFO:600425:ANN:20180421:1204677754"],
+        "dependent_outcome_cell_ids": []
+      },
+      {
+        "claim_id": "CLAIM:600425:E0:OPERATING",
+        "question_id": "Q:600425:E0:OPERATING",
+        "domain": "OPERATIONS",
+        "statement": "The listed-consolidated product, sales and audited D3/D4 fields are cutoff-visible at accounting-boundary level.",
+        "cell_status": "OBSERVED",
+        "admission_level": "E0_CONTEXT",
+        "evidence_refs": ["CNINFO:600425:ANN:20180421:1204677754"],
+        "dependent_outcome_cell_ids": []
+      },
+      {
+        "claim_id": "CLAIM:600425:E0:DECISION",
+        "question_id": "Q:600425:E0:DECISION",
+        "domain": "ORGANIZATION",
+        "statement": "The reviewed annual-report packet does not establish a decision sequence at the required responsibility boundary.",
+        "cell_status": "UNKNOWN",
+        "admission_level": "E0_CONTEXT",
+        "evidence_refs": [],
+        "dependent_outcome_cell_ids": []
+      }
+    ],
+    "evidence_coverage": [
+      {"cell_id": "CUSTOMER", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No customer-order or retention evidence is identified."},
+      {"cell_id": "OPERATIONS", "status": "OBSERVED", "evidence_refs": ["CNINFO:600425:ANN:20180421:1204677754"], "boundary_note": "Limited to listed-consolidated product and audited statement fields."},
+      {"cell_id": "COMPETITION", "status": "OBSERVED", "evidence_refs": ["CNINFO:600425:ANN:20180421:1204677754"], "boundary_note": "Regional overcapacity is context, not a peer-control result."},
+      {"cell_id": "CASH", "status": "OBSERVED", "evidence_refs": ["CNINFO:600425:ANN:20180421:1204677754"], "boundary_note": "Audited operating cash is not owner-cash access."},
+      {"cell_id": "CAPITAL_RETURN", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No capital-return attribution is made."},
+      {"cell_id": "LEVERAGE", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No leverage conclusion is made."},
+      {"cell_id": "PERMANENT_LOSS", "status": "UNKNOWN", "evidence_refs": [], "boundary_note": "No ordinary-share recovery or failure path is measured."}
+    ],
+    "feedback_loops": [],
+    "mechanism_threads": [],
+    "outcome_cells": [
+      {"outcome_cell_id": "CELL:600425:20180430:CUSTOMER", "dimension": "CUSTOMER", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20180430:CUSTOMER", "definition": "Next annual customer or market disclosure at the listed-consolidated boundary.", "window_start": "2018-05-01T00:00:00+08:00", "window_end": "2019-04-30T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+      {"outcome_cell_id": "CELL:600425:20180430:OPERATIONS", "dimension": "OPERATIONS", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20180430:OPERATIONS", "definition": "Next annual listed-consolidated operating disclosure using the same field family.", "window_start": "2018-05-01T00:00:00+08:00", "window_end": "2019-04-30T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+      {"outcome_cell_id": "CELL:600425:20180430:COMPETITION", "dimension": "COMPETITION", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20180430:COMPETITION", "definition": "Next annual competition disclosure without treating any peer as a control.", "window_start": "2018-05-01T00:00:00+08:00", "window_end": "2019-04-30T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+      {"outcome_cell_id": "CELL:600425:20180430:CASH", "dimension": "CASH", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20180430:CASH", "definition": "Next annual listed-consolidated operating-cash disclosure.", "window_start": "2018-05-01T00:00:00+08:00", "window_end": "2019-04-30T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+      {"outcome_cell_id": "CELL:600425:20180430:CAPITAL_RETURN", "dimension": "CAPITAL_RETURN", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20180430:CAPITAL_RETURN", "definition": "Next annual capital-return disclosure at the listed-consolidated boundary.", "window_start": "2018-05-01T00:00:00+08:00", "window_end": "2019-04-30T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+      {"outcome_cell_id": "CELL:600425:20180430:LEVERAGE", "dimension": "LEVERAGE", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20180430:LEVERAGE", "definition": "Next annual leverage disclosure.", "window_start": "2018-05-01T00:00:00+08:00", "window_end": "2019-04-30T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}},
+      {"outcome_cell_id": "CELL:600425:20180430:PERMANENT_LOSS", "dimension": "PERMANENT_LOSS", "status": "UNSETTLED", "measurement_contract": {"contract_id": "OMC:600425:20180430:PERMANENT_LOSS", "definition": "Next annual permanent-loss boundary disclosure without a security-return proxy.", "window_start": "2018-05-01T00:00:00+08:00", "window_end": "2019-04-30T23:59:59+08:00", "allowed_source_types": ["OFFICIAL_AUDITED_ANNUAL_REPORT"], "prohibited_proxies": ["market price", "return"], "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"}}
+    ],
+    "roles": {"judgment_owner_id": "ROLE:CEMENT:JUDGMENT_OWNER", "independent_challenger_id": "ROLE:CEMENT:INDEPENDENT_CHALLENGER", "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"},
+    "object_class": "ENTERPRISE_JUDGMENT_EPISODE",
+    "claim_class": "CUTOFF_ENTERPRISE_RECONSTRUCTION",
+    "allowed_outputs": ["STATE_VIEW", "DECISION_VIEW", "MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"]
+  }
+]

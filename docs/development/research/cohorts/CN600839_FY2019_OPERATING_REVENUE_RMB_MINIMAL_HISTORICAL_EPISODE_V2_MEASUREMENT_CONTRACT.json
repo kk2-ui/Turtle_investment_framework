@@ -1,0 +1,42 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-measurement-contract.v2",
+  "measurement_contract_id": "MHE:CONTRACT:CN600839:FY2019:V2",
+  "measurement_contract_version": 2,
+  "company_id": "CN:600839",
+  "issuer_id": "ISSUER:CN:600839",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+  "window_id": "ONE_YEAR",
+  "decision_contract_ref": {
+    "decision_contract_id": "MHE:DECISION:CN600839:C1:V2",
+    "decision_contract_version": 1
+  },
+  "outcome_period_end": "2019-12-31",
+  "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+  "unit": "RMB",
+  "settlement_tolerance": 0.01,
+  "technical_route_identity_ref": {
+    "technical_route_identity_id": "MHE:ROUTE:CN600839:C1:V1",
+    "technical_route_identity_version": 1
+  },
+  "outcome_acquisition_route": {
+    "provider": "CNINFO_ANNOUNCEMENT_METADATA",
+    "provider_version": "phase10-cninfo-announcement-query.v1",
+    "security_code": "600839",
+    "organization_id": "gssh0600839",
+    "tab_name": "fulltext",
+    "announcement_category": "ANNUAL_REPORT",
+    "begin_date": "2020-01-01",
+    "end_date": "2020-12-31",
+    "page_size": 30,
+    "static_pdf_url_policy": "CNINFO_STATIC_FINALPAGE_PDF"
+  },
+  "roles": {
+    "forecaster_id": "FORECASTER:CN600839:C1:20260827",
+    "custodian_id": "CUSTODIAN:CN600839:FY2019:20260827"
+  },
+  "object_class": "MINIMAL_HISTORICAL_MEASUREMENT_CONTRACT",
+  "claim_class": "ONE_METRIC_PRE_OUTCOME_SCOPE",
+  "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

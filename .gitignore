@@ -1,54 +1,24 @@
-# Python
+*.db
+output/
+data/phase10/
+*.pdf
+*.pyc
 __pycache__/
-*.py[cod]
-*$py.class
+.venv/
+*.html
+!progress-dashboard.html
+!docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/official_context_raw/**/*.html
+.DS_Store
+.vscode/
 *.egg-info/
 dist/
 build/
-*.egg
-
-# Virtual environment
-.venv/
-venv/
-ENV/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Claude Code
-.claude/*
-!.claude/commands/
-!.claude/skills/
-.claude/commands/report-to-html.md
-.agents/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Project runtime outputs
-output/*
-!output/.gitkeep
-scripts/output/
-notebooks/output/
-
-# Sensitive
 .env
-*.token
-
-# PDF files (annual reports, too large for git)
-*.pdf
-
-# Tushare cache
-tushare_data/
-
-# Video assets
-video/
-
-# Project
-claude-progress.txt
-CLAUDE.md
-feature_list.json
+.project/evidence/
+/worktrees/
+.omc/
+scripts/.omc/
+turtle_framework/
+.env.*
+!.env.sample
+analyze.sh

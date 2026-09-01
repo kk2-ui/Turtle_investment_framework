@@ -1,0 +1,75 @@
+{
+  "schema_version": "historical-holdout-v4-cutoff-before-packet-receipt.v1",
+  "receipt_id": "HOLDOUT_V4_PACKET_RECEIPT:CN300059:CUTOFF_2024-05-01:FY2021_FY2023",
+  "candidate": {
+    "case_id": "HOLDOUT:CN300059:20240501:FY2021_FY2023:PAIR_V4",
+    "company_cluster_id": "COMPANY:CN300059",
+    "issuer_code": "CN300059",
+    "issuer_name": "东方财富",
+    "issuer_market": "CNINFO_SZSE"
+  },
+  "cutoff": {
+    "cutoff_date": "2024-05-01",
+    "admission_rule": "Only the three listed full annual reports, each officially published strictly before the cutoff, are in the paired packet."
+  },
+  "official_static_packet": [
+    {
+      "fiscal_year": "FY2021",
+      "source_id": "CNINFO:1212623862",
+      "announcement_title": "2021年年度报告",
+      "publication_date": "2022-03-19",
+      "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2022-03-19/1212623862.PDF",
+      "local_pdf_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2021_CNINFO_1212623862.pdf",
+      "local_text_extraction_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2021_CNINFO_1212623862.txt"
+    },
+    {
+      "fiscal_year": "FY2022",
+      "source_id": "CNINFO:1216145341",
+      "announcement_title": "2022年年度报告",
+      "publication_date": "2023-03-18",
+      "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2023-03-18/1216145341.PDF",
+      "local_pdf_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2022_CNINFO_1216145341.pdf",
+      "local_text_extraction_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2022_CNINFO_1216145341.txt"
+    },
+    {
+      "fiscal_year": "FY2023",
+      "source_id": "CNINFO:1219307793",
+      "announcement_title": "2023年年度报告",
+      "publication_date": "2024-03-15",
+      "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2024-03-15/1219307793.PDF",
+      "local_pdf_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2023_CNINFO_1219307793.pdf",
+      "local_text_extraction_path": "/tmp/cn300059_holdout_v4_packet.hkxNWx/FY2023_CNINFO_1219307793.txt"
+    }
+  ],
+  "common_source_packet_release_rule": "Release the same complete three-report local packet to both Baseline and Enhanced: the listed PDFs and their listed local text extractions only. Neither role may receive an added, substituted, withheld, or role-specific source file.",
+  "paired_allocation": {
+    "baseline": {
+      "source_files": "The same three listed report files and local text extractions.",
+      "report_reading_turns": 3,
+      "synthesis_turns": 1,
+      "total_turns": 4,
+      "permitted_tools": "Local search and local text extraction only; no browser or external tools."
+    },
+    "enhanced": {
+      "source_files": "The same three listed report files and local text extractions.",
+      "report_reading_turns": 3,
+      "synthesis_turns": 1,
+      "total_turns": 4,
+      "permitted_tools": "Local search and local text extraction only; no browser or external tools."
+    },
+    "equality_rule": "Baseline and Enhanced have identical source files, tool access, and turn allocation: three report-reading turns plus one synthesis turn each."
+  },
+  "role_firewall": {
+    "packet_custodian": "May retrieve only the three listed official CNINFO static PDFs, create their local text extractions, and record this receipt; must not interpret or summarize report content.",
+    "baseline_and_enhanced": "May work only from the common released local packet under the identical allocation stated here; they may not browse, call external tools, or add sources.",
+    "outcome_access": "No role receiving this packet may access FY2024 or post-cutoff metadata, report bodies, prices, returns, analyst material, subsequent events, or realized outcome material."
+  },
+  "negative_attestations": {
+    "fy2024_metadata_accessed": false,
+    "fy2024_report_or_outcome_body_accessed": false,
+    "post_cutoff_outcome_material_accessed": false,
+    "report_content_interpreted_or_summarized_by_packet_custodian": false,
+    "browser_used": false,
+    "external_source_used_other_than_the_three_listed_official_static_pdfs": false
+  }
+}

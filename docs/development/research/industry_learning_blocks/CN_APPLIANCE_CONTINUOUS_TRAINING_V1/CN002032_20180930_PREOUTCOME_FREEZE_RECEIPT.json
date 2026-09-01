@@ -1,0 +1,68 @@
+{
+  "schema_version": "appliance-continuous-training-preoutcome-freeze-receipt.v1",
+  "episode_id": "APPLIANCE-R11:CN002032:20180930:V1",
+  "curriculum_candidate_id": "APPLIANCE-CURRICULUM:PRODUCT-BOUNDARY-BEFORE-ISSUER-GROWTH:V1",
+  "roster_id": "APPLIANCE-R11:UNSEEN-ROSTER:20180930:V1",
+  "company_id": "CN:002032",
+  "issuer_id": "ISSUER:CN:002032",
+  "cutoff_at": "2018-09-30T23:59:59+08:00",
+  "frozen_at": "2026-08-28T10:04:50+08:00",
+  "method_identity": "MODEL_MEMORY_MITIGATED_HISTORICAL_APPLIANCE_TRAINING",
+  "role_exposure": {
+    "role_ids": [
+      "ROLE:APPLIANCE-R11:CN002032:STATIC_EVIDENCE_CURATOR_FUNCTION",
+      "ROLE:APPLIANCE-R11:CN002032:FORECASTER_FUNCTION"
+    ],
+    "company_id": "CN:002032",
+    "cutoff_at": "2018-09-30T23:59:59+08:00",
+    "actual_inputs": [
+      "ROUND10_VALUE_FREE_COMPLETION_AND_EXTERNAL_REVIEW",
+      "CN002032_FY2017_CUTOFF_BEFORE_STATIC_CNINFO_ANNUAL_REPORT"
+    ],
+    "outcome_period_input": "NOT_READ",
+    "role_independence": "SEQUENTIAL_FUNCTIONAL_PARTITION_NOT_HOLDOUT"
+  },
+  "source_id": "CNINFO:002032:ANN:20180331:1204552803",
+  "source_url": "https://static.cninfo.com.cn/finalpage/2018-03-31/1204552803.PDF",
+  "source_pages": [11, 12, 13, 16, 21, 34],
+  "baseline_treatment": "CONTINUE_OPERATING_UNDERWRITING",
+  "enhanced_treatment": "CONDITIONAL_PRODUCT_QUALITY_UNDERWRITING",
+  "evidence_requirement_delta_id": "APPLIANCE-R11:DELTA:PRODUCT-BOUNDARY-FIELD",
+  "field_contract_ids": [
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1"
+  ],
+  "predicted_directions": {
+    "CONSOLIDATED_REVENUE_RMB": "INCREASE",
+    "PRODUCT_REVENUE_RMB:电锅类": "INCREASE",
+    "CONSOLIDATED_OPERATING_CASH_FLOW_RMB": "STABLE"
+  },
+  "training_question": "发行人增长能否穿透到电锅产品责任边界，且现金证据是否足以维持正常经营承保处理？",
+  "strongest_alternative_explanation": "消费升级、SEB订单转移、品类组合和共同渠道扩张可以解释增长，而不证明公司特定行动效果。",
+  "known_unknowns": [
+    "客户忠诚与竞争响应不能由产品收入单独识别",
+    "现有采集目录没有冻结FY2018产品毛利率字段",
+    "发行人经营现金流不能替代普通股owner cash",
+    "上海赛博并表范围连续性需要结果期独立复核"
+  ],
+  "outcome_access": {
+    "authorized": false,
+    "content_read": false,
+    "custodian_started": false
+  },
+  "review_state": "PREOUTCOME_INDEPENDENT_REVIEW_REQUIRED",
+  "allowed_outputs": [
+    "OUTCOME_CUSTODY_REQUEST",
+    "INDEPENDENT_REVIEW_CANDIDATE",
+    "RESEARCH_AGENDA"
+  ],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

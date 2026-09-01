@@ -1,0 +1,23 @@
+{
+  "schema_version": "industry-knowledge-taxonomy.v1",
+  "industry_families": [
+    {"key": "property_services", "label": "物业服务", "description": "住宅、商业、城市服务及其关联轻资产服务", "aliases": ["物业服务", "物业管理", "城市服务"]},
+    {"key": "consumer_bottling", "label": "饮料装瓶与渠道消费", "description": "区域生产、配送与终端渠道网络", "aliases": ["饮料装瓶", "食品饮料", "软饮料", "饮料"]},
+    {"key": "cyclical_materials", "label": "周期材料", "description": "水泥、冶金、化工等受供需和重资产约束的行业", "aliases": ["水泥", "建材", "基础材料", "周期品"]},
+    {"key": "mining", "label": "矿业", "description": "资源储量、品位、回收率、成本与替代资本共同决定现金流", "aliases": ["矿业", "有色金属", "黄金", "铜矿"]},
+    {"key": "finite_life_reit", "label": "有限期限REIT与信托", "description": "有明确法律期限、资产到期或受限分配路径的载体", "aliases": ["房地产投资信托", "产业信托", "REIT", "REITS"]},
+    {"key": "project_delivery", "label": "项目交付与工程科技", "description": "订单、合同资产、验收和回款决定现金转换的项目型企业", "aliases": ["工程设计", "轨道交通", "项目交付", "系统集成"]},
+    {"key": "holding_company", "label": "控股平台", "description": "多层实体、内部债权、少数股东和上游分配影响普通股价值", "aliases": ["综合企业", "控股公司", "投资控股"]},
+    {"key": "mature_manufacturing", "label": "成熟制造", "description": "成熟需求、维护资本、营运资金和资本配置决定股东回报", "aliases": ["家用电器", "电器制造", "制造业", "工业制造"]}
+  ],
+  "mechanism_families": [
+    {"key": "margin_channel_cost_offset", "label": "毛利与渠道费用对冲", "description": "产品或投入成本引起的毛利变化，可能被销售、配送或促销效率抵消或放大"},
+    {"key": "asset_light_service_startup_capital_and_receivables", "label": "轻资产服务的启动资本与应收占用", "description": "轻资产收入增长仍可能由启动投入、合同资产和应收款吞噬现金"},
+    {"key": "cyclical_supply_exit_constraint", "label": "周期行业的供给退出约束", "description": "低回报并不自动迫使竞争者退出，恢复速度取决于资产、政策和区域供给约束"},
+    {"key": "finite_life_reit_distribution_vs_cash", "label": "有限期限信托的分派与真实现金", "description": "契约分派率不能替代债务、维护、资本返还和受限现金后的普通持有人现金"},
+    {"key": "mine_depletion_replacement_capital", "label": "矿业耗竭与替代资本", "description": "产量增长必须同时验证储量耗竭、品位、回收率、维持与替代资本"},
+    {"key": "project_contract_asset_cash_conversion", "label": "项目合同资产到现金转换", "description": "收入确认、验收、合同资产、应收、保理和回款周期可能长期背离"},
+    {"key": "cash_control_access_and_distribution", "label": "现金控制、上游与分配", "description": "合并现金、内部债权、少数股东、监管与控股股东安排决定现金能否抵达普通股"},
+    {"key": "product_mix_price_cost_transmission", "label": "产品组合与价格成本传导", "description": "销量、售价、产品组合和关键投入成本共同传导到毛利、费用和owner earnings"}
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "judgment-selection-observability-audit.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "cutoff_at": "2016-04-30T23:59:59+08:00",
+  "audit_scope": "CUTOFF_BEFORE_WHOLE_ISSUER_PRODUCTION_THROUGHPUT_ONLY",
+  "outcome_access": "PIT_OUTCOME_SEALED",
+  "question": "Do FY2013-FY2015 official annual reports continuously disclose whole-issuer beer production volume, sell-through or capacity utilization distinct from sales volume?",
+  "verdict": "NO_RECURRING_EXACT_PRODUCTION_THROUGHPUT_IDENTITY",
+  "source_findings": [
+    {
+      "fiscal_year": 2013,
+      "source_id": "CNINFO:600132:ANN:20140409:63807671",
+      "sales_volume": "120.20 ten-thousand kl",
+      "production_volume": "NOT_DISCLOSED_AT_WHOLE_ISSUER",
+      "sell_through": "NOT_DISCLOSED_AT_WHOLE_ISSUER",
+      "capacity_utilization": "NOT_DISCLOSED_AT_WHOLE_ISSUER"
+    },
+    {
+      "fiscal_year": 2014,
+      "source_id": "CNINFO:600132:ANN:20150410:1200803967",
+      "sales_volume": "104.76 ten-thousand kl",
+      "production_volume": "NOT_DISCLOSED_AT_WHOLE_ISSUER",
+      "sell_through": "NOT_DISCLOSED_AT_WHOLE_ISSUER",
+      "capacity_utilization": "NOT_DISCLOSED_AT_WHOLE_ISSUER"
+    },
+    {
+      "fiscal_year": 2015,
+      "source_id": "CNINFO:600132:ANN:20160409:1202154919",
+      "sales_volume": "98.95 ten-thousand kl in the recurring annual headline; 102.70 ten-thousand kl in the product table including 3.75 ten-thousand kl commissioned processing",
+      "production_volume": "88.77 ten-thousand kl in the product table",
+      "production_volume_change": "minus 6 percent year on year, rounded",
+      "sell_through": "NOT_DISCLOSED_AS_A_STABLE_WHOLE_ISSUER_METRIC",
+      "capacity_utilization": "NOT_DISCLOSED_AT_WHOLE_ISSUER"
+    }
+  ],
+  "single_plant_evidence": {
+    "observation": "The FY2015 report states a future Yibin relocation design capacity commitment.",
+    "classification": "NOT_COMPATIBLE_WITH_WHOLE_ISSUER_PRODUCTION_THROUGHPUT",
+    "reason": "It is a future single-plant design target, not realized consolidated production or utilization."
+  },
+  "prohibited_conversions": [
+    "copy annual sales volume into a production-volume predicate",
+    "treat product-table sales volume as production volume",
+    "derive an exact FY2014 production value from FY2015's rounded minus-6-percent change",
+    "use the Yibin plant design commitment as whole-issuer capacity utilization"
+  ],
+  "effect_on_current_freeze": {
+    "D2": "Annual headline sales volume remains observable as customer absorption context.",
+    "D3": "Whole-issuer operating-contribution amount remains observable without a product-volume denominator, but it is a downstream unit-economics result and cannot isolate plant throughput or fixed-cost absorption.",
+    "admission": "OPTIONAL_LAYER_UNKNOWN_NON_VOTER_PENDING_INDEPENDENT_REVIEW",
+    "hard_gate_rule": "The current product contract requires the five D1-D5 layers and makes D3_PRODUCT_VOLUME optional. Retain production throughput as UNKNOWN and non-voting, do not register a product-volume claim, and prohibit causal attribution of D3 changes to utilization alone."
+  },
+  "outcome_firewall_attestation": "This audit searched only the already acquired FY2013-FY2015 official annual-report texts. No post-cutoff title, filename, snippet, body, result, security price, valuation or return was accessed."
+}

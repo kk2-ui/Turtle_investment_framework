@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/decision_compiler_policy.schema.json",
+  "title": "Turtle Decision Compiler Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "compiler_version", "run_id", "enforced", "protected_chapters", "created_at", "decision_as_of", "max_market_age_days"],
+  "properties": {
+    "schema_version": {"const": "decision-compiler-policy.v1"},
+    "compiler_version": {"const": "decision-compiler.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "enforced": {"type": "boolean"},
+    "protected_chapters": {"type": "array", "const": [0, 9, 12, 13, 14]},
+    "created_at": {"type": "string", "minLength": 1},
+    "decision_as_of": {"type": "string", "format": "date"},
+    "max_market_age_days": {"type": "integer", "minimum": 0, "maximum": 31}
+  }
+}

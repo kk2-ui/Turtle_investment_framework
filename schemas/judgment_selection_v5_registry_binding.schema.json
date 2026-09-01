@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_selection_v5_registry_binding.schema.json",
+  "title": "Turtle registry-aware V5 comparative-admission binding",
+  "description": "A pre-seal provenance and panel-disposition receipt paired with, but never replacing, one canonical V5 economic selection bundle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "admission_epoch_id",
+    "binding_id",
+    "selection_freeze_id",
+    "registry_id",
+    "preseal_registry_event_sequence",
+    "target_carrier_id",
+    "ordered_panel_carrier_ids",
+    "registry_selection_arena_bridge",
+    "registry_panel_disposition_ledger",
+    "registry_preoutcome_review"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-selection-v5-registry-binding.v1"},
+    "admission_epoch_id": {"const": "JUDGMENT_SELECTION_ADMISSION_V5_REGISTRY_V1"},
+    "binding_id": {"$ref": "#/$defs/nonempty"},
+    "selection_freeze_id": {"$ref": "#/$defs/nonempty"},
+    "registry_id": {"$ref": "#/$defs/nonempty"},
+    "preseal_registry_event_sequence": {"type": "integer", "minimum": 1},
+    "target_carrier_id": {"$ref": "#/$defs/nonempty"},
+    "ordered_panel_carrier_ids": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonempty"}
+    },
+    "registry_selection_arena_bridge": {"$ref": "#/$defs/arena_bridge"},
+    "registry_panel_disposition_ledger": {
+      "type": "array",
+      "minItems": 4,
+      "items": {"$ref": "#/$defs/disposition"}
+    },
+    "registry_preoutcome_review": {"$ref": "#/$defs/review"}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "source_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonempty"}
+    },
+    "disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["carrier_id", "panel_disposition", "reason_code", "source_ids"],
+      "properties": {
+        "carrier_id": {"$ref": "#/$defs/nonempty"},
+        "panel_disposition": {"enum": ["TARGET", "EXTERNAL_SHOCK_COMPARATOR", "EXCLUDED_PREOUTCOME"]},
+        "reason_code": {"$ref": "#/$defs/nonempty"},
+        "source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "arena_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_competitive_arena_id", "selection_competitive_arena_id", "relation", "source_ids"],
+      "properties": {
+        "registry_competitive_arena_id": {"$ref": "#/$defs/nonempty"},
+        "selection_competitive_arena_id": {"$ref": "#/$defs/nonempty"},
+        "relation": {"const": "MECHANISM_COMPATIBLE"},
+        "source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "reviewed_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "admission_epoch_id", "binding_id", "selection_freeze_id", "registry_id", "preseal_registry_event_sequence", "target_carrier_id", "ordered_panel_carrier_ids", "registry_selection_arena_bridge", "registry_panel_disposition_ledger"],
+      "properties": {
+        "schema_version": {"const": "judgment-selection-v5-registry-binding.v1"},
+        "admission_epoch_id": {"const": "JUDGMENT_SELECTION_ADMISSION_V5_REGISTRY_V1"},
+        "binding_id": {"$ref": "#/$defs/nonempty"},
+        "selection_freeze_id": {"$ref": "#/$defs/nonempty"},
+        "registry_id": {"$ref": "#/$defs/nonempty"},
+        "preseal_registry_event_sequence": {"type": "integer", "minimum": 1},
+        "target_carrier_id": {"$ref": "#/$defs/nonempty"},
+        "ordered_panel_carrier_ids": {"type": "array", "minItems": 3, "maxItems": 7, "uniqueItems": true, "items": {"$ref": "#/$defs/nonempty"}},
+        "registry_selection_arena_bridge": {"$ref": "#/$defs/arena_bridge"},
+        "registry_panel_disposition_ledger": {"type": "array", "minItems": 4, "items": {"$ref": "#/$defs/disposition"}}
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_id", "pre_outcome_designer_id", "reviewer_id", "reviewed_at", "verdict", "reviewer_outcome_body_access", "reviewer_outcome_metadata_access", "reviewed_binding"],
+      "properties": {
+        "review_id": {"$ref": "#/$defs/nonempty"},
+        "pre_outcome_designer_id": {"$ref": "#/$defs/nonempty"},
+        "reviewer_id": {"$ref": "#/$defs/nonempty"},
+        "reviewed_at": {"type": "string", "format": "date-time"},
+        "verdict": {"const": "ACCEPTED"},
+        "reviewer_outcome_body_access": {"const": "NONE"},
+        "reviewer_outcome_metadata_access": {"const": "NONE"},
+        "reviewed_binding": {"$ref": "#/$defs/reviewed_binding"}
+      }
+    }
+  }
+}

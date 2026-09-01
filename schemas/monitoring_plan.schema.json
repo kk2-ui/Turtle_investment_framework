@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/monitoring_plan.schema.json",
+  "title": "Turtle post-publication monitoring plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "created_at", "report_id", "snapshot_fingerprint", "snapshot_file_sha256", "published_at", "thresholds", "predictions", "case_review_tasks", "policy", "warnings", "plan_fingerprint", "validation"],
+  "properties": {
+    "schema_version": {"const": "research-monitoring-plan.v2"},
+    "created_at": {"type": "string"},
+    "report_id": {"type": "string", "minLength": 1},
+    "snapshot_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "snapshot_file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "published_at": {"type": "string"},
+    "data_as_of": {"type": ["string", "null"]},
+    "thresholds": {"type": "array", "items": {"$ref": "#/$defs/threshold"}},
+    "predictions": {"type": "array", "items": {"type": "object"}},
+    "case_review_tasks": {"type": "array", "items": {"type": "object"}},
+    "policy": {
+      "type": "object",
+      "required": ["append_only_events", "post_publication_evidence_only", "exact_unit_and_accounting_match", "trigger_requires_decision_review", "automatic_trade_forbidden", "short_term_return_is_not_research_quality"]
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "plan_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "validation": {"type": "object"}
+  },
+  "$defs": {
+    "threshold": {
+      "type": "object",
+      "required": ["threshold_id", "threshold_fingerprint", "metric", "current_value", "threshold_value", "unit", "operator", "basis_type", "basis_description", "accounting_definition", "observation_frequency", "window", "aggregation", "minimum_observations", "late_data_tolerance_days", "outlier_policy", "action_after_review", "automatic_trade_forbidden"],
+      "properties": {
+        "threshold_id": {"type": "string", "minLength": 1},
+        "threshold_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "metric": {"type": "string", "minLength": 1},
+        "fact_name": {"type": ["string", "null"]},
+        "current_value": {"type": ["number", "integer", "null"]},
+        "threshold_value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "operator": {"enum": ["<", "<=", ">", ">=", "==", "changes_to"]},
+        "basis_type": {"type": "string"},
+        "basis_description": {"type": "string", "minLength": 1},
+        "accounting_definition": {"type": "string", "minLength": 1},
+        "observation_frequency": {"type": "string"},
+        "window": {"type": "string", "minLength": 1},
+        "aggregation": {"enum": ["single_period", "rolling_average", "consecutive_periods", "cumulative"]},
+        "minimum_observations": {"type": "integer", "minimum": 1},
+        "late_data_tolerance_days": {"type": "integer", "minimum": 0},
+        "hysteresis": {"type": ["number", "null"]},
+        "outlier_policy": {"const": "require_confirmation"},
+        "automatic_trade_forbidden": {"const": true}
+      }
+    }
+  }
+}

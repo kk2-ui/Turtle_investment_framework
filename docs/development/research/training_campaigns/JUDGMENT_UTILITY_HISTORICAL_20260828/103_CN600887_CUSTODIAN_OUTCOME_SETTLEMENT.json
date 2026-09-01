@@ -1,0 +1,199 @@
+{
+  "schema_version": "contract-limited-custodian-outcome-settlement.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "outcome_period": "FY2024",
+  "authorized_source": {
+    "publisher": "巨潮资讯网（上市公司信息披露）",
+    "title": "内蒙古伊利实业集团股份有限公司2024年年度报告",
+    "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2025-04-30/1223421123.PDF",
+    "announcement_id": "1223421123"
+  },
+  "settlement_scope": [
+    "A1_customer_absorption_product_sales_volume",
+    "A2_unit_economics_product_gross_margin",
+    "A3_owner_cash_after_long_term_asset_cash_spend",
+    "A4_enterprise_capital_return_weighted_average_ROE"
+  ],
+  "axes": [
+    {
+      "axis_id": "A1_customer_absorption_product_sales_volume",
+      "frozen_baseline": {
+        "definition": "合并口径、年报“产销量情况分析表”中各产品的销售量",
+        "unit": "吨",
+        "FY2021": {
+          "液体乳": 9612677,
+          "奶粉及奶制品": 252983,
+          "冷饮产品": 473103
+        },
+        "FY2022": {
+          "液体乳": 9494903,
+          "奶粉及奶制品": 345661,
+          "冷饮产品": 597539
+        },
+        "FY2023": {
+          "液体乳": 9694655,
+          "奶粉及奶制品": 355433,
+          "冷饮产品": 667183
+        }
+      },
+      "FY2024_matching_observation": {
+        "table": "产销量情况分析表",
+        "unit": "吨",
+        "official_pdf_pages": [20],
+        "per_product_local_results": [
+          {
+            "product": "液体乳",
+            "FY2023_frozen_baseline_sales_volume": 9694655,
+            "FY2024_sales_volume": 8926606,
+            "comparability": "COMPARABLE",
+            "comparison_to_FY2023": "BELOW_BASELINE"
+          },
+          {
+            "product": "奶粉及奶制品",
+            "FY2023_frozen_baseline_sales_volume": 355433,
+            "FY2024_sales_volume": 395243,
+            "comparability": "COMPARABLE",
+            "comparison_to_FY2023": "AT_OR_ABOVE_BASELINE"
+          },
+          {
+            "product": "冷饮产品",
+            "FY2023_frozen_baseline_sales_volume": 667183,
+            "FY2024_sales_volume": 541998,
+            "comparability": "COMPARABLE",
+            "comparison_to_FY2023": "BELOW_BASELINE"
+          }
+        ],
+        "comparability_basis": "FY2024 table retains each frozen product label and the 吨 unit; no product leg is LOCAL_MISMATCH."
+      },
+      "aggregate_status": "FAILURE",
+      "applicable_formula": "All three product legs are COMPARABLE; liquid milk FY2024 sales volume < 9,694,655 tons and cold drink FY2024 sales volume < 667,183 tons; therefore FAILURE.",
+      "official_pdf_pages": [20]
+    },
+    {
+      "axis_id": "A2_unit_economics_product_gross_margin",
+      "frozen_baseline": {
+        "definition": "合并口径、年报“主营业务分产品情况”中同名产品的毛利率",
+        "unit": "百分比（毛利率）",
+        "FY2021": {
+          "液体乳": 28.33,
+          "奶粉及奶制品": 39.22,
+          "冷饮产品": 40.27
+        },
+        "FY2022": {
+          "液体乳": 29.11,
+          "奶粉及奶制品": 41.06,
+          "冷饮产品": 38.48
+        },
+        "FY2023": {
+          "液体乳": 30.36,
+          "奶粉及奶制品": 38.14,
+          "冷饮产品": 38.45
+        }
+      },
+      "FY2024_matching_observation": {
+        "table": "主营业务分产品情况",
+        "revenue_and_cost_unit": "人民币元",
+        "gross_margin_unit": "百分比",
+        "official_pdf_pages": [19, 20],
+        "per_product_local_results": [
+          {
+            "product": "液体乳",
+            "FY2024_revenue": 75002672990.21,
+            "FY2024_cost": 51770470355.31,
+            "FY2023_frozen_baseline_gross_margin_percent": 30.36,
+            "FY2024_gross_margin_percent": 30.98,
+            "comparability": "COMPARABLE",
+            "comparison_to_FY2023": "AT_OR_ABOVE_BASELINE",
+            "official_pdf_page": 19
+          },
+          {
+            "product": "奶粉及奶制品",
+            "FY2024_revenue": 29675312533.8,
+            "FY2024_cost": 17503230124.97,
+            "FY2023_frozen_baseline_gross_margin_percent": 38.14,
+            "FY2024_gross_margin_percent": 41.02,
+            "comparability": "COMPARABLE",
+            "comparison_to_FY2023": "AT_OR_ABOVE_BASELINE",
+            "official_pdf_page": 20
+          },
+          {
+            "product": "冷饮产品",
+            "FY2024_revenue": 8721025613.26,
+            "FY2024_cost": 5457757147.64,
+            "FY2023_frozen_baseline_gross_margin_percent": 38.45,
+            "FY2024_gross_margin_percent": 37.42,
+            "comparability": "COMPARABLE",
+            "comparison_to_FY2023": "BELOW_BASELINE",
+            "official_pdf_page": 20
+          }
+        ],
+        "comparability_basis": "FY2024 table retains each frozen product label and discloses revenue, cost, and gross margin for every product leg; no product leg is LOCAL_MISMATCH."
+      },
+      "aggregate_status": "MIXED",
+      "applicable_formula": "All three product legs are COMPARABLE; not all FY2024 gross margins meet their FY2023 baselines, and liquid milk FY2024 gross margin is not below 30.36%; therefore MIXED.",
+      "official_pdf_pages": [19, 20]
+    },
+    {
+      "axis_id": "A3_owner_cash_after_long_term_asset_cash_spend",
+      "frozen_baseline": {
+        "definition": "合并现金流量表的“经营活动产生的现金流量净额”减“购建固定资产、无形资产和其他长期资产支付的现金”",
+        "unit": "人民币元",
+        "FY2021": {
+          "operating_cash_flow": 15527519680.07,
+          "long_term_asset_cash_spend": 6682734083.34,
+          "proxy": 8844785596.73
+        },
+        "FY2022": {
+          "operating_cash_flow": 13420320580.36,
+          "long_term_asset_cash_spend": 6646107588.62,
+          "proxy": 6774212991.74
+        },
+        "FY2023": {
+          "operating_cash_flow": 18290357650.56,
+          "long_term_asset_cash_spend": 6955597704.25,
+          "proxy": 11334779946.31
+        }
+      },
+      "FY2024_matching_observation": {
+        "table": "合并现金流量表",
+        "statement_scope": "合并",
+        "unit": "人民币元",
+        "operating_cash_flow": 21739740393.38,
+        "long_term_asset_cash_spend": 3978318320.96,
+        "cash_proxy": 17761422072.42,
+        "comparability": "COMPARABLE",
+        "comparability_basis": "The FY2024 consolidated cash-flow statement discloses both frozen row labels in RMB; no axis-level LOCAL_MISMATCH is present.",
+        "official_pdf_pages": {
+          "statement_title_and_operating_cash_flow": 94,
+          "long_term_asset_cash_spend": 95
+        }
+      },
+      "aggregate_status": "SUCCESS",
+      "applicable_formula": "21,739,740,393.38 - 3,978,318,320.96 = 17,761,422,072.42 RMB; 17,761,422,072.42 >= 8,844,785,596.73 RMB; therefore SUCCESS.",
+      "official_pdf_pages": [94, 95]
+    },
+    {
+      "axis_id": "A4_enterprise_capital_return_weighted_average_ROE",
+      "frozen_baseline": {
+        "definition": "年报“主要财务指标”披露的加权平均净资产收益率，按同一上市公司/股东权益口径",
+        "unit": "百分比",
+        "FY2021": 25.59,
+        "FY2022": 19.23,
+        "FY2023": 20.2
+      },
+      "FY2024_matching_observation": {
+        "table": "主要财务指标",
+        "metric": "加权平均净资产收益率",
+        "unit": "百分比",
+        "FY2024_weighted_average_ROE_percent": 15.81,
+        "comparability": "COMPARABLE",
+        "comparability_basis": "The FY2024 “主要财务指标” table retains the frozen metric label and shows the 2024 and 2023 comparison columns; no axis-level LOCAL_MISMATCH is present.",
+        "official_pdf_page": 7
+      },
+      "aggregate_status": "FAILURE",
+      "applicable_formula": "15.81% < 19.23%; therefore FAILURE.",
+      "official_pdf_pages": [7]
+    }
+  ],
+  "custody_boundary": "Mechanical A1-A4 settlement only; no proxy replaces a missing or mismatched observation."
+}

@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/fact_observations.schema.json",
+  "title": "Turtle Official Evidence Fact Observations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "manifest_hash", "observations", "observation_hash", "validation"],
+  "properties": {
+    "schema_version": {"const": "fact-observations.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "manifest_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generated_at": {"type": "string"},
+    "observations": {"type": "array", "items": {"$ref": "#/$defs/observation"}},
+    "observation_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "validation": {"$ref": "#/$defs/validation"}
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observation_id", "fact_name", "domain", "raw_value", "normalized_value", "unit", "currency", "basis", "as_of", "doc_id", "locator", "raw_text", "extraction_method", "status", "confidence", "conflict_ids"],
+      "properties": {
+        "observation_id": {"type": "string", "pattern": "^OBS:"},
+        "fact_name": {"type": "string", "minLength": 1},
+        "domain": {"type": "string", "minLength": 1},
+        "raw_value": {},
+        "normalized_value": {},
+        "unit": {"type": "string", "minLength": 1},
+        "currency": {"type": ["string", "null"]},
+        "basis": {"type": "string", "minLength": 1},
+        "valuation_evidence_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+        },
+        "valuation_exclusion_destinations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "OTHER_REPLACEMENT_COMPONENT",
+              "BALANCE_SHEET_WORKING_CAPITAL",
+              "EPV_MAINTENANCE_NEED"
+            ]
+          }
+        },
+        "as_of": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "temporal_role": {
+          "enum": ["POSITION_AS_OF", "HISTORICAL_PERIOD", "EVENT"]
+        },
+        "event_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "observed_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(?:[T ].*)?$"
+        },
+        "measurement_context": {"$ref": "#/$defs/measurement_context"},
+        "doc_id": {"type": "string", "pattern": "^DOC:"},
+        "locator": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "page": {"type": ["integer", "null"], "minimum": 1},
+            "section": {"type": ["string", "null"]},
+            "table": {"type": ["string", "null"]},
+            "row": {"type": ["string", "integer", "null"]},
+            "column": {"type": ["string", "integer", "null"]},
+            "char": {
+              "type": ["object", "null"],
+              "properties": {"start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 0}},
+              "required": ["start", "end"]
+            }
+          }
+        },
+        "raw_text": {"type": "string"},
+        "extraction_method": {"type": "string", "minLength": 1},
+        "status": {"enum": ["CANDIDATE", "VERIFIED", "REJECTED", "CONFLICT"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "conflict_ids": {"type": "array", "items": {"type": "string", "pattern": "^OBS:"}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"temporal_role": {"const": "HISTORICAL_PERIOD"}}, "required": ["temporal_role"]},
+          "then": {
+            "required": ["measurement_context"],
+            "properties": {
+              "measurement_context": {"required": ["period_start", "period_end"]}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"temporal_role": {"const": "EVENT"}}, "required": ["temporal_role"]},
+          "then": {"required": ["event_date", "observed_at"]}
+        }
+      ]
+    },
+    "measurement_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "period_start": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "period_end": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "economic_entity": {"type": ["string", "null"]},
+        "operating_perimeter": {"type": ["string", "null"]},
+        "cohort_id": {"type": ["string", "null"]},
+        "project_id": {"type": ["string", "null"]},
+        "customer_scope": {"type": ["string", "null"]},
+        "batch_id": {"type": ["string", "null"]},
+        "stock_flow_role": {
+          "enum": [
+            "OPENING_STOCK", "CLOSING_STOCK", "GROWTH_LAUNCH_ADDITION",
+            "STEADY_ROLLOVER_ADDITION", "COLLECTION_OR_SETTLEMENT",
+            "PERMANENT_LOSS", "NONCASH_SCOPE_CHANGE", null
+          ]
+        },
+        "settlement_status": {"type": ["string", "null"]},
+        "loss_treatment": {
+          "enum": ["RECURRING_EXPECTED", "ONE_OFF_PERMANENT", "NO_LOSS", "UNKNOWN", null]
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["state", "invalid_findings", "incomplete_findings", "warnings", "counts"],
+      "properties": {
+        "state": {"enum": ["INVALID", "INCOMPLETE", "REVIEWABLE"]},
+        "invalid_findings": {"type": "array", "items": {"type": "string"}},
+        "incomplete_findings": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}},
+        "counts": {"type": "object"}
+      }
+    }
+  }
+}

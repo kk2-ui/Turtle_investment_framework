@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:HK01502:20230501:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "HK:01502",
+  "company_name": "Financial Street Property",
+  "cutoff_at": "2023-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:HK01502:TEACHING", "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK01502_NONRESIDENTIAL_RENEWAL_COLLECTION_OWNER_CASH_V1.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:HK01502:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2024-05-01T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "非住宅外拓和置佳收购是否通过续约、项目毛利和收缴获得客户吸收。"},
+    {"clock_id": "CLOCK:HK01502:LONG", "horizon": "LONG_TERM_PERMANENT_LOSS", "opens_at": "2026-05-01T00:00:00+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "收购对价、补偿、减值和项目现金是否支持正常盈利与资本回收。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

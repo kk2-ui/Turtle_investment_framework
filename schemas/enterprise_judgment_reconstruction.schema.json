@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enterprise-judgment-reconstruction-spec.v1",
+  "title": "Turtle J1 Enterprise Judgment Reconstruction Spec",
+  "description": "A bounded, cutoff-safe selection of existing canonical enterprise-model and decision-ledger artifacts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "reconstruction_id", "company_id", "issuer_id", "cutoff_at", "decision_contract_ref", "source_packet_ref", "context_snapshot_id", "operating_system_model_id", "decision_ledger_slice_id", "feedback_loops", "decision_observation", "decision_ids", "roles", "object_class", "claim_class", "allowed_outputs"],
+  "properties": {
+    "schema_version": {"const": "enterprise-judgment-reconstruction-spec.v1"},
+    "reconstruction_id": {"type": "string", "minLength": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "issuer_id": {"type": "string", "minLength": 1},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "decision_contract_ref": {"$ref": "#/$defs/decision_contract_ref"},
+    "source_packet_ref": {"$ref": "#/$defs/source_packet_ref"},
+    "context_snapshot_id": {"type": "string", "minLength": 1},
+    "operating_system_model_id": {"type": "string", "minLength": 1},
+    "decision_ledger_slice_id": {"type": "string", "minLength": 1},
+    "feedback_loops": {"type": "array", "minItems": 2, "maxItems": 3, "items": {"$ref": "#/$defs/feedback_loop"}},
+    "decision_observation": {"$ref": "#/$defs/decision_observation"},
+    "decision_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "roles": {"$ref": "#/$defs/roles"},
+    "object_class": {"const": "ENTERPRISE_JUDGMENT_RECONSTRUCTION_SPEC"},
+    "claim_class": {"const": "CUTOFF_ENTERPRISE_RECONSTRUCTION"},
+    "allowed_outputs": {"const": ["RECONSTRUCTION_READ_MODEL", "CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]}
+  },
+  "$defs": {
+    "feedback_loop": {
+      "type": "object", "additionalProperties": false,
+      "required": ["loop_id", "domains", "variable_ids", "mechanism_ids", "financial_transmission_ids", "decision_ids", "selection_rationale", "evidence_refs"],
+      "properties": {
+        "loop_id": {"type": "string", "minLength": 1},
+        "domains": {"type": "array", "minItems": 1, "items": {"enum": ["CUSTOMER", "COMPETITION", "OPERATIONS", "CASH", "CAPITAL_ALLOCATION", "PERMANENT_LOSS"]}},
+        "variable_ids": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 1}},
+        "mechanism_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "financial_transmission_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "decision_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "selection_rationale": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "decision_contract_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contract_id", "contract_version"],
+      "properties": {"contract_id": {"type": "string", "minLength": 1}, "contract_version": {"type": "integer", "minimum": 1}}
+    },
+    "source_packet_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receipt_id", "receipt_version"],
+      "properties": {"receipt_id": {"type": "string", "minLength": 1}, "receipt_version": {"type": "integer", "minimum": 1}}
+    },
+    "decision_observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["observation_id", "status", "responsibility_unit_ids", "arena_ids", "reviewed_source_refs", "materiality_scope", "rationale", "next_discriminating_evidence"],
+      "properties": {
+        "observation_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["MATERIAL_DECISION_OBSERVED", "NO_MATERIAL_DECISION_OBSERVED", "INSUFFICIENT_EVIDENCE"]},
+        "responsibility_unit_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "arena_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "reviewed_source_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "materiality_scope": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+        "next_discriminating_evidence": {"type": "string", "minLength": 1}
+      }
+    },
+    "roles": {
+      "type": "object", "additionalProperties": false,
+      "required": ["judgment_owner_id", "independent_challenger_id", "outcome_custodian_id"],
+      "properties": {"judgment_owner_id": {"type": "string", "minLength": 1}, "independent_challenger_id": {"type": "string", "minLength": 1}, "outcome_custodian_id": {"type": "string", "minLength": 1}}
+    }
+  }
+}

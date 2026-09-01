@@ -1,0 +1,122 @@
+{
+  "schema_version": "enterprise-real-mechanism-preoutcome-control-plane-receipt.v3",
+  "receipt_id": "EMPCPR:CN:CEMENT:600802:20150415:V3",
+  "recorded_at": "2026-08-26T16:30:00+00:00",
+  "preoutcome_package_ref": {
+    "package_id": "EMFP:CN:CEMENT:600802:20150415:V3",
+    "schema_version": "enterprise-real-mechanism-preoutcome-package.v3",
+    "artifact": "29_round5_v3_preoutcome_mechanism_package.json",
+    "artifact_commit": "4311030b6cf27f7b856041b238041b05d3a788ab",
+    "transition_id": "CCR:600802:20150415:20160427",
+    "selected_rank": 18
+  },
+  "supersedes": {
+    "package_id": "EMFP:CN:CEMENT:600802:20150415:V2",
+    "control_receipt_id": "EMPCPR:CN:CEMENT:600802:20150415:V1",
+    "adjudication_id": "R5ADJ:CN600802:20150415:V2_TO_V3"
+  },
+  "canonical_selection_control": {
+    "control_plane_path": "/Users/xiami/workspace/analy/Turtle_investment_framework/stock_analysis.db",
+    "roster_freeze_ref": {
+      "freeze_id": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1"
+    },
+    "formal_receipt_refs": [
+      {
+        "receipt_id": "FBS:600801:20170412:001",
+        "receipt_version": 1
+      },
+      {
+        "receipt_id": "FBS:600585:20170412:002",
+        "receipt_version": 1
+      },
+      {
+        "receipt_id": "CFS:000401:20170412:R2:001",
+        "receipt_version": 1
+      },
+      {
+        "receipt_id": "R3FBS:600425:20140416:V1",
+        "receipt_version": 1
+      },
+      {
+        "receipt_id": "EMFSA:CN:CEMENT:600802:20140416:V1",
+        "receipt_version": 1
+      }
+    ],
+    "selection_result": {
+      "transition_id": "CCR:600802:20150415:20160427",
+      "company_id": "CN:600802",
+      "cutoff_at": "2015-04-15T00:00:00+08:00",
+      "next_cutoff_at": "2016-04-27T00:00:00+08:00",
+      "selected_rank": 18,
+      "selection_policy": "FIRST_RECEIPT_ELIGIBLE_IMMUTABLE_ROSTER_ROW_NO_OUTCOME_FILTER",
+      "selection_used_outcome": false,
+      "selection_used_lifecycle_label": false,
+      "selection_used_source_convenience": false
+    },
+    "caller_receipt_payloads_accepted": false,
+    "caller_roster_payloads_accepted": false
+  },
+  "canonical_j1_registration": {
+    "frozen": true,
+    "idempotent": true,
+    "reconstruction_id": "RECON:CN600802:20150415:MECHANISM",
+    "schema_version": "enterprise-judgment-reconstruction.v1",
+    "registry_role": "CANONICAL_FROZEN_J1_CONTROL_PLANE"
+  },
+  "canonical_measurement_contract_registration": {
+    "registered": true,
+    "idempotent": true,
+    "contract_set_id": "OMC:CN600802:20150415:MECHANISM:V3",
+    "schema_version": "enterprise-outcome-measurement-contract.v3",
+    "atomic_cell_count": 14,
+    "measurement_clocks": [
+      "FLOW_PERIOD",
+      "BALANCE_AS_OF",
+      "EVENT_WINDOW"
+    ],
+    "mismatch_propagation": "SIBLING_LOCAL"
+  },
+  "public_projections": {
+    "j2": {
+      "api": "enterprise_judgment_mechanism.compile_mechanism_thread_projection",
+      "thread_set_id": "J2:CN600802:20150415:MECHANISM:V2",
+      "valid": true
+    },
+    "j3": {
+      "api": "enterprise_judgment_forecast_projection.compile_forecast_projection",
+      "projection_id": "J3:CN600802:20150415:MECHANISM:V2",
+      "projection_state": "FORECAST_REQUESTS_READY",
+      "valid": true
+    }
+  },
+  "value_free_custody": {
+    "artifact": "30_round5_v3_value_free_custody_projection.json",
+    "projection_id": "CUSTODY:CCR:600802:20150415:20160427:V3",
+    "generation_api": "outcome_measurement_acquisition.build_value_free_custody_projection",
+    "submission_api": "outcome_measurement_round5_adapter.validate_canonical_custodian_submission",
+    "settlement_api": "outcome_measurement_round5_adapter.settle_via_public_adapter",
+    "atomic_measurement_contract_count": 14,
+    "contains_forecast_direction_or_value": false
+  },
+  "outcome_access": {
+    "authorized": false,
+    "content_read": false,
+    "custodian_started": false,
+    "settlement_created": false
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_REAL_MECHANISM_PREOUTCOME_CONTROL_PLANE_RECEIPT",
+  "claim_class": "CANONICAL_V3_PREOUTCOME_FREEZE_AND_VALUE_FREE_CUSTODY",
+  "allowed_outputs": [
+    "PREOUTCOME_CONTROL_PLANE_RECEIPT",
+    "OUTCOME_CUSTODY_REQUEST"
+  ]
+}

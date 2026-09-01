@@ -1,0 +1,1034 @@
+{
+  "schema_version": "industry-underwriting-context.v1",
+  "context_id": "IUC:CN:CEMENT_LISTED:CN000672:20180430:COURSE2B:V1",
+  "company_identity": {
+    "company_id": "CN:000672",
+    "company_name": "Gansu Shangfeng Cement Co., Ltd.",
+    "cutoff_at": "2018-04-30T23:59:59+08:00",
+    "industry_ids": [
+      "INDUSTRY:CN:CEMENT_LISTED",
+      "cement"
+    ]
+  },
+  "context_status": "READY",
+  "report_use": {
+    "mode": "REPORT_PREPARATION_READ_MODEL",
+    "non_blocking": true,
+    "can_support": [
+      "INDUSTRY_RESEARCH_AGENDA",
+      "CANDIDATE_INDUSTRY_FUTURE_THESIS",
+      "PEER_AND_NEAR_MISS_SELECTION"
+    ],
+    "cannot_establish": [
+      "COMPANY_FACT_WITHOUT_COMPANY_EVIDENCE",
+      "VALUATION_PARAMETER",
+      "INVESTMENT_ACTION"
+    ],
+    "boundary": "A BOUNDED context remains usable. The report must make and source its own best-current industry and company judgment."
+  },
+  "industry_value_chain": {
+    "stages": [
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "economic_scope": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "customer_job_or_choice": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "value_driver": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "failure_mode": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "A change in the reporting perimeter may alter the composition of a reported operating or cash series.",
+        "economic_scope": "A listed-consolidated cement issuer discloses an acquisition, restructuring or joint-venture perimeter condition.",
+        "customer_job_or_choice": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "value_driver": "A perimeter-continuity question attached to the affected issuer and cutoff.",
+        "failure_mode": "A cutoff-visible bridge establishes the same responsibility boundary and field definition.",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [
+          "CNINFO:600801:ANN:20170324:1203190337",
+          "CNINFO:000401:ANN:20180323:1204506085"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "The statements can support a bounded operating-to-cash reconstruction at the same issuer perimeter.",
+        "economic_scope": "Issuer-consolidated product, sales and audited cash fields are all cutoff-visible.",
+        "customer_job_or_choice": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "value_driver": "An accounting-boundary learning thread rather than owner-cash, competitive advantage or causal effect.",
+        "failure_mode": "A material perimeter, accounting or working-capital change makes the selected field non-diagnostic.",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20170324:1203189438",
+          "CNINFO:600425:ANN:20180421:1204677754"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "Cement and clinker sold through regional production, grinding, storage and transport assets. -> Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price.",
+        "economic_scope": "China regional delivered markets; national statistics are context rather than a target-company price.",
+        "customer_job_or_choice": "Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price.",
+        "value_driver": "Regional realized price and volume relative to limestone, fuel, power, environmental, grinding and logistics costs, with capital utilization and cash conversion.",
+        "failure_mode": "National supply discipline may not reach the target region, or idle capacity and cost inflation may compress the recovered margin.",
+        "profit_pool_direction": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+          "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+          "CNINFO:000672:FY2015:CYCLE_AND_COST",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      },
+      {
+        "arena_id": "ARENA:CN:CEMENT:EAST_CHINA_YANGTZE_DELIVERED_MARKET",
+        "mechanism": "Clinker, cement, aggregate and concrete produced or converted in Anhui and Zhejiang and delivered through Yangtze-region logistics. -> Regional customers require dependable bulk building material supply within an economical transport radius.",
+        "economic_scope": "East China and the middle/lower Yangtze, with Xinjiang and overseas projects treated as separate growth cohorts.",
+        "customer_job_or_choice": "Regional customers require dependable bulk building material supply within an economical transport radius.",
+        "value_driver": "Limestone and river-logistics position, local price discipline, grinding/storage utilization, product mix and cost control.",
+        "failure_mode": "Regional competition, coal and environmental costs, debt or capital absorbed outside the mature arena can prevent national profit-pool recovery from becoming ordinary-common cash.",
+        "profit_pool_direction": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+          "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+          "CNINFO:000672:FY2017:EXPANSION"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      }
+    ],
+    "customer_jobs": [
+      "Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price.",
+      "Regional customers require dependable bulk building material supply within an economical transport radius."
+    ]
+  },
+  "structural_epochs": [
+    {
+      "epoch_id": "EPOCH:CEMENT:2014",
+      "as_of": "2014-04-16T00:00:00+08:00",
+      "condition": "The H1 risk set contains five listed-consolidated cement issuers with date-only official annual-report material visible before the cutoff.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2015",
+      "as_of": "2015-04-15T00:00:00+08:00",
+      "condition": "The same five issuer identifiers remain in the H1 static risk set; this is a source-coverage state rather than a survival conclusion.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20150324:1200733224"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2016",
+      "as_of": "2016-04-27T00:00:00+08:00",
+      "condition": "The H1 static risk set continues to preserve all five issuer-consolidated boundaries before any later outcome access.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20160324:1202069257"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2017",
+      "as_of": "2017-04-12T00:00:00+08:00",
+      "condition": "A disclosed 15-plant acquisition approval makes Huaxin perimeter continuity an explicit measurement question while retaining it in the risk set.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20170324:1203190337"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2018:ANNUAL",
+      "as_of": "2018-04-22T00:00:00+08:00",
+      "condition": "The five H1 issuers remain in the static risk set, with Jidong restructuring and Huaxin perimeter continuity retained as lifecycle boundaries rather than removed observations.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:000401:ANN:20180323:1204506085"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:PRICE_LED_RECOVERY_WITH_UNRESOLVED_OVERCAPACITY:2017H1",
+      "as_of": "2018-04-30T23:59:59+08:00",
+      "condition": "Official cutoff context: 行业销量近乎横盘，需求繁荣不是同期价格和利润大幅恢复的首要解释。; 在行业销量近乎横盘时，显著提价是同期名义收入和利润池恢复的主要候选传导。; 价格恢复已经传导为行业收入、利润和利润率的同步扩张，利润池改善是真实观察，而不是只见价格未见盈利。; 利润池虽已恢复，但剩余过剩产能限制了把一次恢复外推为结构性高利润时代的可信度。; cutoff 前已经存在限制名义新增熟料能力的制度路径，为价格恢复提供供给纪律候选机制，但政策存在不等于执行已经兑现。; 错峰通过缩短熟料装置运转时间收缩阶段性有效供给，能够在需求平淡时改善价格纪律，但不等于永久退出名义产能。; 联合重组可能改善行业组织和区域价格纪律，但 60% 是政策目标，不是 cutoff 时已经实现的集中度事实。",
+      "observations": [
+        "2017 年上半年全国水泥产量为 11.1 亿吨，同比增长 0.4%。",
+        "2017 年 6 月全国水泥出厂均价为 321 元/吨，同比上涨 25.5%。",
+        "2017 年上半年水泥行业营收 4598 亿元，同比增长 21%；利润 333.6 亿元，同比增长 248%；销售利润率 7.3%，同比提高 4.8 个百分点。",
+        "工信部同期判断水泥产能过剩矛盾尚未根本解决，行业平稳运行基础尚不稳固。",
+        "国办发〔2016〕34 号明确 2020 年底前严禁备案和新建扩大产能的水泥熟料项目，并要求依法依规压减过剩产能。",
+        "国办发〔2016〕34 号要求采暖地区采暖期全面试行水泥熟料错峰生产，并倡导其他地区在春节和酷暑伏天错峰。",
+        "国办发〔2016〕34 号提出到 2020 年水泥熟料产量前十家企业生产集中度达到约 60%，并支持联合重组和主动压减竞争乏力产能。"
+      ],
+      "evidence_refs": [
+        "INDOBS:CN:CEMENT:2017H1:OUTPUT",
+        "INDOBS:CN:CEMENT:2017H1:PRICE",
+        "INDOBS:CN:CEMENT:2017H1:PROFIT_POOL",
+        "INDOBS:CN:CEMENT:2017H1:OVERCAPACITY",
+        "INDOBS:CN:CEMENT:2016:NEW_CAPACITY_RESTRAINT",
+        "INDOBS:CN:CEMENT:2016:PEAK_SHIFTING",
+        "INDOBS:CN:CEMENT:2016:CONSOLIDATION_TARGET"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2018:SELECTION",
+      "as_of": "2018-04-30T23:59:59+08:00",
+      "condition": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20180421:1204677754"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    }
+  ],
+  "industry_drivers": {
+    "demand": [
+      {
+        "driver": "2017 年上半年全国水泥产量为 11.1 亿吨，同比增长 0.4%。",
+        "profit_pool_effect": "DEMAND_VOLUME_NEAR_FLAT",
+        "evidence_refs": [
+          "INDOBS:CN:CEMENT:2017H1:OUTPUT"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "Cement and clinker sold through regional production, grinding, storage and transport assets. -> Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price. Regional realized price and volume relative to limestone, fuel, power, environmental, grinding and logistics costs, with capital utilization and cash conversion. National supply discipline may not reach the target region, or idle capacity and cost inflation may compress the recovered margin.",
+        "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+          "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+          "CNINFO:000672:FY2015:CYCLE_AND_COST",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      },
+      {
+        "driver": "Clinker, cement, aggregate and concrete produced or converted in Anhui and Zhejiang and delivered through Yangtze-region logistics. -> Regional customers require dependable bulk building material supply within an economical transport radius. Limestone and river-logistics position, local price discipline, grinding/storage utilization, product mix and cost control. Regional competition, coal and environmental costs, debt or capital absorbed outside the mature arena can prevent national profit-pool recovery from becoming ordinary-common cash.",
+        "profit_pool_effect": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+          "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+          "CNINFO:000672:FY2017:EXPANSION"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      }
+    ],
+    "supply": [
+      {
+        "driver": "工信部同期判断水泥产能过剩矛盾尚未根本解决，行业平稳运行基础尚不稳固。",
+        "profit_pool_effect": "DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+        "evidence_refs": [
+          "INDOBS:CN:CEMENT:2017H1:OVERCAPACITY"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "国办发〔2016〕34 号要求采暖地区采暖期全面试行水泥熟料错峰生产，并倡导其他地区在春节和酷暑伏天错峰。",
+        "profit_pool_effect": "EFFECTIVE_SUPPLY_SEASONALLY_RESTRAINED",
+        "evidence_refs": [
+          "INDOBS:CN:CEMENT:2016:PEAK_SHIFTING"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "Cement and clinker sold through regional production, grinding, storage and transport assets. -> Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price. Regional realized price and volume relative to limestone, fuel, power, environmental, grinding and logistics costs, with capital utilization and cash conversion. National supply discipline may not reach the target region, or idle capacity and cost inflation may compress the recovered margin.",
+        "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+          "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+          "CNINFO:000672:FY2015:CYCLE_AND_COST",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      },
+      {
+        "driver": "Clinker, cement, aggregate and concrete produced or converted in Anhui and Zhejiang and delivered through Yangtze-region logistics. -> Regional customers require dependable bulk building material supply within an economical transport radius. Limestone and river-logistics position, local price discipline, grinding/storage utilization, product mix and cost control. Regional competition, coal and environmental costs, debt or capital absorbed outside the mature arena can prevent national profit-pool recovery from becoming ordinary-common cash.",
+        "profit_pool_effect": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+          "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+          "CNINFO:000672:FY2017:EXPANSION"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      }
+    ],
+    "competition": [
+      {
+        "driver": "2017 年 6 月全国水泥出厂均价为 321 元/吨，同比上涨 25.5%。",
+        "profit_pool_effect": "PRICE_LED_PROFIT_POOL_EXPANSION",
+        "evidence_refs": [
+          "INDOBS:CN:CEMENT:2017H1:PRICE"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "2017 年上半年水泥行业营收 4598 亿元，同比增长 21%；利润 333.6 亿元，同比增长 248%；销售利润率 7.3%，同比提高 4.8 个百分点。",
+        "profit_pool_effect": "REPORTED_PROFIT_POOL_EXPANDED",
+        "evidence_refs": [
+          "INDOBS:CN:CEMENT:2017H1:PROFIT_POOL"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "国办发〔2016〕34 号提出到 2020 年水泥熟料产量前十家企业生产集中度达到约 60%，并支持联合重组和主动压减竞争乏力产能。",
+        "profit_pool_effect": "CONSOLIDATION_COULD_IMPROVE_DISCIPLINE",
+        "evidence_refs": [
+          "INDOBS:CN:CEMENT:2016:CONSOLIDATION_TARGET"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "Cement and clinker sold through regional production, grinding, storage and transport assets. -> Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price. Regional realized price and volume relative to limestone, fuel, power, environmental, grinding and logistics costs, with capital utilization and cash conversion. National supply discipline may not reach the target region, or idle capacity and cost inflation may compress the recovered margin.",
+        "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+          "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+          "CNINFO:000672:FY2015:CYCLE_AND_COST",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      },
+      {
+        "driver": "Clinker, cement, aggregate and concrete produced or converted in Anhui and Zhejiang and delivered through Yangtze-region logistics. -> Regional customers require dependable bulk building material supply within an economical transport radius. Limestone and river-logistics position, local price discipline, grinding/storage utilization, product mix and cost control. Regional competition, coal and environmental costs, debt or capital absorbed outside the mature arena can prevent national profit-pool recovery from becoming ordinary-common cash.",
+        "profit_pool_effect": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+          "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+          "CNINFO:000672:FY2017:EXPANSION"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      }
+    ],
+    "regulation": [
+      {
+        "driver": "国办发〔2016〕34 号明确 2020 年底前严禁备案和新建扩大产能的水泥熟料项目，并要求依法依规压减过剩产能。",
+        "profit_pool_effect": "POLICY_SUPPORTS_SUPPLY_DISCIPLINE",
+        "evidence_refs": [
+          "INDOBS:CN:CEMENT:2016:NEW_CAPACITY_RESTRAINT"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      },
+      {
+        "driver": "Cement and clinker sold through regional production, grinding, storage and transport assets. -> Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price. Regional realized price and volume relative to limestone, fuel, power, environmental, grinding and logistics costs, with capital utilization and cash conversion. National supply discipline may not reach the target region, or idle capacity and cost inflation may compress the recovered margin.",
+        "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+          "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+          "CNINFO:000672:FY2015:CYCLE_AND_COST",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      },
+      {
+        "driver": "Clinker, cement, aggregate and concrete produced or converted in Anhui and Zhejiang and delivered through Yangtze-region logistics. -> Regional customers require dependable bulk building material supply within an economical transport radius. Limestone and river-logistics position, local price discipline, grinding/storage utilization, product mix and cost control. Regional competition, coal and environmental costs, debt or capital absorbed outside the mature arena can prevent national profit-pool recovery from becoming ordinary-common cash.",
+        "profit_pool_effect": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+          "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+          "CNINFO:000672:FY2017:EXPANSION"
+        ],
+        "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      }
+    ]
+  },
+  "profit_pool_outlook": {
+    "direction": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+    "horizon": "2018-2021 demand, effective supply, regional price discipline, cost transmission and profit-pool durability",
+    "thesis": "截至 cutoff，全国需求量近乎横盘而价格、收入、利润和利润率同步恢复，新增熟料约束、错峰和重组提供有效供给纪律候选机制；但未解决过剩、区域差异和成本传导使恢复的跨周期耐久性仍需结算。",
+    "confidence": "MEDIUM_HIGH_ON_RECOVERY_MEDIUM_LOW_ON_DURABILITY",
+    "evidence_refs": [
+      "CNINFO:600801:ANN:20170324:1203190337",
+      "CNINFO:000401:ANN:20180323:1204506085",
+      "CNINFO:600585:ANN:20170324:1203189438",
+      "CNINFO:600425:ANN:20180421:1204677754",
+      "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+      "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+      "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+      "CNINFO:000672:FY2015:CYCLE_AND_COST",
+      "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+      "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+      "CNINFO:000672:FY2017:EXPANSION",
+      "INDOBS:CN:CEMENT:2017H1:OUTPUT",
+      "INDOBS:CN:CEMENT:2017H1:PRICE",
+      "INDOBS:CN:CEMENT:2017H1:PROFIT_POOL",
+      "INDOBS:CN:CEMENT:2017H1:OVERCAPACITY",
+      "INDOBS:CN:CEMENT:2016:NEW_CAPACITY_RESTRAINT",
+      "INDOBS:CN:CEMENT:2016:PEAK_SHIFTING",
+      "INDOBS:CN:CEMENT:2016:CONSOLIDATION_TARGET"
+    ]
+  },
+  "company_archetype_exposure": {
+    "archetype": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+    "responsibility_boundary": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+    "arena_ids": [
+      "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "ARENA:CN:CEMENT:EAST_CHINA_YANGTZE_DELIVERED_MARKET"
+    ],
+    "exposures": [
+      {
+        "dimension": "regional_delivered_price_and_volume",
+        "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+        "rationale": "National output and price cannot settle East China or the company's realized transmission.",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+          "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL"
+        ]
+      },
+      {
+        "dimension": "unit_cost_and_product_conversion",
+        "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+        "rationale": "Fuel, power, environmental cost and clinker-to-cement conversion determine how much industry price reaches margin.",
+        "evidence_refs": [
+          "CNINFO:000672:FY2015:CYCLE_AND_COST",
+          "CNINFO:000672:FY2017:PRODUCT_ECONOMICS"
+        ]
+      },
+      {
+        "dimension": "capital_intensity_financing_and_owner_cash",
+        "relation": "TARGET_COMPANY_VERIFICATION_REQUIRED",
+        "rationale": "Maintenance, all capital allocation, restricted cash, debt and growth-capital return must remain distinct.",
+        "evidence_refs": [
+          "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+        ]
+      },
+      {
+        "dimension": "mature_core_vs_growth_cohorts",
+        "relation": "SEPARATE_RESPONSIBILITY_BOUNDARIES",
+        "rationale": "East China mature assets, Xinjiang grinding, Kyrgyz construction and real estate cannot share one untested earnings or cash conclusion.",
+        "evidence_refs": [
+          "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+          "CNINFO:000672:FY2017:EXPANSION"
+        ]
+      }
+    ],
+    "current_state": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+    "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+    "evidence_refs": [],
+    "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+  },
+  "representative_peers": [
+    {
+      "company_id": "CN:600585",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:CONSOLIDATED_OPERATING_AND_CASH_TRACK",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Industry and regional conditions cannot be used as an individual counterfactual.",
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20180323:1204507132"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "company_id": "CN:600425",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:REGIONAL_OVERCAPACITY_CONTEXT",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Regional capacity pressure may be shared but is not a treatment-control field.",
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20180421:1204677754"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "company_id": "CN:600802",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:REGIONAL_MANUFACTURING_CONTEXT",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Regional market context does not identify customer response or competitive causality.",
+      "evidence_refs": [
+        "CNINFO:600802:ANN:20180417:1204639756"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    }
+  ],
+  "near_misses": [
+    {
+      "company_id": "CN:600801",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:ACQUISITION_PERIMETER_CONTINUITY",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "A perimeter change can make later aggregate operating fields non-comparable.",
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20180326:1204514309"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "near_miss_reason": "Material scope, control, or measurement boundary differs."
+    },
+    {
+      "company_id": "CN:000401",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:RESTRUCTURING_AND_JV_PERIMETER",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Perimeter continuity must precede any operating comparison.",
+      "evidence_refs": [
+        "CNINFO:000401:ANN:20180323:1204506085"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "near_miss_reason": "Material scope, control, or measurement boundary differs."
+    }
+  ],
+  "candidate_main_paths": [
+    {
+      "path_id": "IUP:CN:000672:OFFICIAL_CONTEXT",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "Official cutoff context: 行业销量近乎横盘，需求繁荣不是同期价格和利润大幅恢复的首要解释。; 在行业销量近乎横盘时，显著提价是同期名义收入和利润池恢复的主要候选传导。; 价格恢复已经传导为行业收入、利润和利润率的同步扩张，利润池改善是真实观察，而不是只见价格未见盈利。; 利润池虽已恢复，但剩余过剩产能限制了把一次恢复外推为结构性高利润时代的可信度。; cutoff 前已经存在限制名义新增熟料能力的制度路径，为价格恢复提供供给纪律候选机制，但政策存在不等于执行已经兑现。; 错峰通过缩短熟料装置运转时间收缩阶段性有效供给，能够在需求平淡时改善价格纪律，但不等于永久退出名义产能。; 联合重组可能改善行业组织和区域价格纪律，但 60% 是政策目标，不是 cutoff 时已经实现的集中度事实。",
+      "industry_force": "2017 年上半年全国水泥产量为 11.1 亿吨，同比增长 0.4%。; 2017 年 6 月全国水泥出厂均价为 321 元/吨，同比上涨 25.5%。; 2017 年上半年水泥行业营收 4598 亿元，同比增长 21%；利润 333.6 亿元，同比增长 248%；销售利润率 7.3%，同比提高 4.8 个百分点。; 工信部同期判断水泥产能过剩矛盾尚未根本解决，行业平稳运行基础尚不稳固。; 国办发〔2016〕34 号明确 2020 年底前严禁备案和新建扩大产能的水泥熟料项目，并要求依法依规压减过剩产能。; 国办发〔2016〕34 号要求采暖地区采暖期全面试行水泥熟料错峰生产，并倡导其他地区在春节和酷暑伏天错峰。; 国办发〔2016〕34 号提出到 2020 年水泥熟料产量前十家企业生产集中度达到约 60%，并支持联合重组和主动压减竞争乏力产能。",
+      "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+      "company_exposure": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+      "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+      "economics_implication": "Verify whether the observed industry drivers transmit through the target company's customer demand, realized price or mix, unit economics, capital needs, and cash conversion.",
+      "permanent_loss_implication": "若错峰退出、闲置产能复产、华东区域纪律失效或燃料环保成本不能传价，上峰的正常盈利会压缩；债务及新疆、境外和其他扩张资本可能同时成为低回报沉淀资产。",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+        "regional_delivered_price_and_volume",
+        "unit_cost_and_product_conversion",
+        "capital_intensity_financing_and_owner_cash",
+        "mature_core_vs_growth_cohorts"
+      ],
+      "evidence_refs": [
+        "INDOBS:CN:CEMENT:2017H1:OUTPUT",
+        "INDOBS:CN:CEMENT:2017H1:PRICE",
+        "INDOBS:CN:CEMENT:2017H1:PROFIT_POOL",
+        "INDOBS:CN:CEMENT:2017H1:OVERCAPACITY",
+        "INDOBS:CN:CEMENT:2016:NEW_CAPACITY_RESTRAINT",
+        "INDOBS:CN:CEMENT:2016:PEAK_SHIFTING",
+        "INDOBS:CN:CEMENT:2016:CONSOLIDATION_TARGET"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000672:1",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+      "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+      "company_exposure": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+      "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+      "economics_implication": "Normalized earnings and owner-cash transmission require company-specific verification.",
+      "permanent_loss_implication": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+        "regional_delivered_price_and_volume",
+        "unit_cost_and_product_conversion",
+        "capital_intensity_financing_and_owner_cash",
+        "mature_core_vs_growth_cohorts"
+      ],
+      "evidence_refs": []
+    },
+    {
+      "path_id": "IUP:CN:000672:2",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "A change in the reporting perimeter may alter the composition of a reported operating or cash series.",
+      "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+      "company_exposure": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+      "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+      "economics_implication": "Verify whether A perimeter-continuity question attached to the affected issuer and cutoff. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "A cutoff-visible bridge establishes the same responsibility boundary and field definition.",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+        "regional_delivered_price_and_volume",
+        "unit_cost_and_product_conversion",
+        "capital_intensity_financing_and_owner_cash",
+        "mature_core_vs_growth_cohorts"
+      ],
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20170324:1203190337",
+        "CNINFO:000401:ANN:20180323:1204506085"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000672:3",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "The statements can support a bounded operating-to-cash reconstruction at the same issuer perimeter.",
+      "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+      "company_exposure": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+      "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+      "economics_implication": "Verify whether An accounting-boundary learning thread rather than owner-cash, competitive advantage or causal effect. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "A material perimeter, accounting or working-capital change makes the selected field non-diagnostic.",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+        "regional_delivered_price_and_volume",
+        "unit_cost_and_product_conversion",
+        "capital_intensity_financing_and_owner_cash",
+        "mature_core_vs_growth_cohorts"
+      ],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20170324:1203189438",
+        "CNINFO:600425:ANN:20180421:1204677754"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000672:4",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "Cement and clinker sold through regional production, grinding, storage and transport assets. -> Construction, infrastructure and property customers choose reliable delivered cement supply at an acceptable quality-adjusted price.",
+      "profit_pool_effect": "PRICE_LED_EXPANSION_WITH_DURABILITY_CONSTRAINED_BY_OVERCAPACITY",
+      "company_exposure": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+      "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+      "economics_implication": "Verify whether Regional realized price and volume relative to limestone, fuel, power, environmental, grinding and logistics costs, with capital utilization and cash conversion. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "National supply discipline may not reach the target region, or idle capacity and cost inflation may compress the recovered margin.",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+        "regional_delivered_price_and_volume",
+        "unit_cost_and_product_conversion",
+        "capital_intensity_financing_and_owner_cash",
+        "mature_core_vs_growth_cohorts"
+      ],
+      "evidence_refs": [
+        "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+        "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+        "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+        "CNINFO:000672:FY2015:CYCLE_AND_COST",
+        "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:000672:5",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "Clinker, cement, aggregate and concrete produced or converted in Anhui and Zhejiang and delivered through Yangtze-region logistics. -> Regional customers require dependable bulk building material supply within an economical transport radius.",
+      "profit_pool_effect": "TARGET_COMPANY_TRANSMISSION_TO_VERIFY",
+      "company_exposure": "公司主要暴露于华东沿江区域 delivered market，并通过安徽浙江熟料、水泥、粉磨、码头、矿山和仓储体系传导全国供给纪律；新疆、境外与房地产具有不同责任边界。",
+      "adaptation_hypothesis": "降低熟料外销、提高水泥和骨料等就地转化、利用沿江物流及成本控制，可能使公司比单一熟料出售者更能保留区域利润池；债务、受限现金和扩张资本回报必须由目标公司证据验证。",
+      "economics_implication": "Verify whether Limestone and river-logistics position, local price discipline, grinding/storage utilization, product mix and cost control. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "Regional competition, coal and environmental costs, debt or capital absorbed outside the mature arena can prevent national profit-pool recovery from becoming ordinary-common cash.",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+        "regional_delivered_price_and_volume",
+        "unit_cost_and_product_conversion",
+        "capital_intensity_financing_and_owner_cash",
+        "mature_core_vs_growth_cohorts"
+      ],
+      "evidence_refs": [
+        "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+        "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+        "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+        "CNINFO:000672:FY2017:EXPANSION"
+      ]
+    }
+  ],
+  "strongest_counter_thesis": {
+    "statement": "价格恢复可能来自低基数、区域性供给扰动或阶段性错峰，而不是可持续的全国竞争纪律。",
+    "why_plausible": "This competing explanation is explicitly preserved by an input block, mechanism card, or arena failure mode; it is not dismissed by peer count.",
+    "discriminating_observations": [
+      "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+      "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+      "regional_delivered_price_and_volume",
+      "unit_cost_and_product_conversion",
+      "capital_intensity_financing_and_owner_cash",
+      "mature_core_vs_growth_cohorts"
+    ],
+    "evidence_refs": [
+      "INDOBS:CN:CEMENT:2017H1:PRICE"
+    ],
+    "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+  },
+  "company_verification_fields": [
+    {
+      "field": "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+      "kind": "QUESTION",
+      "why_it_matters": "Without it, management quality, capital allocation and action-effect conclusions remain unsupported.",
+      "evidence_refs": [],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "field": "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+      "kind": "QUESTION",
+      "why_it_matters": "A missing bridge can change the interpretation of operating cash and permanent-loss conditions.",
+      "evidence_refs": [],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "field": "regional_delivered_price_and_volume",
+      "kind": "FIELD",
+      "why_it_matters": "National output and price cannot settle East China or the company's realized transmission.",
+      "evidence_refs": [
+        "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+        "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL"
+      ],
+      "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+    },
+    {
+      "field": "unit_cost_and_product_conversion",
+      "kind": "FIELD",
+      "why_it_matters": "Fuel, power, environmental cost and clinker-to-cement conversion determine how much industry price reaches margin.",
+      "evidence_refs": [
+        "CNINFO:000672:FY2015:CYCLE_AND_COST",
+        "CNINFO:000672:FY2017:PRODUCT_ECONOMICS"
+      ],
+      "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+    },
+    {
+      "field": "capital_intensity_financing_and_owner_cash",
+      "kind": "FIELD",
+      "why_it_matters": "Maintenance, all capital allocation, restricted cash, debt and growth-capital return must remain distinct.",
+      "evidence_refs": [
+        "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT"
+      ],
+      "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+    },
+    {
+      "field": "mature_core_vs_growth_cohorts",
+      "kind": "FIELD",
+      "why_it_matters": "East China mature assets, Xinjiang grinding, Kyrgyz construction and real estate cannot share one untested earnings or cash conclusion.",
+      "evidence_refs": [
+        "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+        "CNINFO:000672:FY2017:EXPANSION"
+      ],
+      "source_object_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_ref": "INDOBS:CN:CEMENT:2017H1:OUTPUT",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_DEMAND"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDOBS:CN:CEMENT:2017H1:PRICE",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_COMPETITION"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDOBS:CN:CEMENT:2017H1:PROFIT_POOL",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_COMPETITION"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDOBS:CN:CEMENT:2017H1:OVERCAPACITY",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_SUPPLY"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDOBS:CN:CEMENT:2016:NEW_CAPACITY_RESTRAINT",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_REGULATION"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDOBS:CN:CEMENT:2016:PEAK_SHIFTING",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_SUPPLY"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "INDOBS:CN:CEMENT:2016:CONSOLIDATION_TARGET",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json"
+      ],
+      "supports": [
+        "OFFICIAL_INDUSTRY_COMPETITION"
+      ],
+      "knowledge_status": "OFFICIAL_CONTEXT_OBSERVATION"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20140325:63719331",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20150324:1200733224",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20160324:1202069257",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000401:ANN:20180323:1204506085",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "COMPANY_ARCHETYPE_OR_PEER",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600425:ANN:20180421:1204677754",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "COMPANY_ARCHETYPE_OR_PEER",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20180323:1204507132",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600801:ANN:20180326:1204514309",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600802:ANN:20180417:1204639756",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20170324:1203189438",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000672:FY2017:BUSINESS_AND_REGION",
+      "source_object_refs": [
+        "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      ],
+      "supports": [
+        "COMPANY_COMPETITIVE_ARENA",
+        "COMPANY_EXPOSURE"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000672:FY2017:PRODUCT_ECONOMICS",
+      "source_object_refs": [
+        "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      ],
+      "supports": [
+        "COMPANY_COMPETITIVE_ARENA",
+        "COMPANY_EXPOSURE"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000672:2018Q1:PRICE_VOLUME_SIGNAL",
+      "source_object_refs": [
+        "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      ],
+      "supports": [
+        "COMPANY_COMPETITIVE_ARENA",
+        "COMPANY_EXPOSURE"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000672:FY2015:CYCLE_AND_COST",
+      "source_object_refs": [
+        "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      ],
+      "supports": [
+        "COMPANY_COMPETITIVE_ARENA",
+        "COMPANY_EXPOSURE"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000672:FY2017:CASH_CAPITAL_DEBT",
+      "source_object_refs": [
+        "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      ],
+      "supports": [
+        "COMPANY_COMPETITIVE_ARENA",
+        "COMPANY_EXPOSURE"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000672:FY2016:SAME_CONTROL_BOUNDARY",
+      "source_object_refs": [
+        "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      ],
+      "supports": [
+        "COMPANY_COMPETITIVE_ARENA",
+        "COMPANY_EXPOSURE"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000672:FY2017:EXPANSION",
+      "source_object_refs": [
+        "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md"
+      ],
+      "supports": [
+        "COMPANY_COMPETITIVE_ARENA",
+        "COMPANY_EXPOSURE"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    }
+  ],
+  "knowledge_time": {
+    "cutoff_at": "2018-04-30T23:59:59+08:00",
+    "latest_included_at": "2018-04-30T15:59:59+00:00",
+    "excluded_future_source_refs": [],
+    "undated_source_refs": []
+  },
+  "source_objects": [
+    {
+      "kind": "OFFICIAL_INDUSTRY_OBSERVATION",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/60_official_industry_context_observations_v1.json",
+      "schema_version": "official-industry-context-observation-ledger.v1",
+      "use_status": "INCLUDED",
+      "boundary": "Official observations supply cutoff-safe industry context only; they do not establish a target-company fact."
+    },
+    {
+      "kind": "INDUSTRY_LEARNING_BLOCK",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "schema_version": "industry-learning-block.v1",
+      "use_status": "INCLUDED",
+      "boundary": "Referenced source object remains canonical; this context is only a projection."
+    },
+    {
+      "kind": "COMPANY_COMPETITIVE_ARENA",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/sources/01_CN000672_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "schema_version": "company-competitive-arena.v1",
+      "use_status": "INCLUDED",
+      "boundary": "Company arena supplies exposure and comparison scope; it is not an industry fact store."
+    },
+    {
+      "kind": "INDUSTRY_KNOWLEDGE_CONTEXT",
+      "ref": "scripts/industry_knowledge.py:read_industry_knowledge_context",
+      "schema_version": "industry-knowledge-context.v1",
+      "use_status": "EXCLUDED_BY_PIT_BOUNDARY",
+      "boundary": "Historical use requires an explicitly supplied object-level admitted context."
+    }
+  ],
+  "coverage": {
+    "available": [
+      "industry_value_chain",
+      "customer_jobs",
+      "structural_epochs",
+      "demand_drivers",
+      "supply_drivers",
+      "competition_drivers",
+      "regulation_drivers",
+      "profit_pool_direction",
+      "company_archetype_exposure",
+      "representative_peers",
+      "candidate_main_paths",
+      "strongest_counter_thesis",
+      "company_verification_fields",
+      "evidence_references"
+    ],
+    "bounded": []
+  },
+  "warnings": [
+    "current_industry_knowledge_not_loaded_in_pit_mode"
+  ]
+}

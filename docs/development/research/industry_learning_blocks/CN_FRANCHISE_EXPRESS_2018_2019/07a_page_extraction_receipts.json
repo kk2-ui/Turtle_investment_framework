@@ -1,0 +1,320 @@
+[
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:ISSUER_PARCEL_GROWTH",
+    "field_id": "FIELD:002120:FY2019:ISSUER_PARCEL_GROWTH",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 30,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "累计完成快递业务量100.3亿票",
+      "同比增长43.59%"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "43.59%"
+      ],
+      "multiplier": "0.01"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:SPREAD_ISSUER_GROWTH",
+    "field_id": "FIELD:002120:FY2019:SPREAD_ISSUER_GROWTH",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 30,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "累计完成快递业务量100.3亿票",
+      "同比增长43.59%"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "43.59%"
+      ],
+      "multiplier": "0.01"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2018:MARKET_SHARE",
+    "field_id": "FIELD:002120:FY2018:MARKET_SHARE",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 30,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "市场份额达15.79%",
+      "提高2.02个百分点"
+    ],
+    "value_expression": {
+      "operator": "DIFFERENCE_SCALED_TOKENS",
+      "tokens": [
+        "15.79%",
+        "2.02"
+      ],
+      "multiplier": "0.01"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:MARKET_SHARE",
+    "field_id": "FIELD:002120:FY2019:MARKET_SHARE",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 30,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "市场份额达15.79%",
+      "提高2.02个百分点"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "15.79%"
+      ],
+      "multiplier": "0.01"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:PARCEL_VOLUME_RPP_DENOMINATOR",
+    "field_id": "FIELD:002120:FY2019:PARCEL_VOLUME_RPP_DENOMINATOR",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 30,
+    "unit": "PARCEL",
+    "anchor_tokens": [
+      "累计完成快递业务量100.3亿票",
+      "同比增长43.59%"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "100.3"
+      ],
+      "multiplier": "100000000"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2018:OPERATING_CASH_FLOW",
+    "field_id": "FIELD:002120:FY2018:OPERATING_CASH_FLOW",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 6,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "经营活动产生的现金流量净额",
+      "3,714,468,466.28"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "3,714,468,466.28"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:OPERATING_CASH_FLOW",
+    "field_id": "FIELD:002120:FY2019:OPERATING_CASH_FLOW",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 6,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "经营活动产生的现金流量净额",
+      "5,035,636,370.68"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "5,035,636,370.68"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2018:CASH_CAPEX",
+    "field_id": "FIELD:002120:FY2018:CASH_CAPEX",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 138,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "购建固定资产、无形资产和其他",
+      "3,469,731,936.52"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "3,469,731,936.52"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:CASH_CAPEX",
+    "field_id": "FIELD:002120:FY2019:CASH_CAPEX",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 138,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "购建固定资产、无形资产和其他",
+      "4,377,106,950.41"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "4,377,106,950.41"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2018:OCF_RATIO_NUMERATOR",
+    "field_id": "FIELD:002120:FY2018:OCF_RATIO_NUMERATOR",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 6,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "经营活动产生的现金流量净额",
+      "3,714,468,466.28"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "3,714,468,466.28"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2018:CAPEX_RATIO_DENOMINATOR",
+    "field_id": "FIELD:002120:FY2018:CAPEX_RATIO_DENOMINATOR",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 138,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "购建固定资产、无形资产和其他",
+      "3,469,731,936.52"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "3,469,731,936.52"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:OCF_RATIO_NUMERATOR",
+    "field_id": "FIELD:002120:FY2019:OCF_RATIO_NUMERATOR",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 6,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "经营活动产生的现金流量净额",
+      "5,035,636,370.68"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "5,035,636,370.68"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:CAPEX_RATIO_DENOMINATOR",
+    "field_id": "FIELD:002120:FY2019:CAPEX_RATIO_DENOMINATOR",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 138,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "购建固定资产、无形资产和其他",
+      "4,377,106,950.41"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "4,377,106,950.41"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2018:ASSET_LIABILITY_RATIO",
+    "field_id": "FIELD:002120:FY2018:ASSET_LIABILITY_RATIO",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 129,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "负债合计",
+      "负债和所有者权益总计"
+    ],
+    "value_expression": {
+      "operator": "RATIO_TOKENS",
+      "tokens": [
+        "6,539,236,799.10",
+        "18,080,928,087.75"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R8:FIELD:002120:FY2019:ASSET_LIABILITY_RATIO",
+    "field_id": "FIELD:002120:FY2019:ASSET_LIABILITY_RATIO",
+    "source_id": "CNINFO:002120:ANN:20200430:1207682788",
+    "pdf_page": 129,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "负债合计",
+      "负债和所有者权益总计"
+    ],
+    "value_expression": {
+      "operator": "RATIO_TOKENS",
+      "tokens": [
+        "8,962,500,289.53",
+        "22,496,654,773.40"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  }
+]

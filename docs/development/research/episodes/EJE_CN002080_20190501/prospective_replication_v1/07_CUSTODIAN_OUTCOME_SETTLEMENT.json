@@ -1,0 +1,556 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-settlement.v1",
+  "settlement_id": "PEJOS:CN002080:20190501:FY2019:REPLICATION:V1",
+  "authorization_id": "PEJOA:CN002080:20190501:FY2019:REPLICATION:V1",
+  "company_id": "CN:002080",
+  "period": "FY2019",
+  "outcome_source": {
+    "source_id": "CNINFO:1207381473",
+    "title": "中材科技股份有限公司2019年年度报告全文",
+    "publication_date": "2020-03-18",
+    "publisher": "巨潮资讯网",
+    "url": "https://static.cninfo.com.cn/finalpage/2020-03-18/1207381473.PDF",
+    "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+    "page_count": 232,
+    "selection_status": "UNIQUE_QUALIFYING_FULL_REPORT",
+    "selection_note": "The CNINFO annual-report query through 2020-05-01 returned announcement 1207381473 as the full FY2019 report and 1207380995 as the summary. The summary was excluded, and no corrected or revised full FY2019 report was found in the authorized publication window."
+  },
+  "settlement_boundary": {
+    "settled_field_set": "UNION_OF_BASELINE_AND_ENHANCED_CONTRACT_FIELDS_ONLY",
+    "price_access": "NOT_USED",
+    "comparative_access": "NOT_USED",
+    "formal_valuation_access": "NOT_USED",
+    "investment_access": "NOT_USED",
+    "not_disclosed_rule": "UNKNOWN_NOT_ZERO_OR_PAID",
+    "scope_resolution": "PRODUCT_SUBSIDIARY_PROJECT_AND_GROUP_SCOPES_RESOLVED_SEPARATELY"
+  },
+  "scope_settlement": {
+    "consolidated_product_scope": {
+      "status": "LOCAL_SCOPE_MISMATCH_FOR_CROSS_YEAR_TREND",
+      "value": "FY2019 consolidated lithium-separator disclosures include Zhongcai Lithium Film and Hunan Zhongli; Hunan Zhongli entered consolidation during 2019.",
+      "evidence_pages": [10, 21, 22],
+      "short_paraphrase": "The report says Hunan Zhongli was consolidated during 2019 and attributes the large product-volume change partly to that acquisition. FY2019 current levels remain disclosed, but the product trend perimeter is not continuous."
+    },
+    "zhongcai_lithium_film_subsidiary_scope": {
+      "status": "DISCLOSED_COMPARABLE",
+      "value": {
+        "entity": "中材锂膜有限公司",
+        "business_scope": "Lithium-battery separator research, manufacture and sale",
+        "direct_ownership_percent": 86.5
+      },
+      "unit": "EVENT_AND_PERCENT",
+      "evidence_pages": [31, 197],
+      "short_paraphrase": "The subsidiary is separately reported with the same lithium-separator business description and 86.50% direct ownership."
+    },
+    "same_project_obligation_scope": {
+      "status": "DISCLOSED_COMPARABLE_WITH_SEPARATE_NEW_PHASE_EXPANSION",
+      "value": "The 2.4-billion-square-metre separator project retains the same RMB 1,075.4347 million contract denominator; a separate 4.08-billion-square-metre phase-two project was launched in FY2019.",
+      "unit": "EVENT",
+      "evidence_pages": [17, 219],
+      "short_paraphrase": "The commitment table identifies the 2.4-billion-square-metre project and its contract amounts, while the operating review separately identifies the new 4.08-billion-square-metre phase-two project."
+    },
+    "group_scope_continuity": {
+      "status": "LOCAL_SCOPE_MISMATCH_FOR_CROSS_YEAR_TREND",
+      "value": "FY2019 added Hunan Zhongli, Beijing FRP Research & Design Institute and Zhongcai Dazhuang Membrane Technology as second-level consolidated subsidiaries, plus two Hunan Zhongli third-level subsidiaries.",
+      "unit": "EVENT",
+      "evidence_pages": [22, 117, 194, 196],
+      "short_paraphrase": "The report discloses five newly consolidated entities, including two acquired second-level subsidiaries and one newly established second-level subsidiary. FY2019 group current levels remain disclosed, but the perimeter is not continuous."
+    }
+  },
+  "fields": [
+    {
+      "field_id": "LITHIUM_SEPARATOR_FOUR_LINE_STATUS_FY2019",
+      "status": "DISCLOSED",
+      "value": "FOUR_LINES_ALL_COMPLETED_AND_IN_PRODUCTION; CURRENT_OPERATION_REPORTED_GOOD",
+      "unit": "EVENT",
+      "evidence_pages": [10, 17],
+      "short_paraphrase": "All four 60-million-square-metre lines at Zhongcai Lithium Film's Tengzhou phase-one project were completed and put into production; the report describes their operating condition as good.",
+      "scope_limit": "ZHONGCAI_LITHIUM_FILM_FOUR_LINE_EVENT_ONLY"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_CUSTOMER_CERTIFICATION_ORDER_EVENT_FY2019",
+      "status": "PARTIALLY_DISCLOSED",
+      "value": {
+        "customer_testing_and_certification": "DISCLOSED",
+        "batch_supply": "DISCLOSED",
+        "specific_order_event": "UNKNOWN",
+        "long_term_agreement": "UNKNOWN"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [33],
+      "short_paraphrase": "The consolidated lithium-separator business passed tests and certifications of domestic and overseas strategic customers and achieved batch supply; the report does not state a specific FY2019 order or long-term agreement in this disclosure.",
+      "scope_limit": "CONSOLIDATED_PRODUCT_EVENT; NOT_ATTRIBUTED_TO_ZHONGCAI_LITHIUM_FILM_OR_A_SPECIFIC_PROJECT"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PRODUCT_REVENUE_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 335667638.44,
+      "unit": "RMB",
+      "evidence_pages": [19],
+      "short_paraphrase": "The product revenue table reports FY2019 lithium-battery separator revenue of RMB 335,667,638.44.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_SALES_SQM_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 180500000,
+      "unit": "SQUARE_METRES",
+      "evidence_pages": [21],
+      "short_paraphrase": "The product volume table reports lithium-battery separator sales of 18,050 ten-thousand square metres, equal to 180,500,000 square metres.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PRODUCTION_SQM_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 232570000,
+      "unit": "SQUARE_METRES",
+      "evidence_pages": [21],
+      "short_paraphrase": "The product volume table reports lithium-battery separator production of 23,257 ten-thousand square metres, equal to 232,570,000 square metres.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_ENDING_INVENTORY_SQM_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 56520000,
+      "unit": "SQUARE_METRES",
+      "evidence_pages": [21],
+      "short_paraphrase": "The product volume table reports lithium-battery separator ending inventory of 5,652 ten-thousand square metres, equal to 56,520,000 square metres.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_REVENUE_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 187552294.09,
+      "unit": "RMB",
+      "evidence_pages": [31, 199],
+      "short_paraphrase": "The separately reported subsidiary revenue for Zhongcai Lithium Film is RMB 187,552,294.09."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_OPERATING_PROFIT_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": -52684195.98,
+      "unit": "RMB",
+      "evidence_pages": [31],
+      "short_paraphrase": "The principal-subsidiary table reports Zhongcai Lithium Film operating profit of negative RMB 52,684,195.98."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_NET_PROFIT_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 25420588.37,
+      "unit": "RMB",
+      "evidence_pages": [31, 199],
+      "short_paraphrase": "The separately reported subsidiary net profit for Zhongcai Lithium Film is RMB 25,420,588.37."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_OCF_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 20286469.76,
+      "unit": "RMB",
+      "evidence_pages": [199],
+      "short_paraphrase": "The non-wholly-owned-subsidiary table reports Zhongcai Lithium Film operating cash flow of RMB 20,286,469.76."
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PROJECT_UNPAID_CONTRACT_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 56963700,
+      "unit": "RMB",
+      "evidence_pages": [219],
+      "short_paraphrase": "The commitment table reports RMB 56.9637 million unpaid on the 2.4-billion-square-metre separator production-line project contract.",
+      "scope_limit": "SAME_2_4_BILLION_SQUARE_METRE_PROJECT_ONLY; EXCLUDES_SEPARATE_4_08_BILLION_SQUARE_METRE_PHASE_TWO"
+    },
+    {
+      "field_id": "CONSOLIDATED_OCF_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 2969563548.54,
+      "unit": "RMB",
+      "evidence_pages": [105],
+      "short_paraphrase": "The consolidated cash-flow statement reports FY2019 net cash from operating activities of RMB 2,969,563,548.54.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_CAPEX_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 2176682415.89,
+      "unit": "RMB",
+      "evidence_pages": [105],
+      "short_paraphrase": "The consolidated cash-flow statement reports RMB 2,176,682,415.89 paid to acquire or construct fixed assets, intangible assets and other long-term assets.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_BALANCE_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 1655005114.52,
+      "unit": "RMB",
+      "evidence_pages": [93],
+      "short_paraphrase": "The consolidated balance sheet reports year-end monetary funds of RMB 1,655,005,114.52.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_ACCOUNTS_RECEIVABLE_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 3339367749.11,
+      "unit": "RMB",
+      "evidence_pages": [94],
+      "short_paraphrase": "The consolidated balance sheet reports year-end accounts receivable of RMB 3,339,367,749.11.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_INVENTORY_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 2151400110.76,
+      "unit": "RMB",
+      "evidence_pages": [94],
+      "short_paraphrase": "The consolidated balance sheet reports year-end inventory of RMB 2,151,400,110.76.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_SHORT_TERM_BORROWINGS_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 3528876277.45,
+      "unit": "RMB",
+      "evidence_pages": [95],
+      "short_paraphrase": "The consolidated balance sheet reports year-end short-term borrowings of RMB 3,528,876,277.45.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_CURRENT_PORTION_NONCURRENT_LIABILITIES_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 737592162.15,
+      "unit": "RMB",
+      "evidence_pages": [96],
+      "short_paraphrase": "The consolidated balance sheet reports year-end current portion of non-current liabilities of RMB 737,592,162.15.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_LONG_TERM_BORROWINGS_RMB_FY2019_LEVEL",
+      "status": "DISCLOSED",
+      "value": 3357579121.38,
+      "unit": "RMB",
+      "evidence_pages": [96],
+      "short_paraphrase": "The consolidated balance sheet reports year-end long-term borrowings of RMB 3,357,579,121.38.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PRODUCT_SCOPE_CONTINUITY_EVENT_FY2019",
+      "status": "LOCAL_SCOPE_MISMATCH",
+      "value": "FY2019_CONSOLIDATED_PRODUCT_SCOPE_ADDED_HUNAN_ZHONGLI_DURING_THE_YEAR",
+      "unit": "EVENT",
+      "evidence_pages": [10, 21, 22],
+      "short_paraphrase": "Hunan Zhongli entered the consolidated scope during FY2019, and the report explicitly attributes the product-volume change partly to that acquisition; the mismatch is local to product trends and derived product comparisons."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_RESPONSIBILITY_OWNERSHIP_CONTINUITY_EVENT_FY2019",
+      "status": "DISCLOSED_COMPARABLE",
+      "value": {
+        "event": "OWNERSHIP_AND_BUSINESS_SCOPE_CONTINUOUS",
+        "direct_ownership_percent": 86.5
+      },
+      "unit": "EVENT_AND_PERCENT",
+      "evidence_pages": [31, 197],
+      "short_paraphrase": "Zhongcai Lithium Film remains separately identified as a lithium-separator research, manufacturing and sales subsidiary with 86.50% direct ownership."
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PROJECT_CONTRACT_IDENTITY_AND_REPLACEMENT_EXPANSION_EVENT_FY2019",
+      "status": "DISCLOSED",
+      "value": "SAME_2_4_BILLION_SQUARE_METRE_PROJECT_IDENTIFIED; SEPARATE_4_08_BILLION_SQUARE_METRE_PHASE_TWO_EXPANSION_PRESENT",
+      "unit": "EVENT",
+      "evidence_pages": [17, 219],
+      "short_paraphrase": "The same 2.4-billion-square-metre project is shown with its unchanged contract denominator, and a distinct 4.08-billion-square-metre phase-two project was launched in FY2019."
+    },
+    {
+      "field_id": "CONSOLIDATION_PERIMETER_CONTINUITY_EVENT",
+      "status": "LOCAL_SCOPE_MISMATCH",
+      "value": "FIVE_ENTITIES_NEWLY_INCLUDED_IN_FY2019_CONSOLIDATION_SCOPE",
+      "unit": "EVENT",
+      "evidence_pages": [22, 117, 194, 196],
+      "short_paraphrase": "FY2019 newly consolidated five entities: three second-level companies and two third-level Hunan Zhongli subsidiaries; the mismatch is local to group cross-year trends."
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_FOUR_LINE_STATUS_EVENT",
+      "status": "DISCLOSED",
+      "value": "FOUR_LINES_ALL_COMPLETED_AND_IN_PRODUCTION; CURRENT_OPERATION_REPORTED_GOOD",
+      "unit": "EVENT",
+      "evidence_pages": [10, 17],
+      "short_paraphrase": "All four 60-million-square-metre lines at Zhongcai Lithium Film's Tengzhou phase-one project were completed and put into production; the report describes their operating condition as good.",
+      "scope_limit": "ZHONGCAI_LITHIUM_FILM_FOUR_LINE_EVENT_ONLY"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_CUSTOMER_CERTIFICATION_ORDER_EVENT",
+      "status": "PARTIALLY_DISCLOSED",
+      "value": {
+        "customer_testing_and_certification": "DISCLOSED",
+        "batch_supply": "DISCLOSED",
+        "specific_order_event": "UNKNOWN",
+        "long_term_agreement": "UNKNOWN"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [33],
+      "short_paraphrase": "The consolidated lithium-separator business passed tests and certifications of domestic and overseas strategic customers and achieved batch supply; the report does not state a specific FY2019 order or long-term agreement in this disclosure.",
+      "scope_limit": "CONSOLIDATED_PRODUCT_EVENT; NOT_ATTRIBUTED_TO_ZHONGCAI_LITHIUM_FILM_OR_A_SPECIFIC_PROJECT"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PRODUCT_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 335667638.44,
+      "unit": "RMB",
+      "evidence_pages": [19],
+      "short_paraphrase": "The product revenue table reports FY2019 lithium-battery separator revenue of RMB 335,667,638.44.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_SALES_SQM",
+      "status": "DISCLOSED",
+      "value": 180500000,
+      "unit": "SQUARE_METRES",
+      "evidence_pages": [21],
+      "short_paraphrase": "The product volume table reports lithium-battery separator sales of 18,050 ten-thousand square metres, equal to 180,500,000 square metres.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PRODUCTION_SQM",
+      "status": "DISCLOSED",
+      "value": 232570000,
+      "unit": "SQUARE_METRES",
+      "evidence_pages": [21],
+      "short_paraphrase": "The product volume table reports lithium-battery separator production of 23,257 ten-thousand square metres, equal to 232,570,000 square metres.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_ENDING_INVENTORY_SQM",
+      "status": "DISCLOSED",
+      "value": 56520000,
+      "unit": "SQUARE_METRES",
+      "evidence_pages": [21],
+      "short_paraphrase": "The product volume table reports lithium-battery separator ending inventory of 5,652 ten-thousand square metres, equal to 56,520,000 square metres.",
+      "scope_limit": "FY2019_CURRENT_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_INVENTORY_TO_SALES_RATIO",
+      "status": "DERIVED_FROM_DISCLOSED_FIELDS",
+      "value": 0.3131301939,
+      "unit": "RATIO",
+      "evidence_pages": [21],
+      "short_paraphrase": "FY2019 disclosed ending inventory of 56,520,000 square metres divided by disclosed sales of 180,500,000 square metres equals 0.3131301939.",
+      "scope_limit": "DERIVED_FY2019_CURRENT_LEVEL; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PRODUCT_REVENUE_PER_SALES_SQM_PROXY",
+      "status": "DERIVED_FROM_DISCLOSED_FIELDS",
+      "value": 1.8596545066,
+      "unit": "RMB_PER_SQUARE_METRE",
+      "evidence_pages": [19, 21],
+      "short_paraphrase": "FY2019 disclosed product revenue of RMB 335,667,638.44 divided by disclosed sales of 180,500,000 square metres equals RMB 1.8596545066 per square metre.",
+      "scope_limit": "DERIVED_FY2019_CURRENT_LEVEL; CROSS_YEAR_TREND_HAS_LOCAL_PRODUCT_SCOPE_MISMATCH"
+    },
+    {
+      "field_id": "DISCLOSED_PHYSICAL_FLOW_RECONCILIATION_GAP_SQM",
+      "status": "DERIVED_WITH_LOCAL_SCOPE_MISMATCH",
+      "value": 19800000,
+      "unit": "SQUARE_METRES",
+      "evidence_pages": [21],
+      "short_paraphrase": "Using the registered formula, 24,250,000 prior ending inventory plus 232,570,000 FY2019 production minus 180,500,000 FY2019 sales minus 56,520,000 FY2019 ending inventory equals a 19,800,000-square-metre gap.",
+      "scope_limit": "THE_ACQUISITION-DRIVEN_PRODUCT_PERIMETER_CHANGE_PREVENTS_EXACT_CROSS_YEAR_PHYSICAL_FLOW_RECONCILIATION"
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 187552294.09,
+      "unit": "RMB",
+      "evidence_pages": [31, 199],
+      "short_paraphrase": "The separately reported subsidiary revenue for Zhongcai Lithium Film is RMB 187,552,294.09."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_OPERATING_PROFIT_RMB",
+      "status": "DISCLOSED",
+      "value": -52684195.98,
+      "unit": "RMB",
+      "evidence_pages": [31],
+      "short_paraphrase": "The principal-subsidiary table reports Zhongcai Lithium Film operating profit of negative RMB 52,684,195.98."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_NET_PROFIT_RMB",
+      "status": "DISCLOSED",
+      "value": 25420588.37,
+      "unit": "RMB",
+      "evidence_pages": [31, 199],
+      "short_paraphrase": "The separately reported subsidiary net profit for Zhongcai Lithium Film is RMB 25,420,588.37."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_OCF_RMB",
+      "status": "DISCLOSED",
+      "value": 20286469.76,
+      "unit": "RMB",
+      "evidence_pages": [199],
+      "short_paraphrase": "The non-wholly-owned-subsidiary table reports Zhongcai Lithium Film operating cash flow of RMB 20,286,469.76."
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PROJECT_SIGNED_CONTRACT_RMB",
+      "status": "DISCLOSED",
+      "value": 1075434700,
+      "unit": "RMB",
+      "evidence_pages": [219],
+      "short_paraphrase": "The commitment table reports a signed contract amount of RMB 1,075.4347 million for the 2.4-billion-square-metre separator production-line project.",
+      "scope_limit": "SAME_2_4_BILLION_SQUARE_METRE_PROJECT_ONLY"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PROJECT_PAID_CONTRACT_RMB",
+      "status": "DISCLOSED",
+      "value": 1018471000,
+      "unit": "RMB",
+      "evidence_pages": [219],
+      "short_paraphrase": "The commitment table reports RMB 1,018.4710 million paid on the 2.4-billion-square-metre separator production-line project contract.",
+      "scope_limit": "SAME_2_4_BILLION_SQUARE_METRE_PROJECT_ONLY"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PROJECT_UNPAID_CONTRACT_RMB",
+      "status": "DISCLOSED",
+      "value": 56963700,
+      "unit": "RMB",
+      "evidence_pages": [219],
+      "short_paraphrase": "The commitment table reports RMB 56.9637 million unpaid on the 2.4-billion-square-metre separator production-line project contract.",
+      "scope_limit": "SAME_2_4_BILLION_SQUARE_METRE_PROJECT_ONLY; EXCLUDES_SEPARATE_4_08_BILLION_SQUARE_METRE_PHASE_TWO"
+    },
+    {
+      "field_id": "CONSOLIDATED_OCF_RMB",
+      "status": "DISCLOSED",
+      "value": 2969563548.54,
+      "unit": "RMB",
+      "evidence_pages": [105],
+      "short_paraphrase": "The consolidated cash-flow statement reports FY2019 net cash from operating activities of RMB 2,969,563,548.54.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_CAPEX_RMB",
+      "status": "DISCLOSED",
+      "value": 2176682415.89,
+      "unit": "RMB",
+      "evidence_pages": [105],
+      "short_paraphrase": "The consolidated cash-flow statement reports RMB 2,176,682,415.89 paid to acquire or construct fixed assets, intangible assets and other long-term assets.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "DIRECTIONAL_CONSOLIDATED_OCF_LESS_CAPEX_RMB",
+      "status": "DERIVED_FROM_DISCLOSED_FIELDS",
+      "value": 792881132.65,
+      "unit": "RMB",
+      "evidence_pages": [105],
+      "short_paraphrase": "Disclosed consolidated operating cash flow of RMB 2,969,563,548.54 minus disclosed cash paid for fixed, intangible and other long-term assets of RMB 2,176,682,415.89 equals RMB 792,881,132.65.",
+      "scope_limit": "DERIVED_FY2019_CURRENT_GROUP_LEVEL; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_INVENTORY_CASH_ADJUSTMENT_RMB",
+      "status": "DISCLOSED",
+      "value": -342610337.59,
+      "unit": "RMB",
+      "evidence_pages": [191],
+      "short_paraphrase": "The consolidated cash-flow reconciliation reports the inventory decrease adjustment, with increases shown as negative, at negative RMB 342,610,337.59.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_BALANCE_RMB",
+      "status": "DISCLOSED",
+      "value": 1655005114.52,
+      "unit": "RMB",
+      "evidence_pages": [93],
+      "short_paraphrase": "The consolidated balance sheet reports year-end monetary funds of RMB 1,655,005,114.52.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_ACCOUNTS_RECEIVABLE_RMB",
+      "status": "DISCLOSED",
+      "value": 3339367749.11,
+      "unit": "RMB",
+      "evidence_pages": [94],
+      "short_paraphrase": "The consolidated balance sheet reports year-end accounts receivable of RMB 3,339,367,749.11.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_INVENTORY_RMB",
+      "status": "DISCLOSED",
+      "value": 2151400110.76,
+      "unit": "RMB",
+      "evidence_pages": [94],
+      "short_paraphrase": "The consolidated balance sheet reports year-end inventory of RMB 2,151,400,110.76.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_SHORT_TERM_BORROWINGS_RMB",
+      "status": "DISCLOSED",
+      "value": 3528876277.45,
+      "unit": "RMB",
+      "evidence_pages": [95],
+      "short_paraphrase": "The consolidated balance sheet reports year-end short-term borrowings of RMB 3,528,876,277.45.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_CURRENT_PORTION_NONCURRENT_LIABILITIES_RMB",
+      "status": "DISCLOSED",
+      "value": 737592162.15,
+      "unit": "RMB",
+      "evidence_pages": [96],
+      "short_paraphrase": "The consolidated balance sheet reports year-end current portion of non-current liabilities of RMB 737,592,162.15.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "CONSOLIDATED_LONG_TERM_BORROWINGS_RMB",
+      "status": "DISCLOSED",
+      "value": 3357579121.38,
+      "unit": "RMB",
+      "evidence_pages": [96],
+      "short_paraphrase": "The consolidated balance sheet reports year-end long-term borrowings of RMB 3,357,579,121.38.",
+      "scope_limit": "FY2019_CURRENT_GROUP_LEVEL_ONLY; CROSS_YEAR_TREND_HAS_LOCAL_GROUP_PERIMETER_MISMATCH"
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PRODUCT_SCOPE_CONTINUITY_EVENT",
+      "status": "LOCAL_SCOPE_MISMATCH",
+      "value": "FY2019_CONSOLIDATED_PRODUCT_SCOPE_ADDED_HUNAN_ZHONGLI_DURING_THE_YEAR",
+      "unit": "EVENT",
+      "evidence_pages": [10, 21, 22],
+      "short_paraphrase": "Hunan Zhongli entered the consolidated scope during FY2019, and the report explicitly attributes the product-volume change partly to that acquisition; the mismatch is local to product trends and derived product comparisons."
+    },
+    {
+      "field_id": "ZHONGCAI_LITHIUM_FILM_RESPONSIBILITY_OWNERSHIP_CONTINUITY_EVENT",
+      "status": "DISCLOSED_COMPARABLE",
+      "value": {
+        "event": "OWNERSHIP_AND_BUSINESS_SCOPE_CONTINUOUS",
+        "direct_ownership_percent": 86.5
+      },
+      "unit": "EVENT_AND_PERCENT",
+      "evidence_pages": [31, 197],
+      "short_paraphrase": "Zhongcai Lithium Film remains separately identified as a lithium-separator research, manufacturing and sales subsidiary with 86.50% direct ownership."
+    },
+    {
+      "field_id": "LITHIUM_SEPARATOR_PROJECT_CONTRACT_IDENTITY_AND_REPLACEMENT_EXPANSION_EVENT",
+      "status": "DISCLOSED",
+      "value": "SAME_2_4_BILLION_SQUARE_METRE_PROJECT_IDENTIFIED; SEPARATE_4_08_BILLION_SQUARE_METRE_PHASE_TWO_EXPANSION_PRESENT",
+      "unit": "EVENT",
+      "evidence_pages": [17, 219],
+      "short_paraphrase": "The same 2.4-billion-square-metre project is shown with its unchanged contract denominator, and a distinct 4.08-billion-square-metre phase-two project was launched in FY2019."
+    }
+  ],
+  "coverage_summary": {
+    "authorized_union_field_count": 52,
+    "settled_field_count": 52,
+    "status_counts": {
+      "DISCLOSED": 41,
+      "PARTIALLY_DISCLOSED": 2,
+      "DERIVED_FROM_DISCLOSED_FIELDS": 3,
+      "DERIVED_WITH_LOCAL_SCOPE_MISMATCH": 1,
+      "DISCLOSED_COMPARABLE": 2,
+      "LOCAL_SCOPE_MISMATCH": 3
+    },
+    "unknown_components": [
+      "LITHIUM_SEPARATOR_CUSTOMER_CERTIFICATION_ORDER_EVENT_FY2019.specific_order_event",
+      "LITHIUM_SEPARATOR_CUSTOMER_CERTIFICATION_ORDER_EVENT_FY2019.long_term_agreement",
+      "LITHIUM_SEPARATOR_CUSTOMER_CERTIFICATION_ORDER_EVENT.specific_order_event",
+      "LITHIUM_SEPARATOR_CUSTOMER_CERTIFICATION_ORDER_EVENT.long_term_agreement"
+    ],
+    "local_mismatch_summary": [
+      "Consolidated product trends are locally non-comparable because Hunan Zhongli entered the FY2019 product perimeter during the year.",
+      "The registered physical-flow reconciliation is locally limited by that product-perimeter change.",
+      "Consolidated group trends are locally non-comparable because five entities newly entered the FY2019 consolidation perimeter.",
+      "Zhongcai Lithium Film's separately disclosed responsibility-unit scope and 86.50% ownership remain comparable.",
+      "The 2.4-billion-square-metre project contract remains separately identifiable; the 4.08-billion-square-metre phase-two expansion is separately disclosed."
+    ]
+  }
+}

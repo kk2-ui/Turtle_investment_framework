@@ -1,0 +1,9 @@
+{
+  "schema_version": "judgment-experience-feedback-settlement-binding.v1",
+  "target_case_id": "EXPERIENCE_TARGET:CN002475:20240501",
+  "invocation_id": "EIR:CN002475:CAPACITY:V1",
+  "record_id": "JER:TEACH:CAPACITY:V1",
+  "record_version": 1,
+  "outcome_access_authorization_ref": "tests/fixtures/judgment_experience_memory/outcome_authorization_wrong_case.json",
+  "custodian_settlement_ref": "tests/fixtures/judgment_experience_memory/outcome_settlement.json"
+}

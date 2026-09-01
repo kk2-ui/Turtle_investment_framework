@@ -1,0 +1,50 @@
+{
+  "schema_version": "enterprise-judgment-appliance-e2-resolution-contract.v2",
+  "resolution_contract_id": "APPLIANCE:E2:CN002242:20180930:RESOLUTION:V2",
+  "episode_ref": "APPLIANCE-R12:CN002242:20180930:V1",
+  "frozen_before_outcome_access": true,
+  "field_contract_refs": [
+    "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:FOOD_PROCESSOR_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_OCF:V1"
+  ],
+  "signed_deviation_rules": {
+    "STABLE_EXPECTATION_UPWARD_MISS": "FAVORABLE_UPWARD_DEVIATION_NOT_FORECAST_SUCCESS",
+    "STABLE_EXPECTATION_DOWNWARD_MISS": "ADVERSE_DOWNWARD_DEVIATION",
+    "INCREASE_EXPECTATION_STABLE": "INSUFFICIENT_UPWARD_MOVE",
+    "INCREASE_EXPECTATION_DECREASE": "ADVERSE_DIRECTIONAL_MISS"
+  },
+  "product_relative_rule": {
+    "product_contract_ref": "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:FOOD_PROCESSOR_REVENUE:V1",
+    "issuer_contract_ref": "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_REVENUE:V1",
+    "formula": "(product_outcome/product_frozen_baseline-1)-(issuer_outcome/issuer_frozen_baseline-1)",
+    "outperformance_threshold_percentage_points": 5.0,
+    "below_negative_threshold": "PRODUCT_UNDERPERFORMS_ISSUER",
+    "within_threshold": "PRODUCT_TRACKS_ISSUER_NOT_DISTINGUISHING",
+    "above_positive_threshold": "PRODUCT_OUTPERFORMS_ISSUER_SIGNAL_ONLY",
+    "prohibited_upgrade": "NO_CUSTOMER_LOYALTY_SHARE_OR_ACTION_CAUSALITY"
+  },
+  "prior_period_bridge_rule": {
+    "applies_to_contract_refs": [
+      "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_REVENUE:V1",
+      "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:FOOD_PROCESSOR_REVENUE:V1",
+      "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_OCF:V1"
+    ],
+    "required_comparison": "OUTCOME_REPORT_DISCLOSED_PRIOR_COMPARATIVE_EQUALS_FROZEN_BASELINE",
+    "absolute_rmb_tolerance": 0.01,
+    "failure_resolution": "UNKNOWN_PRIOR_PERIOD_SCOPE_OR_RESTATEMENT_BRIDGE",
+    "dependent_claims_blocked": ["PRODUCT_RELATIVE_RESULT", "SAME_SCOPE_ISSUER_TREND", "SAME_SCOPE_CASH_TREND"],
+    "mechanical_field_settlement_preserved": true
+  },
+  "combined_rule": "H_A_REMAINS_UNESTABLISHED_UNLESS_PRODUCT_OUTPERFORMS_ISSUER_AND_CASH_IS_NOT_ADVERSE_AND_ALL_REQUIRED_BRIDGES_PASS",
+  "evidence_ceiling": "NARROW_ASSOCIATION_AND_BOUNDARY_PROBE",
+  "allowed_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

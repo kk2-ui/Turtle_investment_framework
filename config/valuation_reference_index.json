@@ -1,0 +1,4229 @@
+{
+  "schema_version": "valuation-reference-index.v1",
+  "generated_at": "2026-08-02T13:38:40+00:00",
+  "source_root_label": "130家估值模型",
+  "source_root_fingerprint": "d7a4e7f2e971e0bec605af47a48c5564d704adb8f91a10334803b4db2b3878fb",
+  "policy": {
+    "company_fact_eligible": false,
+    "parameter_copying_forbidden": true,
+    "use": "mechanism_and_model_structure_reference"
+  },
+  "summary": {
+    "file_count": 364,
+    "extension_counts": {
+      ".doc": 41,
+      ".pdf": 4,
+      ".ppt": 5,
+      ".xls": 212,
+      ".xlsm": 1,
+      ".xlsx": 99,
+      ".zip": 1,
+      "no_extension": 1
+    },
+    "collection_counts": {
+      "1、A股上市公司财务估值模型": 78,
+      "2、港股上市公司财务估值模型": 21,
+      "3、美股上市公司财务估值模型": 31,
+      "4、行业估值模型": 221,
+      "5、其他估值模型模板": 13
+    }
+  },
+  "files": [
+    {
+      "relative_path": "1、A股上市公司财务估值模型/002049+紫光国微+财务估值模型.xlsx",
+      "sha256": "d2989fb614a2b417bf85e0b54798a98d6e247fa4c2077dbc2ef93d208172f128",
+      "size_bytes": 3343447,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/600745+闻泰科技+财务估值模型.xlsx",
+      "sha256": "faf9660ea9431677fba45026ff559b35de80f97d0e7e0d0579178981fc721198",
+      "size_bytes": 6340303,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/TCL财务估值模型.xls",
+      "sha256": "c4cf80870cd361a4e566e7f3f5444db2b6204d1807b3081f270e00478ef03f28",
+      "size_bytes": 841216,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/一汽轿车估值模型.xls",
+      "sha256": "d4d70c861e505d104b76b44ab6500b31ccfec452aa731cf2a28e82c9774fdbcc",
+      "size_bytes": 110080,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/万科A财务预测估值模型.xlsx",
+      "sha256": "d3220d68964484c6e174ffbd7e2d72aa4547661ca3c15b58e7fe0c93eaca49b4",
+      "size_bytes": 2088725,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/三只松鼠估值模型.xlsx",
+      "sha256": "eaec6bd766f2cedf0b3e50d710a919fb352bdb7aedb81150934d15e0ca0d9eb7",
+      "size_bytes": 207411,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/上海机场财务估值模型.xlsx",
+      "sha256": "70476621c2be61b26e1ff9141735b54071a0e38f0653fb5218c7f7bb503d780f",
+      "size_bytes": 1118639,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/东方财富财务预测估值模型.xlsx",
+      "sha256": "a8885bfa47b4861112579356072ec596b2d4ef70e7192a7ed423964da0038c4e",
+      "size_bytes": 201542,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中信建投-601066.SS-估值模型（VIP）.xlsx",
+      "sha256": "cac2d818b36f8d6fd117d69ce94a0caab3090a976597772542a04973adc1bea3",
+      "size_bytes": 308645,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中信证券-600030.SS-估值模型（VIP）.xls",
+      "sha256": "f3d78d3ce775a875f5525a213a36da855cc28588433a9da8b68c6480b2c2d19a",
+      "size_bytes": 679992,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中国国旅财务预测估值模型.xlsx",
+      "sha256": "4f4c4740cabf009ff5d1c74e9da3bb29d228f14eccdc205b74098b6da6a6706a",
+      "size_bytes": 1352147,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中国国航-估值模型（2021）.xls",
+      "sha256": "a0903f45455038bee57dbe6eabdae9c07b32285c2cbc65c87f2ce739d83e4311",
+      "size_bytes": 816645,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中国平安-估值模型.xls",
+      "sha256": "3824d81bf0712c2fb39039fc64bcc5a42ec3b5afe6088700a431007a9c04858e",
+      "size_bytes": 1977147,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中国建筑-601668.SS-估值模型（2021）.xls",
+      "sha256": "9f70d1da3cbd9d030c75aaa6f5956a25e65258e7fd17ad4a93a00a68212927b3",
+      "size_bytes": 1566310,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中国神华-601088.SS-估值模型.xls",
+      "sha256": "ab4286e0eccac778697a08b09f14618369ea5a93f3d09434bd5770c786ddfc9a",
+      "size_bytes": 2958225,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中国铝业估值模型.xls",
+      "sha256": "676e5619249e85cdab2656630b9833c5f4ca15041e02c9c8404ec5de7e349995",
+      "size_bytes": 1028246,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/中芯国际财务估值模型.xlsx",
+      "sha256": "e2e4fdaf8eeabe6dfa50a1e7e87a2230ee055cff79ec62940faa8a266ea82838",
+      "size_bytes": 8288622,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/五粮液财务预测估值建模.xlsx",
+      "sha256": "8c9c6eaff27481cda41dd0f89a042739a07e92248100ff91796fd135f112cbd5",
+      "size_bytes": 1772492,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/京东方A财务预测估值建模.xlsx",
+      "sha256": "c22523e46e321467f3a18307e72eadb8b2b7cff08671eb109972773969812a5a",
+      "size_bytes": 430026,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "technology_platform"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/伊利股份财务预测估值模型.xlsx",
+      "sha256": "ee405524c016d855c4b93bb57cbfa3664682260f48deac44140549d7746566b6",
+      "size_bytes": 13870460,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/保利地产-600048.SS-估值模型.xls",
+      "sha256": "d450b81cdc137fa89c0f4a305f1f407bc0f85db4d967c9cb990d1b0d57787f67",
+      "size_bytes": 4500622,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/兆易创新财务预测估值模型.xlsx",
+      "sha256": "af46a98e7205db04cf882f2c308bfc763ff478ad16691c520bcc2a29a6b29e89",
+      "size_bytes": 4880449,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/光大证券估值模型.xls",
+      "sha256": "2fc84b38b46b3861627950e0327b8fd7d7cddbccd1fdc43bb129d56a06edf4cc",
+      "size_bytes": 1518592,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/分众传媒估值模型.xlsx",
+      "sha256": "bccbb4e46802a1a0c07978287498077d507951ad16d41eb418f6c37ae93f5c8e",
+      "size_bytes": 8324233,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/华兰生物财务预测估值模型.xlsx",
+      "sha256": "b6f001223cce647c54fd377239c8c7f55b3624cc7d1cc68cc55166c3c1fb0d86",
+      "size_bytes": 3350048,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/同仁堂-600085.SS-估值模型.xls",
+      "sha256": "06a249a6d9c0748b8537e2d2a7f8b142c8500afa1a9d916a5bd5a0117246c721",
+      "size_bytes": 868151,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/味知香财务估值模型.xls",
+      "sha256": "2f6bc8cdbd916d9a78fe20ec3b034abce117ceef4ef68f6d8b9d99cd2e6c75f3",
+      "size_bytes": 712192,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/国信证券-银轮股份估值模型.xls",
+      "sha256": "415d5b7510c0ab73dc11e5fafa96a28b78729f4462ba6c616a7fef0b470d0ded",
+      "size_bytes": 1242624,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/国信证券财务估值模型.xls",
+      "sha256": "154856ffa9756ef3d0f6913f365ad29995fad2215852916faf89a74194c12ec7",
+      "size_bytes": 1169408,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/大连石化DCF财务估值模型.xls",
+      "sha256": "be133421392a0e9db6460261fe9d3b8623517a22fff24ceff60b898f3e56d64f",
+      "size_bytes": 1635840,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/天赐材料财务估值模型.xlsx",
+      "sha256": "f8375274747732114f7a22a8b342b4d1fdc63720d82739d7901099d75481784d",
+      "size_bytes": 19587007,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/宁德时代财务预测估值模型.xlsx",
+      "sha256": "745568d87bccaf7972542d4abe6855dd3ca962f5385bb4a344b4f21da51f6a2b",
+      "size_bytes": 3192728,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/安信证券财务估值模型.xls",
+      "sha256": "489a5cdb8a46ca54a0ff410ca39707ef419e21e9fc8414f74d801d376e904b5d",
+      "size_bytes": 612864,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/山东药玻估值模型 .xls",
+      "sha256": "35d1792afe3ed100000eca9ea7b6f7e12eae107a4cf05b0aaa5ed8d1a7eeef30",
+      "size_bytes": 3528192,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/平安人寿保险估值模型.xls",
+      "sha256": "c01283c819b2154f59b722ef61e3462496415235484f52013130fa6eafc35481",
+      "size_bytes": 1239040,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/恒瑞医药财务估值模型.xlsx",
+      "sha256": "c75fe99fb3d22b5b284e9517fca0f3ffbb5d6c69447b7fa7a5c8d4af959cf46f",
+      "size_bytes": 1434349,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/恒瑞医药财务预测估值模型.xlsx",
+      "sha256": "a9954adabd19c97a59295df9452ebfa492a63cf51c7539c8f713e2c69b035179",
+      "size_bytes": 1467486,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/恩捷股份估值模型.xlsx",
+      "sha256": "d1cf71a612676825d0c7c18122bcce99688cf307529cab37a35ede42eaa3b44e",
+      "size_bytes": 4598177,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/慈铭体检财务估值模型.xlsx",
+      "sha256": "fa76edd36ee22cc167601432d44d756d50ac09066fdc758631376333162054c4",
+      "size_bytes": 505117,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/招商银行财务模型.xlsx",
+      "sha256": "29ac2237a9b779397c6c3ecdd234071ce554987d2d179df283fc070b4a7a98ab",
+      "size_bytes": 6611692,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/智飞生物财务预测估值建模.xlsx",
+      "sha256": "35a7bec3b1cf2c3a04caf278635a493103bee26f4dbe82083abec20399fb7874",
+      "size_bytes": 263528,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/格力电器财务估值模型.xlsx",
+      "sha256": "7e41be2e2e44644d9151136493ff3f9567d6c499c9bb29eb9c14972ce80a91f7",
+      "size_bytes": 534311,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/比亚迪-002594.SZ-估值模型（VIP）.xls",
+      "sha256": "750b552449ff6b76f28e2ffc0420c8f1f0e1aa4c75f8607a2e9823d9991b9498",
+      "size_bytes": 1234416,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/江西铜业-600362.SS-估值模型.xls",
+      "sha256": "583add811fbad89b451c2f104f9d53607995abd99faa1d3a01cd63864ac56841",
+      "size_bytes": 1141976,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/法拉电子财务估值模型.xlsx",
+      "sha256": "e8c270808c7da117aa0e6e146a322b34887ab8dcfaedc087c3cee549534aa568",
+      "size_bytes": 10110850,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/浙江医药财务预测估值模型.xlsx",
+      "sha256": "437247d20410c3c40b7ba2c30c17ce5136b5d8919b018651ab08fbba0a533074",
+      "size_bytes": 214101,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/海天味业财务预测估值模型.xlsx",
+      "sha256": "59ad50b835b1eaeb06b84c07aacedc1111a58b9c2ad1041b40c9b1c6cfa13edf",
+      "size_bytes": 1315041,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/海康威视财务估值模型.xlsx",
+      "sha256": "bba53ea90a0d9f4afbf6832a4109b17c0d4b58316966b23d411cd96364310d6b",
+      "size_bytes": 777726,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/海螺水泥财务预测估值模型.xlsx",
+      "sha256": "eafd50d4ca7b248a0c3d55e2a0703f80661a480f6da1341725793824e9a8af43",
+      "size_bytes": 1545016,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/温氏股份财务模型.xlsx",
+      "sha256": "07656737af997f2a87209c999d9cd97f94a9f27402721a18294c6a8b1af84824",
+      "size_bytes": 1396807,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/爱尔眼科-300015.SZ-估值模型（VIP）.xls",
+      "sha256": "a0a32170f45cdefdd4c243b4eb8865b1ced494ce86442eb345b130579d5abf59",
+      "size_bytes": 5183488,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/爱尔眼科估值模型.xlsx",
+      "sha256": "9ada8146dde2c274b4e6e1acfd0ec62b045df40ae3a015552f6a2c6a76771d35",
+      "size_bytes": 218543,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/爱美客估值模型.xlsx",
+      "sha256": "7616aa6c2d5e756ada1ce5daceb8047de4641fbb92b347f1022661ad9611a849",
+      "size_bytes": 667699,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/片仔癀财务预测估值模型.xlsx",
+      "sha256": "373f57c5643b002e7fba6048803d26ebe3dd80e7dc75df6770033f7e2712408c",
+      "size_bytes": 357846,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/用友网络财务估值模型.xlsx",
+      "sha256": "0ebf86d3e4d50df33a0cd0773432b78a98e6e24dac7227133b9794bf24038740",
+      "size_bytes": 2796286,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/甲骨文估值模型.xls",
+      "sha256": "4bd8ea61cfe19195ae878e6b53ef7723d10ca2aead1a6fe52132a8f9a438b4f4",
+      "size_bytes": 3500694,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/石头科技财务估值模型.xlsx",
+      "sha256": "51c3aaa7126530356401128a0ecf0898f82a73f7233085a2f0bf14082acdbbaf",
+      "size_bytes": 1613224,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/科大讯飞-002230.SZ-估值模型（2021）.xls",
+      "sha256": "97a04ddcb3009f1e6008babcafb50edccf4cb0f5aa3c86cf158e7b66762d96a5",
+      "size_bytes": 3448192,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/立讯精密财务预测估值模型.xlsx",
+      "sha256": "7eacf87f8fa547eb30717a87786504653b0795d23e90290e7244af033815441b",
+      "size_bytes": 1793143,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/紫金矿业-601899.SS-估值模型.xls",
+      "sha256": "a2d33c671ec0a928d84071da6563c9c4801eeb6c4b1db2263cc54f6e08fdec63",
+      "size_bytes": 3427942,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/美的集团财务预测估值模型.xlsx",
+      "sha256": "3ed6e0cd1242fe18f2e66dec3a7fb3c34715feead6fd10dbde753b999da1f7c0",
+      "size_bytes": 1269182,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/老板电器财务模型 .xlsx",
+      "sha256": "aff54e9d4d6583f5aa20bcfe30ad4a4a440a977e4a8c7775f47a8937ea6b1faa",
+      "size_bytes": 484080,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/老板电器财务预测估值模型.xlsx",
+      "sha256": "7e651eac29636b51f08fabe8cda5c661a7d7c7803651a4fc74b336927f80e337",
+      "size_bytes": 1346690,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/苏宁易购财务预测估值模型.xlsx",
+      "sha256": "95dfd3a94efd338dcc28bf6556c2d7fe7e285a941b4943a9b13e14289479e28f",
+      "size_bytes": 2751562,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/英维克估值模型.xls",
+      "sha256": "7e8d9edbf3431ac3e29ad784f34bfcb818d6fc6439d45230b594a9130867ba15",
+      "size_bytes": 768000,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/药明康德财务预测估值模型.xlsx",
+      "sha256": "924b1347b5c830411dc171dc2652129c2d03f6f8102daba15710af229ed9dc74",
+      "size_bytes": 582585,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/莱克电气财务模型.xlsx",
+      "sha256": "d1b62c8ec6ee22e4d69f0e438e26d3681a30ff5f40afa9c46441bb8dcd0f26b5",
+      "size_bytes": 411794,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/贵州茅台-600519.SS-估值模型（2021）.xls",
+      "sha256": "c56a72e885ac33b3c07749785f7feb3ca4a36c4c7afbb0aa3a78fa26da4b302f",
+      "size_bytes": 975291,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "consumer"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/贵州茅台DCF估值模型.xls",
+      "sha256": "a9d1a272a5288ef5b0bb5c817138b97ca449e69a8057e85da41d87677aaa4add",
+      "size_bytes": 7587840,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [
+        "consumer"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/迈瑞医疗财务预测估值模型（VIP）.xls",
+      "sha256": "8a22e1a9f178ba2310bcb32a56044dea7339dcdb986915d0e86f99bbb6d9af97",
+      "size_bytes": 1423872,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/金山办公财务估值模型.xls",
+      "sha256": "709cb3ef60b5a716b2bf21d5d7458f3684af4da0d6ee4eec3dae99dfaf5f05b4",
+      "size_bytes": 216886,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/长春高新财务预测估值模型（永久）.xlsx",
+      "sha256": "c61327d5d470af2ebecfae7d3031e7bed597025289f503e4140d5a18a4797ab6",
+      "size_bytes": 2475170,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/长江电力财务预测估值模型.xlsx",
+      "sha256": "55c5cc5f9bd1c8253bf4bbf902b7fbb218e115873dd9168ebcf386cbab95211d",
+      "size_bytes": 306988,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/隆基股份财务估值模型.xlsx",
+      "sha256": "917bfd9e79949b73588e428c14538cbf47528514b616a64dd6657c975f331a4f",
+      "size_bytes": 3492054,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/青岛啤酒估值模型.xls",
+      "sha256": "dc93249c19c4bd514302e34de089dd0d82408c6e5baced28d1b3475cf86d5592",
+      "size_bytes": 1312139,
+      "extension": ".xls",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/顺丰控股财务预测估值模型.xlsx",
+      "sha256": "17c516e5ef8800a8fbd9b391a443436b4a40c1b8b210ea44d570882ff4c305f9",
+      "size_bytes": 7959817,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/飞科电器财务模型.xlsx",
+      "sha256": "1ea2d29b36cb742df31aa3fb8e8be374412b6f7f95f7e01cb916d36bda7ab8f7",
+      "size_bytes": 387292,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "1、A股上市公司财务估值模型/香飘飘估值模型.xlsx",
+      "sha256": "882f55d04b3a43046949f6c8a4dd625a084c78a6bcda66aeb14b4dff062f81e5",
+      "size_bytes": 4726712,
+      "extension": ".xlsx",
+      "collection": "1、A股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/HK00268+金蝶国际+财务估值模型.xlsx",
+      "sha256": "9341502fafb79dfd4b35a66e867463badab2acff8ae9fba6237804e764420883",
+      "size_bytes": 6517267,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/HK01093+石药集团+财务估值模型.xlsx",
+      "sha256": "5cb6eb5cc8c5cfddfd92da4e8e18b0b4cdb3c8cada8f2b4a4907c2091eda099a",
+      "size_bytes": 5571155,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/HK02400+心动公司+财务估值建模.xlsx",
+      "sha256": "d3f21969936abd5b84aea4efefe7f029b127271b6fe9482030a0245e03237150",
+      "size_bytes": 3339084,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/HK08158+中国生物+财务估值模型.xlsx",
+      "sha256": "d5289e28d11fe05f17208715bcd9cd2995af3a70fd17685ada7231516c5938ef",
+      "size_bytes": 4461521,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/HK1167+旷视科技+财务估值建模.xlsx",
+      "sha256": "01571769541417b920be3945d945fd770dc24a1a5b1ea74bce4e6e9e99e7540f",
+      "size_bytes": 4523763,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/中国恒大-3333.HK-估值模型.xlsx",
+      "sha256": "5dd361a305bf013e9c032d5ffe726db356666b045d8c3c10af4d95f89ba6cb30",
+      "size_bytes": 698430,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/中国生物财务预测估值模型.xlsx",
+      "sha256": "957c1bdf72ce918cecb59a3961ee6d8ffd30b73476c3d37fc474839e6134b912",
+      "size_bytes": 1713051,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/中国财险财务预测估值模型-永久用户.xlsx",
+      "sha256": "5d7f6d787ae3ef78a62be7a8cf09f138d6c863ff12559828b6a86738c1ee78cd",
+      "size_bytes": 2341249,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/中国铁塔财务预测估值模型.xlsx",
+      "sha256": "ccf238ea3f09862d2ffa322f0c1518e77da07ebba4ecbb93e0611d942b06db08",
+      "size_bytes": 9452293,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/九毛九估值模型.xls",
+      "sha256": "89f517db049c993598544d0b076c8f9da5872ade871ec95b7bc4d1f39fcb5bca",
+      "size_bytes": 1529856,
+      "extension": ".xls",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/信达生物-1801.HK-估值模型（2021）.xls",
+      "sha256": "b6a7ca60401492d0ed02b16de1a14a2ad0d39b8144383f80c4340aaf56fbeace",
+      "size_bytes": 484839,
+      "extension": ".xls",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/农夫山泉-9633.HK-估值模型.xls",
+      "sha256": "9b13229e873184aaaab559e1d677a884c8d934c048c5ed9f6965f9fb758d4f27",
+      "size_bytes": 517602,
+      "extension": ".xls",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "consumer"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/国药控股-1099.HK-估值模型（VIP）.xls",
+      "sha256": "0c9081eb9d9499ff0a725abe3300f3246cb47108e5fef29d36241006e54ebbb5",
+      "size_bytes": 3129344,
+      "extension": ".xls",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/安踏体育-2020.HK-估值模型（2021）.xls",
+      "sha256": "abf3c591571f4b66bb824c26c5b91fb010952c21ced7b112b1a17cc6acd704ba",
+      "size_bytes": 1637574,
+      "extension": ".xls",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "consumer"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/小米集团财务预测估值模型.xlsx",
+      "sha256": "df12ec004cf3d205e602c312169b3c0602576d5254450edd4d2ebce669784128",
+      "size_bytes": 1273597,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/快手估值模型.xls",
+      "sha256": "59272a303ebcc5cdd78730b420a5926c09a47d8a1f7b6c40259a846cb05b2ce5",
+      "size_bytes": 591143,
+      "extension": ".xls",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/海伦司估值模型.xlsx",
+      "sha256": "9f38e1e9e1eea737a557e5f16c05de59f1bacf8e75cb9503889f992b0e6cde5b",
+      "size_bytes": 475591,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/海底捞财务预测估值模型.xlsx",
+      "sha256": "797e391e1e98ee95e480ff4081e54ee89e6a1a2dad1e4316388e4d98cee03dd6",
+      "size_bytes": 414487,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "consumer"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/港交所财务估值模型.xlsx",
+      "sha256": "08325c9383e6b96962d688fb6ed6717839c805589b3c0760fb33ff563ed3f7e5",
+      "size_bytes": 1700017,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/美团财务预测估值模型.xlsx",
+      "sha256": "be678897e39da6072e679663e450b1016eaadfe6e941255c187ed3a6a14ea62d",
+      "size_bytes": 532141,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "2、港股上市公司财务估值模型/腾讯控股财务预测估值模型.xlsx",
+      "sha256": "a9e1fd8617b2aaa5ae65590b2fa3d2d7fbaf3150a3f49962394a419424ba526e",
+      "size_bytes": 709192,
+      "extension": ".xlsx",
+      "collection": "2、港股上市公司财务估值模型",
+      "mechanism_tags": [
+        "technology_platform"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/GILD+吉利德+财务估值模型.xlsx",
+      "sha256": "b026d7edcb7267636bacb73fd59f827f95591394f5bfaead080451157cbeb548",
+      "size_bytes": 4666613,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/GOOGL+谷歌+财务估值模型.xlsx",
+      "sha256": "ff6541b380d1c1c83e84e37eee46650fc35160442b901259f439727fe12e7cac",
+      "size_bytes": 3552264,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/JP-Tesla财务预测估值模型.xlsx",
+      "sha256": "8707cd86a957034c38d30ca951061fcd2287b1a1cadd530a0ffec2e77b20a15d",
+      "size_bytes": 744468,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/NVDA+英伟达+财务估值模型.xlsx",
+      "sha256": "3f038d4eb6d7781edb43d4c68bf8ba7d41ef461c5e961827b9ee295182493c58",
+      "size_bytes": 3255045,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/亚马逊财务预测估值模型.xlsx",
+      "sha256": "609edb2173b9eec4a2e5b3dd704a8aefe1fa2633597ced3c4e5d549555e41b1e",
+      "size_bytes": 223394,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/京东财务预测估值模型.xlsx",
+      "sha256": "eb47e9b26b48d86ff86a5206b329dab2a942a9f01d7c4adf4558ff294dc67d4b",
+      "size_bytes": 738018,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "technology_platform"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/伯克希尔哈撒韦估值模型.xlsx",
+      "sha256": "93d2077b13e60bb535cb9766d01f9f3f6aa482259d82b3b3ccf41cdef4d28c1d",
+      "size_bytes": 1608424,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/华住酒店财务预测估值模型.xlsx",
+      "sha256": "81ef3a153c016603abf76c00b9fe9cde4e561dcd797a0d817461173df7c2550e",
+      "size_bytes": 529910,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/哔哩哔哩财务估值模型.xlsx",
+      "sha256": "dbc6af2ba6cfae7a5a50f3040c3b4993346734adf66da1f22c9ddfa030c3e0b6",
+      "size_bytes": 601081,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/唯品会财务预测估值模型.xlsx",
+      "sha256": "3bcd322c868699cc8c618709d38233deebc92279f76470720052958d5105b176",
+      "size_bytes": 308412,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/国际投行_蔚来_model.xlsx",
+      "sha256": "4479b3ad8dafa6760978370755e01b7777aec768019dc40f4bf6e4d326830b0b",
+      "size_bytes": 688938,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/奈飞财务估值模型.xls",
+      "sha256": "e8d258bc5c0633ad9013750b363583073d8cf6599b9188cc542b59ac38e36a27",
+      "size_bytes": 2414149,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/好未来-TAL.N-估值模型（VIP）.xls",
+      "sha256": "1a566abce9cd570fc92febfb3d11552c36732c190659e1490141062202b61630",
+      "size_bytes": 1228172,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/小鹏汽车-XPEV-估值模型.xlsx",
+      "sha256": "e9435ede8e55b99d513d85468e8d4369ab2c1cf80bf11234ef85079fef53d9f9",
+      "size_bytes": 500449,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/德州仪器估值模型.xlsx",
+      "sha256": "200ea686b3b7678083c935c4cca12358de23e777b57b99327cf286b7f6c565c5",
+      "size_bytes": 4453534,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/拼多多-PDD-财务预测估值模型.xlsm",
+      "sha256": "be6b5d2a5632175b21ac8f77eb9cdcea47f627d44120026f547a538c0ca5bfa3",
+      "size_bytes": 604527,
+      "extension": ".xlsm",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/新浪微博财务预测估值模型.xlsx",
+      "sha256": "79c2e0ee99a81858dbd0db0e8536f6904a8183f21f0138c80be31c8a0445e539",
+      "size_bytes": 158013,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/星巴克财务预测估值模型.xlsx",
+      "sha256": "67a8b95f2e0ead3f5cc54e6db264d8a664db4a0dbb882da4a4fb17f4e8c87145",
+      "size_bytes": 2139172,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "consumer"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/汽车之家估值模型.xls",
+      "sha256": "74d1279ccdf55a848368af103fb9f6b8bc324b52a1fe2641e8968d99d9579448",
+      "size_bytes": 969426,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/爱奇艺财务预测估值模型.xlsx",
+      "sha256": "c9d84491f948307250d48af71b17631cb7670a8202dd7d3a93469f3c897ac460",
+      "size_bytes": 362993,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/百度财务预测估值模型.xlsx",
+      "sha256": "b77bc406ec105a334f9d73fdbc4c6ba1e39c62df111b7ed5fc1b91bec062481a",
+      "size_bytes": 452476,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "technology_platform"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/网易财务预测估值模型.xlsx",
+      "sha256": "b0c8fb2454966cc9ab770e976766d25daf07a706a170a402b5f203cb6c5b5ef9",
+      "size_bytes": 1612263,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/腾讯音乐估值模型.xlsx",
+      "sha256": "0ca48318a126c0bececfc34451e14a59f337de18f57161fce934c4b4017f7131",
+      "size_bytes": 1254378,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "technology_platform"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/贝壳-BEKE-估值模型（VIP）.xls",
+      "sha256": "f148e889f765d809996299d717d4802e06f701d822bb8bcaed9a2878e1c0c391",
+      "size_bytes": 602717,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/达摩达兰-2019年全球国家市场风险溢价.xlsx",
+      "sha256": "920eedbe9c00b6fe4bf185d85a9db21b56d9dd4f199448cf594916f71c132414",
+      "size_bytes": 366343,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/达摩达兰-Uber估值模型.xls",
+      "sha256": "c05d220b048e94315cfd632c90bc56851e1ecd1a5a1f7b8e93446243e301d9f2",
+      "size_bytes": 105984,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/阿里巴巴IPO-DCF估值模型.xls",
+      "sha256": "55f2438d9ff224ea5efa1c80c20f777fcfba3b0d5c981824a1f0b3a811656fa3",
+      "size_bytes": 243200,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "technology_platform"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/阿里巴巴财务预测估值模型.xlsx",
+      "sha256": "d006fc9cca173b318745fc01b5fce11f63ffe321de553c26eadaec54b61d9778",
+      "size_bytes": 703776,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "technology_platform"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/高盛-IBM财务估值模型.xls",
+      "sha256": "c0a12e9746a385efd2fdd629b65cac69b81e4b5d90b3a36041a13c60ce727e57",
+      "size_bytes": 633856,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/高盛-通用汽车估值模型.xls",
+      "sha256": "bdfd7f2de7ee8f63f81ac86f6036c9354b382c71c70ce3468c4a4e029d9e3263",
+      "size_bytes": 1655296,
+      "extension": ".xls",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "3、美股上市公司财务估值模型/麦当劳财务估值模型.xlsx",
+      "sha256": "2dca65355757c2eeb9efc5f5e755d5576993368bf26e0aab1dbfc218379f78ab",
+      "size_bytes": 5658542,
+      "extension": ".xlsx",
+      "collection": "3、美股上市公司财务估值模型",
+      "mechanism_tags": [
+        "consumer"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/Goldman房地产作价模板.xls",
+      "sha256": "191b7d96d7b8f0628680527a956806c8a8d0b8de8c2f624e2f5865abec51a151",
+      "size_bytes": 539136,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/abs估值/ABS估值思路和方法分析.pdf",
+      "sha256": "ff722d30bd41d0abb1eff1d294c81a74fc2aa4f4051ac2e1401fec7ca31a4a06",
+      "size_bytes": 1953800,
+      "extension": ".pdf",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/医药行业License In的DCF估值模型.XLSX",
+      "sha256": "5d5d5c251163eb7a88e18d72485d7a772d3ee6e58d97d161a586dbe4fbffaa58",
+      "size_bytes": 56339,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "healthcare"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/万科中山项目成本测算表.xls",
+      "sha256": "bff921f81d30837f7674a7abdcbefc163b4b0ec7e1c3da2cea0fd1af4669c0d8",
+      "size_bytes": 524288,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/万科房地产项目投资分析excel模型.xls",
+      "sha256": "c89a1c2dfe558e94663cb4dfc228554b1e74574a6829f56636fc1c0dec2bd794",
+      "size_bytes": 856576,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/动态测算测算模板.xls",
+      "sha256": "9e53c070ebf144a9a75f8e2457479a7754b0b87df182fc4c95a3704e2888e1f7",
+      "size_bytes": 303616,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产企业目标成本测算标科目表.xls",
+      "sha256": "aa810afb4756f180be7cac01cc3bd80e60466a845e9c8f4eed35894ab01f1d21",
+      "size_bytes": 53248,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产开发--综合体项目投资收益测算模板（全）.xls",
+      "sha256": "a6d982e4aac734999008aff78a2bdc059bd9088e688c0f979ca606fbcbc6368d",
+      "size_bytes": 144896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产开发成本、利润测算表.xls",
+      "sha256": "400231a64089e5cade90543adad604e8307725a5f2b5603d0b42d4c613281941",
+      "size_bytes": 36352,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产成本测算表.xls",
+      "sha256": "24c0628fc1f15070e7f8b6bb201e971974c3278036b5c4b8df1fb1359222a84b",
+      "size_bytes": 55808,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产成本测算表（万科参考）.xls",
+      "sha256": "18b0b945ad94ef75fc7b058d0bdeaf4ba9b9e7778d6554a5ff183d373eaa062b",
+      "size_bytes": 266240,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/060729五棵松详细调研资料.xls",
+      "sha256": "05edc59318a414f84b4f12053e0e11c826ccc693849e64845afbe951e465281a",
+      "size_bytes": 22528,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/F3-5成本分析表.xls",
+      "sha256": "b7db2ef9126c22a3a51351fc7c164b86fb873c999dfd42a6ac2dc638bb07bf2a",
+      "size_bytes": 245248,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/F3-F5造价分析表0805.xls",
+      "sha256": "32e2b11215c5c2c3c6577e1530585bf2e1c1080f0e8ce3e340051ca9138de305",
+      "size_bytes": 47104,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/万科南京光明城市一期目标成本测算04.11.22.xls",
+      "sha256": "55a23be7ed8c61c77c5e23470c51143dabf1d437464d78f16780400f33fa4b30",
+      "size_bytes": 247808,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/万科标准工期.xls",
+      "sha256": "93ccadf90384c3cdc3d78bb49a83ae0b11b9ce2c0d379180540f1b71e814296c",
+      "size_bytes": 64512,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/万科目标成本测算08.xls",
+      "sha256": "b40e235346241f665ad370a98e33a36a26922dde832e2d689267d2ca1ddb06ca",
+      "size_bytes": 247808,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/中南房地产成本利润测算表.xls",
+      "sha256": "4a16945b74f9a2726de2adddd631bdcd77e0a9f34b3aa48477eeef1c4f1a95fa",
+      "size_bytes": 292864,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/五棵松测算报告.xls",
+      "sha256": "ab8b725c592c363322d8692b52c15e984456c59c27ec16dc2ea75efe9530f943",
+      "size_bytes": 75776,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/住宅测算模型.xls",
+      "sha256": "3d663f1c195add3bce228e0ed85f462abfc131cb7cc0bd1dafbb8a0989ce0615",
+      "size_bytes": 60416,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/商品房价格构成-成本核算表（1P）.xls",
+      "sha256": "559eda7655875f1608b52e31da4a189580ce727dc6582b2c57df627d9f57cc92",
+      "size_bytes": 19968,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/土地测算.xls",
+      "sha256": "03ab866d0fb976bbed509669b221670ecb3a23edf95a3caa68b5559a4e46bfa2",
+      "size_bytes": 41984,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/容积率与产品组合测算表.xls",
+      "sha256": "cdc30bacb5526233c9feec6a0a12f8174000ceab9fa09c77763742d647d0615d",
+      "size_bytes": 27648,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/市场比价法 .xls",
+      "sha256": "38ba3200d82e484c48002f1ca824ee100bc7582eb66f0171c9012e88dca1f1b4",
+      "size_bytes": 30208,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/开发成本明细.xls",
+      "sha256": "bc1f5723c9a5619af24d122fd2aac5c958ee290859849b3257215790b1e8c9ee",
+      "size_bytes": 427008,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/成本及利润测算20060906.xls",
+      "sha256": "6e7da2c40deff5e53467ed10b06297358e7926f994381a6a87ec371540bbc503",
+      "size_bytes": 37888,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/成本测算.xls",
+      "sha256": "1faf807b11db5edc6a79ad39e3f2bb6a0478d12967884ce45b0287a227b2a500",
+      "size_bytes": 28160,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/成本测算表模版.xls",
+      "sha256": "947575d01c522feba1dc184d8771ee39732473c56f561760081f472bc80c44d7",
+      "size_bytes": 20992,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房产开发成本计算.xls",
+      "sha256": "9abceafcbbf5c7e60c096b7b6ec44e5c03c0dde4567f9aaa18178dac609a83b1",
+      "size_bytes": 185856,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房产开发成本计算（6P）.xls",
+      "sha256": "77a9bdd52a868cb65b5edecd83b9f7de2fe3e2e3232341dc3bcb618a8f1c85e9",
+      "size_bytes": 186368,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产——土地造价计算（1P）.xls",
+      "sha256": "072e6daff9410aed55f8f122a37184fc3e49de427b462bc5d9582b839aa4fcd0",
+      "size_bytes": 19968,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产前期测算表.xls",
+      "sha256": "61da58e275dfaf213031a4adff4f6534f6d517804e814b1ec37c07181548ce9a",
+      "size_bytes": 18432,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产前期测算表（8页）.xls",
+      "sha256": "b99c85ae4b286677dbbab12f659cd516d766eae430d4fc89b12d1c9f5304cd52",
+      "size_bytes": 164864,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产投资项目成本估算表.xls",
+      "sha256": "360c13813b3682f4b4ee23265fe102c82773dbad8abecc804120b1a324df8920",
+      "size_bytes": 33280,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产测算计算表.xls",
+      "sha256": "324f63383498cd5a8a67bab39c7ee09128485289bb0d817809d5e4a46dfd3ecc",
+      "size_bytes": 95744,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产税费种类及标准（1P）.xls",
+      "sha256": "08fd4c17905539da84cbe1536c119944c3f8356483f0686dc855ba426d4152ef",
+      "size_bytes": 19968,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产项目成本效益分析.xls",
+      "sha256": "5e986d76460d57f66357ea060d5bc5fb6e4864fbfbacf80d96ca78ea976a8767",
+      "size_bytes": 365568,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产项目成本测算、投资分析(超级详细、Excel各个联接表自动生成).xls",
+      "sha256": "4d098ca52e1186396e7a4fe603d52c81f1845998cba0ee1ffc3afa7cfb158ed5",
+      "size_bytes": 225792,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/房地产项目投资估算及财务分析模型.xls",
+      "sha256": "3d3f4fd69fa519b7f3bf2c3b1355e4c2e9ea9f86e8cfc1a62bedb1fe8edab9a2",
+      "size_bytes": 103936,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/投资成本测算表.xls",
+      "sha256": "5f37c621113d6d85c20fd5dc4c3a3be482e2802ae09fb91b980bed93981b4d57",
+      "size_bytes": 30208,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/投资财务分析表（8P）.xls",
+      "sha256": "9d4765e37d5fd9aaccfb73615dc20eca4b0e6fdf88a7f6c3e7ce53b05a282157",
+      "size_bytes": 105984,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/某地产项目详细成本与收益测算表.xls",
+      "sha256": "e038404d2b946e3ed9f96f7ed2e0902b665b2c6502e807255a70e673596d88eb",
+      "size_bytes": 52224,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/某房地产项目经济测算表.xls",
+      "sha256": "899c93f9aa67bcea89295cb15318dbb7506934224d7f2066ba821c1b45e31aab",
+      "size_bytes": 128512,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/楼面地价速算表.xls",
+      "sha256": "eef6d6391527eef2ae6ce6dab090a825f14245f02f49863b379f9ad5aec41f08",
+      "size_bytes": 53248,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/筑巢地产项目财务分析.xls",
+      "sha256": "b52d0e7c5ba8e875e6245b6ba4cf0f84d8c7086269bc1e212f529bf6a7641e4d",
+      "size_bytes": 28160,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/茂华集团石景山TSM项目投资估算.xls",
+      "sha256": "b15691b7ff5b28921ccad2a562d716d58940e8f106d1aa3ba1ad257ef474a674",
+      "size_bytes": 786432,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/青岛x项目效益分析（1页）.xls",
+      "sha256": "d7cbb6a333b7e5c5b4884a105090b11da58ec8b9f74cbd76c42dc1e96e13bec1",
+      "size_bytes": 63488,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/项目土地成本分析表(模板).xls",
+      "sha256": "ccdd2afaa88434f559f67d6717923b955bb6fe62b430fc61702d1fc34eef1aef",
+      "size_bytes": 36352,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/项目成本测算套表.xls",
+      "sha256": "0684ef78f8f62bb33bb810c663c133d34004a19be8b87f0e698ba2cdf42e636c",
+      "size_bytes": 208896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/项目成本静态测算模板.xls",
+      "sha256": "d0c017e479443bba8e76eead7752b54df8fcc485554a21880992b24be4259eaa",
+      "size_bytes": 40448,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/项目投资收益测算模板（全）.xls",
+      "sha256": "a6d982e4aac734999008aff78a2bdc059bd9088e688c0f979ca606fbcbc6368d",
+      "size_bytes": 144896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/项目预算（表格精华）.xls",
+      "sha256": "933dad7a2a8723624043b9c3150a3a2c86d59e6723ce85ea3b13f8b3e0789cb2",
+      "size_bytes": 222720,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产测算全集/测算本集/预算成本明细.xls",
+      "sha256": "5cab276ff9c382392d8efa6d0ecc2f34f06e30b8d0bc19d7501561ac9f9dcf1b",
+      "size_bytes": 51712,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/万科中山项目成本测算表.xls",
+      "sha256": "d5ff3e0e3992c91f354817988000ddd342915a0e61033686dd1bcbea3d89de4a",
+      "size_bytes": 524288,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/(CF105)单位工程指标测算表.xls",
+      "sha256": "14b4ffb2583d40c13da068c7d94e0944eaa8135dad6f56505f34a9eae03bd942",
+      "size_bytes": 51200,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/06-独栋系数测算过程8[1][1].12.xls",
+      "sha256": "7dfbc0216ce824434e21690373ca69551d0c08eff585865c08ba1a0dceac91aa",
+      "size_bytes": 62464,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/060729五棵松详细调研资料.xls",
+      "sha256": "05edc59318a414f84b4f12053e0e11c826ccc693849e64845afbe951e465281a",
+      "size_bytes": 22528,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/11.12营销测算.xls",
+      "sha256": "226cb39f2a98f3e3ace58848aa0f9d2be6547b5fc2a53eabbcc934557811c2c3",
+      "size_bytes": 97792,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/2007世联开发流程及经济测算.ppt",
+      "sha256": "aa1151def4ea6761ad252c2fc7376937bda59f4499480371ba1c84f14fb893db",
+      "size_bytes": 373760,
+      "extension": ".ppt",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/2008思源长城集团优客联邦2期价格测算与合作模式.doc",
+      "sha256": "894bcd28413339039745da06246f984ce1f4c3d449f42e21a026f0df8216de5d",
+      "size_bytes": 479232,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/315.75亩完整的市场投资测算.doc",
+      "sha256": "45a247420c7efc4f5a7c7f4d4f97da7d9a82afefe371b6f1e38df63b997238b8",
+      "size_bytes": 113152,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/7-31营销测算.xls",
+      "sha256": "68801201a874ed1787b62afe545a7334a3ff417dc92a72825ec69b2efc8f08ae",
+      "size_bytes": 97792,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/CG102测算表使用帮助.doc",
+      "sha256": "09f6135c30cb30dc2770c4ea6084179d9a7e222005306fec034e9c94b5271ca0",
+      "size_bytes": 39424,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/CG102测算表使用帮助1",
+      "sha256": "09f6135c30cb30dc2770c4ea6084179d9a7e222005306fec034e9c94b5271ca0",
+      "size_bytes": 39424,
+      "extension": "",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/CG103成本测算指引.doc",
+      "sha256": "39984229ade9f726eb18c4f722bd0faa11381849fd1f8c6628f3e833c1a2e24c",
+      "size_bytes": 96256,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/CG104测算时的分摊指引.doc",
+      "sha256": "ee3e483718ace808734c5461910ff3fa6b55d74fb150dd24e99079b390e6d79e",
+      "size_bytes": 710144,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/F3-5成本分析表.xls",
+      "sha256": "b7db2ef9126c22a3a51351fc7c164b86fb873c999dfd42a6ac2dc638bb07bf2a",
+      "size_bytes": 245248,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/F3-F5造价分析表0805.xls",
+      "sha256": "32e2b11215c5c2c3c6577e1530585bf2e1c1080f0e8ce3e340051ca9138de305",
+      "size_bytes": 47104,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/VKWY7.5.1-Q01-F2汽美中心新增服务项目成本测算表.doc",
+      "sha256": "4ba9ea173f49a8727dc6797c9de48c234a8838accd54100a5a074de0d9a80997",
+      "size_bytes": 35840,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/一份房地产前期测算估算书.doc",
+      "sha256": "0a367d19e86376f7c0ab518a88fbfb337759051dc0bde9a1aa9840465716b686",
+      "size_bytes": 36352,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/一号楼楼王物业服务费测算依据.doc",
+      "sha256": "1008c1aaad54ea448f737b5e5e2932baacdd952292923a32b4bbf7202cb7cb87",
+      "size_bytes": 33792,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/万科中山项目成本测算表.xls",
+      "sha256": "d5ff3e0e3992c91f354817988000ddd342915a0e61033686dd1bcbea3d89de4a",
+      "size_bytes": 524288,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/万科南京光明城市一期目标成本测算04.11.22.xls",
+      "sha256": "55a23be7ed8c61c77c5e23470c51143dabf1d437464d78f16780400f33fa4b30",
+      "size_bytes": 247808,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/万科标准工期.xls",
+      "sha256": "93ccadf90384c3cdc3d78bb49a83ae0b11b9ce2c0d379180540f1b71e814296c",
+      "size_bytes": 64512,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/万科目标成本测算08.xls",
+      "sha256": "b40e235346241f665ad370a98e33a36a26922dde832e2d689267d2ca1ddb06ca",
+      "size_bytes": 247808,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/万科项目可行性论证-经济测算指标.ppt",
+      "sha256": "f7263c3b6e9a0b3d119f77e7f8355533bbeebb5ca6d5701981ca10628fcc17e4",
+      "size_bytes": 139264,
+      "extension": ".ppt",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/上海星级酒店评估过程中收益与成本测算分析.doc",
+      "sha256": "b15876f84372a9d48d18c9d3d07580c105fdf3e8fc67bf889ca8d5689348350d",
+      "size_bytes": 59392,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/中南房地产成本利润测算表.xls",
+      "sha256": "4a16945b74f9a2726de2adddd631bdcd77e0a9f34b3aa48477eeef1c4f1a95fa",
+      "size_bytes": 292864,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/中原大河春天高层投资分析测算表.xls",
+      "sha256": "c21e429a72a86024d7cc69f6f154cea821cf15665e563cf2dbb5861db1b30cff",
+      "size_bytes": 31744,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/丹东【造纸厂】成本测算.doc",
+      "sha256": "d1b8e514af4109b1107ca0167c69dab57e1ca2a8c840e24a8a76b821ee748e95",
+      "size_bytes": 104960,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/五棵松测算报告.xls",
+      "sha256": "ab8b725c592c363322d8692b52c15e984456c59c27ec16dc2ea75efe9530f943",
+      "size_bytes": 75776,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/住宅测算模型.xls",
+      "sha256": "3d663f1c195add3bce228e0ed85f462abfc131cb7cc0bd1dafbb8a0989ce0615",
+      "size_bytes": 60416,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/住宅测算模型7.xls",
+      "sha256": "575c523a6ab97c8e5ccfea899ef3dc9c6bcff37539bcab49695b8f1419d9ec8b",
+      "size_bytes": 60416,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/别墅项目成本利润测算模型.xls",
+      "sha256": "0694a66c838d992586f7a675ba614763b9f6b33fb3c4368bfc350ed322e67dac",
+      "size_bytes": 27136,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/北京中轴路项目商业部分经济效益测算.ppt",
+      "sha256": "1b4aacdc6d71596614f26d62cb9b1e8fbf576f0470c270d30ef9e06746c91a79",
+      "size_bytes": 1622528,
+      "extension": ".ppt",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/北京基准地价测算价格方法.doc",
+      "sha256": "3fb7335a9684b1e0b7d22a892138a026c4380c3fc187fa0b184806f35dd3fe64",
+      "size_bytes": 28160,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/北京某商业广场物业运营成本测算.doc",
+      "sha256": "c1a8f63cdca9bd5a8ba71ba7053757932c31f35152218e0bb5e1d881629707e4",
+      "size_bytes": 34304,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/北京某大厦整体购买调研报告及测算表.doc",
+      "sha256": "3511518be52bdf8b652d888eb79268e42aab7e10522afd3295125367ac622ed9",
+      "size_bytes": 380928,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/北京金融街行程大街整购投资分析报告及测算表/北京某大厦整体购买调研报告及测算表.doc",
+      "sha256": "3511518be52bdf8b652d888eb79268e42aab7e10522afd3295125367ac622ed9",
+      "size_bytes": 380928,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/北京金融街行程大街整购投资分析报告及测算表/行程大厦销谨慎方案.xls",
+      "sha256": "45ebf0f6e5e5d1774409c8e53de7aa427ca1b5dc284ffcb7f7a1240bc69abddc",
+      "size_bytes": 38912,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/南京房地产项目成本测算案例.doc",
+      "sha256": "1cd1df6480fd63687659d2126c91fda37c12d1e133de7abfeed2e687909874eb",
+      "size_bytes": 26624,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/商业报价测算.doc",
+      "sha256": "54cdc839e15eee904730094d142211e8280037b10cf2a7eb25ac1207e490a8f2",
+      "size_bytes": 93696,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/商品房价格构成-成本核算表（1P）.xls",
+      "sha256": "559eda7655875f1608b52e31da4a189580ce727dc6582b2c57df627d9f57cc92",
+      "size_bytes": 19968,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/土地测算.xls",
+      "sha256": "05f4152c31a73da7eb351f28f630961921816412aeace5e812631510e127563e",
+      "size_bytes": 41984,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/土地测算资料/土地报价研究案例.doc",
+      "sha256": "c1a70888b0132fc612050c7ba23e979c390465f970d63877f8e5465a768bb6b8",
+      "size_bytes": 908800,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/土地测算资料/土地报价研究案例.ppt",
+      "sha256": "46f9ab430d1ae090999d425005872f3167e23441a7a31d6b5d79671ecf5c1b47",
+      "size_bytes": 358400,
+      "extension": ".ppt",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/地上购物中心租金回报测算3-20.xls",
+      "sha256": "60d8712ab3afa486ab105421c428284b50c6192b9b5f83ccfb6cb3ee5a466f94",
+      "size_bytes": 20480,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/地上购物中心租金回报测算（余沛强-24）.xls",
+      "sha256": "968e8e44a809e61836697267b4f5356a05645434e9d06fab51fffc01e1fddeb5",
+      "size_bytes": 24576,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/地下出租测算2007.3.15.xls",
+      "sha256": "35638078de3d0c5964e145030d489dab2622dba919d3db942c8e71ad9fc4b498",
+      "size_bytes": 124416,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/地下时尚街道出租金额测算2007.3.13.xls",
+      "sha256": "bceffce1d32f43f100c1a0ec34b138b975428195306381f4da0c17339f2c7858",
+      "size_bytes": 352768,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/地下租金测算2007.3.14.xls",
+      "sha256": "c8d6646c353b4416d81e63fe48241da698f1e5e28b028e7b5c22b009047566b9",
+      "size_bytes": 355328,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/地下车库管理成本费用测算.doc",
+      "sha256": "807ee0dba314498e4e316b8bcf256eaef8741d1093527f3518603868cb91776a",
+      "size_bytes": 29184,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/地造价测算表.xls",
+      "sha256": "c40c18935f46a3c94e5cb1df97f92bf5551aba445e5e0486d72d8db8f0f4d4e7",
+      "size_bytes": 77312,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/大悲院商贸街/贷款评估报告(1).doc",
+      "sha256": "2e710fdab3d793d9d63169041ac9161e191c9f2835b1ecc39d3f4db1e0601b11",
+      "size_bytes": 51200,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/大悲院商贸街/贷款评估报告(2).doc",
+      "sha256": "6943ed2b89832a5b1ead55f3a7e18d5617f8ad98b85cfbfcbba19a54c387e13e",
+      "size_bytes": 51200,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/大悲院商贸街/贷款评估报告(3).doc",
+      "sha256": "73d5a716019ac0a41e17e77d71120f18d48d12facf2b849e58b5190982e51ca5",
+      "size_bytes": 51200,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/大悲院商贸街/贷款评估报告(4).doc",
+      "sha256": "5d64be5f7594e3d3d78d580353aefa8a3fb517b0b71253bf0a5116d8219becec",
+      "size_bytes": 51200,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/天都城经济测算.doc",
+      "sha256": "55f3267b29c47a9a3662af3a69f34f734fa337043f7ec41c35fdc46e76df3da9",
+      "size_bytes": 221696,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/太原项目测算表(容积率3.5-XX毛利润0%).xls",
+      "sha256": "a24290ba8415917b951c2a1d33b32cfa4bb4616910ebdce122ffd3f44a07124c",
+      "size_bytes": 96256,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/太原项目测算表(容积率3.5-XX毛利润15%).xls",
+      "sha256": "1c9d2b984a26f6a66d8c9508111ae10d2057904a135605145f0a289545a5c79f",
+      "size_bytes": 96768,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/太原项目测算表(容积率3.5不含XX).xls",
+      "sha256": "ea1bb44188b0c515cff65a5a4c6f17e29b37594e3408d55555eff592fe826c73",
+      "size_bytes": 78336,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/太原项目测算表(容积率4-XX毛利润0%).xls",
+      "sha256": "5badd8de0eca0aa6bf070caf2c9c3ef00a0223e262484f6fcc55553cfa0b47b4",
+      "size_bytes": 96768,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/太原项目测算表(容积率4-XX毛利润15%).xls",
+      "sha256": "4f66850aec8f409a49e78432237c483158ff05787821e1c0388b78c5de371170",
+      "size_bytes": 97280,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/太原项目测算表(容积率4不含xx).xls",
+      "sha256": "21f677c87f80e0fe170b20e897effbb597edf862b60384b311b20ab96e5deaca",
+      "size_bytes": 78848,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/如何测算招拍挂土地的地价.doc",
+      "sha256": "828e57dbabfc027e5d9ded64d09d4cc9496a6ebe26bfdf28180dbc3f7959babc",
+      "size_bytes": 122368,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/容积率与产品组合测算表.xls",
+      "sha256": "cdc30bacb5526233c9feec6a0a12f8174000ceab9fa09c77763742d647d0615d",
+      "size_bytes": 27648,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/市场比价法 .xls",
+      "sha256": "38ba3200d82e484c48002f1ca824ee100bc7582eb66f0171c9012e88dca1f1b4",
+      "size_bytes": 30208,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/建材超市郑州北环道店投资测算表.xls",
+      "sha256": "ab919cd1340353d8c10aeb6d51f0edcc22cb0111b809a0852e171c4db62745c7",
+      "size_bytes": 29696,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/开发成本明细.xls",
+      "sha256": "bc1f5723c9a5619af24d122fd2aac5c958ee290859849b3257215790b1e8c9ee",
+      "size_bytes": 427008,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/心语家园实销控制价格测算.doc",
+      "sha256": "b90c8f3e7355609196d34e085e13ea0d6fd94a54b8babdf5a86154a8528822b2",
+      "size_bytes": 29184,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/思源顾问北京天元港C区地块项目商业业态规划和综合经济测算.ppt",
+      "sha256": "8547baa85c9887e13ff40d83e7672ccfcdf7b5833dd37c8d644c647e73655107",
+      "size_bytes": 17067008,
+      "extension": ".ppt",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/恒宇一期项目第一方案成本测算了080323.xls",
+      "sha256": "39da81d690109118048f4abb3f5e121612fb98a020603818739ab171931bdf7d",
+      "size_bytes": 149504,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/成本及利润测算20060906.xls",
+      "sha256": "6e7da2c40deff5e53467ed10b06297358e7926f994381a6a87ec371540bbc503",
+      "size_bytes": 37888,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/成本测算.xls",
+      "sha256": "1faf807b11db5edc6a79ad39e3f2bb6a0478d12967884ce45b0287a227b2a500",
+      "size_bytes": 28160,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/成本测算表模版.xls",
+      "sha256": "947575d01c522feba1dc184d8771ee39732473c56f561760081f472bc80c44d7",
+      "size_bytes": 20992,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房产开发成本计算.xls",
+      "sha256": "9abceafcbbf5c7e60c096b7b6ec44e5c03c0dde4567f9aaa18178dac609a83b1",
+      "size_bytes": 185856,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房产开发成本计算（6P）.xls",
+      "sha256": "77a9bdd52a868cb65b5edecd83b9f7de2fe3e2e3232341dc3bcb618a8f1c85e9",
+      "size_bytes": 186368,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房产测算面积细则.doc",
+      "sha256": "089361bffa7edc917f69d5740439ec1e279538a2c62857cd4a2976feeede3042",
+      "size_bytes": 40960,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产——土地造价计算（1P）.xls",
+      "sha256": "072e6daff9410aed55f8f122a37184fc3e49de427b462bc5d9582b839aa4fcd0",
+      "size_bytes": 19968,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产前期测算表.xls",
+      "sha256": "61da58e275dfaf213031a4adff4f6534f6d517804e814b1ec37c07181548ce9a",
+      "size_bytes": 18432,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产前期测算表（8页）.xls",
+      "sha256": "b99c85ae4b286677dbbab12f659cd516d766eae430d4fc89b12d1c9f5304cd52",
+      "size_bytes": 164864,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产开发成本及经济测算/房地产开发项目成本分析及经济评价（excel格式）.xls",
+      "sha256": "8e9f80d8c296a743e578210eba9f426a4b6b97e5aa55120a3187ab010f90659e",
+      "size_bytes": 76800,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产开发经济测算表.pdf",
+      "sha256": "4112a7b3b0b4fd615f28e9d725218725d231420c73c8d85d52193e49f088cdef",
+      "size_bytes": 87877,
+      "extension": ".pdf",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产投资测算之我的总结.doc",
+      "sha256": "b3d5b10dd88b1469e7c3376b1f68161f8e070879201eed74306ab6aa0a430e6c",
+      "size_bytes": 20992,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产投资测算操作手册（北京）.doc",
+      "sha256": "bd7509d7362e7b75993c351fdac84500ec53e2c7a476214fc79a867b0023b7b4",
+      "size_bytes": 57856,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产投资项目成本估算表.xls",
+      "sha256": "360c13813b3682f4b4ee23265fe102c82773dbad8abecc804120b1a324df8920",
+      "size_bytes": 33280,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产测算计算表.xls",
+      "sha256": "324f63383498cd5a8a67bab39c7ee09128485289bb0d817809d5e4a46dfd3ecc",
+      "size_bytes": 95744,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产税费种类及标准（1P）.xls",
+      "sha256": "08fd4c17905539da84cbe1536c119944c3f8356483f0686dc855ba426d4152ef",
+      "size_bytes": 19968,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产项目成本效益分析.xls",
+      "sha256": "5e986d76460d57f66357ea060d5bc5fb6e4864fbfbacf80d96ca78ea976a8767",
+      "size_bytes": 365568,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产项目成本测算、投资分析(超级详细、Excel各个联接表自动生成).xls",
+      "sha256": "4d098ca52e1186396e7a4fe603d52c81f1845998cba0ee1ffc3afa7cfb158ed5",
+      "size_bytes": 225792,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产项目投资估算及财务分析模型.xls",
+      "sha256": "3d3f4fd69fa519b7f3bf2c3b1355e4c2e9ea9f86e8cfc1a62bedb1fe8edab9a2",
+      "size_bytes": 103936,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/房地产项目经济效益测算及Excel的应用.pdf",
+      "sha256": "468db448b9b7ddfa00507c6d24998ea4bc0229b4d7c7212fcdb7ef1d85b0cd47",
+      "size_bytes": 654046,
+      "extension": ".pdf",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/投资成本测算表.xls",
+      "sha256": "5f37c621113d6d85c20fd5dc4c3a3be482e2802ae09fb91b980bed93981b4d57",
+      "size_bytes": 30208,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/投资测算表.xls",
+      "sha256": "d1da743e75432d0ec54a48b486809dd4863332e8bbbb94a753de3a029845f67c",
+      "size_bytes": 60928,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/投资财务分析表（8P）.xls",
+      "sha256": "9d4765e37d5fd9aaccfb73615dc20eca4b0e6fdf88a7f6c3e7ce53b05a282157",
+      "size_bytes": 105984,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/拍卖地块测算.xls",
+      "sha256": "c1072bff73fa80b14df0b1f5ec0788873c4701439381323e533efd66c33e0884",
+      "size_bytes": 177664,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/拍卖项目测算表.xls",
+      "sha256": "4c747eaabde99f01bd74d584c4584f5b82816057c364802c70c3f68f07a6ba68",
+      "size_bytes": 52224,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/新秀商城2009年下半年营销执行方案（附单页DM文案内容） (NXPowerLite).doc",
+      "sha256": "b9496a6679e41f63a84d9286d765b572325449bf43a352ed48a0864d68ef154f",
+      "size_bytes": 45568,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/最佳容积率测算模板.xls",
+      "sha256": "26b326889ef5944a27c4a7edfe661a9f022946380324656b80e59ea17900f9b9",
+      "size_bytes": 1298432,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/某地产项目详细成本与收益测算表.xls",
+      "sha256": "e038404d2b946e3ed9f96f7ed2e0902b665b2c6502e807255a70e673596d88eb",
+      "size_bytes": 52224,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/某房地产220亩项目详细的经济测算报告.xls",
+      "sha256": "ac332149fb2c75fda1115882bc44d681d9e42f859031c98f51f7d3e6c89eaefa",
+      "size_bytes": 121856,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/某房地产项目经济测算表.xls",
+      "sha256": "899c93f9aa67bcea89295cb15318dbb7506934224d7f2066ba821c1b45e31aab",
+      "size_bytes": 128512,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/某项目详细测算(前期和建安成本非常细).xls",
+      "sha256": "70a1a9029c231969b134f54c173b206de4b617aaf873ddace448db8ccb5c8d50",
+      "size_bytes": 122368,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/楼面地价速算表.xls",
+      "sha256": "eef6d6391527eef2ae6ce6dab090a825f14245f02f49863b379f9ad5aec41f08",
+      "size_bytes": 53248,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/泰州坡子街项目市场分析及投资测算报告.doc",
+      "sha256": "c30c4439b4a8504513dbf8d81a2b041cb5a32324b4c0780ad832c7def9bd92ed",
+      "size_bytes": 1538048,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/测算成本明细流程.xls",
+      "sha256": "9c18b6a104dce9cc056c35f0f05e5f203e87c99f8b2e6abfc04a7f21dbefc4e3",
+      "size_bytes": 54784,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/深圳香蜜湖地块竞标测算全套/香蜜湖项目/报告封面.doc",
+      "sha256": "59957b7bd49ae5593580d494717ea256758b38286fc2d80c107a5c3e9cdf5f5b",
+      "size_bytes": 19456,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/深圳香蜜湖地块竞标测算全套/香蜜湖项目/报告正文.doc",
+      "sha256": "4385dee51389401bc405dc827e8d4ed9c6272366b98617d76b0016693c859b96",
+      "size_bytes": 157184,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/深圳香蜜湖地块竞标测算全套/香蜜湖项目/报告目录.doc",
+      "sha256": "ea7a515d1145a5001a7367da5919fff8a3c19c6c2b546f30ec29458a63a74e96",
+      "size_bytes": 165376,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/深圳香蜜湖地块竞标测算全套/香蜜湖项目/概率分析图.doc",
+      "sha256": "917ceb50f8f98c1bfb0a46cb601c0ded59fdc61fea0d8dfcf88b8f119dea6b39",
+      "size_bytes": 46080,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/深圳香蜜湖地块竞标测算全套/香蜜湖项目/项目财务评价.xls",
+      "sha256": "5678dc8c199ed8f203b8dbc0c0c8874002f0ee4fbc2c6ce1eddb6268e4aa809b",
+      "size_bytes": 55296,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/深圳香蜜湖地块竞标测算全套/香蜜湖项目/香蜜湖地块成本预测.xls",
+      "sha256": "8dd55475df781b92078790d188a3c32c5f5be27cb9dae6ac572d1ca8ef94221f",
+      "size_bytes": 32768,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/物业管理综合服务费用成本测算模板.doc",
+      "sha256": "7e97eeeb37edf2e47d6ce3cca202fd9de61980f91e2616c9b6464c4151a954da",
+      "size_bytes": 447488,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/物业经营管理成本测算.doc",
+      "sha256": "b5cf2a4b7b275ce2cfc0f902ca749a1ff69c8c39d112e021eab849307767f41c",
+      "size_bytes": 29184,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/筑巢地产项目财务分析.xls",
+      "sha256": "b52d0e7c5ba8e875e6245b6ba4cf0f84d8c7086269bc1e212f529bf6a7641e4d",
+      "size_bytes": 28160,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/经济测算作业表单.doc",
+      "sha256": "ecfbf80454ebf7409ca82f78c4ed166180de244b6b417a66d53966585621c358",
+      "size_bytes": 58368,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/综合体项目投资收益测算模板（全）.xls",
+      "sha256": "a6d982e4aac734999008aff78a2bdc059bd9088e688c0f979ca606fbcbc6368d",
+      "size_bytes": 144896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/综合体项目投资收益测算模板（全）1].xls",
+      "sha256": "a6d982e4aac734999008aff78a2bdc059bd9088e688c0f979ca606fbcbc6368d",
+      "size_bytes": 144896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/绿茵豪苑高尔夫1号华府物业开办及销售服务费用测算总表.xls",
+      "sha256": "58f2959aa1fdc416f603a7084bda69aa0137ca4e12fa03b7dbbd379a52c0ac81",
+      "size_bytes": 53248,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/茂华集团石景山TSM项目投资估算.xls",
+      "sha256": "b15691b7ff5b28921ccad2a562d716d58940e8f106d1aa3ba1ad257ef474a674",
+      "size_bytes": 786432,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/萍乡别墅测算(2500).xls",
+      "sha256": "199994437091de03a30a704048ef51f8a658033edfc3de71106fac17698f60a1",
+      "size_bytes": 44032,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/萍乡别墅测算.xls",
+      "sha256": "0340f0126de8e2ea752fecfc382e72acdd726246872187c6d407a87653ee5f82",
+      "size_bytes": 43520,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/萍乡别墅测算1.xls",
+      "sha256": "9c925a784d04c7ef3f028cc1364c3875e49e7757630209b6412b362f9df82618",
+      "size_bytes": 41984,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/购物中心租金修正测算.xls",
+      "sha256": "f32b183f0ca2009d4fd3aa331959c94a3ca8249a616694478f46c78754075bd0",
+      "size_bytes": 16896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/资产负债表损益表模板.xls",
+      "sha256": "1490cdb0bcb08954b314e39dac9c171c82a38bd0935b8775ecef9944b2fad463",
+      "size_bytes": 26112,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/远洲九江项目商场销售价格前期测算报告(新）.doc",
+      "sha256": "7ebf5748c73bcd073c75a2aa736ab451fde91f6e80dbf3e046fadd7bbfa6e84e",
+      "size_bytes": 137216,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/钢铁厂项目经济测算表格（很完整）.xls",
+      "sha256": "092e4ebb1e82e2bd74fafdfb3302214e304602e8fb4a1b1de7be2ac078880ca0",
+      "size_bytes": 78336,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/销售收入测算.xls",
+      "sha256": "9409316fa9a9365dde107c895fed2021f9a51cb074d2d5f2dca3bbbc610d9d9d",
+      "size_bytes": 17408,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/销售收入测算2/滨州房地产市场调研纲要.doc",
+      "sha256": "8d84d39eff87519d04a020122d8580ca9f06a47f3b91aec01dbecb1aae43ae14",
+      "size_bytes": 22528,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/锦绣东方小区管理费测算及经费收支预算.doc",
+      "sha256": "7a505c45cafb8d273c6eb95f6a346df31e1cb205763bd8cba5f486c3aeaa4291",
+      "size_bytes": 100352,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/青岛x项目效益分析（1页）.xls",
+      "sha256": "d7cbb6a333b7e5c5b4884a105090b11da58ec8b9f74cbd76c42dc1e96e13bec1",
+      "size_bytes": 63488,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/鞍山道项目/鞍山道(新6.19）.xls",
+      "sha256": "0188067cd5365cac7e8837c9f378a43e1f9383fdb15e5f0ae2fff33a7ea48dac",
+      "size_bytes": 761344,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/鞍山道项目/鞍山道(新6.19）gai.xls",
+      "sha256": "b1be12641a23cc1847349559d5db68b89ce26078f7aa9daadf990d4238965357",
+      "size_bytes": 764416,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/鞍山道项目/鞍山道(新6.19）gaixiaoshou.xls",
+      "sha256": "f2c12c77b8e714560f5e01d3675ea0aa02957d020e431dcd4cbff38182ee909d",
+      "size_bytes": 850944,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目土地成本分析表(模板).xls",
+      "sha256": "ccdd2afaa88434f559f67d6717923b955bb6fe62b430fc61702d1fc34eef1aef",
+      "size_bytes": 36352,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目开发成本测算及财务分析表.xls",
+      "sha256": "e983941760dbdfd8475e5559d00e459a2dde100048d5f35627bb4ab87ee73b15",
+      "size_bytes": 45568,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目成本测算套表.xls",
+      "sha256": "0684ef78f8f62bb33bb810c663c133d34004a19be8b87f0e698ba2cdf42e636c",
+      "size_bytes": 208896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目成本静态测算模板.xls",
+      "sha256": "d0c017e479443bba8e76eead7752b54df8fcc485554a21880992b24be4259eaa",
+      "size_bytes": 40448,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目投资收益测算模板（全）.xls",
+      "sha256": "a6d982e4aac734999008aff78a2bdc059bd9088e688c0f979ca606fbcbc6368d",
+      "size_bytes": 144896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目投资测算分析表.xls",
+      "sha256": "d8ab097179aa015a9af93157e0ccfa20f977058e0910ed8b1b6263c7d2485643",
+      "size_bytes": 31744,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目投资现金流测算1(1).xls",
+      "sha256": "5279668b673c19dd6b598439536bebcf3f1727eb260cbd2055b68e39699eaf51",
+      "size_bytes": 94208,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目规模测算表.doc",
+      "sha256": "b9eed83e9f6ffca1e623bc5af64a877a721788df35bd9841b2158e854df7f5b1",
+      "size_bytes": 193536,
+      "extension": ".doc",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目财务现金流测算.xls",
+      "sha256": "93d5dcd1d7ac37e83f353af7a6f82d2db5783fa480a5e35b40819916f3e7714f",
+      "size_bytes": 49664,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/项目预算（表格精华）.xls",
+      "sha256": "933dad7a2a8723624043b9c3150a3a2c86d59e6723ce85ea3b13f8b3e0789cb2",
+      "size_bytes": 222720,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/顺弛地产投资测算表格/顺驰地产投资测算表格.xls",
+      "sha256": "4de92bfbdfaca6753e0d39eb5c1ee379cb2ca2e479da4bc68455fda5bbd5772b",
+      "size_bytes": 23552,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/顺驰地产投资测算表格.xls",
+      "sha256": "4de92bfbdfaca6753e0d39eb5c1ee379cb2ca2e479da4bc68455fda5bbd5772b",
+      "size_bytes": 23552,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/预算成本明细.xls",
+      "sha256": "5cab276ff9c382392d8efa6d0ecc2f34f06e30b8d0bc19d7501561ac9f9dcf1b",
+      "size_bytes": 51712,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/测算/预计投资成本测算.xls",
+      "sha256": "e8f0264161e073067d5256ca0d8b6b38d3cb95dbe735567ee96264193e0612f0",
+      "size_bytes": 48128,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/综合体项目投资收益测算模板（全）.xls",
+      "sha256": "a6d982e4aac734999008aff78a2bdc059bd9088e688c0f979ca606fbcbc6368d",
+      "size_bytes": 144896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产经济测算工具包合集（上百个案例）/资产负债表损益表模板.xls",
+      "sha256": "8780428c67dfa2f8aec3515435a47e22390cfbae4c76c8ed38861c2d8e6c4e6a",
+      "size_bytes": 26112,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产项目成本测算、投资分析(超级详细、Excel各个联接表自动生成).xls",
+      "sha256": "1cf6286fa2c4e5d780b0173d3ee72177f4f901e50ebc6cde6c987672cace7439",
+      "size_bytes": 225792,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/房地产项目成本测算、投资分析表（实用表格，含分析数据）.xls",
+      "sha256": "911404e0e7bcca725c86da586496629663e2161628722ed71fcd7ff990e3e22b",
+      "size_bytes": 225792,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产估值（测算）实用资源包/青岛海信房地产项目成本测算工具.xls",
+      "sha256": "6851a91f36bb2c18b94af541e34eddd7a1fd3e5f54d32938514a73f6c73efb5c",
+      "size_bytes": 2552832,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产公司NAV估值模型.xls",
+      "sha256": "1508a77977a9c5f9e8071c75fdddde94abc9525c89e46f07179d6e90c14c11f9",
+      "size_bytes": 374784,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/房地产综合体项目投资收益测算模板.xls",
+      "sha256": "47fee3ded1a05c50f041c7f9c8a30e04dfb55c59afdf597409cf7923e566d4e4",
+      "size_bytes": 144896,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/樊魏高速估值模型.xls",
+      "sha256": "565cc683880d1360f23ec3c6e76fd7b2e6cf3706978ba3cfa9fb8ff6ea2c8aae",
+      "size_bytes": 135680,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/欧洲能源期货交易所商品期权估值模型.pdf",
+      "sha256": "e1a457965ce7b682e9ce3bfcbc1f44dd605b57cbd9d3742a19ac589fe0573a1d",
+      "size_bytes": 278889,
+      "extension": ".pdf",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/水电公司财务预测估值模型/01-水电公司财务预测与估值模型-参考答案(1).xlsx",
+      "sha256": "46fd03efe63e9331223de33f5fa54ed836724182e105d2495b91f621b787288d",
+      "size_bytes": 277822,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/水电公司财务预测估值模型/01-水电公司财务预测与估值模型.xlsx",
+      "sha256": "649c089decefca9791aa62f74b22efc6b01fe6bab994895183e8993d5848a5e5",
+      "size_bytes": 187076,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/水电公司财务预测估值模型/02-水电公司财务预测与估值模型-DCF前.xlsx",
+      "sha256": "c293fb4660188fd99444cbddd0773c0bb26d972151f49a488fd5955dd78f3bff",
+      "size_bytes": 215755,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/煤矿估值模型.xlsx",
+      "sha256": "5774617cdbc9a451fe815cf95085111db686f2a7bf972505de83cea1a538692f",
+      "size_bytes": 46677,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/物业持有类公司估值方法及案例.zip",
+      "sha256": "e4078c42555eed01e581739fe1af46ebe9a730037a2dc966a3173522d6f69d1d",
+      "size_bytes": 5085912,
+      "extension": ".zip",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/物流公司财务预测估值模型/物流公司财务预测与估值模型-DCF前.xlsx",
+      "sha256": "79c75b38d074f013b0b7478c60e62a1439f0d3abf1041693ec4de5f7999f0ca1",
+      "size_bytes": 104695,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/物流公司财务预测估值模型/物流公司财务预测与估值模型-现金流量表构建.xlsx",
+      "sha256": "6d2ccca2622e81cf38ea41966ad713cdfd6244e32fb9b1386cb84098d17a9560",
+      "size_bytes": 85677,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/物流公司财务预测估值模型/物流公司财务预测与估值模型.xlsx",
+      "sha256": "44142c9823d614e084865c69fa399f35009ced9bb760a29f52b53ab83a183602",
+      "size_bytes": 76443,
+      "extension": ".xlsx",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/石油公司财务预测与估值模型.xls",
+      "sha256": "6d6be1f313a9afbb17890e160e67f05196622c166547c1bff351e9face129205",
+      "size_bytes": 163840,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "cyclical_infrastructure"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/种植基地与工厂投资估算、财务预测、投资分析与估值分析.xls",
+      "sha256": "d76aecd59a77206201dbf2cdcea7ceb59dbea7ddbdb276a67cf5639c0b7313ed",
+      "size_bytes": 173056,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/证券公司财务预测与估值模型.xls",
+      "sha256": "23b28d3add21d67b4d44af074681767f863999795e5897454c8ca247dd0d0171",
+      "size_bytes": 504832,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "financial"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/高盛-房地产估价模型.xls",
+      "sha256": "705a3123a33466aabbd3f38a48f0bcd0db99dd224bac3fe9147f00d7b94b6b48",
+      "size_bytes": 545280,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/高盛-杠杆收购模型.xls",
+      "sha256": "8a81a386b6dc4808fe5cf5d8852b323dc44b856db3916bd286a37b66866e0175",
+      "size_bytes": 1806848,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "4、行业估值模型/高盛高华-房地产估值模型.xls",
+      "sha256": "a0e6e4afce04d4ad64e8aa4db1b68214718c1b4e9a89a09d2f69982f70dc702a",
+      "size_bytes": 2839040,
+      "extension": ".xls",
+      "collection": "4、行业估值模型",
+      "mechanism_tags": [
+        "property"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/DCF速算估值模型 .xlsx",
+      "sha256": "cc1c800b2be0ac6616613b6836d1dce4cad1be17c1996a73ae724b0480cf8c3b",
+      "size_bytes": 14222,
+      "extension": ".xlsx",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/《财务模型与估值__投资银行和私募股权实践指南》底稿表.xlsx",
+      "sha256": "89c8baa862d8381f3d87d33683b48efa881f1efe4cbee913c74cc46c3b97be03",
+      "size_bytes": 48493,
+      "extension": ".xlsx",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "financial",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/上市公司股权激励期权评估模型.xls",
+      "sha256": "8a5bbaa6dfaf0416626761462b7cdb42e2dcfeba54e874fd177f4adbaaf31ece",
+      "size_bytes": 137216,
+      "extension": ".xls",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/利率掉期合约公允价值估值计算表.xls",
+      "sha256": "df39f37582647267561beb528a80f85178c3227efc1c643f72d0e8b428a5d395",
+      "size_bytes": 89088,
+      "extension": ".xls",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/基础设施REITs项目现金流测算表.xlsx",
+      "sha256": "6985cff5fc1abcdef4d8e6cc3c82859c456847434568ca5d0777fd80f2deef0a",
+      "size_bytes": 121009,
+      "extension": ".xlsx",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/德勤-财务预测估值模型全套模板.xls",
+      "sha256": "9ac8365bcd0233660ce6d1e778c61aaa0f2a9f212c3ce835c61ff132260e867a",
+      "size_bytes": 1847808,
+      "extension": ".xls",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/德勤-财务预测估值模型全套模板V5.3.2.xls",
+      "sha256": "f48a217c5027793398a1ceb31c453657b4a868d7088266fe7cc9e7a48b6f110a",
+      "size_bytes": 1841664,
+      "extension": ".xls",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/房地产公司NAV估值模型.xls",
+      "sha256": "12159505919197ee7970cd2934db4fac26e3dbb0f122f1e9613c4a060ef1e968",
+      "size_bytes": 374784,
+      "extension": ".xls",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "property",
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/汇率掉期合约公允价值估值计算表.xls",
+      "sha256": "faf7df8d838ab8d1b950ab4cb2f0087d594a84c657b1ccd95db555aece66775b",
+      "size_bytes": 118784,
+      "extension": ".xls",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/融资租赁租金支付和收益测算表.xlsx",
+      "sha256": "45fb096ad126578e6621b75124a50ff9e174d2818b9287b08f0d79e8901cd7ba",
+      "size_bytes": 118766,
+      "extension": ".xlsx",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/资产评估机构收益法估值模型.xlsx",
+      "sha256": "901465dab6887a86702ac6733566838d35292ba520415f12e9ea1a9e203c6a25",
+      "size_bytes": 435988,
+      "extension": ".xlsx",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/长租公寓财务测算表.xlsx",
+      "sha256": "6b656c142bb282c462a0268a1bf59752c6294a55da32fbebdc34bc22e7883355",
+      "size_bytes": 82367,
+      "extension": ".xlsx",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    },
+    {
+      "relative_path": "5、其他估值模型模板/限制流通性股票估值模板.xls",
+      "sha256": "ceff8aa46a957d81d143dfcd4146a9370469dcacb0ba3fa6ad2c40bff35ac0f5",
+      "size_bytes": 216064,
+      "extension": ".xls",
+      "collection": "5、其他估值模型模板",
+      "mechanism_tags": [
+        "generic_template"
+      ],
+      "usage": "mechanism_reference_only",
+      "company_fact_eligible": false
+    }
+  ]
+}

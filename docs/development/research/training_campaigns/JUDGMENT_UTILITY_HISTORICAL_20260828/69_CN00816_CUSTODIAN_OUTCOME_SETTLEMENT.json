@@ -1,0 +1,378 @@
+{
+  "schema_version": "blind-outcome-settlement.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "case_id": "BLIND:HK00816:20240501:FY2024",
+  "custodian_role": "fresh isolated outcome custodian",
+  "settlement_method": {
+    "contract": "66_CN00816_PREOUTCOME_JUDGMENT.json#outcome_settlement",
+    "rule": "For each responsibility axis, evaluate ordered_cells in order and record only the first matched cell. Fields not needed by an already matched negative cell do not create a cross-axis inference."
+  },
+  "authorized_source": {
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "issuer": "Jinmao Property Services Co., Limited / 金茂物业服务发展股份有限公司",
+    "document_title": "2024 Annual Report",
+    "period": "year ended 31 December 2024",
+    "official_exchange_disclosure_date": "2025-04-28",
+    "official_document_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/0428/2025042800899.pdf",
+    "pdf_page_count": 155,
+    "citation_convention": "All page references below are printed Annual Report pages. The PDF physical-page offset is +2."
+  },
+  "axis_vector": [
+    "NEGATIVE",
+    "NEGATIVE",
+    "LOCAL_UNKNOWN"
+  ],
+  "axis_settlements": [
+    {
+      "axis": "J1_OPERATING_AND_CUSTOMER_ABSORPTION",
+      "responsibility": "Whether property-management scale was absorbed by margin, acquisition-impairment-adjusted parent profit, and non-related-customer collections.",
+      "raw_inputs": [
+        {
+          "field": "property_management_revenue_rmb_thousand",
+          "fy2024": 2058567,
+          "fy2023": 1574891,
+          "annual_report_page": 15,
+          "locator": "Management Discussion and Analysis — property-management revenue by property type"
+        },
+        {
+          "field": "property_management_gross_profit_margin_percent",
+          "fy2024": 15.1,
+          "fy2023": 15.8,
+          "annual_report_page": 22,
+          "locator": "Management Discussion and Analysis — Gross profit and gross profit margin of the Group by business lines"
+        },
+        {
+          "field": "profit_attributable_to_owners_of_the_parent_rmb_thousand",
+          "fy2024": 372456,
+          "fy2023": 337315,
+          "annual_report_page": 78,
+          "locator": "Consolidated Statement of Profit or Loss — Attributable to: Owners of the parent"
+        },
+        {
+          "field": "acquisition_related_goodwill_and_contractual_rights_impairment_added_back_rmb_thousand",
+          "fy2024": 0,
+          "fy2023": 0,
+          "annual_report_pages": [
+            125,
+            126
+          ],
+          "locator": "Note 16 Goodwill lists cost/net carrying movements and impairment testing; Note 17 Intangible assets lists contractual-right movements and amortisation. Neither table discloses an impairment charge.",
+          "direct_derivation": "The required disclosed acquisition-related impairment add-back is zero in each period; no tax or non-controlling-interest estimate is used."
+        },
+        {
+          "field": "j1_adjusted_parent_profit_rmb_thousand",
+          "fy2024": 372456,
+          "fy2023": 337315,
+          "annual_report_pages": [
+            78,
+            125,
+            126
+          ],
+          "locator": "Consolidated Statement of Profit or Loss and Notes 16–17",
+          "direct_derivation": "372,456 + 0 and 337,315 + 0."
+        },
+        {
+          "field": "non_related_trade_receivables_gross_rmb_thousand",
+          "fy2024": 821718,
+          "fy2023": 566852,
+          "annual_report_page": 129,
+          "locator": "Note 20 Trade receivables — Third parties"
+        },
+        {
+          "field": "non_related_trade_receivables_over_one_year_gross_rmb_thousand",
+          "fy2024": 297586,
+          "fy2023": 91470,
+          "annual_report_page": 130,
+          "locator": "Note 20 Trade receivables — provision matrix: the 1–2 year, 2–3 year, and over-3-year columns; the related-party column is separately presented",
+          "direct_derivation": "FY2024: 215,477 + 56,081 + 26,028 = 297,586. FY2023: 70,791 + 13,777 + 6,902 = 91,470."
+        }
+      ],
+      "direct_derivations": [
+        {
+          "metric": "property_management_revenue_growth",
+          "value": "30.71%",
+          "calculation": "2,058,567 / 1,574,891 - 1",
+          "annual_report_page": 15,
+          "locator": "Management Discussion and Analysis — property-management revenue by property type"
+        },
+        {
+          "metric": "j1_adjusted_parent_profit_growth",
+          "value": "10.42%",
+          "calculation": "372,456 / 337,315 - 1",
+          "annual_report_pages": [
+            78,
+            125,
+            126
+          ],
+          "locator": "Consolidated Statement of Profit or Loss and Notes 16–17"
+        },
+        {
+          "metric": "non_related_trade_receivables_over_one_year_change",
+          "value_rmb_thousand": 206116,
+          "value_percent": "225.34%",
+          "calculation": "297,586 - 91,470; then 206,116 / 91,470",
+          "annual_report_page": 130,
+          "locator": "Note 20 Trade receivables — provision matrix"
+        }
+      ],
+      "ordered_cell_evaluation": [
+        {
+          "order": 1,
+          "output": "NEGATIVE",
+          "matched": true,
+          "matched_branch": "The one-year-plus non-related trade-receivable gross balance increased at least 20% and at least RMB10m while the property-management gross margin was no more than 15.8%.",
+          "mechanical_test": "225.34% >= 20%; RMB206.116m >= RMB10m; 15.1% <= 15.8%.",
+          "annual_report_pages": [
+            22,
+            130
+          ],
+          "locators": [
+            "Management Discussion and Analysis — Gross profit and gross profit margin of the Group by business lines",
+            "Note 20 Trade receivables — provision matrix"
+          ]
+        }
+      ],
+      "axis_output": "NEGATIVE",
+      "axis_limited_conclusion": "This is a J1-only settlement: the disclosed rise in aged, non-related customer receivables occurred alongside a 15.1% property-management margin. It does not settle group cash, related-party credit, parent availability, or acquisition returns."
+    },
+    {
+      "axis": "J2_GROUP_CASH_RELATED_CREDIT_AND_PARENT_AVAILABILITY",
+      "responsibility": "Group cash conversion, related credit/funding use, and Hong Kong parent availability.",
+      "raw_inputs": [
+        {
+          "field": "net_cash_from_operating_activities_rmb_thousand",
+          "fy2024": 532998,
+          "fy2023": 450781,
+          "annual_report_page": 84,
+          "locator": "Consolidated Statement of Cash Flows — Net cash flows from operating activities"
+        },
+        {
+          "field": "profit_for_the_year_rmb_thousand",
+          "fy2024": 384048,
+          "fy2023": 342947,
+          "annual_report_page": 78,
+          "locator": "Consolidated Statement of Profit or Loss — Profit for the year"
+        },
+        {
+          "field": "group_cash_and_cash_equivalents_rmb_thousand",
+          "fy2024": 1399453,
+          "fy2023": 1252038,
+          "annual_report_page": 85,
+          "locator": "Consolidated Statement of Cash Flows — Cash and cash equivalents at end of year"
+        },
+        {
+          "field": "amounts_due_from_related_parties_rmb_thousand",
+          "fy2024": 600257,
+          "fy2023": 564703,
+          "annual_report_page": 131,
+          "locator": "Note 21 Prepayments, other receivables and other assets — Amounts due from related parties"
+        },
+        {
+          "field": "parking_agency_service_deposits_with_related_parties_rmb_thousand",
+          "fy2024": 541359,
+          "fy2023": 501952,
+          "annual_report_page": 141,
+          "locator": "Note 30 Related party transactions — Deposits for the provision of property agency services included in prepayments and other receivables"
+        },
+        {
+          "field": "gross_related_party_trade_receivables_rmb_thousand",
+          "fy2024": 227055,
+          "fy2023": 361427,
+          "annual_report_pages": [
+            129,
+            141
+          ],
+          "locator": "Note 20 Trade receivables — Related parties; Note 30 Related party transactions — Trade receivables"
+        },
+        {
+          "field": "deposits_placed_with_sinochem_finance_rmb_thousand",
+          "fy2024": 594000,
+          "fy2023": 115000,
+          "annual_report_page": 141,
+          "locator": "Note 30 Related party transactions — Cash and cash equivalents: Deposits placed with Sinochem Finance"
+        }
+      ],
+      "direct_derivations": [
+        {
+          "metric": "related_party_other_receivables_change",
+          "value_rmb_thousand": 35554,
+          "value_percent": "6.30%",
+          "calculation": "600,257 - 564,703; then 35,554 / 564,703",
+          "annual_report_page": 131,
+          "locator": "Note 21 Prepayments, other receivables and other assets"
+        },
+        {
+          "metric": "operating_cash_to_profit_for_year",
+          "value": "138.78%",
+          "calculation": "532,998 / 384,048",
+          "annual_report_pages": [
+            78,
+            84
+          ],
+          "locator": "Consolidated Statement of Profit or Loss and Consolidated Statement of Cash Flows"
+        }
+      ],
+      "ordered_cell_evaluation": [
+        {
+          "order": 1,
+          "output": "NEGATIVE",
+          "matched": true,
+          "matched_branch": "Deposits placed with Sinochem Finance exceeded the RMB120m threshold specified by the frozen settlement rule.",
+          "mechanical_test": "RMB594.000m > RMB120.000m.",
+          "annual_report_page": 141,
+          "locator": "Note 30 Related party transactions — Cash and cash equivalents: Deposits placed with Sinochem Finance"
+        }
+      ],
+      "axis_output": "NEGATIVE",
+      "axis_limited_conclusion": "This is a J2-only settlement triggered by related finance-company funding concentration. The positive single-year operating cash conversion does not negate that first-match condition and does not settle J1 or J3. No conclusion is made here about the parent post-dividend replenishment or acquisition return."
+    },
+    {
+      "axis": "J3_ACQUISITION_CAPITAL_ALLOCATION",
+      "responsibility": "Whether acquisition consideration produced separately observable acquired-business profit or operating-cash returns, and whether acquisition assets suffered loss.",
+      "raw_inputs": [
+        {
+          "field": "runwu_jiaye_cash_consideration_rmb_thousand",
+          "fy2024": 323800,
+          "annual_report_page": 135,
+          "locator": "Note 27 Business combination — cash consideration, fully paid during the year"
+        },
+        {
+          "field": "runwu_jiaye_attributable_profit_contribution_rmb_thousand",
+                    "fy2024": 29259,
+          "annual_report_page": 136,
+          "locator": "Note 27 Business combination — since acquisition, Runwu Jiaye Group contribution to consolidated profit"
+        },
+        {
+          "field": "runwu_jiaye_attributable_operating_cash_contribution",
+          "fy2024": "UNKNOWN",
+          "annual_report_pages_checked": [
+            135,
+            136
+          ],
+          "locator": "Note 27 Business combination discloses consideration, total cash outflow, revenue, and consolidated-profit contribution, but no acquired-business operating-cash contribution.",
+          "treatment": "UNKNOWN is not zero."
+        },
+        {
+          "field": "shouzhishenghua_attributable_profit_contribution",
+          "fy2024": "UNKNOWN",
+          "annual_report_pages_checked": [
+            125,
+            135,
+            136
+          ],
+          "locator": "Note 16 identifies the Beijing Capital Property Services cash-generating unit; Note 27 provides the FY2024 business-combination contribution only for Runwu Jiaye. No separate FY2024 profit contribution is provided for the pre-frozen Shouzhishenghua acquisition.",
+          "treatment": "UNKNOWN is not zero."
+        },
+        {
+          "field": "shouzhishenghua_attributable_operating_cash_contribution",
+          "fy2024": "UNKNOWN",
+          "annual_report_pages_checked": [
+            125,
+            135,
+            136
+          ],
+          "locator": "The same Notes 16 and 27 do not provide a separate FY2024 operating-cash contribution for the pre-frozen Shouzhishenghua acquisition.",
+          "treatment": "UNKNOWN is not zero."
+        },
+        {
+          "field": "acquisition_related_goodwill_impairment_rmb_thousand",
+          "fy2024": 0,
+          "annual_report_page": 125,
+          "locator": "Note 16 Goodwill — cost and net carrying amount movements and impairment testing; no impairment charge is listed."
+        },
+        {
+          "field": "acquisition_related_contractual_rights_impairment_rmb_thousand",
+          "fy2024": 0,
+          "annual_report_page": 126,
+          "locator": "Note 17 Intangible assets — contractual-right movement lists amortisation but no impairment charge."
+        }
+      ],
+      "direct_derivations": [
+        {
+          "metric": "runwu_jiaye_profit_return",
+                    "value": "9.04%",
+                    "calculation": "29,259 / 323,800",
+          "annual_report_pages": [
+            135,
+            136
+          ],
+          "locator": "Note 27 Business combination — cash consideration and since-acquisition profit contribution"
+        }
+      ],
+      "ordered_cell_evaluation": [
+        {
+          "order": 1,
+          "output": "NEGATIVE",
+          "matched": false,
+                    "reason": "No disclosed material acquisition-related goodwill or contractual-right impairment; Runwu Jiaye's disclosed profit contribution is positive; its 9.04% profit return is not below 5%; and the annual report does not disclose a further FY2024 large acquisition outside the pre-frozen Shouzhishenghua and Runwu Jiaye scope.",
+          "annual_report_pages": [
+            125,
+            126,
+            135,
+            136
+          ],
+          "locators": [
+            "Note 16 Goodwill",
+            "Note 17 Intangible assets",
+            "Note 27 Business combination"
+          ]
+        },
+        {
+          "order": 2,
+          "output": "POSITIVE",
+          "matched": false,
+          "reason": "The pre-frozen Shouzhishenghua acquisition has no separately disclosed FY2024 profit or operating-cash contribution; therefore the all-in-scope-acquisitions disclosure requirement is not complete.",
+          "annual_report_pages": [
+            125,
+            135,
+            136
+          ],
+          "locators": [
+            "Note 16 Goodwill",
+            "Note 27 Business combination"
+          ]
+        },
+        {
+          "order": 3,
+          "output": "MIXED",
+          "matched": false,
+          "reason": "The same missing Shouzhishenghua contribution prevents the required at-least-one-attributable-contribution disclosure for every in-scope acquisition. Runwu Jiaye's missing operating-cash contribution cannot be treated as zero or selected against its disclosed positive profit contribution.",
+          "annual_report_pages": [
+            135,
+            136
+          ],
+          "locator": "Note 27 Business combination"
+        },
+        {
+          "order": 4,
+          "output": "LOCAL_UNKNOWN",
+          "matched": true,
+          "reason": "At least one pre-frozen material acquisition — Shouzhishenghua — has neither a separately disclosed FY2024 profit contribution nor operating-cash contribution, while no independent sufficient J3-negative event is disclosed."
+        }
+      ],
+      "axis_output": "LOCAL_UNKNOWN",
+            "axis_limited_conclusion": "The annual report supplies a positive 9.04% FY2024 profit return for Runwu Jiaye but not its operating-cash contribution, and supplies neither contribution measure for Shouzhishenghua. This local disclosure gap cannot be filled with group operating cash, overall profit, related-party collections, no impairment, or the disclosed Runwu Jiaye profit contribution."
+    }
+  ],
+  "local_unknowns": [
+    {
+      "axis": "J3_ACQUISITION_CAPITAL_ALLOCATION",
+      "missing_fields": [
+        "FY2024 separately attributable profit contribution of Shouzhishenghua",
+        "FY2024 separately attributable operating-cash contribution of Shouzhishenghua",
+        "FY2024 separately attributable operating-cash contribution of Runwu Jiaye"
+      ],
+      "why_not_cross_axis": "Group CFO is J2 evidence; parent/overall reported profit and property-management margin are J1 evidence; related-party balances are J2 evidence. None identifies the operating cash or profit generated by the missing acquired business. The absence of an impairment charge does not establish an acquisition return."
+    }
+  ],
+  "scope_boundary": {
+    "not_concluded": [
+      "method utility or effectiveness",
+      "transferability or migration",
+      "investment action",
+      "formal valuation or BuyBand",
+      "overall win/loss synthesis beyond the three-axis vector"
+    ],
+    "outcome_access_limited_to": "FY2024 disclosure in the single authorized issuer official annual report."
+  }
+}

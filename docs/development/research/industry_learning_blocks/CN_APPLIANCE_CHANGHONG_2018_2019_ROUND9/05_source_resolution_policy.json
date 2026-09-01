@@ -1,0 +1,38 @@
+{
+  "schema_version": "enterprise-judgment-round9-source-resolution-policy.v1",
+  "policy_id": "SOURCE-RESOLUTION:R9:CN600839:FY2019:V1",
+  "company_id": "CN:600839",
+  "issuer_id": "ISSUER:CN:600839",
+  "report_period_end": "2019-12-31",
+  "provider": "CNINFO",
+  "security_code": "600839",
+  "document_category": "ANNUAL_REPORT",
+  "bounded_announcement_window": {
+    "start": "2020-01-01",
+    "end": "2020-06-30"
+  },
+  "selection_rule": "EARLIEST_ORIGINAL_FULL_FY2019_ANNUAL_REPORT_STATIC_FINALPAGE_PDF",
+  "required_static_host": "static.cninfo.com.cn",
+  "excluded_titles": [
+    "SUMMARY",
+    "ABSTRACT",
+    "REVISION",
+    "CORRECTION",
+    "ENGLISH_VERSION"
+  ],
+  "resolution_timing": "ONLY_AFTER_PREOUTCOME_FREEZE_COMMIT",
+  "permitted_metadata_use": "ENUMERATE_AND_BIND_STATIC_PDF_IDENTITY_ONLY",
+  "prohibited_prebinding_use": [
+    "PDF_CONTENT",
+    "OUTCOME_VALUE",
+    "OUTCOME_DIRECTION",
+    "PRICE",
+    "RETURN"
+  ],
+  "object_class": "OUTCOME_SOURCE_RESOLUTION_POLICY",
+  "claim_class": "POST_FREEZE_DETERMINISTIC_SOURCE_IDENTITY_ONLY",
+  "allowed_outputs": [
+    "OUTCOME_SOURCE_BINDING_RECEIPT",
+    "RESEARCH_AGENDA"
+  ]
+}

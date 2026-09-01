@@ -1,0 +1,70 @@
+{
+  "artifact_type": "BLIND9_OUTCOME_ACCESS_AUTHORIZATION",
+  "status": "AUTHORIZED",
+  "candidate": {
+    "security_id": "CN:600276",
+    "legal_name": "江苏恒瑞医药股份有限公司",
+    "cninfo_org_id": "gssh0600276"
+  },
+  "authorized_outcome_source": {
+    "fiscal_year": 2024,
+    "document_kind": "original annual report",
+    "original_report_title": "恒瑞医药2024年年度报告",
+    "disclosure_date": "2025-03-31",
+    "announcement_id": "1222961962",
+    "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2025-03-31/1222961962.PDF"
+  },
+  "source_identification_attestation": {
+    "metadata_only_method": "Official CNINFO hisAnnouncement/query classification metadata, after the candidate identity resolved in receipt 108.",
+    "classification": "category_ndbg_szsh;",
+    "matching_original_fy2024_annual_report_count": 1,
+    "announcement_or_pdf_body_accessed_for_identification": false
+  },
+  "authorization_prerequisites": {
+    "pre_outcome_artifact_references": [
+      "108_CN600276_BLIND_EXTENSION_SELECTION_REGISTER.json",
+      "109_CN600276_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+      "110_CN600276_FORECASTER_EXECUTION_RECEIPT.json",
+      "111_CN600276_PREOUTCOME_JUDGMENT.json",
+      "112_CN600276_INDEPENDENT_PREOUTCOME_REVIEW.md"
+    ],
+    "required_states": {
+      "108": "ISSUED",
+      "109": "ISSUED",
+      "110": "ISSUED",
+      "111": "ISSUED",
+      "112": "ACCEPT"
+    },
+    "frozen_cell_ids": [
+      "S1_INNOVATIVE_REVENUE_CARRIER",
+      "S2_COLLECTION_TO_OWNER_CASH",
+      "S3_REINVESTMENT_DISCIPLINE"
+    ],
+    "prerequisite_result": "The pre-outcome judgment and its independently accepted, mechanically matchable settlement contract are frozen before outcome access."
+  },
+  "custodian_authorization": {
+    "recipient": "A fresh, independent, contract-limited outcome custodian.",
+    "permitted_source_access": "Read only the single PDF at authorized_outcome_source.official_static_pdf_url.",
+    "permitted_work": "Locate only company-disclosed information needed to apply the frozen definitions and thresholds for the three frozen cell IDs, then settle only those matching cells exactly as frozen.",
+    "authorized_cell_ids": [
+      "S1_INNOVATIVE_REVENUE_CARRIER",
+      "S2_COLLECTION_TO_OWNER_CASH",
+      "S3_REINVESTMENT_DISCIPLINE"
+    ],
+    "no_expansion": "No other report, announcement, fiscal period, source, repository material, market material, valuation material, analyst material, or curriculum/method material may be read or used."
+  },
+  "local_mismatch_protocol": {
+    "permitted_return": "Return only a LOCAL_MISMATCH for a specific frozen cell when the authorized PDF cannot be deterministically matched to that cell's frozen issuer, period, metric, definition, unit, comparator, or threshold contract.",
+    "required_localization": "Identify the affected frozen cell ID and the exact contract field that does not match; do not generalize the mismatch beyond that cell.",
+    "prohibited_return": "No source substitution, new cell, threshold revision, outcome narrative, cross-cell synthesis, method assessment, enterprise re-judgment, valuation, price/return analysis, or investment conclusion."
+  },
+  "role_firewall": {
+    "custodian_must_not": [
+      "disclose or use any outcome information beyond the minimum needed to settle the authorized frozen cells",
+      "synthesize the cell results into a business, management, owner-cash, permanent-loss, valuation, return, or investment conclusion",
+      "assess, validate, generalize, or revise the research method or training curriculum",
+      "provide feedback other than a cell-level settlement or localized mismatch"
+    ],
+    "authorization_record_attestation": "This authorization record contains source metadata and access instructions only; no outcome-report body or outcome facts are included."
+  }
+}

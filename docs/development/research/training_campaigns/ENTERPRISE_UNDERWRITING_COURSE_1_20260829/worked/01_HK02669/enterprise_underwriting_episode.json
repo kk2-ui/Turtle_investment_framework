@@ -1,0 +1,182 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "EUE:HK02669:20221231:WORKED:C1",
+  "company_id": "HK:02669",
+  "company_name": "China Overseas Property Holdings",
+  "cutoff_at": "2022-12-31T23:59:59+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "在2022年第三方在管面积已快速上升、包干制占比高且公司承担服务成本与应收风险的状态下，判断管理层继续主动外拓能否把合同和面积依次转成客户留存、正常利润、维护后普通股现金，并避免信用损失吞噬资本。",
+  "underwriting_route": "THIRD_PARTY_SERVICE_FRANCHISE_WITH_COLLECTION_AND_OWNER_CASH_CROSS_CHECK",
+  "situation_model": {
+    "summary": "物业管理的增长入口正在从关联方交付转向更分散的独立第三方项目，但包干制下公司同时承接成本、定价和收款责任。中海物业在2022年选择继续主动外拓；结果显示合同、面积、收入、分部利润和集团现金均有改善，但第三方 cohort 的续约、单位经济、收缴和维护后现金仍未连通。",
+    "industry_future_thesis": {
+      "horizon": "2023至2025年的结果观察窗及其后一个物业合同周期",
+      "most_likely_regime": "第三方物业项目仍提供规模入口，但利润池将更多流向能够同时维持服务、续约、包干成本纪律和收缴质量的运营商，而不是单纯新增面积最多的运营商。",
+      "profit_pool_transmission": "第三方中标先扩大合同与在管面积；只有项目被客户续约、费用覆盖人工与分包成本、应收按期回收并扣除维护和扩张投入后，新增规模才进入正常利润和 owner cash。包干制使成本超支和坏账直接侵蚀利润池。",
+      "company_exposure": "中海物业的第三方占比和包干制占比都较高，因此既能借品牌和规模赢得外部项目，也更直接暴露于异质客户、竞争性定价、服务成本及应收账期。",
+      "adaptation": "管理层以品牌、规模、人员结构精简和更多分包承接扩张；2023年新订单、第三方面积与包干制毛利改善说明适应产生了经营结果，但没有来源别 cohort 数据证明新增第三方项目已经续约并完成现金吸收。",
+      "normal_economics": "可把合并物业管理收入、包干制毛利改善和分部利润增长作为正常盈利改善的方向性证据；不能把合同总额、面积或集团毛利直接视为第三方项目的成熟单位经济。",
+      "permanent_loss": "近端生存风险低于信用和资本回收风险；材料性损失路径是竞争性包干项目在应收老化、核销、服务补投和续约失败后持续占用现金，而集团披露无法把该风险分配到第三方 cohort。",
+      "valuation_treatment": "价值路线只承认可复现的正常利润和经收缴、维护投入调整后的 owner cash；第三方面积增长作为有条件增长情景，不单独承担价值增量，信用损失路径进入压力处理。",
+      "strongest_rival": "2023年包干制毛利、物业管理分部利润、集团经营现金和实际股东现金转移同步改善，最简单的解释是规模与运营效率已经足以证明第三方扩张创造了高质量现金，而 cohort 拆分只是非必要的披露细节。",
+      "reversal_observations": [
+        "若连续披露第三方项目的续约或终止、来源别成熟毛利、实收与账龄，并显示新增 cohort 在维护投入后稳定产生现金，则应上调第三方增长的正常盈利与 owner cash 信用。",
+        "若第三方面积继续增长而来源别毛利下降、逾期和核销加速、续约恶化，或集团经营现金主要依赖应付与预收扩张，则应下调扩张质量并提高永久损失处理。"
+      ]
+    }
+  },
+  "business_position": "公司已具备品牌、规模和项目获取能力：2022年第三方在管面积105.2百万平方米、占32.8%，2023年第三方新订单57.3百万平方米并把期末第三方在管面积推至162.5百万平方米、占40.5%。这一位置证明外部客户授予合同，但不等于客户留存和项目现金已经成熟。",
+  "survival_case": "集团2023年经营现金净额为人民币1,504.7百万元，并实际向公司股东支付人民币407.854百万元股息，未显示近端融资生存压力。该结论只覆盖集团流动性和已发生股东现金转移；第三方 cohort 是否提供了这些现金、现金能否在维护与增长投入后持续，仍属局部未知。",
+  "adaptation_case": "管理层实际选择继续主动获取独立第三方项目，并以人员结构精简、增加分包和疫后成本回落改善包干制经济。合同、面积、物业管理收入和分部利润均作出正面响应，因此不能把适应写成失败；但服务质量叙述没有续约率、满意度或来源别项目质量支持，管理执行信用停留在规模与合并经营层。",
+  "normalization_case": "物业管理收入增长、包干制毛利率由10.6%升至12.7%、物业管理分部利润增长35.0%，支持正常盈利较2022年改善。改善同时受组织效率和防疫成本消失影响，且缺第三方 cohort 收入、成本与期限，因此正常化应使用合并物业经营结果并对增长归因和可持续性保留折扣，不以每平方米合同额推算单位收益。",
+  "permanent_loss_map": "核心损失载体不是面积本身，而是包干项目的低质量定价、服务补投和应收无法回收。2023年总贸易应收、两年以上应收、损失准备和核销均上升，证明信用载体真实存在；由于来源和 vintage 未拆分，只能把它作为集团信用压力和第三方扩张的判别风险，不能断言新增第三方项目已经造成同额永久损失。",
+  "value_route": {
+    "primary_routes": [
+      "NORMALIZED_PROPERTY_MANAGEMENT_EARNINGS",
+      "MAINTENANCE_ADJUSTED_OWNER_CASH_CROSS_CHECK"
+    ],
+    "excluded_routes": [
+      "MANAGED_AREA_MULTIPLE",
+      "UNATTRIBUTED_THIRD_PARTY_GROWTH_CAPITALIZATION"
+    ],
+    "route_reasoning": "业务是经常性服务合同平台，主路线应从可持续物业管理利润出发，再以营运资本、维护投入和普通股现金可达性校验。面积和合同总额只说明规模入口，缺少续约、来源别利润与收缴时不进入基础价值路线。",
+    "valuation_model_roles": {
+      "primary": [
+        "NORMALIZED_EARNINGS_WITH_COLLECTION_DISCIPLINE"
+      ],
+      "corroborative": [
+        "GROUP_OWNER_CASH_AND_DIVIDEND_ACCESS_CROSS_CHECK"
+      ],
+      "stress": [
+        "RECEIVABLE_AGING_WRITEOFF_AND_RENEWAL_STRESS"
+      ]
+    }
+  },
+  "strongest_rival": "2023年包干制毛利、物业管理分部利润、集团经营现金和实际股东现金转移同步改善，最简单的解释是规模与运营效率已经足以证明第三方扩张创造了高质量现金，而 cohort 拆分只是非必要的披露细节。",
+  "reversal_observations": [
+    "若连续披露第三方项目的续约或终止、来源别成熟毛利、实收与账龄，并显示新增 cohort 在维护投入后稳定产生现金，则应上调第三方增长的正常盈利与 owner cash 信用。",
+    "若第三方面积继续增长而来源别毛利下降、逾期和核销加速、续约恶化，或集团经营现金主要依赖应付与预收扩张，则应下调扩张质量并提高永久损失处理。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "THIRD_PARTY_CONTRACT_AND_AREA_SCALE",
+      "treatment": "UNDERWRITE",
+      "reason": "官方结果明确显示独立第三方新订单和期末在管面积大幅增加，外部客户授予合同这一经营事实已经成立。",
+      "investment_consequence": "承认第三方市场入口和规模扩张，不再把公司仅视为关联方交付平台；但该事实本身不提高成熟单位经济或现金质量。",
+      "promotion_or_resolution_condition": "无需再证明合同和面积已经增长；后续信用升级取决于同一 cohort 的续约、利润和实收。",
+      "evidence_ids": [
+        "HK02669:E1",
+        "HK02669:E2"
+      ]
+    },
+    {
+      "component_id": "CUSTOMER_RETENTION_AND_SERVICE_ABSORPTION",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "管理层声称服务质量和满意度改善，但没有披露第三方续约率、终止率、满意度分数或项目质量数据。",
+      "investment_consequence": "客户授予合同可进入现状判断，持续留存和品牌复利只保留在上行情景，不能进入基础正常化。",
+      "promotion_or_resolution_condition": "取得按第三方来源和 cohort 划分的续约、流失、投诉或服务等级结果。",
+      "evidence_ids": [
+        "HK02669:E2",
+        "HK02669:E3"
+      ]
+    },
+    {
+      "component_id": "CONSOLIDATED_OPERATING_ECONOMICS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "物业管理收入、包干制毛利率和分部利润均改善，说明经营吸收超过纯面积增长；改善同时受人员、分包和疫后成本影响，不能完全归因于新增第三方项目。",
+      "investment_consequence": "正常盈利方向上调，但对增长归因、成熟毛利和持续性保留折扣。",
+      "promotion_or_resolution_condition": "披露来源别项目收入、全成本毛利、合同期限及成熟期表现，并在疫后成本基数正常后保持改善。",
+      "evidence_ids": [
+        "HK02669:E3"
+      ]
+    },
+    {
+      "component_id": "GROUP_OWNER_CASH_AND_THIRD_PARTY_ATTRIBUTION",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "集团经营现金和已支付普通股股息是真实正面事实，但营运资本依赖、维护投入及第三方 cohort 对现金的贡献没有拆分。",
+      "investment_consequence": "承认集团存在现金创造与普通股现金访问，不把全部经营现金或股息归因给第三方增长，也不把其视为稳定维护后 owner cash。",
+      "promotion_or_resolution_condition": "取得第三方项目实收、应收、维护与扩张现金需求，以及从项目现金到公司股东现金的可重复桥接。",
+      "evidence_ids": [
+        "HK02669:E4",
+        "HK02669:E5"
+      ]
+    },
+    {
+      "component_id": "CREDIT_AND_PERMANENT_LOSS_PATH",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "应收、两年以上账龄、损失准备和实际核销上升，证明信用损失路径存在；缺少项目来源拆分，不能把损失定向归因给新增第三方 cohort。",
+      "investment_consequence": "把信用与收缴纳入永久损失压力处理，并限制面积增长信用；不把集团核销机械等同于第三方扩张损失。",
+      "promotion_or_resolution_condition": "按客户来源、服务线和项目 vintage 披露账龄、ECL、核销与回收，并观察其相对收入变化。",
+      "evidence_ids": [
+        "HK02669:E5"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "HK02669:E1",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "Case boundary; The economic episode section 1",
+      "scope": "FY2022 third-party and contract-basis opening state",
+      "used_for": "Establish the company constraint and management choice at the decision boundary"
+    },
+    {
+      "evidence_id": "HK02669:E2",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "The economic episode section 2, paragraphs 1-2",
+      "scope": "FY2023 independent-party orders, managed area and customer-response boundary",
+      "used_for": "Separate contract awards from renewal and service absorption"
+    },
+    {
+      "evidence_id": "HK02669:E3",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "The economic episode section 2, paragraphs 3-4",
+      "scope": "Property-management revenue, contract-basis margin and segment profit",
+      "used_for": "Judge operating absorption and its attribution limits"
+    },
+    {
+      "evidence_id": "HK02669:E4",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "The economic episode section 3, paragraphs 1-2",
+      "scope": "Group operating cash and ordinary-shareholder cash transfer",
+      "used_for": "Distinguish observed group cash access from sustainable cohort owner cash"
+    },
+    {
+      "evidence_id": "HK02669:E5",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "The economic episode section 3, paragraph 3 and consequence bullets",
+      "scope": "Receivable ageing, allowances, write-offs and attribution boundary",
+      "used_for": "Map credit and permanent-loss carriers without over-attribution"
+    },
+    {
+      "evidence_id": "HK02669:E6",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+      "locator": "The strongest counter-case; Best-current investor handling after the outcome",
+      "scope": "Rival explanation and research treatment",
+      "used_for": "Anchor the bounded whole-company conclusion and reversal test"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "RESULT_KNOWN_TEACHING_CASE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md",
+      "role": "Sole contract-allowed evidence package for the worked Episode"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWT:HK02669:20221231:WORKED:C1",
+    "central_path": "中海物业已经证明能把品牌和规模转成第三方合同、在管面积及合并物业利润增长，集团也有真实经营现金和普通股现金转移；但最可能的行业路径会把利润池留给同时完成续约、包干成本和收缴的运营商，而现有披露尚未证明新增第三方 cohort 穿过这三关，因此应上调经营规模与正常盈利方向、保留 owner cash 归因，并把应收老化作为材料性永久损失路径。",
+    "normal_earnings_treatment": "以合并物业管理收入、包干制毛利和分部利润的改善作为正常盈利方向性锚，但剔除面积和合同总额的机械贡献，并对疫后成本回落、来源别单位经济缺失及 cohort 成熟度作条件性处理。",
+    "owner_cash_treatment": "承认人民币1,504.7百万元集团经营现金和人民币407.854百万元已支付股东现金为已观察事实；不把它们归因给第三方 cohort，也不在维护、扩张和营运资本桥未闭合时视为可重复的维护后 owner cash。",
+    "permanent_loss_treatment": "近端生存压力不高；把包干制低价、服务补投、应收老化和核销作为主要损失载体。集团信用指标恶化提高压力，但在来源拆分缺失时不推定第三方 cohort 已造成具体损失。",
+    "value_route_treatment": "采用正常物业利润并以维护后 owner cash 交叉验证；不使用面积倍数或未归因第三方增长，信用和续约进入压力情景。",
+    "strongest_rival": "2023年包干制毛利、物业管理分部利润、集团经营现金和实际股东现金转移同步改善，最简单的解释是规模与运营效率已经足以证明第三方扩张创造了高质量现金，而 cohort 拆分只是非必要的披露细节。",
+    "monitoring": "优先追踪第三方 cohort 的合同期限、续约或终止、来源别成熟毛利、实收与账龄、维护和扩张现金需求，以及其与普通股现金转移的桥接。",
+    "economic_directions": {
+      "normal_earnings": "IMPROVES",
+      "owner_cash": "UNKNOWN",
+      "permanent_loss": "MIXED"
+    }
+  },
+  "investment_treatment": "研究训练处理：承认第三方市场入口、合并经营改善和集团普通股现金访问；第三方增长只在续约、来源别利润、收缴和维护后现金闭合后进入基础承保。本 Episode 不生成市场价值、买入区间或投资动作。"
+}

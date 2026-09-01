@@ -1,0 +1,38 @@
+{
+  "authorization_type": "single-case-contract-limited-outcome-content-custody.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "authorization_status": "ACTIVE_FOR_FRESH_CUSTODIAN_ONLY",
+  "activation_evidence": {
+    "preoutcome_judgment_ref": "97_CN600887_PREOUTCOME_JUDGMENT.json",
+    "forecaster_execution_receipt_ref": "98_CN600887_FORECASTER_EXECUTION_RECEIPT.json",
+    "independent_preoutcome_review_ref": "99_CN600887_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "preoutcome_review_status": "AUTHORIZE",
+    "outcome_source_inventory_ref": "101_CN600887_OUTCOME_SOURCE_INVENTORY.json",
+    "outcome_source_inventory_status": "PASS"
+  },
+  "authorized_source": {
+    "publisher": "巨潮资讯网（上市公司信息披露）",
+    "issuer": "内蒙古伊利实业集团股份有限公司",
+    "period": "FY2024",
+    "title": "内蒙古伊利实业集团股份有限公司2024年年度报告",
+    "publication_date": "2025-04-30",
+    "announcement_id": "1223421123",
+    "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2025-04-30/1223421123.PDF",
+    "permitted_use": "Read only content needed to mechanically settle A1_customer_absorption_product_sales_volume, A2_unit_economics_product_gross_margin, A3_owner_cash_after_long_term_asset_cash_spend and A4_enterprise_capital_return_weighted_average_ROE in the frozen preoutcome judgment."
+  },
+  "fresh_custodian_read_set": [
+    "AGENTS.md",
+    "97_CN600887_PREOUTCOME_JUDGMENT.json",
+    "this authorization",
+    "the single authorized FY2024 official annual-report PDF"
+  ],
+  "custodian_may_write": [
+    "a contract-limited settlement JSON and a custody execution receipt in its designated temporary directory"
+  ],
+  "custodian_must_not_read_or_write": [
+    "selection register, curriculum, teaching cases, prior-case outcomes, method packs, price, return, valuation, report or investment recommendation",
+    "a company synthesis, a method-effectiveness conclusion, an alteration to the preoutcome contract or an expanded outcome inventory"
+  ],
+  "settlement_treatment": "Record only matching FY2024 cells with official page locations. An unavailable, changed, merged or perimeter-incompatible measure is LOCAL_UNKNOWN or MEASUREMENT_MISMATCH for the affected product leg or axis only; it neither supplies a proxy nor invalidates other legs.",
+  "authority": "NO_CJO_NO_VALUATION_NO_BUYBAND_NO_INVESTMENT_ACTION"
+}

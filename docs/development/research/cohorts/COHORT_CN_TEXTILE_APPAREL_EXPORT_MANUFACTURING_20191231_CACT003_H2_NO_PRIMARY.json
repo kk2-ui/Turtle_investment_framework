@@ -1,0 +1,76 @@
+{
+  "schema_version": "judgment-selection-action-screen-no-primary.v1",
+  "entry_kind": "CURATOR_ACTION_SCREEN_STATIC_EXTENSION_NO_PRIMARY",
+  "screen_id": "H2:CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING:20191231:C-ACT-003:NO_PRIMARY:V1",
+  "status": "NO_PRIMARY",
+  "stage0_binding": {
+    "cohort_id": "COHORT:CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING:20191231",
+    "selection_as_of": "2019-12-31T00:00:00+08:00",
+    "immutable_receipt_id": "H1:COHORT:CN:TEXTILE_APPAREL_EXPORT_MANUFACTURING:20191231:STATIC:V1@1",
+    "curator_id": "STATIC_H1_CURATOR_EXPORT_MANUFACTURING_2019",
+    "mechanism_topology": "CUSTOMER_RESPONSE",
+    "listed_company_ids": [
+      "CN:002003",
+      "CN:002404",
+      "CN:002083",
+      "CN:002394",
+      "CN:600070"
+    ]
+  },
+  "candidate_binding": {
+    "candidate_id": "C-ACT-003",
+    "candidate_package_id": "TURTLE_COMPARATIVE_ACTION_SCREEN_STATIC_PDF_PACKAGE_V2",
+    "candidate_action_source_id": "STATIC_PDF_1207047557_P1",
+    "candidate_action_static_pdf": "https://static.cninfo.com.cn/finalpage/2019-10-31/1207047557.PDF",
+    "candidate_action_page": 1,
+    "candidate_mechanism_topology": "COST_RESTRUCTURING_CHAIN",
+    "candidate_responsibility_boundary": "Wholly owned Dushan Energy PTA feedstock project and its supply to the group's main business."
+  },
+  "material_failure": {
+    "root_cause_categories": [
+    "ACQUISITION_MODULE",
+    "DATA_COVERAGE"
+    ],
+    "missing_facts": [
+      "The preferred-candidate record names an action and subsidiary boundary but supplies none of the H2-required company_id, issuer_id, listed-consolidated responsibility_unit_id, industry_id or common-boundary identity needed to match an immutable H1 member.",
+      "The H1 action-blind feasibility package was frozen for CUSTOMER_RESPONSE; it contains no cost-restructuring field history for the preferred PTA internal-supply boundary.",
+      "No eligible H1 member is supplied as an alternative candidate for this screen, and this curator may not search for or substitute one."
+    ],
+    "why_this_blocks_h2": [
+      "The executable H2 validator requires candidate_identity.company_id to be an unchanged H1 member and requires the H2 topology to match the frozen H1 topology. The candidate package cannot supply that identity match.",
+      "An H2 extension may add only new action-screen PDFs. It may not add a company, replace the H1 receipt, or convert its generic customer-response cohort into a cost-restructuring cohort."
+    ],
+    "economic_impact": "Treating the PTA project as if it belonged to this H1 cohort would manufacture a comparator universe and a mechanism measurement contract. Any later relative result could then be driven by an un-frozen scope or wrong causal channel, so it cannot support a directional Comparative episode.",
+    "prohibited_assumptions": [
+      "Do not treat textile/apparel export membership as proof that the PTA feedstock project is a member of the same frozen issuer universe.",
+      "Do not relabel three years of customer-response fields as a unit-cost or internal-procurement series.",
+      "Do not append the candidate or a newly found peer to H1 through this H2 screen.",
+      "Do not inspect later commissioning, procurement, financial, price, return, or outcome material to cure the missing pre-cutoff contract."
+    ]
+  },
+  "curator_firewall_attestation": {
+    "outcome_body_access": "UNREAD_AND_PROHIBITED",
+    "outcome_metadata_access": "NONE",
+    "post_cutoff_sources_prohibited": true,
+    "new_company_or_peer_search_performed": false,
+    "new_static_pdf_opened": false,
+    "reason": "The H1-to-candidate identity and topology conflict is already decisive under the closed validator contract."
+  },
+  "next_legal_command": {
+    "action": "Commission a new independent, action-blind Stage-0 H1 package for the candidate's actual pre-cutoff arena and COST_RESTRUCTURING topology.",
+    "required_before_any_h2": [
+      "Freeze a new roster that actually contains the candidate's listed-consolidated issuer and records the intended responsibility boundary.",
+      "For every H1 carrier, bind three cutoff-before cost-driver or other topology-eligible field identities and five-period D3/D4 identities on the same disclosed boundary.",
+      "Validate and register the new H1 receipt before the action curator receives the candidate action source."
+    ],
+    "stop_condition": "If the new action-blind H1 cannot establish a common arena, boundary-consistent cost field and sufficient independent disclosure carriers, retain NO_PRIMARY rather than creating an H2 or peer panel."
+  },
+  "does_not_grant": [
+    "H2 reviewability",
+    "V5 admission",
+    "peer recruitment or final panel selection",
+    "outcome access or settlement",
+    "learning or method-release rights",
+    "CJO, valuation, report, BuyBand, or investment authority"
+  ]
+}

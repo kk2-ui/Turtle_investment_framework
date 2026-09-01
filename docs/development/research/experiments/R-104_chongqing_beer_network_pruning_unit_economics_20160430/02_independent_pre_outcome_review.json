@@ -1,0 +1,108 @@
+{
+  "schema_version": "judgment-selection-review-receipt.v1",
+  "receipt_id": "JSELREVIEW:R-104:INDEPENDENT-PRE-OUTCOME:20260824:V2-ADMITTED",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "reviewer_id": "codex-independent-pre-outcome-reviewer-r104-v2-20260824",
+  "reviewed_at": "2026-08-24T01:26:45+08:00",
+  "selection_scope": "Fresh independent cutoff-before review of the final R-104 refreeze recorded at 2026-08-24T01:22:40+08:00, including the preserved v1 rejection, remediation map, three frozen CNINFO annual-report sources and current production selection validators/tests. No post-cutoff title, filename, snippet, body, report existence, value, price, result or metadata was accessed.",
+  "verdict": "SELECTION_ADMITTED_PRE_OUTCOME",
+  "outcome_body_access": "UNREAD_AND_PROHIBITED",
+  "outcome_metadata_access": "NONE",
+  "reviewed_artifacts": [
+    "00_cohort_screen_and_source_selection.json",
+    "01_case_freeze.json",
+    "02a_independent_pre_outcome_review_v1_rejection.json",
+    "03_outcome_acquisition_contract.json",
+    "04_measurement_contract.json",
+    "05_pre_cutoff_measurement_workpaper.json",
+    "06_pre_cutoff_product_volume_observability.json",
+    "07_rejection_remediation_and_refreeze.json",
+    "README.md",
+    "CNINFO:600132:ANN:20140409:63807671",
+    "CNINFO:600132:ANN:20150410:1200803967",
+    "CNINFO:600132:ANN:20160409:1202154919",
+    "scripts/judgment_selection_candidate.py",
+    "scripts/judgment_feedback_control.py",
+    "scripts/judgment_selection_feedback.py",
+    "tests/test_judgment_selection_control.py",
+    "tests/test_judgment_selection_feedback.py"
+  ],
+  "review_answers": {
+    "directional_preference_without_prohibited_inputs": "YES: six implemented production closures, rising revenue per headline beer-sales kilolitre through two volume contractions, and recurring cash-working-capital release support a non-common H-A without management targets or later facts. H-A now requires a material whole-issuer normal-profit and owner-cash recovery step rather than inferring success from the actions alone.",
+    "strongest_rival_preserved": "YES: declining whole-issuer contribution margin, a 5.39% FY2015 contribution decline, 16.62% selling-expense growth, continuing volume contraction, RMB204,449,973.25 of closure impairment and potentially non-recurring working-capital release leave H-B genuinely live. Conflicting central results remain MIXED rather than being forced into H-A.",
+    "fair_baseline_distinct": "YES: the baseline mechanically carries FY2015 forward at RMB231,478,984.88 operating contribution and RMB196,326,607.01 owner cash excluding positive working-capital release. It is independently reproducible, is not a selection voter, and lies exactly one RMB40,889,994.65 capital-recovery step between each H-A and H-B boundary, so neither directional verdict can be obtained by repeating the baseline.",
+    "responsibility_unit_and_unknown_boundary": "YES: every D3 and D4 component uses the legal consolidated issuer perimeter. D3 no longer divides whole-issuer activity by beer-only volume; D4 uses consolidated OCF, all long-term-asset acquisition cash and the same five-account opening/ending working-capital identity. Parent-only cash, net profit, survival and unadjusted OCF less capex are prohibited. Non-recurring production throughput remains UNKNOWN, unregistered and non-voting rather than being copied from D2 sales volume.",
+    "golden_report_materiality": "YES: the symmetric RMB40,889,994.65 annual step is 20% of the cutoff-before six-plant fixed-asset impairment, represents a five-year pretax recovery hurdle and about RMB30,667,495.99 after illustrative 25% tax. D3 tests recurring normal operating contribution, D4 tests owner cash after stripping positive working-capital release, and D5 preserves continuous permanent-loss/capital-return diagnosis, making the selection material to a golden report."
+  },
+  "accepted_selection_basis": {
+    "primary_hypothesis_id": "R104-H-A",
+    "strongest_rival_id": "R104-H-B",
+    "simple_baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015"
+  },
+  "v1_remediation_verification": [
+    {
+      "finding_id": "R104-REVIEW-F1-SIX-CLAIM-BUNDLE-MISSING",
+      "state": "SUPERSEDED_BY_PRODUCT_CONTRACT_AND_VERIFIED",
+      "review_conclusion": "The current product contract requires the ordered D1/D2/D3_UNIT/D4/D5 layers and permits D3_PRODUCT_VOLUME only when a stable identity exists. Production validators and tests accept both five- and six-claim forms. R-104 correctly leaves throughput UNKNOWN, creates no product-volume claim, prohibits D2 substitution and gives the missing optional layer no vote."
+    },
+    {
+      "finding_id": "R104-REVIEW-F2-D3-ACTIVITY-PERIMETER-MISMATCH",
+      "state": "REMEDIATED_AND_VERIFIED",
+      "review_conclusion": "D3 is now the whole-issuer RMB amount revenue less operating cost, taxes and surcharges, selling expense and administrative expense. No beer-volume denominator remains, all FY2013-FY2015 components share the consolidated issuer perimeter, and the reclassification-invariant amounts reproduce."
+    },
+    {
+      "finding_id": "R104-REVIEW-F3-CENTRAL-THRESHOLD-ECONOMICS-NOT-ESTABLISHED",
+      "state": "REMEDIATED_AND_VERIFIED",
+      "review_conclusion": "The cutoff-before RMB204,449,973.25 six-plant fixed-asset impairment yields the independently reproduced RMB40,889,994.65 five-year annual recovery step. D3 and D4 use symmetric non-overlapping boundaries around their FY2015 baselines, the prior per-kilolitre arithmetic is corrected to 0.1679% and no post-cutoff calibration is used."
+    },
+    {
+      "finding_id": "R104-REVIEW-F4-PACKET-NOT-FROZEN-BEFORE-REVIEW",
+      "state": "REMEDIATED_AND_VERIFIED",
+      "review_conclusion": "The current candidate records a final freeze at 2026-08-24T01:22:40+08:00. This fresh review began after selector confirmation of that final refreeze and records its receipt later. The v1 rejection remains preserved separately and grants no rights to this revision."
+    }
+  ],
+  "central_resolution_verification": {
+    "only_voting_predicates": [
+      "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+      "R104-D4-CASH-AND-WORKING-CAPITAL"
+    ],
+    "diagnostic_non_voters": [
+      "D1_IMPLEMENTATION",
+      "D2_CUSTOMER_ABSORPTION",
+      "D3_PRODUCT_VOLUME_OR_FIXED_COST_ABSORPTION:UNKNOWN_NOT_REGISTERED",
+      "D5_CAPITAL_RETURN"
+    ],
+    "joint_rule": "A_ONLY requires both D3 and D4 primary tests; B_ONLY requires both rival tests; conflicts and middle intervals are MIXED; any missing or mismatched central identity is NOT_DIAGNOSTIC.",
+    "simple_baseline_role": "SEPARATE_POINT_FORECAST_COMPARATOR_NOT_SELECTION_DECIDER"
+  },
+  "validator_evidence": {
+    "candidate_validator": "REVIEWABLE_WITH_NO_FINDINGS",
+    "production_selection_tests": "77_PASSED",
+    "tested_files": [
+      "tests/test_judgment_selection_control.py",
+      "tests/test_judgment_selection_feedback.py"
+    ]
+  },
+  "outcome_firewall_attestation": {
+    "state": "PIT_OUTCOME_SEALED",
+    "post_cutoff_metadata_access": "NONE",
+    "post_cutoff_body_access": "NONE",
+    "security_price_or_return_access": "NONE",
+    "attestation": "The v2 reviewer used only the final cutoff-before packet, the preserved rejection, the current local validators/tests and the three already frozen FY2013-FY2015 official annual-report sources."
+  },
+  "admission_boundary": {
+    "state": "SELECTION_ADMITTED_PRE_OUTCOME_ONLY",
+    "does_not_grant": [
+      "post-cutoff access by the selector or reviewer",
+      "outcome enumeration, acquisition or settlement outside the separately assigned custodian and frozen acquisition contract",
+      "automatic training-program or feedback-control registration",
+      "automatic SELECTION_METHOD_ELIGIBLE learning status or learning transfer",
+      "a D2, D5 or optional product-throughput vote on H-A versus H-B",
+      "causal attribution of D3 changes to plant utilization or fixed-cost absorption alone",
+      "method win, accuracy, probability or calibration claims",
+      "unknown-outcome deployment-skill claims",
+      "security-price, valuation, return or portfolio conclusions",
+      "permission for any later packet revision to rely on this receipt"
+    ]
+  }
+}

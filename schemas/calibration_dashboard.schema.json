@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/calibration_dashboard.schema.json",
+  "title": "Turtle research calibration dashboard",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "report_id", "snapshot_fingerprint", "event_sample_size", "prediction_calibration", "process_calibration", "trigger_effectiveness", "decision_calibration", "case_tracking", "pending_review_trigger_ids", "warnings"],
+  "properties": {
+    "schema_version": {"const": "research-calibration-dashboard.v2"},
+    "generated_at": {"type": "string"},
+    "report_id": {"type": "string"},
+    "snapshot_fingerprint": {"type": "string"},
+    "event_sample_size": {"type": "integer", "minimum": 0},
+    "prediction_calibration": {
+      "type": "object",
+      "required": ["resolved_binary_predictions", "brier_score", "brier_standard_error", "uncertainty_note"]
+    },
+    "process_calibration": {"type": "object"},
+    "trigger_effectiveness": {"type": "object"},
+    "decision_calibration": {"type": "object"},
+    "case_tracking": {"type": "object"},
+    "pending_review_trigger_ids": {"type": "array", "items": {"type": "string"}},
+    "warnings": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

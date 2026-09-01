@@ -1,0 +1,55 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-preoutcome-curator-submission.v1",
+  "submission_id": "MHE:CURATOR:CN000921:FY2016:OPERATING-REVENUE:C1:V1",
+  "submission_version": 1,
+  "curator_id": "CURATOR:CN000921:FY2016:STRICT:20260827",
+  "company_id": "CN:000921",
+  "issuer_id": "ISSUER:CN:000921",
+  "cutoff_at": "2017-04-30T23:59:59+08:00",
+  "submission_scope": "PRE_OUTCOME_STATIC_BASELINE_AND_VALUE_FREE_TECHNICAL_ROUTE_ONLY",
+  "preoutcome_static_field": {
+    "source_id": "CNINFO:000921:ANN:20170330:1203223381",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-30/1203223381.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2017-03-30",
+    "issuer_id": "ISSUER:CN:000921",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "measurement_period_end": "2016-12-31",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2016 consolidated income statement, PDF p. 72, 其中：营业收入.",
+    "numeric_value": 26730219497.07
+  },
+  "future_outcome_route_shape": {
+    "provider": "CNINFO_ANNOUNCEMENT_METADATA",
+    "provider_version": "phase10-cninfo-announcement-query.v1",
+    "security_code": "000921",
+    "organization_id": "gssz0000921",
+    "tab_name": "fulltext",
+    "announcement_category": "ANNUAL_REPORT",
+    "begin_date": "2018-01-01",
+    "end_date": "2018-12-31",
+    "page_size": 30,
+    "static_pdf_url_policy": "CNINFO_STATIC_FINALPAGE_PDF"
+  },
+  "information_boundary": {
+    "read_inputs": [
+      "CNINFO:000921:ANN:20170330:1203223381",
+      "CNINFO code-to-organization technical identity for security code 000921"
+    ],
+    "no_outcome_period_source_enumerated": true,
+    "no_outcome_period_source_opened": true,
+    "no_outcome_title_or_value_retained": true,
+    "no_decision_contract": true,
+    "no_measurement_contract": true,
+    "no_prediction": true,
+    "no_price": true,
+    "no_h2_or_r103": true,
+    "no_cjo_or_report": true,
+    "no_round2": true
+  },
+  "allowed_outputs": [
+    "MECHANICAL_SETTLEMENT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

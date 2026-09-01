@@ -1,0 +1,37 @@
+{
+  "schema_version": "enterprise-judgment-method-epoch-requirements.v1",
+  "method_epoch_id": "METHOD-EPOCH:ENTERPRISE-JUDGMENT:EIGHT-DIMENSION:V2",
+  "state": "DESIGN_REQUIREMENTS_FROZEN_NOT_SAMPLE_VALIDATED",
+  "excluded_validation_samples": [
+    {
+      "company_id": "CN:600839",
+      "cutoff_at": "2018-09-30T23:59:59+08:00"
+    }
+  ],
+  "resolver_requirements": [
+    "Every dimension output must be a JSON scalar or a declared typed object.",
+    "A treatment change must carry one unique treatment_delta_id.",
+    "Several dimensions may explain one treatment delta, but method_advantage_count must remain one.",
+    "Baseline and Enhanced resolution rules must be committed before outcome identity or content access."
+  ],
+  "review_requirements": {
+    "input_mode": "EXTERNAL_ARTIFACT_ONLY",
+    "implementation_must_not_generate_review_decision": true,
+    "completion_without_external_review": "REJECT"
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "METHOD_EPOCH_DESIGN_REQUIREMENTS",
+  "claim_class": "POST_ROUND9_REMEDIATION_ONLY",
+  "allowed_outputs": [
+    "NEW_UNSEEN_PREOUTCOME_FREEZE"
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "schema_version": "judgment-selection-measurement-contract.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "probability_mode": "NO_PROBABILITY",
+  "selection_status": "SELECTION_ADMITTED",
+  "selection_effective_gate": "PENDING_INDEPENDENT_PRE_OUTCOME_REVIEW",
+  "contract_status": "FROZEN_NOT_EXECUTABLE",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600132",
+  "recurring_disclosure_gate": {
+    "state": "PASS_CUTOFF_BEFORE_EVIDENCE_ONLY",
+    "proof_periods": [
+      "FY2013",
+      "FY2014",
+      "FY2015"
+    ],
+    "proof_ref": "00_cohort_screen_and_source_selection.json#pre_admission_recurring_disclosure_gate",
+    "prohibited_inference": "No post-cutoff report existence, title or continued field availability was used."
+  },
+  "product_contract_decision": {
+    "required_layers": [
+      "D1_IMPLEMENTATION",
+      "D2_CUSTOMER_ABSORPTION",
+      "D3_UNIT_ECONOMICS",
+      "D4_WORKING_CAPITAL_AND_CASH",
+      "D5_CAPITAL_RETURN"
+    ],
+    "optional_layer": "D3_PRODUCT_VOLUME",
+    "r104_optional_layer_state": "UNKNOWN_NOT_REGISTERED_NON_VOTER",
+    "rule": "Do not create or impute D3_PRODUCT_VOLUME from D2 sales volume when recurring cutoff-before whole-issuer production throughput is unavailable."
+  },
+  "cutoff_before_materiality_anchor": {
+    "source_id": "CNINFO:600132:ANN:20160409:1202154919",
+    "six_closed_plants_fixed_asset_impairment_rmb": 204449973.25,
+    "recovery_period_years": 5,
+    "annual_pretax_recovery_step_rmb": 40889994.65,
+    "illustrative_tax_rate_pct": 25.0,
+    "illustrative_after_tax_normal_profit_step_rmb": 30667495.99,
+    "threshold_rule": "H-A requires one annual recovery step above the FY2015 baseline; H-B requires the same step below it. The impairment is a cutoff-before capital-at-risk anchor, not a cash outflow to deduct again."
+  },
+  "measurement_rules": [
+    {
+      "predicate_id": "R104-D1-NETWORK-IMPLEMENTATION",
+      "clock": "D1",
+      "required_observation": "implementation or reversal of the six-brewery production closure, equivalent capacity rebuild, material supply interruption and transition burden inside the consolidated listed issuer",
+      "recurring_identity": {
+        "responsibility_unit": "ISSUER_CONSOLIDATED:CN:600132",
+        "metric": "production-network implementation state",
+        "unit": "categorical plus disclosed capacity in 10k_kl when available",
+        "segment_perimeter": "all consolidated production facilities",
+        "expected_official_document_type": "CNINFO annual report or original plant/capacity announcement",
+        "cutoff_before_evidence": "FY2015 annual report identifies six completed production-business closures"
+      },
+      "prohibited_substitutes": [
+        "management intention",
+        "company survival",
+        "group sales volume",
+        "industry capacity"
+      ]
+    },
+    {
+      "predicate_id": "R104-D2-BEER-VOLUME-AND-PRICE-MIX",
+      "clock": "D2",
+      "required_observation": "FY2016 recurring annual headline beer sales volume and consolidated revenue per headline kl",
+      "diagnostic_observation_guide": {
+        "role": "NON_VOTING_CONTEXT_NOT_ADAPTER_SCORED",
+        "primary_context": "sales volume decline is less severe than FY2014's 12.85% decline and revenue per headline kl is at least RMB3,359.0149",
+        "rival_context": "sales volume decline is at least as severe as FY2014's 12.85% decline or revenue per headline kl falls below RMB3,359.0149",
+        "last_observed_points": {
+          "beer_sales_volume_kl": 989500,
+          "revenue_per_kl_rmb": 3359.0149
+        },
+        "adapter_scoring": "PROHIBITED"
+      },
+      "recurring_identity": {
+        "responsibility_unit": "ISSUER_CONSOLIDATED:CN:600132",
+        "metric": "annual headline beer sales volume and consolidated operating revenue",
+        "unit": "kilolitres and RMB_per_kilolitre",
+        "segment_perimeter": "whole consolidated issuer",
+        "expected_official_document_type": "CNINFO official audited annual report",
+        "cutoff_before_repetitions": 3,
+        "disclosure_change_risk": "Product-table volume cannot silently replace the recurring headline volume; separately disclosed commissioned processing needs an issuer bridge."
+      },
+      "prohibited_substitutes": [
+        "production volume",
+        "brand narrative",
+        "industry beer volume",
+        "management sales target"
+      ]
+    },
+    {
+      "predicate_id": "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+      "clock": "D3",
+      "required_observation": "FY2016 whole-issuer operating-contribution amount: consolidated revenue less consolidated operating cost, taxes and surcharges, selling expense and administrative expense",
+      "formula": "operating_revenue_rmb - operating_cost_rmb - taxes_and_surcharges_rmb - selling_expense_rmb - administrative_expense_rmb",
+      "primary_test": {
+        "operator": "GREATER_THAN_OR_EQUAL",
+        "value": 272368979.53,
+        "unit": "RMB"
+      },
+      "rival_test": {
+        "operator": "LESS_THAN_OR_EQUAL",
+        "value": 190588990.23,
+        "unit": "RMB"
+      },
+      "mixed_interval": {
+        "lower_exclusive": 190588990.23,
+        "upper_exclusive": 272368979.53,
+        "unit": "RMB"
+      },
+      "baseline_prediction": {
+        "operator": "EQUAL_POINT_FORECAST",
+        "value": 231478984.88,
+        "unit": "RMB"
+      },
+      "recurring_identity": {
+        "responsibility_unit": "ISSUER_CONSOLIDATED:CN:600132",
+        "metric": "whole-issuer operating-contribution amount after taxes and surcharges",
+        "unit": "RMB",
+        "segment_perimeter": "whole consolidated issuer for every formula component; no product-volume denominator and no plant or brand allocation",
+        "expected_official_document_type": "CNINFO official audited annual report",
+        "cutoff_before_repetitions": 3,
+        "disclosure_change_risk": "FY2015 moved supply-chain expense from administrative expense to manufacturing cost. The whole-issuer amount includes both accounts plus recurring taxes and surcharges; standalone gross margin and beer-volume denominators are non-central."
+      },
+      "prohibited_substitutes": [
+        "operating contribution divided by beer sales volume",
+        "standalone gross margin",
+        "net profit per kl",
+        "EBITDA without a bridge",
+        "brand margin",
+        "security price"
+      ]
+    },
+    {
+      "predicate_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+      "clock": "D4",
+      "required_observation": "FY2016 whole-issuer owner cash after removing any positive cash-working-capital release",
+      "formulae": {
+        "opening_cash_working_capital_rmb": "opening_accounts_receivable_rmb + opening_prepayments_rmb + opening_inventory_rmb - opening_accounts_payable_rmb - opening_customer_advances_rmb",
+        "ending_cash_working_capital_rmb": "ending_accounts_receivable_rmb + ending_prepayments_rmb + ending_inventory_rmb - ending_accounts_payable_rmb - ending_customer_advances_rmb",
+        "owner_cash_ex_working_capital_release_rmb": "operating_cash_flow_rmb - cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_rmb - max(opening_cash_working_capital_rmb - ending_cash_working_capital_rmb, 0)"
+      },
+      "primary_test": {
+        "operator": "GREATER_THAN_OR_EQUAL",
+        "value": 237216601.66,
+        "unit": "RMB"
+      },
+      "rival_test": {
+        "operator": "LESS_THAN_OR_EQUAL",
+        "value": 155436612.36,
+        "unit": "RMB"
+      },
+      "mixed_interval": {
+        "lower_exclusive": 155436612.36,
+        "upper_exclusive": 237216601.66,
+        "unit": "RMB"
+      },
+      "baseline_prediction": {
+        "operator": "EQUAL_POINT_FORECAST",
+        "value": 196326607.01,
+        "unit": "RMB"
+      },
+      "recurring_identity": {
+        "responsibility_unit": "ISSUER_CONSOLIDATED:CN:600132",
+        "metric": "consolidated OCF less all cash paid to acquire fixed, intangible and other long-term assets and less positive release between opening and ending five-account cash working capital",
+        "unit": "RMB",
+        "segment_perimeter": "whole consolidated issuer",
+        "expected_official_document_type": "CNINFO official audited annual report",
+        "cutoff_before_repetitions": 3,
+        "disclosure_change_risk": "Opening and ending cash-working-capital accounts and the long-term-asset-acquisition cash-flow caption must remain bridgeable at the issuer perimeter; otherwise return MEASUREMENT_MISMATCH or UNKNOWN."
+      },
+      "prohibited_substitutes": [
+        "net profit",
+        "parent-only OCF",
+        "cash balance",
+        "debt reduction",
+        "inventory alone",
+        "an estimated maintenance-capex allocation",
+        "OCF less capex without removing positive working-capital release"
+      ]
+    },
+    {
+      "predicate_id": "R104-D5-CAPITAL-RETURN",
+      "clock": "D5",
+      "required_observation": "FY2016-FY2018 cumulative OCF less maintenance-oriented capital expenditure, with working-capital change, closure-related permanent loss/disposal proceeds and opening/average operating capital explicitly bridged",
+      "diagnostic_mode": {
+        "state": "CONTINUOUS_UNKNOWN_NO_SELECTION_HIT_MISS",
+        "numerator": "cumulative owner cash after maintenance-oriented capital expenditure and permanent closure loss without double deduction",
+        "denominator": "opening and average consolidated operating capital with closure/disposal bridge",
+        "reason": "The cutoff-before packet does not support a non-arbitrary three-year capital-return threshold, and closure impairments cannot be treated as both a cash outflow and an additional capital loss."
+      },
+      "recurring_identity": {
+        "responsibility_unit": "ISSUER_CONSOLIDATED:CN:600132",
+        "metric": "consolidated cash flow, capital expenditure, operating assets and closure-related impairment/disposal bridge",
+        "unit": "RMB and percent",
+        "segment_perimeter": "whole consolidated issuer",
+        "expected_official_document_type": "CNINFO official audited annual report and original asset impairment/disposal announcement",
+        "cutoff_before_repetitions": 3,
+        "disclosure_change_risk": "Maintenance versus expansion capex may remain UNKNOWN; no arbitrary allocation is allowed."
+      },
+      "prohibited_substitutes": [
+        "net income called owner cash",
+        "asset impairment double deduction",
+        "market capitalization",
+        "share price or return"
+      ]
+    }
+  ],
+  "definition_change_action": "MEASUREMENT_MISMATCH",
+  "missing_disclosure_action": "UNKNOWN",
+  "no_proxy_override": true,
+  "central_discriminators": [
+    "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+    "R104-D4-CASH-AND-WORKING-CAPITAL"
+  ],
+  "production_throughput_boundary": {
+    "state": "UNKNOWN_OPTIONAL_NON_VOTER",
+    "reason": "No exact, repeated whole-issuer production-volume, sell-through or capacity-utilization identity exists across FY2013-FY2015 cutoff-before annual reports.",
+    "prohibited_substitute": "D2 sales volume",
+    "review_consequence": "The current five-layer product contract makes D3_PRODUCT_VOLUME optional. R-104 therefore keeps production throughput UNKNOWN, does not register a product-volume claim and gives it no vote."
+  },
+  "joint_hypothesis_comparison": {
+    "primary": "D3 operating contribution >= RMB272,368,979.53 AND D4 owner cash excluding positive working-capital release >= RMB237,216,601.66",
+    "strongest_rival": "D3 operating contribution <= RMB190,588,990.23 AND D4 owner cash excluding positive working-capital release <= RMB155,436,612.36",
+    "simple_baseline": "D3 operating contribution point RMB231,478,984.88; D4 owner cash excluding positive working-capital release point RMB196,326,607.01",
+    "baseline_distinction": "Each H-A and H-B amount boundary is one annual RMB40,889,994.65 recovery step away from the FY2015 point. The step is 20% of disclosed six-plant fixed-asset impairment and the primary cannot be met by merely repeating the baseline.",
+    "resolution": {
+      "A_ONLY": "both D3 and D4 satisfy their primary tests",
+      "B_ONLY": "both D3 and D4 satisfy their rival tests",
+      "MIXED": "the observed central discriminators conflict or occupy a frozen middle interval",
+      "NOT_DIAGNOSTIC": "either central discriminator is UNKNOWN, MEASUREMENT_MISMATCH or otherwise unavailable"
+    },
+    "anti_conflation_rule": "D1 closure continuation and D2 sales-volume/price-mix observations are diagnostic context only. Optional D3 product throughput remains UNKNOWN and cannot be copied from D2. D5 remains continuous and cannot vote on the selection."
+  },
+  "baseline_resolution": {
+    "role": "SEPARATE_POINT_FORECAST_COMPARATOR_NOT_SELECTION_DECIDER",
+    "observed_inputs_required": [
+      "D3 whole-issuer operating-contribution amount",
+      "D4 owner cash excluding positive working-capital release RMB"
+    ],
+    "loss_function": "Report predicate-wise absolute relative point error with no aggregate score. Missing or mismatched components remain NOT_DIAGNOSTIC.",
+    "interpretation_limit": "Baseline error cannot create or reverse the H-A/H-B joint verdict. It only establishes whether the selected mechanism added a genuinely different operating call beyond last-observed continuation."
+  },
+  "execution_authorized": false,
+  "registration_status": "NOT_REGISTERED"
+}

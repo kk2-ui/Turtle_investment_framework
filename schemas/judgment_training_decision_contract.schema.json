@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-training-decision-contract.v1",
+  "title": "Turtle historical training Decision Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_id", "contract_version", "company_id", "issuer_id", "cutoff_at", "decision_purpose", "holding_horizon", "permanent_loss_constraints", "decision_flip_questions", "evidence_budget", "price_and_opportunity_cost_policy", "outcome_access", "roles", "object_class", "claim_class", "allowed_outputs"],
+  "properties": {
+    "schema_version": {"const": "turtle-training-decision-contract.v1"},
+    "contract_id": {"type": "string", "minLength": 1},
+    "contract_version": {"type": "integer", "minimum": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "issuer_id": {"type": "string", "minLength": 1},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "decision_purpose": {"const": "HISTORICAL_TRAINING"},
+    "holding_horizon": {
+      "type": "object", "additionalProperties": false,
+      "required": ["minimum_years", "maximum_years"],
+      "properties": {"minimum_years": {"type": "integer", "minimum": 1}, "maximum_years": {"type": "integer", "minimum": 1}}
+    },
+    "permanent_loss_constraints": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "object", "additionalProperties": false, "required": ["constraint_id", "condition", "required_treatment"], "properties": {"constraint_id": {"type": "string", "minLength": 1}, "condition": {"type": "string", "minLength": 1}, "required_treatment": {"type": "string", "minLength": 1}}}
+    },
+    "decision_flip_questions": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "object", "additionalProperties": false, "required": ["question_id", "statement", "decision_effect"], "properties": {"question_id": {"type": "string", "minLength": 1}, "statement": {"type": "string", "minLength": 1}, "decision_effect": {"type": "string", "minLength": 1}}}
+    },
+    "evidence_budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_budget_id", "source_packet_refs"],
+      "properties": {
+        "evidence_budget_id": {"type": "string", "minLength": 1},
+        "source_packet_refs": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["receipt_id", "receipt_version"], "properties": {"receipt_id": {"type": "string", "minLength": 1}, "receipt_version": {"type": "integer", "minimum": 1}}}}
+      }
+    },
+    "price_and_opportunity_cost_policy": {"const": "PROHIBITED_FOR_HISTORICAL_TRAINING"},
+    "outcome_access": {"const": "NONE"},
+    "roles": {
+      "type": "object", "additionalProperties": false,
+      "required": ["judgment_owner_id", "independent_challenger_id", "outcome_custodian_id"],
+      "properties": {"judgment_owner_id": {"type": "string", "minLength": 1}, "independent_challenger_id": {"type": "string", "minLength": 1}, "outcome_custodian_id": {"type": "string", "minLength": 1}}
+    },
+    "object_class": {"const": "DECISION_CONTRACT"},
+    "claim_class": {"const": "EX_ANTE_DECISION_SCOPE"},
+    "allowed_outputs": {"const": ["CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]}
+  }
+}

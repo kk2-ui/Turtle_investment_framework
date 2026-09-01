@@ -1,0 +1,97 @@
+{
+  "schema_version": "judgment-first-training-extension-roster.v1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_id": "JUDGMENT_FIRST_12H_20260828_EXTENSION_2",
+  "predecessor_roster_ref": "02_FROZEN_EXTENSION_ROSTER.json",
+  "freeze_state": "FROZEN_AFTER_EXTENSION_RANK_1_FEEDBACK_AND_BEFORE_EXTENSION_RANK_2_OUTCOME",
+  "selection_policy": "PRESERVE_PREDECESSOR_RANKS_1_TO_3_AND_USE_THESE_ADDITIONAL_ROWS_ONLY_AFTER_THEY_COMPLETE; THEN_TAKE_THE_FIRST_UNSETTLED_ROW_IN_THIS_FIXED_ORDER",
+  "selection_basis": "BUSINESS_MODEL_HETEROGENEITY_PREOUTCOME_OFFICIAL_DATA_SUFFICIENCY_AND_NO_MATCHING_COMPANY_CUTOFF_OUTCOME_ARTIFACT",
+  "forbidden_selection_basis": [
+    "OUTCOME_DIRECTION",
+    "PRICE_OR_RETURN",
+    "SUPPORT_FOR_DIRECT_JUDGMENT_CALIBRATION",
+    "EXPECTED_SCORE_OR_UTILITY"
+  ],
+  "outcome_access": "SEALED_FOR_EACH_ROW_UNTIL_ITS_OWN_PREOUTCOME_FREEZE_REVIEW_AND_AUTHORIZATION",
+  "candidates": [
+    {
+      "extension_rank": 4,
+      "company_id": "CN:601318",
+      "company_name": "中国平安",
+      "cutoff_at": "2024-03-23T00:00:00+08:00",
+      "outcome_period": "FY2024",
+      "archetype": "INSURANCE_LIABILITY_SALES_CHANNEL_UNDERWRITING_AND_ASSET_LIABILITY_MANAGEMENT",
+      "central_operating_tension": "LIFE_AGENT_REFORM_SHOWS_VNB_AND_PRODUCTIVITY_RECOVERY_BUT_DURABILITY_DEPENDS_ON_PERSISTENCY_WORKFORCE_QUALITY_INVESTMENT_RETURN_AND_PROPERTY_CASUALTY_UNDERWRITING_DISCIPLINE",
+      "current_investment_judgment_possible": "CHANNEL_REFORM_HAS_REAL_RECOVERY_SIGNALS_BUT_LONG_TERM_OWNER_ECONOMICS_ARE_NOT_PROVEN_BY_ONE_YEAR_VNB_REBOUND_OR_ACCOUNTING_RESTATEMENT",
+      "decision_carriers": [
+        "COMPARABLE_VNB_AGENT_CHANNEL_VNB_PER_AGENT_PERSISTENCY_AND_AGENT_SCALE",
+        "MOTOR_AND_NON_MOTOR_COMBINED_RATIO_NET_AND_TOTAL_INVESTMENT_YIELD_AND_INVESTMENT_VARIANCE",
+        "SOLVENCY_LIFE_DIVIDEND_OR_CAPITAL_REMITTANCE_AND_EMBEDDED_VALUE_OPERATING_VARIANCE"
+      ],
+      "preoutcome_sources": [
+        {"fiscal_year": 2022, "announcement_id": "SSE:601318:ANN:20230316:601318_20230316_3DLV", "published_at": "2023-03-16", "url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-03-16/601318_20230316_3DLV.pdf"},
+        {"fiscal_year": 2023, "announcement_id": "SSE:601318:ANN:20240322:601318_20240322_QFI4", "published_at": "2024-03-22", "url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-03-22/601318_20240322_QFI4.pdf"},
+        {"document_role": "ACCOUNTING_BRIDGE", "announcement_id": "SSE:601318:ANN:20230427:601318_20230427_VBUT", "published_at": "2023-04-27"},
+        {"document_role": "RESTATED_FY2022_BRIDGE", "announcement_id": "SSE:601318:ANN:20230720:601318_20230720_0GYB", "published_at": "2023-07-20"}
+      ],
+      "known_pollution_or_limit": "CUTOFF_PREDECESSOR_MATERIAL_WAS_USED_IN_AN_R01_ACCOUNTING_BOUNDARY_EXPERIMENT; THE_BRIDGE_IS_SHARED_MEASUREMENT_CONTEXT_NOT_LEARNING_UTILITY; NO_MATCHING_FY2024_OUTCOME_ARTIFACT_WAS_FOUND"
+    },
+    {
+      "extension_rank": 5,
+      "company_id": "HK:06862",
+      "company_name": "海底捞",
+      "cutoff_at": "2023-05-01T00:00:00+08:00",
+      "outcome_period": "FY2023",
+      "archetype": "DIRECT_RESTAURANT_NETWORK_TURNAROUND_WITH_STORE_CLOSURES_REOPENINGS_AND_LEASE_CAPITAL",
+      "central_operating_tension": "WOODPECKER_COST_AND_STORE_GOVERNANCE_CORRECTION_RESTORED_PROFIT_BUT_CUSTOMER_DEMAND_SAME_STORE_ABSORPTION_AND_DISCIPLINED_REOPENING_REMAIN_UNPROVEN",
+      "current_investment_judgment_possible": "COST_AND_STORE_GOVERNANCE_CORRECTION_IS_REAL_WHILE_DEMAND_ABSORPTION_IS_NOT_YET_PROVEN_AND_RESTARTED_EXPANSION_GETS_NO_BASE_GROWTH_VALUE",
+      "decision_carriers": [
+        "SAME_STORE_SALES_TABLE_TURNOVER_AND_RESTAURANT_OPERATING_MARGIN",
+        "REOPENED_CLOSED_AND_NEW_STORE_COUNTS_WITH_REOPENED_STORE_ECONOMICS",
+        "OCF_MAINTENANCE_CAPEX_LEASE_PRINCIPAL_LEASE_LIABILITY_AND_IMPAIRMENT"
+      ],
+      "preoutcome_sources": [
+        {"fiscal_year": 2021, "announcement_id": "IR:6862.HK:FY_2021", "published_at": "2022-04-26", "url": "https://website.hdlcdns.com/website/file/f5885715187847a1970ea32ce1a95005"},
+        {"fiscal_year": 2022, "announcement_id": "IR:6862.HK:FY_2022", "published_at": "2023-04-26", "url": "https://website.hdlcdns.com/website/file/ffbbc3a9cf474272936a9620b6021a95"}
+      ],
+      "known_pollution_or_limit": "A_PRIOR_R75_TEACHING_OBJECT_USED_THE_2021_TO_FY2022_ACTION_RESULT_BUT_THIS_IS_A_NEW_CUTOFF_AND_FY2023_OUTCOME_IS_UNREAD; SUPER_HI_SPINOFF_REQUIRES_CONTINUING_OPERATIONS_COMPARABILITY_AS_SHARED_MEASUREMENT_NOT_LEARNING_UTILITY"
+    },
+    {
+      "extension_rank": 6,
+      "company_id": "CN:600070",
+      "company_name": "浙江富润",
+      "cutoff_at": "2019-05-01T00:00:00+08:00",
+      "outcome_period": "FY2019",
+      "archetype": "TEXTILE_STEEL_PROCESSING_AND_DIGITAL_MARKETING_CROSS_DOMAIN_CAPITAL_ALLOCATION",
+      "central_operating_tension": "CAN_DIGITAL_BUSINESS_PROFIT_IMPROVE_OWNER_CASH_AFTER_CROSS_DOMAIN_ACQUISITION_OR_DO_RECEIVABLES_GOODWILL_AND_COMPLEXITY_HIDE_TRADITIONAL_MANUFACTURING_WEAKNESS",
+      "current_investment_judgment_possible": "ASSIGN_NO_CROSS_DOMAIN_GROWTH_VALUE_UNLESS_SEGMENT_PROFIT_COLLECTION_AND_CONSOLIDATED_CASH_MOVE_TOGETHER",
+      "decision_carriers": [
+        "SEGMENT_REVENUE_MARGIN_AND_EXPORT_EXPOSURE_BY_TRADITIONAL_AND_DIGITAL_BUSINESS",
+        "CONSOLIDATED_PROFIT_TO_OCF_CAPEX_ACQUISITION_CASH_AND_RECEIVABLE_BRIDGE",
+        "GOODWILL_INTANGIBLES_IMPAIRMENT_DEBT_AND_SUBSIDIARY_CAPITAL_OCCUPANCY"
+      ],
+      "preoutcome_sources": [
+        {"fiscal_year": 2016, "announcement_id": "CNINFO:600070:ANN:20170320:1203178988", "published_at": "2017-03-20", "url": "https://static.cninfo.com.cn/finalpage/2017-03-21/1203178988.PDF"},
+        {"fiscal_year": 2017, "announcement_id": "CNINFO:600070:ANN:20180412:1204621453", "published_at": "2018-04-12", "url": "https://static.cninfo.com.cn/finalpage/2018-04-13/1204621453.PDF"},
+        {"fiscal_year": 2018, "announcement_id": "CNINFO:600070:ANN:20190416:1206041964", "published_at": "2019-04-16", "url": "https://static.cninfo.com.cn/finalpage/2019-04-17/1206041964.PDF"}
+      ],
+      "known_pollution_or_limit": "ACTION_BLIND_H1_AND_H2_IDENTITY_TOPOLOGY_NO_PRIMARY_EXIST_BUT_NO_ENTERPRISE_OUTCOME_SETTLEMENT_WAS_FOUND; THE_OLD_COMPARATIVE_NO_PRIMARY_DOES_NOT_BLOCK_THIS_ENTERPRISE_EPISODE"
+    }
+  ],
+  "contamination_scan": {
+    "performed_before_any_CANDIDATE_OUTCOME_ACCESS": true,
+    "outcome_reports_accessed": false,
+    "price_or_return_accessed": false,
+    "ordering_basis": "ARCHETYPE_HETEROGENEITY_AND_PREOUTCOME_EXECUTABILITY_NOT_OUTCOME_QUALITY"
+  },
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "artifact_type": "BLIND9_COMPANY_FEEDBACK_RECEIPT",
+  "status": "COMPLETED",
+  "candidate": {
+    "security_id": "CN:600276",
+    "legal_name": "江苏恒瑞医药股份有限公司"
+  },
+  "REAL_FEEDBACK_TURN_9_COMPLETED": true,
+  "completion_basis": "This is marked true only because the frozen real blind contract in 111_CN600276_PREOUTCOME_JUDGMENT.json was settled by 114_CN600276_CUSTODIAN_OUTCOME_SETTLEMENT.json, independently accepted by 115_CN600276_INDEPENDENT_POSTOUTCOME_REVIEW.md, and that settlement changed this company's next-cutoff research agenda from first confirmation to persistence, coupling, and licensing/timing-effect tests.",
+  "settled_cells": {
+    "S1_INNOVATIVE_REVENUE_CARRIER": "pass",
+    "S2_COLLECTION_TO_OWNER_CASH": "pass",
+    "S3_REINVESTMENT_DISCIPLINE": "pass"
+  },
+  "company_treatment_change": {
+    "before_settlement": "Treat the 2023 operating-cash-flow rebound as funding-capacity evidence only; do not treat it as a settled recurring owner-cash level, and keep R&D as required reinvestment.",
+    "after_settlement": "The repeated S2 pass permits treatment of the 2023 collection recovery as repeated funding capacity; the S1 and S3 passes support an innovative revenue carrier and R&D within a revenue-funded transition. R&D remains required reinvestment, not surplus owner cash.",
+    "permanent_loss_change": "Immediate risk of a cash-constrained transition is reduced, while durability of the revenue carrier, collection quality, collection/working-capital timing, potential up-front out-licensing revenue/profit effects, legacy pressure, and economic returns on R&D remain company-specific residual risks."
+  },
+  "next_cutoff_research_agenda_delta": {
+    "previous_question": "Whether the FY2023 recovery first passes the frozen tests for innovative-revenue commercialization, cash conversion, and financeable R&D.",
+    "new_questions": [
+      "Whether comparable innovative-drug sales continue to be disclosed and remain a continuing carrier relative to the FY2024 disclosed 138.92亿元人民币 basis.",
+      "Whether operating cash flow again converts reported attributable profit, with disclosure on the collection/working-capital driver to separate repeated funding capacity from a one-period timing effect.",
+      "Whether R&D/revenue and revenue direction remain jointly consistent with a revenue-funded transition rather than a renewed cash-absorbing burden.",
+      "Whether innovative commercialization and cash conversion remain intact without reliance on non-recurring licensing or timing effects, and whether any weakness in one of the three links requires a local downgrade rather than being masked by the other passed links."
+    ],
+    "company_specific_effect": "The agenda changes from first confirmation to durability and coupling review for CN:600276."
+  },
+  "transferable_rule": {
+    "created": false,
+    "statement": "No new transferable rule was created. The direct artifacts settle and independently review one company-specific blind contract; they do not establish cross-company transfer."
+  },
+  "METHOD_VALIDATED": false,
+  "TRANSFER_CANDIDATE_CREATED": false,
+  "TRANSFER_VALIDATED": false,
+  "method_vs_company_distinction": "The completed feedback turn records a changed company treatment and next-cutoff agenda. It does not validate the method or any transfer candidate, because an all-pass settlement for one company is not method or transfer validation.",
+  "permissions": {
+    "PERMISSIONS_GRANTED": false,
+    "granted": [],
+    "statement": "No permissions are granted or implied by this receipt."
+  },
+  "independent_post_outcome_review": {
+    "artifact": "115_CN600276_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "verdict": "ACCEPT",
+    "scope": "The review accepts the bounded company-treatment change and explicitly does not validate the method or transfer."
+  },
+  "source_boundary": {
+    "direct_artifacts_referenced": [
+      "111_CN600276_PREOUTCOME_JUDGMENT.json",
+      "114_CN600276_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+      "115_CN600276_INDEPENDENT_POSTOUTCOME_REVIEW.md"
+    ],
+    "other_outcome_facts_added": false,
+    "market_price_return_valuation_analyst_or_portfolio_content": false
+  }
+}

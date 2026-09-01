@@ -1,0 +1,246 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN601888:20190501:INDEPENDENT_AB_3:BASELINE:MANUAL_FRESH:V1",
+  "company_id": "CN:601888",
+  "company_name": "中国国旅股份有限公司（现中国中免）",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "以2019-05-01为截止时点，只判断免税渠道经营、扩张责任与普通股现金转化能否形成可承保的企业经济；成熟渠道、条件性扩张和不可界定项目分别处理，不把FY2018的并表增长直接外推。",
+  "underwriting_route": "CONDITIONALLY_UNDERWRITE_MATURE_DUTY_FREE_CHANNELS_WITH_COMPONENT_SEPARATION",
+  "situation_model": {
+    "summary": "公司正从离岛免税核心扩展为覆盖北京、上海、香港、澳门等机场及其他口岸的多渠道免税经营者。行业利润池取决于授权和经营权、旅客流量与购物转化、采购与品类组织能力，以及渠道租赁责任之间的分配；2018年的高增长同时包含并表、招投标取得新经营权和既有离岛业务优化，不能作为单一稳定状态。",
+    "industry_future_thesis": {
+      "horizon": "未来5至10年，以渠道经营权完整周期而非单一财年观察。",
+      "most_likely_regime": "免税需求仍由出入境和离岛客流、政策资格及消费转化共同驱动，但优质渠道将继续通过竞争性招投标、续约和租赁条款重新分配利润；经营者规模和采购整合可能扩大商品与运营优势，却不会消除授权期限和渠道方议价。",
+      "profit_pool_transmission": "客流和购物转化先形成渠道销售，采购规模、品类组合与运营效率决定商品毛利，机场及其他渠道租赁、促销、人力、库存资金占用和维护投入再决定经营现金；经营权竞争越激烈，越可能由渠道方通过租赁及保底责任吸收增量利润。",
+      "company_exposure": "公司拥有离岛购物中心以及北京、上海等大型机场渠道，并在2018年通过收购和招投标明显扩大经营版图，因此既暴露于客流与政策增长，也集中暴露于租金、续约、整合、库存和扩张资本责任。",
+      "adaptation": "已披露的商品、人员、流程和采购体系整合，线上线下及数据中台合作，以及针对政策调整的系统、采购、培训和提货准备，说明公司具备组织性适应动作；但尚无同店、复购、每客毛利、库存周转和各渠道回收率，不能证明这些动作已经转化为可重复的单位经济。",
+      "normal_economics": "正常经济应分别基于成熟离岛渠道、成熟机场渠道和新取得渠道在完整经营期内的客流转化、商品毛利、合同租赁、库存周转、维护投入及税费，而不是把2018年并表收入、利润增量或毛利结构变化整体年化；新渠道在责任边界清楚并经过完整周期前只进入情景。",
+      "permanent_loss": "永久损失主要来自经营权到期或不利续约、竞争性招标把利润转给渠道方、政策改变适格客群或购买规则、客流与转化不足时刚性租赁责任、库存跌价及资金占用、并购整合失败与商誉减值，以及土地和商业综合体投入不能产生足够普通股现金。",
+      "valuation_treatment": "后续应采用分部化、责任匹配的正常化普通股现金路线：成熟免税渠道为主要承载体，新机场及境外渠道、采购整合收益和在建商业项目使用条件情景，旅游服务与无法拆清责任的扩张不进入核心基准；任何模型都必须显式扣除租赁、维护投入、营运资金、少数股东及融资层级索取权。",
+      "strongest_rival": "最强反方是：2018年的表观增长主要由日上上海并表和高成本机场经营权扩张驱动，机场租赁、备货、建设与整合持续吞噬现金，采购规模优势不足以抵消渠道方议价和续约重定价，因此集团利润增长不能稳定转化为普通股可得现金。",
+      "reversal_observations": [
+        "成熟离岛和机场渠道在完整年度中同时出现客流或购物转化走弱、商品毛利下降、租赁负担上升，并导致扣除库存与维护投入后的现金持续恶化。",
+        "关键经营权未能续约，或续约和新招标条款使渠道在合理客流情景下仍无法覆盖租赁及运营责任。",
+        "日上上海及其他新增渠道在采购、商品、人员和流程整合后仍不能形成可重复的单位经济，并出现显著商誉或库存减值。",
+        "海南土地、总部或商业综合体等扩张持续吸收资本，而不能被独立、可验证的普通股现金回收支持。",
+        "相反，若分渠道披露证明成熟机场与离岛业务在完整周期内具有稳定转化、库存周转和扣除全部租赁及维护责任后的现金，同时续约条款可承受，则应上调对规模与适应能力的判断。"
+      ]
+    }
+  },
+  "business_position": "公司在免税授权体系下取得多类渠道经营权，2018年形成三亚海棠湾、上海机场和首都机场等大型经营节点，并通过并购、招投标、续约和改扩建扩大覆盖。其潜在优势来自渠道组合、采购整合、品类与运营能力；但渠道所有者和政策授予方仍掌握关键进入与续约条件，竞争优势必须在租赁责任之后验证。旅游服务规模较大但毛利率明显低于商品销售，不能与免税核心经济混作同一组件。",
+  "survival_case": "FY2018年末约111.35亿元货币资金、较少的短期借款以及27.222亿元经营现金流，为一般经营波动提供缓冲；然而集团现金流同时承担租赁、供应商、少数股东、投资建设和其他层级索取权，且年报未拆出应付租金和渠道保底责任。因而基准情景下持续经营能力较强，但在政策或客流冲击叠加刚性租赁、库存和建设承诺的压力情景中仍需按责任到期结构复核，不能仅凭净现金表象作无条件生存结论。",
+  "adaptation_case": "公司已经完成日上中国、日上上海的商品、人员和流程对接，推动采购体系整合，并通过营销引流、促销、员工激励、商品结构调整和数字合作适应扩张；针对离岛政策变化也实施系统、采购、培训和提货准备。这些动作说明适应机制存在。现阶段缺失渠道级同店、转化、复购、每客毛利、库存周转和投入资本回收数据，故只承保组织能力，新增渠道的经济成果仍为条件性。",
+  "normalization_case": "FY2018收入470.073亿元、归母净利润30.95亿元和主营业务毛利率41.11%均受商品销售占比提升、日上上海自2018年3月并表、机场渠道扩张和离岛优化影响；同期经营现金流下降至27.222亿元、存货增至59.431亿元、销售费用因并表和机场租赁显著上升。正常化应分离成熟离岛、成熟机场、新并表与新开渠道、旅游服务和开发项目，使用完整周期的转化、毛利、租赁、库存、维护投入及税费。现有资料足以给方向，但不足以给单点正常收益。",
+  "permanent_loss_map": "第一路径是政策授权或渠道经营权丧失，使现有客流入口消失；第二路径是不利续约或竞争性招标将商品毛利转化为刚性租赁负担；第三路径是客流、转化或品类判断失误造成库存积压、跌价和营运资金损失；第四路径是并购整合未达预期导致商誉减值且协同不产生现金；第五路径是海南土地、商业综合体和其他建设资本长期不能回收；第六路径是集团经营现金被少数股东、供应商、租赁及融资索取权截留。风险缓冲来自现金储备、多渠道覆盖与已披露的整合动作，但缓冲强度须由渠道级责任数据确认。",
+  "value_route": {
+    "primary_routes": [
+      "SEGMENTED_NORMALIZED_OWNER_CASH",
+      "SCENARIO_WEIGHTED_CHANNEL_DCF"
+    ],
+    "excluded_routes": [
+      "FY2018_CONSOLIDATED_EARNINGS_AS_STEADY_STATE",
+      "UNADJUSTED_REVENUE_MULTIPLE",
+      "GROUP_OPERATING_CASH_FLOW_AS_EQUITY_DISTRIBUTABLE_CASH",
+      "UNPROVEN_DEVELOPMENT_PIPELINE_IN_CORE_BASE"
+    ],
+    "route_reasoning": "免税渠道的期限、租赁和续约责任决定现金归属，且2018年混合了成熟业务、并表和新扩张，所以必须按渠道成熟度拆分并以普通股现金为共同口径。成熟离岛和经完整周期验证的机场渠道可承担主要路线；新增渠道、整合协同和开发项目只做情景，旅游服务仅在能够独立证明普通股现金后纳入。",
+    "valuation_model_roles": {
+      "primary": [
+        "分渠道正常化普通股现金模型",
+        "经营权期限与续约情景现金流模型"
+      ],
+      "corroborative": [
+        "成熟渠道单位经济交叉验证",
+        "分部投入资本回收验证"
+      ],
+      "stress": [
+        "客流和购物转化下降叠加租赁刚性",
+        "不利续约或经营权丧失",
+        "库存与商誉减值叠加建设资本无法回收"
+      ]
+    }
+  },
+  "strongest_rival": "最强反方是：2018年的表观增长主要由日上上海并表和高成本机场经营权扩张驱动，机场租赁、备货、建设与整合持续吞噬现金，采购规模优势不足以抵消渠道方议价和续约重定价，因此集团利润增长不能稳定转化为普通股可得现金。",
+  "reversal_observations": [
+    "成熟离岛和机场渠道在完整年度中同时出现客流或购物转化走弱、商品毛利下降、租赁负担上升，并导致扣除库存与维护投入后的现金持续恶化。",
+    "关键经营权未能续约，或续约和新招标条款使渠道在合理客流情景下仍无法覆盖租赁及运营责任。",
+    "日上上海及其他新增渠道在采购、商品、人员和流程整合后仍不能形成可重复的单位经济，并出现显著商誉或库存减值。",
+    "海南土地、总部或商业综合体等扩张持续吸收资本，而不能被独立、可验证的普通股现金回收支持。",
+    "相反，若分渠道披露证明成熟机场与离岛业务在完整周期内具有稳定转化、库存周转和扣除全部租赁及维护责任后的现金，同时续约条款可承受，则应上调对规模与适应能力的判断。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "MATURE_HAINAN_OFFSHORE_DUTY_FREE",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "三亚海棠湾2018年收入80.10亿元、接待597万人次且购物170万人次，显示已运行的大型渠道和可观察的客户吸收，但缺少每客毛利、同店、复购、库存和合同责任数据。",
+      "investment_consequence": "作为核心正常化候选，但只使用经完整周期验证、扣除库存与维护投入后的渠道现金，不把单年销售规模直接视为可重复普通股现金。",
+      "promotion_or_resolution_condition": "获得多期同店销售、客流到购物转化、每客毛利、库存周转、政策持续性和维护投入数据，并确认渠道现金在集团索取权之后归属普通股。",
+      "evidence_ids": [
+        "EVID:CHANNELS",
+        "EVID:CASH_CLAIMS",
+        "EVID:DISCLOSURE_GAPS"
+      ]
+    },
+    {
+      "component_id": "MATURE_BEIJING_SHANGHAI_AIRPORT_DUTY_FREE",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "上海机场和首都机场渠道已形成显著销售，且公司披露营销、商品结构和运营动作；但上海仅自2018年3月并表，各机场租金率、保底、剩余期限和续约概率未披露。",
+      "investment_consequence": "仅在租赁后单位经济与完整年度现金得到验证时进入核心；在此之前对增长贡献与租赁责任同时保留。",
+      "promotion_or_resolution_condition": "分渠道取得完整年度销售转化、毛利、租赁及保底、库存、维护投入和经营权期限，并证明合理客流压力下仍产生普通股现金。",
+      "evidence_ids": [
+        "EVID:CHANNELS",
+        "EVID:INVENTORY_RENT",
+        "EVID:DISCLOSURE_GAPS"
+      ]
+    },
+    {
+      "component_id": "NEW_AIRPORT_OVERSEAS_AND_OTHER_CHANNEL_EXPANSION",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "大兴、澳门及其他新开、续约、改扩建渠道证明取得经营权的能力，但截止日前没有完整经营周期和责任匹配的单位经济。",
+      "investment_consequence": "保留潜在增长和渠道组合价值，不进入核心正常化现金，避免把经营权取得等同于经济回报实现。",
+      "promotion_or_resolution_condition": "至少一个完整经营周期证明客流转化、商品毛利、租赁、库存与维护投入后的现金，并披露经营权期限和续约责任。",
+      "evidence_ids": [
+        "EVID:INDUSTRY_IDENTITY",
+        "EVID:CHANNELS",
+        "EVID:DISCLOSURE_GAPS"
+      ]
+    },
+    {
+      "component_id": "PROCUREMENT_INTEGRATION_AND_DIGITAL_ADAPTATION",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "采购体系整合、流程对接、线上线下和数据中台合作是可观察的适应动作，但披露尚未隔离其对毛利、库存周转、转化或复购的增量贡献。",
+      "investment_consequence": "作为竞争力改善情景而非独立收益加项，避免与并表和渠道客流贡献重复计算。",
+      "promotion_or_resolution_condition": "以分渠道可重复的采购条件、毛利、库存周转、转化或复购改善验证，并排除促销和并表结构的主要解释。",
+      "evidence_ids": [
+        "EVID:ADAPTATION",
+        "EVID:DISCLOSURE_GAPS"
+      ]
+    },
+    {
+      "component_id": "TOURISM_SERVICES",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "2018年旅游服务收入122.90亿元、毛利率10.01%，与免税商品销售经济明显不同，且中性资料未提供其普通股现金、维护投入和竞争位置的独立证据。",
+      "investment_consequence": "不以旅游服务收入规模支撑免税核心判断，也不在缺乏分部现金证据时赋予独立核心贡献。",
+      "promotion_or_resolution_condition": "取得多期分部经营现金、维护投入、营运资金和客户经济，证明其能独立、重复地贡献普通股现金。",
+      "evidence_ids": [
+        "EVID:OPERATING_MIX",
+        "EVID:CASH_CLAIMS"
+      ]
+    },
+    {
+      "component_id": "INVENTORY_AND_WORKING_CAPITAL_CONVERSION",
+      "treatment": "CANNOT_BOUND",
+      "reason": "年末存货59.431亿元、同比增长84.69%，既包含并表和增长备货，也面临库龄、市场销售和跌价风险；资料没有渠道级周转和采购返利。",
+      "investment_consequence": "正常化普通股现金必须对库存占用和减值作压力处理，不能从集团经营现金流或利润机械推导。",
+      "promotion_or_resolution_condition": "取得分渠道库存周转、库龄、跌价、采购结算和销售兑现记录，区分一次性并表备货与持续资金占用。",
+      "evidence_ids": [
+        "EVID:INVENTORY_RENT",
+        "EVID:DISCLOSURE_GAPS"
+      ]
+    },
+    {
+      "component_id": "ACQUISITION_GOODWILL_AND_MINORITY_CLAIMS",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "日上上海并表带来收入与利润增量并形成8.225亿元商誉，集团现金还受到少数股东权益等索取权影响；缺少资产组投入资本回收率。",
+      "investment_consequence": "并购协同不作为独立核心加项，普通股现金只确认扣除少数股东和全部责任后的份额，并保留减值情景。",
+      "promotion_or_resolution_condition": "取得被收购渠道完整周期的资产组现金回收、整合成本、少数股东分配和商誉承载能力证据。",
+      "evidence_ids": [
+        "EVID:OPERATING_MIX",
+        "EVID:CASH_CLAIMS"
+      ]
+    },
+    {
+      "component_id": "LAND_COMMERCIAL_COMPLEX_AND_CONSTRUCTION_PIPELINE",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "海口土地、海南总部、商业综合体和三亚河心岛等项目已吸收投资现金，但尚无成熟运营、维护投入或普通股现金回收证据。",
+      "investment_consequence": "核心路线不承认未验证的开发收益，并在压力情景中保留继续投入和无法回收的永久损失路径。",
+      "promotion_or_resolution_condition": "项目独立披露总投入、剩余承诺、稳定期经营现金、维护投入和普通股现金回收，并经过实际爬坡验证。",
+      "evidence_ids": [
+        "EVID:CAPITAL_PROJECTS",
+        "EVID:CASH_CLAIMS"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "EVID:INDUSTRY_IDENTITY",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "身份、业务和行业",
+      "scope": "免税业态、渠道类型、授权和经营权边界",
+      "used_for": "行业未来、经营位置、经营权与政策风险"
+    },
+    {
+      "evidence_id": "EVID:OPERATING_MIX",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "FY2017—FY2018 合并经营数据",
+      "scope": "收入、利润、经营现金、业务结构和毛利",
+      "used_for": "并表增长识别、正常化边界、旅游服务处理"
+    },
+    {
+      "evidence_id": "EVID:CHANNELS",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "渠道、客户吸收和管理动作",
+      "scope": "经营权取得、三亚与机场销售、客流和购物人数",
+      "used_for": "成熟渠道、新扩张、客户吸收和经营位置"
+    },
+    {
+      "evidence_id": "EVID:ADAPTATION",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "渠道、客户吸收和管理动作",
+      "scope": "采购与流程整合、数字合作、营销和政策准备",
+      "used_for": "适应能力及其证据边界"
+    },
+    {
+      "evidence_id": "EVID:INVENTORY_RENT",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "存货、租金、资本和普通股现金相关事实",
+      "scope": "存货增长、跌价审计事项、销售费用和机场租赁",
+      "used_for": "owner cash、机场渠道、营运资金和永久损失"
+    },
+    {
+      "evidence_id": "EVID:CAPITAL_PROJECTS",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "存货、租金、资本和普通股现金相关事实",
+      "scope": "固定资产、在建工程、土地和投资现金支出",
+      "used_for": "开发项目处理、维护与增长资本边界"
+    },
+    {
+      "evidence_id": "EVID:CASH_CLAIMS",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "存货、租金、资本和普通股现金相关事实",
+      "scope": "货币资金、借款、租金、供应商、少数股东、商誉和现金拆分缺口",
+      "used_for": "生存、普通股现金、并购与索取权处理"
+    },
+    {
+      "evidence_id": "EVID:DISCLOSURE_GAPS",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "locator": "风险与披露边界",
+      "scope": "政策、客流、竞争、租赁、库存、整合、建设风险和缺失字段",
+      "used_for": "局部不可界定、反方、反转观察和条件升级标准"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "NEUTRAL_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_INDEPENDENT_AB_3_20260830/sources/CN601888_20190427_NEUTRAL_FACT_SOURCE_PACKAGE.md",
+      "role": "唯一事实证据来源"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN601888:20190501:BASELINE:MANUAL_FRESH:V1",
+    "central_path": "最可能路径是公司凭借离岛与大型机场渠道、采购和运营整合继续参与免税行业增长，但利润池会在经营者与政策或渠道授予方之间通过授权、招投标和租赁条款反复再分配。成熟渠道可作为条件性核心；新渠道、并购协同和开发项目必须等到完整周期与责任后现金被验证。",
+    "normal_earnings_treatment": "不采用FY2018合并利润作为稳定状态。分离成熟离岛、成熟机场、新并表与新开渠道、旅游服务及建设项目，以完整周期客流转化、商品毛利、租赁、库存、维护投入和税费形成区间；资料不足的组件留在情景或排除。",
+    "owner_cash_treatment": "以渠道经营现金扣除库存增量、维持经营权所需投入、维护资本、租赁及保底、税费、融资和少数股东索取权后的普通股现金为口径。FY2018集团经营现金流和账面现金只用于生存缓冲，不直接视作可分配现金。",
+    "permanent_loss_treatment": "核心压力放在经营权丧失或不利续约、租赁刚性叠加客流与转化下降、库存跌价、整合及商誉失败、建设资本无法回收和多层索取权截留；对缺少合同与资产组数据的路径使用保守情景而非假设消失。",
+    "value_route_treatment": "采用分渠道正常化普通股现金和经营权期限情景路线；成熟渠道为主，新渠道与适应收益为条件情景，旅游服务和未验证开发项目不进入核心。模型角色仅确定后续承载方式，不生成任何当期结论。",
+    "strongest_rival": "最强反方是：2018年的表观增长主要由日上上海并表和高成本机场经营权扩张驱动，机场租赁、备货、建设与整合持续吞噬现金，采购规模优势不足以抵消渠道方议价和续约重定价，因此集团利润增长不能稳定转化为普通股可得现金。",
+    "monitoring": "优先监测各渠道经营权期限和续约条款、租金及保底、客流到购物转化、同店与每客毛利、库存周转及跌价、维护和扩张资本拆分、日上整合后的资产组现金、少数股东分配，以及开发项目剩余承诺与现金回收。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "UNKNOWN",
+      "permanent_loss": "MIXED"
+    }
+  },
+  "investment_treatment": "RESEARCH_ONLY_CONDITIONALLY_UNDERWRITE"
+}

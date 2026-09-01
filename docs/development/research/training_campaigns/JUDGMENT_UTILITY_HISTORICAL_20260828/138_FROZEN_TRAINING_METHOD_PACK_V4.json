@@ -1,0 +1,67 @@
+{
+  "schema_version": "historical-frozen-training-method-pack.v1",
+  "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V4",
+  "method_version": "judgment-first-blind-feedback.v4",
+  "state": "FROZEN_FOR_HOLDOUT_EVALUATION",
+  "purpose": "A candidate research-method pack for one fresh, paired historical Holdout. It preserves V3's judgment-first behaviors and adds one outcome-derived composite-metric scope behavior. It is not validated, transferable, or an investment authority.",
+  "predecessor": {
+    "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V3",
+    "direct_source_ref": "118_FROZEN_TRAINING_METHOD_PACK_V3.json",
+    "carry_forward_basis": "V3's three judgment behaviors remain candidate behaviors."
+  },
+  "rules": [
+    {
+      "rule_id": "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+      "trigger": "Scale, revenue, capacity, store, customer, or deployment growth is used to justify an upgrade.",
+      "required_behavior": "Before upgrading, build a responsibility-matched bridge to recurring profit, unit economics, utilization, inventory absorption, or an equivalent economic carrier. Preserve independently supported company judgments when one bridge remains open.",
+      "prohibited_inference": "Scale growth alone proves customer absorption, execution quality, normal earnings, capital return, or higher intrinsic value."
+    },
+    {
+      "rule_id": "CONVERSION_TRIAD_RETAIN_AND_NARROW",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+      "trigger": "Within one responsibility boundary, recurring profit grows more slowly than revenue, gross margin declines, and capital expenditure grows faster than profit.",
+      "required_behavior": "Retain already-supported enterprise strengths and execution credit, but pause an upgrade for the matched incremental project or capital burden until recurring unit profit, utilization, or a cash-return bridge explains the return.",
+      "prohibited_inference": "A scoped conversion weakness proves enterprise failure, permanent loss, or withdrawal of already-supported execution credit."
+    },
+    {
+      "rule_id": "SCOPED_MANAGEMENT_EXECUTION_BEFORE_ENTERPRISE_MERGE",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+      "trigger": "Different responsibility-matched management subaxes produce positive, conditional, mixed, or adverse observations in the same episode.",
+      "required_behavior": "State each subaxis treatment before an enterprise summary. A local mixed or conditional signal lowers only its matched execution credit; an enterprise-wide downgrade requires an observed material negative carrier or a demonstrated transmission into normal earnings, parent owner cash, or permanent loss.",
+      "prohibited_inference": "The weakest local treatment is the company-wide management score, or a strong product result proves credit quality and new-project capital returns."
+    },
+    {
+      "rule_id": "COMPOSITE_METRIC_SCOPE_BEFORE_CONVERSION_CLAIM",
+      "status": "CANDIDATE_BEHAVIOR_NOT_VALIDATED",
+      "source_feedback": "137_CN600036_FEEDBACK_RECEIPT.json#measurement_method_note",
+      "scope": "Any claim that customer assets, users, volume, capacity, or another activity carrier converts into fee income, recurring profit, cash, or capital efficiency.",
+      "trigger": "The activity carrier and the economic carrier are reported at potentially different issuer, group, parent, segment, project, or accounting responsibility boundaries.",
+      "required_behavior": "Before freezing a composite conversion test or drawing its conclusion, name the exact reported perimeter for each carrier. Combine them only when the disclosed perimeter is identical or the issuer supplies an explicit bridge. When the perimeters differ, retain the independently observed carrier facts but treat the conversion proposition as local-only; do not use a proxy to force a pass or failure.",
+      "prohibited_inference": "A parent/company activity metric and a group/consolidated income metric may be joined merely because both use the same business label, or a local scope mismatch justifies abandoning the enterprise judgment.",
+      "expected_decision_consequence": "The method can alter whether a claimed light-capital income carrier is granted, withheld, or left conditional. It does not itself determine enterprise quality, owner cash, valuation, or an investment action.",
+      "disconfirming_observation": "The exact same-perimeter figures were available in the cutoff-bounded packet and would have supported a material conversion conclusion, but this behavior prevented the conclusion; or the behavior's local treatment was materially inferior after outcome feedback.",
+      "classification": "ACQUISITION_CONTRACT_CORRECTION_ONLY_NOT_ENTERPRISE_INSIGHT"
+    }
+  ],
+  "v4_change_and_limit": {
+    "actual_change_from_v3": "V4 adds only COMPOSITE_METRIC_SCOPE_BEFORE_CONVERSION_CLAIM, derived from the independently accepted CN600036 local mismatch. It changes the pre-outcome construction and permitted use of cross-perimeter composite fields; it does not add a source-volume, field-count, evidence-completeness, or admission requirement.",
+    "why_it_is_not_a_global_gate": "A perimeter mismatch limits one conversion claim. It must not stop a company judgment, prevent another cell from settling, or require a new review layer.",
+    "transfer_status": "NOT_YET_TESTED_ON_ANOTHER_UNKNOWN_COMPANY"
+  },
+  "paired_historical_holdout_evaluation_contract": {
+    "same_cutoff_evidence_budget_and_tools": "Baseline and Enhanced receive the identical cutoff-bounded, result-unseen packet and the same stated tool and turn budget.",
+    "required_preoutcome_difference": "The actual completed baseline and enhanced outputs must contain a specific, material difference in a normal-earnings, owner-cash, permanent-loss, valuation-direction, or rank-one-research treatment. The difference must be attributable to an active V4 rule, not a hypothetical weak baseline, extra prose, field count, caveat count, or gate.",
+    "not_evaluable_if": "The two actual pre-outcome treatments are economically equivalent, their resources differ, or the asserted distinction is only format, confidence, unknown count, or audit work.",
+    "utility_standard": "Enhanced can be preferred only if later outcome feedback supports the pre-frozen treatment difference for its stated economic mechanism."
+  },
+  "authority": "RESEARCH_METHOD_ONLY",
+  "claims_explicitly_not_made": {
+    "method_validated": false,
+    "transfer_candidate_created": false,
+    "transfer_validated": false,
+    "company_judgment_authority_created": false,
+    "valuation_authority_created": false,
+    "investment_permission_or_action_created": false
+  }
+}

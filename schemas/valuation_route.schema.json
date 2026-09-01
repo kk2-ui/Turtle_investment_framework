@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/valuation_route.schema.json",
+  "title": "Turtle Valuation Route",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "registry_version", "registry_fingerprint", "archetype_id", "archetype_fingerprint", "route_id", "generated_at", "legacy_company_profile", "models", "rejected_models", "synthesis_policy", "terminal_policy", "required_research", "reference_policy", "validation"],
+  "properties": {
+    "schema_version": {"const": "valuation-route.v1"},
+    "report_id": {"type": "string"},
+    "registry_version": {"type": "string"},
+    "registry_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "archetype_id": {"type": "string"},
+    "archetype_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "route_id": {"type": "string", "pattern": "^VR:"},
+    "generated_at": {"type": "string"},
+    "legacy_company_profile": {"type": "object", "required": ["business_type", "asset_intensity"]},
+    "models": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/model"}},
+    "rejected_models": {"type": "array", "items": {"type": "object", "required": ["route_model_id", "model_type", "role", "rejection_reason"]}},
+    "synthesis_policy": {"type": "object"},
+    "terminal_policy": {"type": "object"},
+    "required_research": {"type": "array", "items": {"type": "string"}},
+    "reference_policy": {"type": "object"},
+    "validation": {"type": "object"}
+  },
+  "$defs": {
+    "model": {"type": "object", "additionalProperties": false, "required": ["route_model_id", "model_type", "role", "value_scope", "cash_flow_scope", "discount_rate_kind", "independence_group", "fragilities", "use", "required_conditions"], "properties": {"route_model_id": {"type": "string"}, "model_type": {"type": "string"}, "role": {"enum": ["primary", "corroborative", "stress"]}, "value_scope": {"type": "string"}, "cash_flow_scope": {"type": "string"}, "discount_rate_kind": {"type": "string"}, "independence_group": {"type": "string"}, "fragilities": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "use": {"type": "string"}, "required_conditions": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "valuation_archetype_id": {"type": "string", "minLength": 1}, "valuation_archetype_version": {"type": "string", "minLength": 1}}}
+  }
+}

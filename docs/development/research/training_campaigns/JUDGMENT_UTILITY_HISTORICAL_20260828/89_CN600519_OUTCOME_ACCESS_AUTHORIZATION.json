@@ -1,0 +1,31 @@
+{
+  "authorization_type": "single-case-contract-limited-outcome-access.v1",
+  "case_id": "BLIND:CN600519:20240501:FY2024",
+  "authorization_status": "ACTIVE_FOR_FRESH_CUSTODIAN_ONLY",
+  "activation_evidence": {
+    "selection_register_ref": "84_CN600519_BLIND_EXTENSION_SELECTION_REGISTER.json",
+    "preoutcome_judgment_ref": "86_CN600519_PREOUTCOME_JUDGMENT.json",
+    "independent_preoutcome_review_ref": "88_CN600519_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "preoutcome_review_status": "ACCEPT"
+  },
+  "authorized_source": {
+    "publisher": "issuer official annual report disclosure",
+    "issuer": "贵州茅台酒股份有限公司",
+    "period": "FY2024",
+    "local_path": "/Users/xiami/workspace/analy/Turtle_investment_framework/output/600519_贵州茅台/600519_2024_年报.pdf",
+    "permitted_use": "Read only the report content needed to mechanically settle AXIS_1_CHANNEL_ARCHITECTURE_ADDITIVITY, AXIS_2_MATURE_PRODUCT_ABSORPTION, and AXIS_3_PRODUCT_COLLECTION_AND_OWNER_CASH_CONVERSION in the frozen preoutcome judgment."
+  },
+  "fresh_custodian_read_set": [
+    "AGENTS.md",
+    "86_CN600519_PREOUTCOME_JUDGMENT.json",
+    "this authorization",
+    "the single authorized FY2024 issuer annual report"
+  ],
+  "custodian_may_write": ["a contract-limited settlement JSON and a custody execution receipt in its designated temporary directory"],
+  "custodian_must_not_read_or_write": [
+    "selection register, curriculum, teaching cases, prior-case outcomes, method packs, price, return, valuation, report, or investment recommendation",
+    "a company synthesis, a method-effectiveness conclusion, an alteration to the preoutcome contract, or an expanded outcome inventory"
+  ],
+  "settlement_treatment": "Record only matching FY2024 operating or cash/capital cells with official page locations. An unavailable, changed, merged, or perimeter-incompatible measure is LOCAL_UNKNOWN or MEASUREMENT_MISMATCH only for the affected leg; it neither supplies a proxy nor invalidates other legs.",
+  "authority": "NO_CJO_NO_VALUATION_NO_BUYBAND_NO_INVESTMENT_ACTION"
+}

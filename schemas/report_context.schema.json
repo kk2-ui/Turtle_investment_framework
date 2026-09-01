@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/report_context.schema.json",
+  "title": "Turtle Verified Report Context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "meta", "documents", "domains", "unresolved_gaps", "conflicts", "coverage", "validation"],
+  "properties": {
+    "schema_version": {"const": "report-context.v2"},
+    "meta": {
+      "type": "object",
+      "required": ["report_id", "code", "market", "issuer", "manifest_hash", "observation_hash", "context_fingerprint"],
+      "properties": {
+        "report_id": {"type": "string", "minLength": 1},
+        "code": {"type": "string", "minLength": 1},
+        "market": {"type": "string", "minLength": 1},
+        "issuer": {"type": "string", "minLength": 1},
+        "generated_at": {"type": "string"},
+        "manifest_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "observation_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "context_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "documents": {"type": "array", "items": {"type": "string", "pattern": "^DOC:"}},
+    "domains": {"type": "object", "additionalProperties": {"type": "array"}},
+    "unresolved_gaps": {"type": "array", "items": {"type": "object"}},
+    "conflicts": {"type": "array", "items": {"type": "object"}},
+    "coverage": {"type": "object"},
+    "validation": {
+      "type": "object",
+      "required": ["state", "invalid_findings", "incomplete_findings", "warnings"],
+      "properties": {
+        "state": {"enum": ["INVALID", "INCOMPLETE", "REVIEWABLE", "DECISION_READY"]},
+        "invalid_findings": {"type": "array", "items": {"type": "string"}},
+        "incomplete_findings": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

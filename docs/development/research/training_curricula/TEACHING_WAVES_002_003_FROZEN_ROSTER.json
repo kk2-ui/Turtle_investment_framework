@@ -1,0 +1,105 @@
+{
+  "schema_version": "teaching-wave-roster.v1",
+  "roster_id": "TEACHING_WAVES_002_003_20260828",
+  "state": "FROZEN",
+  "frozen_at": "2026-08-28T00:00:00+08:00",
+  "base_commit": "8bc6d70",
+  "selection_policy": "CAPABILITY_GAP_THEN_BUSINESS_MODEL_HETEROGENEITY_NOT_OUTCOME_QUALITY",
+  "purpose": "扩充结果已知的机制教学覆盖，不把教学案例数量当作能力证据。",
+  "shared_requirements": [
+    "每案必须形成当前企业判断、机制、最强反方、管理层、owner cash、永久损失、估值方向和翻转事实",
+    "局部 UNKNOWN 只能限制对应主张，不能撤回整家公司判断",
+    "结果已知允许用于解释机制，但不得包装为盲测、留出或方法效用",
+    "Comparative 仅在提出相对因果主张时使用",
+    "字段数、引用数、篇幅和门槛数不计训练成效"
+  ],
+  "waves": [
+    {
+      "wave_id": "TEACHING_BLOCK_002",
+      "sequence": 1,
+      "cases": [
+        {
+          "rank": 1,
+          "candidate_id": "TCAND:HK02688",
+          "company_id": "HK:02688",
+          "company_name": "新奥能源",
+          "capability_focus": [
+            "BUSINESS_MODEL_ECONOMICS",
+            "CAPITAL_ALLOCATION"
+          ],
+          "selection_reason": "城市燃气、公用事业接驳和泛能项目的现金载体与现有九案明显不同。"
+        },
+        {
+          "rank": 2,
+          "candidate_id": "TCAND:CN000651",
+          "company_id": "CN:000651",
+          "company_name": "格力电器",
+          "capability_focus": [
+            "COMPETITION_AND_PRICING",
+            "CAPITAL_ALLOCATION"
+          ],
+          "selection_reason": "经销渠道、库存和价格纪律可训练成熟制造企业的竞争与现金分配判断。"
+        },
+        {
+          "rank": 3,
+          "candidate_id": "TCAND:HK00882",
+          "company_id": "HK:00882",
+          "company_name": "天津发展",
+          "capability_focus": [
+            "CAPITAL_ALLOCATION",
+            "VALUATION_AND_ENTRY_TREATMENT"
+          ],
+          "selection_reason": "多业务控股和联营现金可补充估值对象、母公司可得现金及资本再配置训练。"
+        }
+      ]
+    },
+    {
+      "wave_id": "TEACHING_BLOCK_003",
+      "sequence": 2,
+      "cases": [
+        {
+          "rank": 4,
+          "candidate_id": "TCAND:HK00506",
+          "company_id": "HK:00506",
+          "company_name": "中国食品",
+          "capability_focus": [
+            "CUSTOMER_ABSORPTION",
+            "OWNER_CASH_CONVERSION"
+          ],
+          "selection_reason": "装瓶渠道、产品结构和营运资本提供消费品客户吸收至现金的完整传导。"
+        },
+        {
+          "rank": 5,
+          "candidate_id": "TCAND:ERDOS",
+          "company_id": "CN:600295",
+          "company_name": "鄂尔多斯",
+          "capability_focus": [
+            "BUSINESS_MODEL_ECONOMICS",
+            "PERMANENT_LOSS_AND_LIFECYCLE"
+          ],
+          "selection_reason": "品牌消费与能源冶金周期共处集团边界，可训练周期现金和永久损失载体分离。"
+        },
+        {
+          "rank": 6,
+          "candidate_id": "TCAND:CN001914",
+          "company_id": "CN:001914",
+          "company_name": "招商积余",
+          "capability_focus": [
+            "MANAGEMENT_DECISION_EXECUTION",
+            "OWNER_CASH_CONVERSION"
+          ],
+          "selection_reason": "重组整合与第三方拓展可补充管理层执行、关联边界和回款质量训练。"
+        }
+      ]
+    }
+  ],
+  "ability_credit": "NONE",
+  "permissions": {
+    "blind_judgment": false,
+    "historical_holdout": false,
+    "method_utility": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "investment_action": false
+  }
+}

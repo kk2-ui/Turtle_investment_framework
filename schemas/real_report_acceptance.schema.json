@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "real_report_acceptance.schema.json",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "config_fingerprint", "summary", "samples"],
+  "properties": {
+    "schema_version": {"const": "real-report-acceptance.v1"},
+    "generated_at": {"type": "string"},
+    "config_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "summary": {"type": "object", "required": ["sample_count", "registered_sample_count", "held_out_count", "rules_frozen", "status_counts", "benchmark_approved_count"]},
+    "samples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sample_id", "company_code", "machine_status", "hard_gates", "research_execution", "insight_ceiling", "review_priority"],
+        "properties": {
+          "sample_id": {"type": "string"},
+          "company_code": {"type": "string"},
+          "machine_status": {"enum": ["NOT_ASSESSABLE", "TECHNICALLY_BLOCKED", "READY_FOR_BLIND_REVIEW", "BENCHMARK_CANDIDATE", "BENCHMARK_APPROVED"]},
+          "hard_gates": {"type": "object"},
+          "research_execution": {"type": "object"},
+          "insight_ceiling": {"type": "object"},
+          "review_priority": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

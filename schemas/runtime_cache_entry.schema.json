@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "runtime_cache_entry.schema.json",
+  "type": "object",
+  "required": ["schema_version", "cache_key", "scope", "created_at", "expires_at", "payload_hash", "payload"],
+  "properties": {
+    "schema_version": {"const": "runtime-cache-entry.v1"},
+    "cache_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "scope": {"type": "object", "required": ["company_code", "period", "task_type", "model", "prompt_version", "code_version"]},
+    "created_at": {"type": "string"},
+    "expires_at": {"type": "string"},
+    "payload_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "payload": {}
+  }
+}

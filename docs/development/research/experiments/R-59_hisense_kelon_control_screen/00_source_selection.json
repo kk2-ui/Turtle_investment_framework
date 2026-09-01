@@ -1,0 +1,31 @@
+{
+  "selection_policy_id": "R59-HISENSE-KELON-CONTROL-SCREEN-V1",
+  "selection_reason": "Screen whether the statutory record can support a different-company boundary case for control rights versus operating integration. The allowed sources cover only the 2005 control transaction, 2006 sales-agency operating interface, and the first full FY2006 target-company baseline; no FY2007 or later operating body is selected.",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:000921:ANN:20051012:16011850",
+      "selection_reason": "Locate the statutory acquisition terms, legal control rights and stated transaction perimeter before treating the buyer as an operating owner.",
+      "research_question_ids": ["R59-Q1-CONTROL-AND-ENTITY"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20051230:16334421",
+      "selection_reason": "Read the target board's contemporaneous account of the acquisition and any stated risks or counterarguments.",
+      "research_question_ids": ["R59-Q1-CONTROL-AND-ENTITY", "R59-Q2-RIVAL"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20060405:16849336",
+      "selection_reason": "Establish the disclosed sales-agency operating interface rather than infer integration from equity ownership.",
+      "research_question_ids": ["R59-Q3-OPERATING-INTERFACE"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20060616:17511570",
+      "selection_reason": "Determine whether the disclosed sales-agency interface was executed and what it did or did not cover.",
+      "research_question_ids": ["R59-Q3-OPERATING-INTERFACE"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20070427:23140200",
+      "selection_reason": "Establish the first statutory target-company operating, product-economics and cash baseline available after control/interface implementation, including restatement, audit and entity-boundary limitations that must govern any later outcome contract.",
+      "research_question_ids": ["R59-Q4-D2-D5-BASELINE", "R59-Q5-METRIC-CONTRACT"]
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "adaptation_case": "管理层对渠道变迁作出了可观察的选择：提升传统终端，扩张科力普客户与五个中心仓，直营结合加盟探索零售大店，并收购有技术/品牌/海外渠道的安硕。判断为“核心执行已证明、新业务/整合待验证”：科力普和大店收入增长显示客户进入，安硕订单下滑亏损显示收购不能因协同叙述被承保。下一步应按业务观察收入、毛利/费用、应收库存和现金，而不是给管理动作先记功。",
+  "business_position": "晨光的可承保位置是品牌、设计制造和高覆盖分销网络形成的客户入口与产品经济，而不是“所有渠道都同样好”。书写和学生文具显示约三成毛利，办公代理、B2B 直销和门店业务的经济结构较低毛利或尚在爬坡。网络可以降低新业务进入摩擦，却不替代客户质量、费用、营运资本和单店/仓网回报。",
+  "company_id": "CN:603899",
+  "company_name": "M&G Stationery",
+  "component_treatments": [
+    {
+      "component_id": "MATURE_BRAND_NETWORK",
+      "evidence_ids": [
+        "EV-MG-THREE_YEAR",
+        "EV-MG-CORE_ECONOMICS",
+        "EV-MG-NETWORK"
+      ],
+      "investment_consequence": "以成熟品牌与分销网络作为条件化价值主线，不能把合并增速或所有渠道一并承保。",
+      "promotion_or_resolution_condition": "按核心产品/渠道取得毛利、费用、营运资本和维护资本，确认其在消费与渠道变化下的现金韧性。",
+      "reason": "三年利润和经营现金、约三成的书写/学生文具毛利、品牌与 7.6 万终端支持成熟核心真实存在；产品/渠道净利和维护资本未拆分。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "OFFICE_AND_RETAIL_COHORTS",
+      "evidence_ids": [
+        "EV-MG-CORE_ECONOMICS",
+        "EV-MG-COST_AND_WORKING_CAPITAL",
+        "EV-MG-Q1"
+      ],
+      "investment_consequence": "将办公直销和零售大店保留为具名上/下行情景，不以增长率加入正常盈利。",
+      "promotion_or_resolution_condition": "各业务连续显示客户收入、毛利/费用、应收库存周转、门店或仓网资本和现金的共同改善。",
+      "reason": "科力普和零售大店收入及客户入口增长真实，但办公代理低毛利、中心仓/物流/人力、门店租金和单店经济仍未由同边界现金结算。",
+      "treatment": "SCENARIO_ONLY"
+    },
+    {
+      "component_id": "ANSHUO_ACQUISITION",
+      "evidence_ids": [
+        "EV-MG-ANSHUO",
+        "EV-MG-STRATEGIC_TENSION"
+      ],
+      "investment_consequence": "不以协同叙事给收购正常盈利或现金信用；把整合和恢复列为可观察情景。",
+      "promotion_or_resolution_condition": "安硕订单、利用率、利润、营运资本和收购后资本回收在独立边界中改善。",
+      "reason": "安硕有产品、技术和海外渠道协同逻辑，但截止日前订单下降、利用率不足且 FY2018 前九月亏损，交易方无盈利承诺。",
+      "treatment": "SCENARIO_ONLY"
+    },
+    {
+      "component_id": "MAINTENANCE_OWNER_CASH",
+      "evidence_ids": [
+        "EV-MG-CAPITAL_CASH",
+        "EV-MG-COST_AND_WORKING_CAPITAL"
+      ],
+      "investment_consequence": "维护后 owner cash 条件化，但不会终止公司、现金质量或永久损失判断。",
+      "promotion_or_resolution_condition": "取得核心维护、增长渠道/门店和收购整合的资本及营运资本责任拆分。",
+      "reason": "源包未拆分传统制造维护、仓网/门店装修、产品升级及收购整合资本。",
+      "treatment": "CANNOT_BOUND"
+    },
+    {
+      "component_id": "TOTAL_CAPITAL_AND_WORKING_CASH",
+      "evidence_ids": [
+        "EV-MG-CAPITAL_CASH",
+        "EV-MG-COST_AND_WORKING_CAPITAL"
+      ],
+      "investment_consequence": "将总资本支出后现金和营运资本作为实际现金质量/扩张压力，而不是维护后现金的替身。",
+      "promotion_or_resolution_condition": "观察增长业务在扩张后是否降低对营运资本、租金和核心现金的边际占用。",
+      "reason": "FY2018 OCF 减总长期资产支出约正 5.10 亿元，但应收和库存上升，科力普/零售的仓网、人力、租金和物流费用增加。",
+      "treatment": "UNDERWRITE"
+    },
+    {
+      "component_id": "PERMANENT_LOSS_PATH",
+      "evidence_ids": [
+        "EV-MG-CORE_ECONOMICS",
+        "EV-MG-COST_AND_WORKING_CAPITAL",
+        "EV-MG-ANSHUO"
+      ],
+      "investment_consequence": "重点监测核心现金是否持续补贴不同边界的低回报业务，而不是用 UNKNOWN 或单季现金取代风险判断。",
+      "promotion_or_resolution_condition": "若 cohort 产生资本后现金则降低风险；若成本/营运资本与亏损持续快于客户和利润则确认资本错配。",
+      "reason": "新业务和收购的低毛利、应收、库存、租金及整合风险是明确机制，当前尚无结果证明其已长期吞噬核心现金。",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    }
+  ],
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "decision_frame": "在 2019-05-01 起三至五年的承保时域内，判断晨光能否把成熟品牌和终端网络，经过办公直销、零售大店和安硕整合，转化为普通股现金；必须分别判断维护后 owner cash、全部长期资产投入后的现金、以及渠道/收购增长资本的回报。",
+  "episode_id": "UWEP:CN603899:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+  "evidence_trace": [
+    {
+      "evidence_id": "EV-MG-INDUSTRY",
+      "locator": "行业、公司位置与利润池",
+      "scope": "业务、终端网络、行业需求、渠道变化和不同业务责任。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "构建行业未来、利润池和公司位置。"
+    },
+    {
+      "evidence_id": "EV-MG-NETWORK",
+      "locator": "行业、公司位置与利润池，第 1 段",
+      "scope": "品牌、经销体系、35 家一级伙伴、近 1,200 城市和 7.6 万终端。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "承保成熟客户入口并限制其不能自动证明新渠道经济。"
+    },
+    {
+      "evidence_id": "EV-MG-THREE_YEAR",
+      "locator": "FY2016–FY2018 经济基础与业务分化，表格",
+      "scope": "三年收入、利润、扣非利润与经营现金。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "建立成熟核心与合并执行的历史锚。"
+    },
+    {
+      "evidence_id": "EV-MG-CORE_ECONOMICS",
+      "locator": "FY2016–FY2018 经济基础与业务分化，第 2–3 段",
+      "scope": "核心/新业务增长、产品毛利、科力普、零售大店和中心仓。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "区分成熟核心、办公直销和零售大店的客户与单位经济。"
+    },
+    {
+      "evidence_id": "EV-MG-CAPITAL_CASH",
+      "locator": "现金、营运资本、资本与管理选择，第 1 段",
+      "scope": "FY2018 OCF、总长期资产支出和维护/增长未拆分。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "分开维护后 cash、总资本支出后 cash 与增长回报。"
+    },
+    {
+      "evidence_id": "EV-MG-COST_AND_WORKING_CAPITAL",
+      "locator": "现金、营运资本、资本与管理选择，第 2 段",
+      "scope": "应收、库存、科力普/零售的人力、物流、租金和销售费用。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "将轻资产渠道的营运资本和运营成本连接到现金质量。"
+    },
+    {
+      "evidence_id": "EV-MG-ANSHUO",
+      "locator": "现金、营运资本、资本与管理选择，第 3 段",
+      "scope": "安硕收购、品牌/技术/渠道、亏损、订单和利用率风险。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "将收购列为独立整合 cohort。"
+    },
+    {
+      "evidence_id": "EV-MG-Q1",
+      "locator": "cutoff 附近的早期观察",
+      "scope": "FY2019 Q1 收入、利润、现金、长期资产支出、应收和库存。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "提供早期信号而不外推全年经济。"
+    },
+    {
+      "evidence_id": "EV-MG-STRATEGIC_TENSION",
+      "locator": "需要承保的矛盾",
+      "scope": "核心与渠道升级/收购的正反机制和区分证据。",
+      "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "形成最强反方、永久损失和研究议程。"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN603899_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "本 Episode 唯一的截止日前公司、行业、经营、现金和管理选择证据；课程经验只影响提问顺序，不作为公司事实。"
+    }
+  ],
+  "investment_treatment": "结果封存训练处理：成熟品牌和网络可作条件化承保基础；办公直销、零售大店和安硕在业务级现金证据前留在情景。维护资本未知局部限制精度，不能阻止完整企业判断，也不能让总资本支出后现金或“轻资产”标签替代 owner cash。不得产生价格、CJO、正式估值、黄金报告或投资权限。",
+  "normalization_case": "FY2016–FY2018 归母利润约 4.93、6.34、8.07 亿元及持续正经营现金，是成熟核心与合并执行的历史锚；核心增长约 16% 与新业务约 90% 证明两类经济不能混为静态正常范围。基准承保核心的方向性正常能力，在产品、渠道和周期压力下审查；科力普、零售大店与安硕维持具名情景，直到可见其独立毛利/费用、营运资本和现金。",
+  "permanent_loss_map": "第一路径是合并收入由低毛利代理/B2B 业务驱动，却以不断增加的应收、库存、仓网、人力、运输和租金换取，成熟高毛利核心补贴低现金增长；第二路径是安硕的订单、产能利用和整合无法恢复，收购资金与管理注意力长期无法回收；第三路径是把总资本开支后正现金误认作维护后 owner cash。前两条须由经营结果结算，第三条是逻辑禁区。",
+  "reversal_observations": [
+    "若核心、科力普、零售大店和安硕分别显示持续客户收入、毛利或费用改善、应收/库存周转和资本后现金，且新业务不再需要核心现金补贴，则把相应 cohort 提升为正常能力。",
+    "若办公直销收入增长伴随应收、库存、仓网/人力和低毛利持续快于现金，或门店/收购持续亏损，则确认渠道升级在稀释而非扩大普通股现金。",
+    "若可靠拆分传统制造维护、仓网/门店扩张和收购整合资本，并显示核心维护后现金稳定、各增长项目随后取得回报，则提高 owner-cash 与增长处理；若没有拆分，只维持条件性判断。"
+  ],
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "situation_model": {
+    "industry_future_thesis": {
+      "adaptation": "管理层通过终端升级、产品升级、科力普五个中心仓、直营结合加盟和安硕收购适应渠道变迁。核心网络和新业务的收入增长说明行动有真实市场入口；低毛利代理、费用/营运资本增加及安硕亏损说明执行能力尚应按业务 cohort 而非管理动作本身评价。",
+      "company_exposure": "传统书写和学生文具毛利约三成以上，品牌与广覆盖终端是优势；办公文具毛利仅 18.97%，其中代理产品 13.71%，科力普扩张带来应收、中心仓、人力和物流责任；零售大店仍在优化亏损，安硕已显示订单下滑和低利用率亏损。公司不是没有资本责任，而是固定资产、营运资本、租金和收购责任的组合不同。",
+      "horizon": "自 2019-05-01 起三至五年；先看 FY2019 核心与新业务的收入、利润、应收库存和整合边界，再看 FY2021/FY2023 的渠道经济、现金转换和收购回报。",
+      "most_likely_regime": "文具核心需求相对稳定但总量和人口红利放缓，行业利润池向品牌、产品升级、终端效率和服务密度迁移。最可能路径是传统网络继续提供基础现金，而办公直销、零售大店和电商以不同速度和不同成本结构成长；合并收入增速本身不能统一结算这些路径。",
+      "normal_economics": "FY2016–FY2018 归母净利润由约 4.93 亿元升至 8.07 亿元、经营现金持续为正，支持成熟核心的方向性 earnings power。基准承保品牌、产品和终端网络的已证明能力；对科力普、零售大店和安硕只在各自客户、毛利/费用、营运资本和现金显示稳定后纳入，不能以新业务约 90% 增长或 Q1 增长外推。",
+      "permanent_loss": "永久损失主路径是低毛利办公代理、B2B 应收/库存、仓网/人员、门店租金和亏损收购长期吞噬核心现金，而合并增速掩盖单位经济；第二路径是把 FY2018 正的 OCF 减总长期资产支出直接等同维护 owner cash，忽略扩张和营运资本责任。前者是公司风险，后者是必须避免的推理错误。",
+      "profit_pool_transmission": "品牌、产品设计和终端覆盖先促成客户选择；经销、B2B 直销、门店和线上渠道的产品组合、毛利、物流/租金/人力、应收和库存再决定现金。收购只有在订单恢复、产能利用和整合费用后产生现金，才把利润池传给股东。",
+      "reversal_observations": [
+        "若核心、科力普、零售大店和安硕分别显示持续客户收入、毛利或费用改善、应收/库存周转和资本后现金，且新业务不再需要核心现金补贴，则把相应 cohort 提升为正常能力。",
+        "若办公直销收入增长伴随应收、库存、仓网/人力和低毛利持续快于现金，或门店/收购持续亏损，则确认渠道升级在稀释而非扩大普通股现金。",
+        "若可靠拆分传统制造维护、仓网/门店扩张和收购整合资本，并显示核心维护后现金稳定、各增长项目随后取得回报，则提高 owner-cash 与增长处理；若没有拆分，只维持条件性判断。"
+      ],
+      "strongest_rival": "晨光的终端网络、品牌、研发、供应链和多年高增长已使新业务具有低获客和采购优势；科力普的客户开发和五个中心仓、零售大店增长和安硕的马可品牌/海外渠道会把传统文具优势放大为更大平台，现有应收、费用和收购亏损只是扩张初期现象。",
+      "valuation_treatment": "价值路线以成熟品牌文具和终端网络的条件化现金能力为主，以核心与每项新业务的责任边界交叉检验。维护后现金、全长期资产支出后现金和增长资本/营运资本回报仍分开：轻资产不使三者自动相等。"
+    },
+    "summary": "截至 cutoff，晨光拥有自主品牌、设计制造和超过 7.6 万终端组成的成熟文具网络；它又正在用科力普、零售大店、线上与安硕收购进入不同客户和产品场景。核心文具的低价、品牌和网络可产生稳定需求，但办公直销的 B2B 应收/物流、零售大店的租金和库存、以及亏损收购的整合都不是核心分销的自动延伸。"
+  },
+  "strongest_rival": "晨光的终端网络、品牌、研发、供应链和多年高增长已使新业务具有低获客和采购优势；科力普的客户开发和五个中心仓、零售大店增长和安硕的马可品牌/海外渠道会把传统文具优势放大为更大平台，现有应收、费用和收购亏损只是扩张初期现象。",
+  "survival_case": "FY2018 经营现金约 8.28 亿元、总长期资产支出约 3.18 亿元，集团当年有约 5.10 亿元机械余量；FY2019 Q1 小幅为负。公司没有显示迫近融资危机，且有核心盈利、正现金和自有资金进行收购的承受力。真正的生存与融资风险是 B2B 应收、库存、租金/物流及亏损整合是否持续占用成熟现金，而不是把轻资产标签或单季现金写成结论。",
+  "underwriting_route": "先分开传统核心、办公直销、零售大店/电商和安硕的客户及利润责任，再连接各自毛利、费用、应收/库存、门店/仓网资本和现金，最后判断成熟业务、增长业务和收购各自应如何进入正常盈利、永久损失与价值路线。",
+  "underwriting_thesis": {
+    "central_path": "晨光已证明品牌、产品和高覆盖终端可产生利润与经营现金；科力普、零售大店和安硕则是不同成本、营运资本和整合责任下的扩张。最可能路径是核心继续作为条件化现金基础，新业务带来真实客户入口但以不同速度获得现金回报。基准不为低毛利代理、门店/仓网或亏损收购预付增长信用；维护后 cash 保持条件化，全资本支出后现金和增长回报分别承保。置信度中等。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "DETERIORATES"
+    },
+    "monitoring": "先分别检查核心、科力普、零售大店和安硕的客户收入、毛利/费用、应收库存和现金，再判断总资本支出、门店/仓网和收购资本是否获得回报；不以店数、收入增速或总 OCF 替代这些责任。",
+    "normal_earnings_treatment": "以 FY2016–FY2018 约 4.93–8.07 亿元归母利润和核心产品/终端作为方向性锚，不把核心 16% 增长与新业务 90% 增长混为正常范围。科力普、零售大店和安硕须在独立毛利/费用、营运资本和现金闭环后加入。",
+    "owner_cash_treatment": "FY2018 OCF 减总长期资产支出约正 5.10 亿元，回答的是当年全部已披露长期资产投入后的资金余量；维护后 owner cash 仍因维护、仓网/门店、产品升级和收购资本未拆分而不可精确界定。应收、库存和渠道运营成本另行决定现金转换；增长资本的后续回报是第三个问题。",
+    "permanent_loss_treatment": "主要风险是低毛利办公代理、应收库存、物流/人力/租金和亏损收购长期吸收核心现金，造成合并收入增长却无法提高普通股现金；不是核心品牌已经失去生存能力的结论。",
+    "strongest_rival": "晨光的终端网络、品牌、研发、供应链和多年高增长已使新业务具有低获客和采购优势；科力普的客户开发和五个中心仓、零售大店增长和安硕的马可品牌/海外渠道会把传统文具优势放大为更大平台，现有应收、费用和收购亏损只是扩张初期现象。",
+    "thesis_id": "UWTHESIS:CN603899:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+    "value_route_treatment": "价值主线以成熟品牌、产品和终端网络的条件化利润/现金能力为主；新业务和收购按 cohort 在客户—单位经济—营运资本/资本后现金闭环后再加入。"
+  },
+  "value_route": {
+    "excluded_routes": [
+      "把合并高增长、终端数量、中心仓/门店数量或收购协同直接写成正常盈利的路线",
+      "把轻资产标签或 OCF 减全部长期资产支出直接等同维护后 owner cash 的路线"
+    ],
+    "primary_routes": [
+      "成熟品牌文具、产品经济和高覆盖终端网络的条件化盈利/现金路线",
+      "核心与每项新渠道的毛利、费用、营运资本和资本回报分层检验路线"
+    ],
+    "route_reasoning": "三年利润、现金、品牌和终端支持核心价值路线；办公直销、零售大店和安硕具有真实入口但各自的单位经济和现金未被同一口径证明。公司价值须先依靠核心条件化能力，再让每一项增长业务通过客户—毛利/费用—营运资本—现金闭环加入。",
+    "valuation_model_roles": {
+      "corroborative": [
+        "核心、科力普、零售大店和安硕的独立收入、毛利/费用与应收库存",
+        "维护后现金、全部长期资产支出后现金与渠道/收购增长回报的分线检验"
+      ],
+      "primary": [
+        "成熟品牌文具和终端网络的压力后条件化盈利能力"
+      ],
+      "stress": [
+        "低毛利 B2B 与门店/仓网成本长期稀释核心现金",
+        "安硕整合、订单与产能利用未恢复造成收购资本错配"
+      ]
+    }
+  }
+}

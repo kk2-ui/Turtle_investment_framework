@@ -1,0 +1,133 @@
+{
+  "schema_version": "turtle-action-first-canonicalization-curator-result.v1",
+  "result_id": "A1:CANONICALIZATION:C-ACT-003:V1",
+  "status": "EVIDENCE_INELIGIBLE_NO_A1_RECEIPT",
+  "purpose": "Independent, pre-outcome check of the remaining A1 canonicalization requirements for C-ACT-003. This result is a stop receipt, not an A1 candidate receipt, H1/H2 package, peer selection, outcome, settlement, forecast, CJO, valuation, report, or investment permission.",
+  "candidate_binding": {
+    "candidate_id": "C-ACT-003",
+    "candidate_package_id": "TURTLE_COMPARATIVE_ACTION_SCREEN_STATIC_PDF_PACKAGE_V2",
+    "cutoff_at": "2019-12-31T00:00:00+08:00",
+    "company_id": "COMPANY:CN:603225",
+    "issuer_id": "ISSUER:CN:603225",
+    "proposed_action_responsibility_unit_id": "RU:ISSUER:CN:603225:DUSHAN_ENERGY_PTA_INPUT_SUPPLY",
+    "perimeter_id": "PERIMETER:ISSUER:CN:603225:CONSOLIDATED_GROUP"
+  },
+  "official_metadata_availability": [
+    {
+      "official_artifact_id": "CNINFO:603225:1207047557",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2019-10-31/1207047557.PDF",
+      "published_at": "2019-10-31T00:00:00+00:00",
+      "availability_precision": "TIMESTAMP",
+      "official_metadata_field": "announcementTime",
+      "official_metadata_epoch_ms": 1572451200000,
+      "metadata_identity": {
+        "security_code": "603225",
+        "organization_id": "9900023641",
+        "announcement_id": "1207047557"
+      },
+      "cutoff_check": "STRICTLY_BEFORE_CUTOFF"
+    },
+    {
+      "official_artifact_id": "CNINFO:603225:1205821336",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2019-02-02/1205821336.PDF",
+      "published_at": "2019-02-02T00:00:00+00:00",
+      "availability_precision": "TIMESTAMP",
+      "official_metadata_field": "announcementTime",
+      "official_metadata_epoch_ms": 1549036800000,
+      "metadata_identity": {
+        "security_code": "603225",
+        "organization_id": "9900023641",
+        "announcement_id": "1205821336"
+      },
+      "cutoff_check": "STRICTLY_BEFORE_CUTOFF"
+    }
+  ],
+  "static_source_boundary_reading": [
+    {
+      "source_id": "STATIC_PDF_1207047557_P1",
+      "official_artifact_id": "CNINFO:603225:1207047557",
+      "page": 1,
+      "declared_issuer_id": "ISSUER:CN:603225",
+      "declared_responsibility_unit_id": "RU:ISSUER:CN:603225:DUSHAN_ENERGY_PTA_INPUT_SUPPLY",
+      "declared_perimeter_id": "PERIMETER:ISSUER:CN:603225:CONSOLIDATED_GROUP",
+      "support_status": "DIRECT_ACTION_BOUNDARY",
+      "bounded_fact": "The trial-production notice names the wholly owned Dushan Energy PTA project and states that it is intended to secure the company's PTA input supply and reduce external PTA procurement."
+    },
+    {
+      "source_id": "SOURCE:C-ACT-003:PERIMETER:2018_ANNUAL:P5",
+      "official_artifact_id": "CNINFO:603225:1205821336",
+      "page": 5,
+      "declared_issuer_id": "ISSUER:CN:603225",
+      "declared_responsibility_unit_id": "RU:ISSUER:CN:603225:DUSHAN_ENERGY_PTA_INPUT_SUPPLY",
+      "declared_perimeter_id": "PERIMETER:ISSUER:CN:603225:CONSOLIDATED_GROUP",
+      "support_status": "DIRECT_OWNERSHIP_CHAIN_ONLY",
+      "bounded_fact": "The annual report identifies Dushan Energy as a subsidiary of an issuer wholly owned subsidiary. It establishes the group ownership chain, but does not assign procurement, cost, or product-market facts to Dushan Energy."
+    },
+    {
+      "source_id": "SOURCE:C-ACT-003:HYPOTHESIS:2018_ANNUAL:P12",
+      "official_artifact_id": "CNINFO:603225:1205821336",
+      "page": 12,
+      "declared_issuer_id": "ISSUER:CN:603225",
+      "declared_responsibility_unit_id": null,
+      "declared_perimeter_id": "PERIMETER:ISSUER:CN:603225:CONSOLIDATED_GROUP",
+      "support_status": "ISSUER_CONTEXT_NOT_DUSHAN_BOUND",
+      "bounded_fact": "The annual report describes issuer-level PTA procurement and says relevant companies sign their own procurement contracts. It does not identify Dushan Energy as one of those companies or attach the procurement fact to the Dushan PTA project."
+    },
+    {
+      "source_id": "SOURCE:C-ACT-003:RIVAL:2018_ANNUAL:P26",
+      "official_artifact_id": "CNINFO:603225:1205821336",
+      "page": 26,
+      "declared_issuer_id": "ISSUER:CN:603225",
+      "declared_responsibility_unit_id": null,
+      "declared_perimeter_id": "PERIMETER:ISSUER:CN:603225:CONSOLIDATED_GROUP",
+      "support_status": "ISSUER_MARKET_CONTEXT_NOT_DUSHAN_BOUND",
+      "bounded_fact": "The annual report names upstream inputs, industry supply-demand, and downstream textile conditions as polyester-filament price drivers. It does not assign those drivers to the Dushan PTA project or its defined input-supply responsibility unit."
+    }
+  ],
+  "canonicalization_result": {
+    "timestamp_requirement": "SATISFIED",
+    "issuer_and_perimeter_requirement": "SATISFIED",
+    "same_boundary_bridge_requirement": "NOT_SATISFIED",
+    "hypothesis_source_requirement": "NOT_SATISFIED_FOR_DUSHAN_RU",
+    "rival_source_requirement": "NOT_SATISFIED_FOR_DUSHAN_RU",
+    "prohibited_assumption": "Do not relabel issuer-wide procurement or market-condition statements as direct evidence for the Dushan Energy PTA input-supply responsibility unit merely because the annual report proves an ownership chain.",
+    "why_no_a1_receipt": "An A1 receipt would have to declare every HYPOTHESIS and RIVAL source under the same responsibility-unit identifier as the implemented action. The available annual-report pages supply issuer-level context only; assigning them the Dushan identifier would manufacture a source boundary that the static PDFs do not declare."
+  },
+  "root_cause": {
+    "classification": [
+      "DATA_COVERAGE"
+    ],
+    "economic_impact": "The action is still a credible pre-outcome operating decision, but Turtle cannot yet recruit comparators around a falsifiable Dushan-bound cost mechanism. Treating issuer-wide inputs or market drivers as project evidence would falsely make a capacity/commodity explanation look like an action-specific cost thesis.",
+    "missing_facts": [
+      "A cutoff-before official static page that links Dushan Energy or its PTA project to the issuer's PTA procurement/cost mechanism.",
+      "A cutoff-before official static page that gives a Dushan-bound alternative explanation, or an independently mapped same-boundary market-driver statement."
+    ],
+    "executable_remediation": "A future independent curator may search only cutoff-before official static disclosures for a direct Dushan procurement, PTA input-supply, project-cost, or product-market bridge. If none exists, retain this stop receipt and move to another action candidate; do not widen the responsibility unit after seeing later material."
+  },
+  "information_boundary": {
+    "read_inputs": [
+      "TURTLE_COMPARATIVE_ACTION_SCREEN_STATIC_PDF_PACKAGE_V2",
+      "CACT003_A1_EVIDENCE_SUPPLEMENT_V1",
+      "CNINFO cutoff-before announcement metadata for 1207047557 and 1205821336",
+      "The four cutoff-before static PDFs/pages already named by the supplement"
+    ],
+    "prohibited_inputs": [
+      "OUTCOME_DOCUMENTS",
+      "OUTCOME_METADATA",
+      "PRICE",
+      "RETURN",
+      "R-103",
+      "H2",
+      "V5",
+      "FORECAST",
+      "CJO",
+      "REPORT",
+      "VALUATION",
+      "LEARNING"
+    ]
+  },
+  "allowed_outputs": [
+    "EVIDENCE_INELIGIBLE_STOP_RECEIPT_ONLY"
+  ],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

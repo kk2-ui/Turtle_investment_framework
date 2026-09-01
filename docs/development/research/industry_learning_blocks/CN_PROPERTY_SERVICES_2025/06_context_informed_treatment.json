@@ -1,0 +1,96 @@
+{
+  "schema_version": "industry-underwriting-treatment.v1",
+  "snapshot_id": "IUT:HK02669:20260813:INDUSTRY_CONTEXT",
+  "company_id": "HK:02669",
+  "cutoff_at": "2026-08-13T23:59:59+08:00",
+  "status": "READY",
+  "dimensions": {
+    "industry_future_path": {
+      "status": "READY",
+      "thesis_code": "PATH:NEW_BUILD_TO_STOCK_AND_CONDITIONAL_ADJACENCIES",
+      "direction": "CONDITIONAL",
+      "investment_treatment": {
+        "base_case_role": "INCLUDE_CONDITIONALLY",
+        "decision_action": "PROCEED_WITH_HAIRCUT",
+        "reason": "Recurring stock operations remain the base while public services and smart engineering require separate cash proof."
+      },
+      "key_economic_range": null,
+      "required_evidence": [
+        {"evidence_id": "E:CN:PROPERTY:NEW_BUILD_AND_STOCK_DEMAND", "priority": "SUPPORTING"}
+      ],
+      "explanation": "The profit pool is migrating away from incremental developer delivery toward stock operations and conditional adjacencies."
+    },
+    "target_exposure": {
+      "status": "READY",
+      "thesis_code": "EXPOSURE:RESIDENTIAL_BASE_PUBLIC_GROWTH_SMART_CASH_RISK",
+      "direction": "MIXED",
+      "investment_treatment": {
+        "base_case_role": "INCLUDE_CONDITIONALLY",
+        "decision_action": "WAIT_FOR_DECISIVE_EVIDENCE",
+        "reason": "Mature residential can anchor earnings, but public-service and engineering growth enter only after target-specific margin and cash evidence."
+      },
+      "key_economic_range": null,
+      "required_evidence": [
+        {"evidence_id": "E:HK02669:PUBLIC_PROJECT_MATURITY", "priority": "DECISIVE"},
+        {"evidence_id": "E:HK02669:SMART_ENGINEERING_CASH_CONVERSION", "priority": "DECISIVE"}
+      ],
+      "explanation": "The target is a multi-path operator rather than one homogeneous property-services business."
+    },
+    "owner_cash_treatment": {
+      "status": "BOUNDED",
+      "thesis_code": "OWNER_CASH:MECHANISM_MATCHED_PUBLIC_SERVICE_REFERENCE",
+      "direction": "CONDITIONAL",
+      "investment_treatment": {
+        "base_case_role": "SCENARIO_ONLY",
+        "decision_action": "WAIT_FOR_DECISIVE_EVIDENCE",
+        "reason": "The reference-class range constrains a scenario but does not establish Zhonghai project economics."
+      },
+      "key_economic_range": {
+        "metric": "ordinary_shareholder_operating_margin_after_working_capital",
+        "scope": "public_and_institutional_property_reference_class",
+        "unit": "percent",
+        "lower": 3.0,
+        "upper": 6.0
+      },
+      "required_evidence": [
+        {"evidence_id": "E:HK02669:PUBLIC_SERVICE_MARGIN_AND_CASH", "priority": "DECISIVE"},
+        {"evidence_id": "E:CN:PROPERTY:MECHANISM_PEER_MARGIN_AND_RECEIVABLES", "priority": "SUPPORTING"}
+      ],
+      "explanation": "Mechanism-matched peers narrow the reference range; issuer project margin, receivables and cumulative cash remain unproven."
+    },
+    "permanent_loss_path": {
+      "status": "READY",
+      "thesis_code": "LOSS:LOW_RETURN_EXPANSION_AND_CASH_ABSORPTION",
+      "direction": "NEGATIVE",
+      "investment_treatment": {
+        "base_case_role": "SCENARIO_ONLY",
+        "decision_action": "PROCEED_WITH_HAIRCUT",
+        "reason": "Permanent loss can arise through years of below-cost reinvestment and delayed collection even without insolvency."
+      },
+      "key_economic_range": null,
+      "required_evidence": [
+        {"evidence_id": "E:HK02669:PUBLIC_PROJECT_ROIC_AND_COLLECTION", "priority": "DECISIVE"},
+        {"evidence_id": "E:HK02669:CAPITAL_ALLOCATION_AND_CASH_ACCESS", "priority": "DECISIVE"}
+      ],
+      "explanation": "The downside path shifts from bankruptcy to slow ordinary-shareholder value erosion."
+    },
+    "valuation_route_and_required_evidence": {
+      "status": "BOUNDED",
+      "thesis_code": "ROUTE:SEGMENT_SENSITIVE_EPV_AND_OWNER_CASH",
+      "direction": "CONDITIONAL",
+      "investment_treatment": {
+        "base_case_role": "INCLUDE_CONDITIONALLY",
+        "decision_action": "PROCEED_WITH_HAIRCUT",
+        "reason": "Residential, public-service and engineering economics require separate normalization before synthesis."
+      },
+      "key_economic_range": null,
+      "required_evidence": [
+        {"evidence_id": "E:HK02669:MATURE_RESIDENTIAL_MARGIN_AND_COLLECTION", "priority": "DECISIVE"},
+        {"evidence_id": "E:HK02669:PUBLIC_PROJECT_MATURITY", "priority": "DECISIVE"},
+        {"evidence_id": "E:HK02669:SMART_ENGINEERING_CASH_CONVERSION", "priority": "DECISIVE"},
+        {"evidence_id": "E:HK02669:CAPITAL_ALLOCATION_AND_CASH_ACCESS", "priority": "DECISIVE"}
+      ],
+      "explanation": "The valuation route now follows distinct profit and cash mechanisms rather than an issuer-wide sector multiple or margin."
+    }
+  }
+}

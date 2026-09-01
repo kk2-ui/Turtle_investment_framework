@@ -1,0 +1,36 @@
+{
+  "schema_version": "historical-forecaster-execution-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN603195:20240501:FY2024",
+  "company_id": "CN:603195",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "forecaster_id": "/root/cn603195_preoutcome_forecaster",
+  "execution_mode": "FRESH_AGENT_NO_PARENT_CONTEXT",
+  "fork_turns": "none",
+  "declared_input": {
+    "packet_path": "/tmp/turtle-cn603195-forecaster-packet.wUta9w",
+    "allowed_files": [
+      "FORECASTER_PACKET.json",
+      "FY2021.pdf",
+      "FY2022.pdf",
+      "FY2023.pdf"
+    ],
+    "source_ids": [
+      "CNINFO:603195:FY2021:1212886382",
+      "CNINFO:603195:FY2022:1216665553",
+      "CNINFO:603195:FY2023:1219840341"
+    ],
+    "parent_conversation_visible": false,
+    "workspace_search_authorized": false,
+    "outcome_body_access": false,
+    "price_or_return_access": false
+  },
+  "output": {
+    "path": "/tmp/turtle-cn603195-forecaster-packet.wUta9w/PREOUTCOME_JUDGMENT.json",
+    "status": "COMPLETED",
+    "outcome_state": "SEALED"
+  },
+  "isolation_status": "ROLE_SCOPED_ONE_SHOT_EXECUTED",
+  "training_utility_credit": "NONE",
+  "authority": "NONE"
+}

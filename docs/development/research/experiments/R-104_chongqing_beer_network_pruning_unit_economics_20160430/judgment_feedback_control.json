@@ -1,0 +1,83 @@
+{
+  "schema_version": "judgment-feedback-control-registration.v1",
+  "episode_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "company_id": "CN:600132",
+  "frozen_at": "2016-04-30T23:59:59+08:00",
+  "episode_class": "JUDGMENT_SELECTION_EPISODE",
+  "selection_status": "SELECTION_ADMITTED",
+  "learning_eligibility": "SELECTION_METHOD_ELIGIBLE",
+  "program_lane": "HISTORICAL_TRAINING",
+  "outcome_access": "PIT_OUTCOME_SEALED",
+  "registration_status": "READY_AFTER_PROGRAM_HOLDOUT_LINEAGE_AND_ACCEPTED_RESOLUTION_REVIEW",
+  "training_program_ref": "../../../../../config/judgment_selection_program_candidate_v2.json",
+  "selection_resolution_ref": "08_selection_resolution_amendment.json",
+  "selection_resolution_review_ref": "09_independent_selection_resolution_amendment_review.json",
+  "selection_outcome_custodian_id": "codex-r104-independent-outcome-custodian-20260824",
+  "feedback_items": [
+    {
+      "claim_id": "R-104:D1-TERMINAL",
+      "stage_id": "D1_IMPLEMENTATION",
+      "source_kind": "OFFICIAL_COMPANY_DISCLOSURE",
+      "source_ref": "03_outcome_acquisition_contract.json#/clocks/0",
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "settlement_version_policy": "INITIAL_DISCLOSURE",
+      "frozen_artifact_ref": "01_case_freeze.json",
+      "source_contract_ref": "03_outcome_acquisition_contract.json",
+      "measurement_contract_ref": "04_measurement_contract.json"
+    },
+    {
+      "claim_id": "R-104:D2-TERMINAL",
+      "stage_id": "D2_CUSTOMER_ABSORPTION",
+      "source_kind": "OFFICIAL_COMPANY_DISCLOSURE",
+      "source_ref": "03_outcome_acquisition_contract.json#/clocks/1",
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "settlement_version_policy": "INITIAL_DISCLOSURE",
+      "frozen_artifact_ref": "01_case_freeze.json",
+      "source_contract_ref": "03_outcome_acquisition_contract.json",
+      "measurement_contract_ref": "04_measurement_contract.json"
+    },
+    {
+      "claim_id": "R-104:D3-TERMINAL",
+      "stage_id": "D3_UNIT_ECONOMICS",
+      "source_kind": "OFFICIAL_COMPANY_DISCLOSURE",
+      "source_ref": "03_outcome_acquisition_contract.json#/clocks/2",
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "settlement_version_policy": "INITIAL_DISCLOSURE",
+      "frozen_artifact_ref": "01_case_freeze.json",
+      "source_contract_ref": "03_outcome_acquisition_contract.json",
+      "measurement_contract_ref": "04_measurement_contract.json"
+    },
+    {
+      "claim_id": "R-104:D4-CASH",
+      "stage_id": "D4_WORKING_CAPITAL_AND_CASH",
+      "source_kind": "OFFICIAL_COMPANY_DISCLOSURE",
+      "source_ref": "03_outcome_acquisition_contract.json#/clocks/3",
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "settlement_version_policy": "INITIAL_DISCLOSURE",
+      "frozen_artifact_ref": "01_case_freeze.json",
+      "source_contract_ref": "03_outcome_acquisition_contract.json",
+      "measurement_contract_ref": "04_measurement_contract.json"
+    },
+    {
+      "claim_id": "R-104:D5-CAPITAL",
+      "stage_id": "D5_CAPITAL_RETURN",
+      "source_kind": "OFFICIAL_COMPANY_DISCLOSURE",
+      "source_ref": "03_outcome_acquisition_contract.json#/clocks/4",
+      "eligible_at": "2019-05-01T00:00:00+08:00",
+      "settlement_version_policy": "INITIAL_DISCLOSURE",
+      "frozen_artifact_ref": "01_case_freeze.json",
+      "source_contract_ref": "03_outcome_acquisition_contract.json",
+      "measurement_contract_ref": "04_measurement_contract.json"
+    }
+  ],
+  "registration_blockers": [
+    "program v2 must bind the already sealed R-103 holdout through accepted lineage without duplicating or mutating it",
+    "selection resolution amendment requires independent pre-outcome acceptance"
+  ],
+  "prohibited_actions": [
+    "register before program v2 and accepted resolution review exist",
+    "create a D3 product-volume claim or copy D2 sales volume into production throughput",
+    "enumerate or acquire post-cutoff outcomes in selector, author or reviewer context",
+    "emit a learning note, method win, probability or report-use authorization before settlement and transfer"
+  ]
+}

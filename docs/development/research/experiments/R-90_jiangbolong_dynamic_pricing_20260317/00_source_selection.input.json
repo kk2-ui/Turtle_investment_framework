@@ -1,0 +1,13 @@
+{
+  "selection_policy_id": "r90-jiangbolong-dynamic-pricing-boundary-pre-read.v1",
+  "selection_reason": "只读取在完整 CNINFO 普通公告与 relation activity inventory 后，界定动态定价是否为可选择管理行动所必需的一份截止日前官方活动记录；不读取截止日后的经营结果或任何常规定期报告正文。",
+  "source_research_rationales": [
+    {
+      "source_id": "CNINFO:301308:REL:20260317:1225014553",
+      "selection_reason": "记录公司关于 UFS4.1、原厂/终端合作、行业供需、客户订单和动态定价的原始表述，以检验它们是可归责的行动还是共同的行业状态响应。",
+      "research_question_ids": [
+        "R90-Q1-dynamic-pricing-versus-cycle-response"
+      ]
+    }
+  ]
+}

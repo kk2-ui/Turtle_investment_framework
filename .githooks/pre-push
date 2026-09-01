@@ -1,0 +1,13 @@
+#!/bin/sh
+if [ "${PROJECT_ALLOW_PROTECTED_PUSH:-0}" = "1" ]; then
+  exit 0
+fi
+
+while read local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main|refs/heads/master)
+      echo "BLOCKED: 禁止直接推送受保护分支；请通过已启用必需检查的 PR 合入。" >&2
+      exit 1
+      ;;
+  esac
+done

@@ -1,0 +1,14 @@
+{
+  "artifact_type": "postoutcome-feedback-receipt.v1",
+  "case_id": "BLIND:CN600519:20240501:FY2024",
+  "real_feedback_turn": 7,
+  "real_feedback_turn_status": "REAL_FEEDBACK_TURN_7_COMPLETED",
+  "status": "NO_MATERIAL_NEW_METHOD_UTILITY",
+  "frozen_field_or_processing_delta_for_next_unknown_brand_channel_company": [],
+  "basis": {
+    "observed_settlement": "渠道为PASS/FAIL/PASS→MIXED；两个产品桶吸收SUCCESS；商品收款和综合经营现金SUCCESS，后者保留财务公司归因限制。",
+    "why_no_delta": "结果实际行使了预先已存在的拆分：直销、i茅台、批发各为独立腿；两产品桶独立；商品收款不由综合经营现金流替代。它没有发现会改善下一家未知品牌/渠道公司冻结字段的缺失字段或不同处理规则。",
+    "why_this_is_not_defensive": "结果没有被丢弃或转成整案拒绝。它给出一个决策相关的渠道失败、两个成功的独立经营轴和现金归因限制；既有拆分被证明重要，不等于出现新的可迁移方法。"
+  },
+  "prohibited_claims": {"method_validated": false, "transfer_validated": false, "company_judgment_authority_claimed": false, "valuation_claimed": false, "investment_permission_or_action_claimed": false}
+}

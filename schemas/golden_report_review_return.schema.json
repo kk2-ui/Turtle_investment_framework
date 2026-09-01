@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/golden_report_review_return.schema.json",
+  "title": "Golden Report Review Return",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "review_id", "report_id", "candidate_ref", "reviewer_id", "reviewed_at", "findings"],
+  "properties": {
+    "schema_version": {"const": "golden-report-review-return.v2"},
+    "review_id": {"type": "string", "minLength": 1},
+    "report_id": {"type": "string", "minLength": 1},
+    "candidate_ref": {"type": "string", "minLength": 1},
+    "reviewer_id": {"type": "string", "minLength": 1},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "findings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_id", "root_cause_classes", "materiality", "affected_claims",
+          "affected_chapters", "economic_impact", "missing_facts",
+          "prohibited_assumptions", "executable_remediation", "acceptance_criteria",
+          "remediation_status", "acceptance_evidence_refs"
+        ],
+        "properties": {
+          "finding_id": {"type": "string", "minLength": 1},
+          "root_cause_classes": {
+            "type": "array", "minItems": 1, "uniqueItems": true,
+            "items": {"enum": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"]}
+          },
+          "materiality": {"enum": ["MATERIAL", "NON_MATERIAL"]},
+          "affected_claims": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "affected_chapters": {"type": "array", "uniqueItems": true, "items": {"type": "integer", "minimum": 0, "maximum": 14}},
+          "economic_impact": {"type": "string", "minLength": 1},
+          "missing_facts": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "prohibited_assumptions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "executable_remediation": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "acceptance_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "remediation_status": {"enum": ["OPEN", "ACCEPTED", "CLOSED_NON_MATERIAL"]},
+          "acceptance_evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "reader_conclusion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["statement", "basis", "investor_consequence", "source_refs"],
+            "properties": {
+              "statement": {"type": "string", "minLength": 1},
+              "basis": {"type": "string", "minLength": 1},
+              "investor_consequence": {"type": "string", "minLength": 1},
+              "source_refs": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

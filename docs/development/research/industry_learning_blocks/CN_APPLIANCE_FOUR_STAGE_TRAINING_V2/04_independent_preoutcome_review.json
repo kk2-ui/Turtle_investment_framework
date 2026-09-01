@@ -1,0 +1,126 @@
+{
+  "schema_version": "enterprise-judgment-appliance-round2-independent-preoutcome-review.v1",
+  "review_id": "APPLIANCE-R12:CN002242:20180930:INDEPENDENT-PREOUTCOME-REVIEW:V1",
+  "reviewed_commit": "c25d0ea9b1dd8acbd5adaeec6a454c5fd38ee65a",
+  "reviewed_parent_commit": "2db94a0041173cdcd4c5715b0d4e4a054acc376c",
+  "episode_ref": "APPLIANCE-R12:CN002242:20180930:V1",
+  "reviewer": {
+    "reviewer_id": "ROLE:APPLIANCE-R12:INDEPENDENT_PREOUTCOME_REVIEWER",
+    "distinct_from": [
+      "ROLE:APPLIANCE-R12:CN002242:STATIC_EVIDENCE_CURATOR_FUNCTION",
+      "ROLE:APPLIANCE-R12:CN002242:FORECASTER_FUNCTION",
+      "ROLE:APPLIANCE-R12:CN002242:INDEPENDENT_OUTCOME_CUSTODIAN"
+    ]
+  },
+  "review_status": "PASS",
+  "decision": "CONTRACT_ONLY_OUTCOME_CUSTODY_MAY_BE_AUTHORIZED",
+  "roster_selection": {
+    "selection_rule": "SECOND_FIXED_RESULT_UNSEEN_COMPANY_IN_APPLIANCE_ROSTER",
+    "fixed_position": 2,
+    "company_id": "CN:002242",
+    "selection_not_result_driven": true
+  },
+  "verified_preoutcome_source": {
+    "source_id": "CNINFO:002242:ANN:20180421:1204680243",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204680243.PDF",
+    "publication_date": "2018-04-21",
+    "period_end": "2017-12-31",
+    "fields": [
+      {
+        "metric_id": "CONSOLIDATED_REVENUE_RMB",
+        "physical_pdf_page": 60,
+        "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED:CN002242",
+        "unit": "RMB",
+        "numeric_value": 7247524855.71
+      },
+      {
+        "metric_id": "PRODUCT_REVENUE_RMB:食品加工机系列",
+        "physical_pdf_page": 13,
+        "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED:CN002242:DISCLOSED_PRODUCT_CATEGORY:食品加工机系列",
+        "unit": "RMB",
+        "numeric_value": 3149788827.0
+      },
+      {
+        "metric_id": "CONSOLIDATED_OPERATING_CASH_FLOW_RMB",
+        "physical_pdf_page": 64,
+        "responsibility_boundary": "LISTED_ISSUER_CONSOLIDATED:CN002242",
+        "unit": "RMB",
+        "numeric_value": 48903264.69
+      }
+    ]
+  },
+  "fairness_findings": {
+    "same_fact_budget": true,
+    "baseline_and_enhanced_fact_refs_equal": true,
+    "unknowns_are_field_local": true,
+    "implemented_action_not_promoted_to_result": true
+  },
+  "frozen_minimal_contract_ids": [
+    "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:FOOD_PROCESSOR_REVENUE:V1",
+    "MHE:CONTRACT:APPLIANCE-R12:CN002242:FY2018:ISSUER_OCF:V1"
+  ],
+  "independently_reproduced_controller_counts": {
+    "decision_contracts": 3,
+    "technical_route_identities": 3,
+    "measurement_contracts": 3,
+    "static_evidence": 3,
+    "predictions": 3,
+    "outcome_access": 0,
+    "source_inventories": 0,
+    "observations": 0,
+    "settlements": 0
+  },
+  "learning_rules_frozen_before_outcome": {
+    "signed_miss_semantics": true,
+    "product_relative_outperformance_threshold_percentage_points": 5.0,
+    "prior_comparative_bridge_absolute_rmb_tolerance": 0.01,
+    "bridge_failure_resolution": "UNKNOWN_PRIOR_PERIOD_SCOPE_OR_RESTATEMENT_BRIDGE",
+    "mechanical_settlement_engine_copied": false,
+    "existing_runner_and_controller_reused": true
+  },
+  "known_unknowns_preserved": [
+    "ACTION_INCREMENTAL_REVENUE",
+    "CUSTOMER_LOYALTY_OR_SHARE",
+    "PRODUCT_UNIT_ECONOMICS",
+    "ORDINARY_SHARE_OWNER_CASH",
+    "CONSTANT_PERIMETER_REVENUE_AND_OCF_BRIDGE",
+    "STRONGEST_NAMED_RIVAL"
+  ],
+  "review_execution": {
+    "future_source_enumerated": false,
+    "future_pdf_opened": false,
+    "outcome_content_read": false,
+    "price_or_return_read": false,
+    "network_used": false,
+    "browser_used": false
+  },
+  "custodian_boundary": {
+    "allowed_role": "ROLE:APPLIANCE-R12:CN002242:INDEPENDENT_OUTCOME_CUSTODIAN",
+    "allowed_inputs": [
+      "FROZEN_MEASUREMENT_CONTRACT",
+      "CONTROLLER_ISSUED_OUTCOME_ACCESS",
+      "AUTHORIZED_OFFICIAL_STATIC_RESULT_REPORT"
+    ],
+    "prohibited_inputs": [
+      "PREDICTED_DIRECTION",
+      "FORECAST_REASONING",
+      "BASELINE_OR_ENHANCED_TREATMENT",
+      "METHOD_UTILITY_CLAIM",
+      "PRICE_OR_RETURN",
+      "CJO_VALUATION_REPORT_OR_INVESTMENT_CONCLUSION"
+    ],
+    "allowed_output": "FIELD_LEVEL_ACQUISITION_AND_MECHANICAL_SETTLEMENT_ONLY"
+  },
+  "allowed_outputs": [
+    "OUTCOME_ONLY_CUSTODY_AUTHORIZATION"
+  ],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "artifact_type": "postoutcome-feedback-receipt.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "real_feedback_turn": 8,
+  "real_feedback_turn_status": "REAL_FEEDBACK_TURN_8_COMPLETED",
+  "status": "MATERIAL_ENTERPRISE_JUDGMENT_UPDATE_NO_MATERIAL_NEW_METHOD_UTILITY",
+  "enterprise_judgment_delta": {
+    "before": "核心液体乳受价格压力，但冷饮和营养品的可验证吸收可能提供增量；产品组合经济与资本回报尚待重复。",
+    "after": "液体乳和冷饮销量同时低于基线，奶粉及奶制品的局部销量改善不足以抵消；两个产品毛利改善、企业现金代理强，却与低于此前谷底的 ROE 并存。",
+    "investor_treatment": "从条件性偏正面下调为需求与资本回报恢复前的中高永久损失风险；现金和局部毛利仅为缓冲，不能替代客户吸收和资本回报。"
+  },
+  "next_cutoff_research_agenda_delta": {
+    "remove_as_settled_for_FY2024": [
+      "三项产品销量相对 FY2023 的机械比较",
+      "三项产品毛利率相对 FY2023 的机械比较",
+      "合并经营现金流减购建长期资产现金支出的代理",
+      "加权平均净资产收益率阈值"
+    ],
+    "retain_highest_value_question": "液体乳和冷饮能否在不牺牲保留毛利的前提下恢复同产品销量，并把企业 ROE 恢复至至少 FY2023 水平？",
+    "required_next_observation": "下一个年度同一产品销量和毛利表、同口径 ROE，以及年报若披露的价格/销量桥；销量恢复若由毛利损失换取、或毛利/现金改善仍伴随低 ROE，均不构成正面回答。"
+  },
+  "frozen_field_or_processing_delta_for_next_unknown_company": [],
+  "basis": {
+    "observed_settlement": "A1 客户吸收 FAILURE；A2 单位经济 MIXED；A3 owner-cash proxy SUCCESS；A4 企业资本回报 FAILURE。",
+    "why_no_new_method_delta": "结果按既有的客户吸收、单位经济、企业现金代理和资本回报四轴分离后得到材料性公司更新；现金成功没有覆盖需求或 ROE 失败，局部毛利改善也没有覆盖销量失败。这是既有规则的正确命中，未发现下一家未知公司必须新增字段、改变阈值或改变处理顺序。",
+    "why_this_is_not_defensive": "局部未知没有中止企业判断，正面现金与毛利观察也没有掩盖两项材料失败。反馈实际下调了公司处理并明确了下一期可证伪的问题。"
+  },
+  "prohibited_claims": {
+    "method_validated": false,
+    "transfer_candidate_created": false,
+    "transfer_validated": false,
+    "company_judgment_authority_claimed": false,
+    "valuation_claimed": false,
+    "investment_permission_or_action_claimed": false
+  }
+}

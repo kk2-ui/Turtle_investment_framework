@@ -1,0 +1,40 @@
+{
+  "schema_version": "historical-blind-selection-register.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "selection_order": 6,
+  "case_id": "BLIND:CN600309:20240501:FY2024",
+  "company": {
+    "ticker": "CN:600309",
+    "name": "万华化学"
+  },
+  "preoutcome_cutoff": "2024-05-01T00:00:00+08:00",
+  "outcome_period": "FY2024",
+  "selection_rule": {
+    "predeclared_rotation": "After five settled Blind cases in consumer electrical, logistics, resource deep processing, industrial equipment and property management, select the next unrepresented large-process-industry company from the fixed chemistry/manufacturing slot.",
+    "selection_inputs": [
+      "curriculum register company-cluster and industry coverage through the fifth settled Blind",
+      "company identity and sector classification only"
+    ],
+    "prohibited_selection_inputs": [
+      "FY2024 annual-report content or any other post-cutoff result",
+      "price, return, market performance, analyst commentary or derived company report",
+      "comparison of candidate outcome quality"
+    ],
+    "reason_not_result_selected": "CN:600309 fills the next fixed sector slot and is outside every settled Blind company cluster and industry. The choice is recorded before any FY2024 source may be opened."
+  },
+  "preoutcome_research_problem": {
+    "state_and_constraint": "Process-industry capacity additions, feedstock/product spreads and customer demand must be separated from reported sales growth.",
+    "management_choice_or_no_action": "Assess capacity, integration, product-mix and capital-spending decisions without pre-judging their outcome.",
+    "customer_or_operating_link": "Demand absorption, utilization, product price/cost spread and customer collection quality must be observed before output growth receives economic credit.",
+    "cash_or_capital_link": "Operating cash, working capital and maintenance/growth capital must be separated before treating reported profit or capacity deployment as owner cash or capital return."
+  },
+  "role_and_source_firewall": {
+    "preoutcome_source_allowed": "issuer official FY2023 annual report and cutoff-before issuer materials only",
+    "outcome_source_sealed": "issuer official FY2024 annual report; no content may be opened until a fresh forecaster, result-free independent preoutcome review and single-source custody authorization are frozen",
+    "forecaster_must_be_fresh": true,
+    "price_or_return_allowed": false,
+    "formal_valuation_allowed": false,
+    "investment_action_allowed": false
+  },
+  "registration_status": "PREOUTCOME_SOURCE_CURATION_AUTHORIZED"
+}

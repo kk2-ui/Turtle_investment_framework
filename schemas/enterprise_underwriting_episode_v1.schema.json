@@ -1,0 +1,747 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EnterpriseUnderwritingEpisode v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "episode_id",
+    "company_id",
+    "company_name",
+    "cutoff_at",
+    "sample_identity",
+    "decision_frame",
+    "underwriting_route",
+    "situation_model",
+    "business_position",
+    "survival_case",
+    "adaptation_case",
+    "normalization_case",
+    "permanent_loss_map",
+    "value_route",
+    "strongest_rival",
+    "reversal_observations",
+    "component_treatments",
+    "evidence_trace",
+    "existing_object_refs",
+    "underwriting_thesis",
+    "investment_treatment"
+  ],
+  "properties": {
+    "schema_version": {"const": "enterprise-underwriting-episode.v2"},
+    "episode_id": {"$ref": "#/$defs/non_empty_string"},
+    "company_id": {"$ref": "#/$defs/non_empty_string"},
+    "company_name": {"$ref": "#/$defs/non_empty_string"},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "sample_identity": {"enum": ["WORKED_CASE", "BLIND_REPLAY", "PROSPECTIVE_EPISODE"]},
+    "decision_frame": {"$ref": "#/$defs/non_empty_string"},
+    "underwriting_route": {"$ref": "#/$defs/non_empty_string"},
+    "situation_model": {"$ref": "#/$defs/situation_model"},
+    "business_position": {"$ref": "#/$defs/non_empty_string"},
+    "survival_case": {"$ref": "#/$defs/non_empty_string"},
+    "adaptation_case": {"$ref": "#/$defs/non_empty_string"},
+    "normalization_case": {"$ref": "#/$defs/non_empty_string"},
+    "permanent_loss_map": {"$ref": "#/$defs/non_empty_string"},
+    "value_route": {"$ref": "#/$defs/value_route"},
+    "strongest_rival": {"$ref": "#/$defs/non_empty_string"},
+    "reversal_observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/non_empty_string"}
+    },
+    "component_treatments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/component_treatment"}
+    },
+    "component_decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/component_decision"}
+    },
+    "component_decision_summary": {
+      "$ref": "#/$defs/component_decision_summary"
+    },
+    "economic_derivation": {
+      "$ref": "#/$defs/economic_derivation"
+    },
+    "economic_derivation_summary": {
+      "$ref": "#/$defs/economic_derivation_summary"
+    },
+    "evidence_trace": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evidence_trace_item"}
+    },
+    "existing_object_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/existing_object_ref"}
+    },
+    "underwriting_thesis": {"$ref": "#/$defs/underwriting_thesis"},
+    "investment_treatment": {"$ref": "#/$defs/non_empty_string"}
+  },
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "non_empty_unique_string_list": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/non_empty_string"}
+    },
+    "evidence_trace_item": {
+      "type": "object",
+      "required": ["evidence_id", "source_ref", "locator", "scope", "used_for"],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/non_empty_string"},
+        "source_ref": {"$ref": "#/$defs/non_empty_string"},
+        "locator": {"$ref": "#/$defs/non_empty_string"},
+        "scope": {"$ref": "#/$defs/non_empty_string"},
+        "used_for": {"$ref": "#/$defs/non_empty_string"},
+        "sensitivity_magnitude_observation": {
+          "$ref": "#/$defs/sensitivity_magnitude_observation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sensitivity_magnitude_observation": {
+      "type": "object",
+      "required": [
+        "component_ids", "responsibility_boundary", "driver_metric",
+        "driver_unit", "horizon", "affected_axes", "delta_unit",
+        "calculation_inputs"
+      ],
+      "properties": {
+        "component_ids": {"$ref": "#/$defs/non_empty_unique_string_list"},
+        "responsibility_boundary": {"$ref": "#/$defs/non_empty_string"},
+        "driver_metric": {"$ref": "#/$defs/non_empty_string"},
+        "driver_unit": {"$ref": "#/$defs/non_empty_string"},
+        "horizon": {"$ref": "#/$defs/non_empty_string"},
+        "affected_axes": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"enum": ["normal_earnings", "owner_cash"]}
+        },
+        "delta_unit": {"$ref": "#/$defs/non_empty_string"},
+        "calculation_inputs": {"$ref": "#/$defs/non_empty_unique_string_list"}
+      },
+      "additionalProperties": false
+    },
+    "existing_object_ref": {
+      "type": "object",
+      "required": ["kind", "ref", "role"],
+      "properties": {
+        "kind": {"$ref": "#/$defs/non_empty_string"},
+        "ref": {"$ref": "#/$defs/non_empty_string"},
+        "role": {"$ref": "#/$defs/non_empty_string"}
+      },
+      "additionalProperties": false
+    },
+    "component_treatment": {
+      "type": "object",
+      "required": [
+        "component_id", "treatment", "reason", "investment_consequence",
+        "promotion_or_resolution_condition", "evidence_ids"
+      ],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/non_empty_string"},
+        "treatment": {
+          "enum": ["UNDERWRITE", "CONDITIONALLY_UNDERWRITE", "SCENARIO_ONLY", "EXCLUDE_FROM_BASE", "CANNOT_BOUND"]
+        },
+        "reason": {"$ref": "#/$defs/non_empty_string"},
+        "investment_consequence": {"$ref": "#/$defs/non_empty_string"},
+        "promotion_or_resolution_condition": {"$ref": "#/$defs/non_empty_string"},
+        "evidence_ids": {"$ref": "#/$defs/non_empty_unique_string_list"}
+      },
+      "additionalProperties": false
+    },
+    "underwriting_thesis": {
+      "type": "object",
+      "required": [
+        "thesis_id",
+        "central_path",
+        "normal_earnings_treatment",
+        "owner_cash_treatment",
+        "permanent_loss_treatment",
+        "value_route_treatment",
+        "economic_directions",
+        "strongest_rival",
+        "monitoring"
+      ],
+      "properties": {
+        "thesis_id": {"$ref": "#/$defs/non_empty_string"},
+        "central_path": {"$ref": "#/$defs/non_empty_string"},
+        "normal_earnings_treatment": {"$ref": "#/$defs/non_empty_string"},
+        "owner_cash_treatment": {"$ref": "#/$defs/non_empty_string"},
+        "permanent_loss_treatment": {"$ref": "#/$defs/non_empty_string"},
+        "value_route_treatment": {"$ref": "#/$defs/non_empty_string"},
+        "economic_directions": {"$ref": "#/$defs/economic_directions"},
+        "strongest_rival": {"$ref": "#/$defs/non_empty_string"},
+        "monitoring": {"$ref": "#/$defs/non_empty_string"}
+      },
+      "additionalProperties": false
+    },
+    "situation_model": {
+      "type": "object",
+      "required": ["summary", "industry_future_thesis"],
+      "properties": {
+        "summary": {"$ref": "#/$defs/non_empty_string"},
+        "industry_future_thesis": {"$ref": "#/$defs/industry_future_thesis"}
+      },
+      "additionalProperties": false
+    },
+    "industry_future_thesis": {
+      "type": "object",
+      "required": [
+        "horizon",
+        "most_likely_regime",
+        "profit_pool_transmission",
+        "company_exposure",
+        "adaptation",
+        "normal_economics",
+        "permanent_loss",
+        "valuation_treatment",
+        "strongest_rival",
+        "reversal_observations"
+      ],
+      "properties": {
+        "horizon": {"$ref": "#/$defs/non_empty_string"},
+        "most_likely_regime": {"$ref": "#/$defs/non_empty_string"},
+        "profit_pool_transmission": {"$ref": "#/$defs/non_empty_string"},
+        "company_exposure": {"$ref": "#/$defs/non_empty_string"},
+        "adaptation": {"$ref": "#/$defs/non_empty_string"},
+        "normal_economics": {"$ref": "#/$defs/non_empty_string"},
+        "permanent_loss": {"$ref": "#/$defs/non_empty_string"},
+        "valuation_treatment": {"$ref": "#/$defs/non_empty_string"},
+        "strongest_rival": {"$ref": "#/$defs/non_empty_string"},
+        "reversal_observations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "economic_directions": {
+      "type": "object",
+      "required": ["normal_earnings", "owner_cash", "permanent_loss"],
+      "properties": {
+        "normal_earnings": {"$ref": "#/$defs/economic_direction"},
+        "owner_cash": {"$ref": "#/$defs/economic_direction"},
+        "permanent_loss": {"$ref": "#/$defs/economic_direction"}
+      },
+      "additionalProperties": false
+    },
+    "value_route": {
+      "type": "object",
+      "required": ["primary_routes", "excluded_routes", "route_reasoning", "valuation_model_roles"],
+      "properties": {
+        "primary_routes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "excluded_routes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "route_component_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/route_component_requirement"}
+        },
+        "route_reasoning": {"$ref": "#/$defs/non_empty_string"},
+        "valuation_model_roles": {
+          "type": "object",
+          "required": ["primary"],
+          "properties": {
+            "primary": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/non_empty_string"}
+            },
+            "corroborative": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/non_empty_string"}
+            },
+            "stress": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/non_empty_string"}
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "route_component_requirement": {
+      "type": "object",
+      "required": ["route_id", "required_component_ids", "optional_component_ids"],
+      "properties": {
+        "route_id": {"$ref": "#/$defs/non_empty_string"},
+        "required_component_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "optional_component_ids": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "economic_direction": {
+      "enum": ["IMPROVES", "DETERIORATES", "MIXED", "UNKNOWN", "NONE"]
+    },
+    "component_decision": {
+      "type": "object",
+      "required": [
+        "component_id",
+        "economic_scope",
+        "normal_earnings_use",
+        "owner_cash_use",
+        "financing_pressure_effect",
+        "permanent_loss_use",
+        "valuation_use",
+        "valuation_route_bindings",
+        "promotion_test",
+        "invalidation_test"
+      ],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/non_empty_string"},
+        "economic_scope": {
+          "enum": [
+            "SURVIVAL_FINANCING",
+            "MATURE_CORE_NORMAL_EARNINGS",
+            "ORDINARY_SHARE_OWNER_CASH",
+            "GROWTH_CAPITAL_RETURN",
+            "NONCORE_OR_OPTIONAL_ASSET",
+            "OTHER_MATERIAL_COMPONENT"
+          ]
+        },
+        "normal_earnings_use": {"$ref": "#/$defs/earnings_and_cash_use"},
+        "owner_cash_use": {"$ref": "#/$defs/earnings_and_cash_use"},
+        "financing_pressure_effect": {
+          "enum": ["REDUCES", "NEUTRAL", "INCREASES", "CONDITIONAL", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "permanent_loss_use": {
+          "enum": ["BASE_PATH", "CONDITIONAL_PATH", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "valuation_use": {
+          "enum": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "valuation_route_bindings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/valuation_route_binding"}
+        },
+        "promotion_test": {"$ref": "#/$defs/non_empty_string"},
+        "invalidation_test": {"$ref": "#/$defs/non_empty_string"}
+      },
+      "additionalProperties": false
+    },
+    "component_decision_summary": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "normal_earnings",
+        "owner_cash",
+        "financing_pressure",
+        "permanent_loss",
+        "valuation"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "enterprise-underwriting-component-decision-summary.v1"
+        },
+        "normal_earnings": {"$ref": "#/$defs/range_component_route"},
+        "owner_cash": {"$ref": "#/$defs/range_component_route"},
+        "financing_pressure": {"$ref": "#/$defs/financing_component_route"},
+        "permanent_loss": {"$ref": "#/$defs/permanent_loss_component_route"},
+        "valuation": {"$ref": "#/$defs/valuation_component_route"}
+      },
+      "additionalProperties": false
+    },
+    "component_id_list": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/non_empty_string"}
+    },
+    "range_component_route": {
+      "type": "object",
+      "required": ["range_authority", "components_by_use"],
+      "properties": {
+        "range_authority": {"$ref": "#/$defs/earnings_and_cash_use"},
+        "components_by_use": {
+          "type": "object",
+          "required": ["BASE_RANGE", "CONDITIONAL_RANGE", "SCENARIO_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "financing_component_route": {
+      "type": "object",
+      "required": ["active_effects", "components_by_effect"],
+      "properties": {
+        "active_effects": {
+          "type": "array",
+          "items": {"enum": ["REDUCES", "NEUTRAL", "INCREASES", "CONDITIONAL", "UNRESOLVED", "NOT_APPLICABLE"]}
+        },
+        "components_by_effect": {
+          "type": "object",
+          "required": ["REDUCES", "NEUTRAL", "INCREASES", "CONDITIONAL", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "permanent_loss_component_route": {
+      "type": "object",
+      "required": ["path_authority", "components_by_use"],
+      "properties": {
+        "path_authority": {
+          "enum": ["BASE_PATH", "CONDITIONAL_PATH", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "components_by_use": {
+          "type": "object",
+          "required": ["BASE_PATH", "CONDITIONAL_PATH", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "valuation_component_route": {
+      "type": "object",
+      "required": ["route_authority", "components_by_use", "route_component_bindings"],
+      "properties": {
+        "route_authority": {
+          "enum": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        },
+        "components_by_use": {
+          "type": "object",
+          "required": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        },
+        "route_component_bindings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/derived_valuation_route_binding"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "valuation_route_binding": {
+      "type": "object",
+      "required": ["route_id", "use"],
+      "properties": {
+        "route_id": {"$ref": "#/$defs/non_empty_string"},
+        "use": {
+          "enum": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "derived_valuation_route_binding": {
+      "type": "object",
+      "required": ["route_id", "components_by_use"],
+      "properties": {
+        "route_id": {"$ref": "#/$defs/non_empty_string"},
+        "components_by_use": {
+          "type": "object",
+          "required": ["PRIMARY_INPUT", "CONDITIONAL_PRIMARY_INPUT", "CORROBORATIVE_INPUT", "SCENARIO_ONLY", "STRESS_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"],
+          "additionalProperties": {"$ref": "#/$defs/component_id_list"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "economic_derivation": {
+      "type": "object",
+      "required": [
+        "schema_version", "normal_earnings_bridge", "driver_sensitivity_specs"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "enterprise-underwriting-economic-derivation.v1"
+        },
+        "normal_earnings_bridge": {
+          "type": "object",
+          "required": ["basis", "rows"],
+          "properties": {
+            "basis": {"$ref": "#/$defs/normal_earnings_bridge_basis"},
+            "rows": {
+              "type": "array", "minItems": 1,
+              "items": {"$ref": "#/$defs/normal_earnings_bridge_row"}
+            }
+          },
+          "additionalProperties": false
+        },
+        "driver_sensitivity_specs": {
+          "type": "array", "minItems": 1,
+          "items": {"$ref": "#/$defs/driver_sensitivity_spec"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "normal_earnings_bridge_basis": {
+      "type": "object",
+      "required": [
+        "metric", "currency", "unit", "tax_basis", "earnings_claim_scope",
+        "operating_perimeter", "as_of"
+      ],
+      "properties": {
+        "metric": {"$ref": "#/$defs/non_empty_string"},
+        "currency": {"$ref": "#/$defs/non_empty_string"},
+        "unit": {"$ref": "#/$defs/non_empty_string"},
+        "tax_basis": {"enum": ["PRETAX", "AFTER_TAX"]},
+        "earnings_claim_scope": {
+          "enum": ["ENTERPRISE_OPERATING", "ORDINARY_COMMON_EQUITY"]
+        },
+        "operating_perimeter": {"$ref": "#/$defs/non_empty_string"},
+        "as_of": {"type": "string", "format": "date"}
+      },
+      "additionalProperties": false
+    },
+    "normal_earnings_bridge_row": {
+      "type": "object",
+      "required": [
+        "row_id", "component_id", "row_role", "direction", "quantification",
+        "evidence_ids", "economic_reason"
+      ],
+      "properties": {
+        "row_id": {"$ref": "#/$defs/non_empty_string"},
+        "component_id": {"$ref": "#/$defs/non_empty_string"},
+        "row_role": {
+          "enum": ["REFERENCE_EARNINGS", "NORMALIZATION_ADJUSTMENT"]
+        },
+        "direction": {"enum": ["ADD", "SUBTRACT"]},
+        "quantification": {"$ref": "#/$defs/derivation_quantification"},
+        "evidence_ids": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "economic_reason": {"$ref": "#/$defs/non_empty_string"}
+      },
+      "additionalProperties": false
+    },
+    "derivation_quantification": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "range_low", "range_high"],
+          "properties": {
+            "status": {"const": "BOUNDED"},
+            "range_low": {"type": "number", "minimum": 0},
+            "range_high": {"type": "number", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["status", "reason", "conservative_treatment"],
+          "properties": {
+            "status": {"const": "UNKNOWN"},
+            "reason": {"$ref": "#/$defs/non_empty_string"},
+            "conservative_treatment": {"$ref": "#/$defs/non_empty_string"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "driver_sensitivity_spec": {
+      "type": "object",
+      "required": [
+        "sensitivity_id", "component_ids", "metric", "unit", "horizon",
+        "input_cases", "transmission",
+        "reversal_observation_refs"
+      ],
+      "properties": {
+        "sensitivity_id": {"$ref": "#/$defs/non_empty_string"},
+        "component_ids": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        },
+        "responsibility_boundary": {"$ref": "#/$defs/non_empty_string"},
+        "driver_binding": {
+          "type": "object",
+          "properties": {
+            "enterprise_variable_id": {"$ref": "#/$defs/non_empty_string"},
+            "financial_driver_id": {"$ref": "#/$defs/non_empty_string"}
+          },
+          "minProperties": 1,
+          "additionalProperties": false
+        },
+        "metric": {"$ref": "#/$defs/non_empty_string"},
+        "unit": {"$ref": "#/$defs/non_empty_string"},
+        "horizon": {"$ref": "#/$defs/non_empty_string"},
+        "input_cases": {"$ref": "#/$defs/sensitivity_input_cases"},
+        "transmission": {"$ref": "#/$defs/sensitivity_transmission"},
+        "reversal_observation_refs": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {
+            "type": "string", "pattern": "^#/reversal_observations/[0-9]+$"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sensitivity_input_case": {
+      "type": "object",
+      "required": ["value_or_range", "basis", "evidence_ids"],
+      "properties": {
+        "value_or_range": {
+          "oneOf": [
+            {
+              "type": "object", "required": ["value"],
+              "properties": {"value": {"type": "number"}},
+              "additionalProperties": false
+            },
+            {
+              "type": "object", "required": ["range_low", "range_high"],
+              "properties": {
+                "range_low": {"type": "number"},
+                "range_high": {"type": "number"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "basis": {"$ref": "#/$defs/non_empty_string"},
+        "evidence_ids": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "sensitivity_input_cases": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["mode", "low", "base", "high"],
+          "properties": {
+            "mode": {"const": "LOW_BASE_HIGH"},
+            "low": {"$ref": "#/$defs/sensitivity_input_case"},
+            "base": {"$ref": "#/$defs/sensitivity_input_case"},
+            "high": {"$ref": "#/$defs/sensitivity_input_case"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object", "required": ["mode", "range"],
+          "properties": {
+            "mode": {"const": "BOUNDED_RANGE"},
+            "range": {"$ref": "#/$defs/sensitivity_input_case"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "sensitivity_axis_transmission": {
+      "type": "object", "required": ["status", "basis", "delta"],
+      "properties": {
+        "status": {"enum": ["DIRECT", "PRESERVED", "UNKNOWN"]},
+        "basis": {"$ref": "#/$defs/non_empty_string"},
+        "delta": {"$ref": "#/$defs/sensitivity_delta_attribution"}
+      },
+      "additionalProperties": false
+    },
+    "sensitivity_delta_attribution": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "range_low", "range_high", "unit"],
+          "properties": {
+            "status": {"const": "BOUNDED"},
+            "range_low": {"type": "number", "maximum": 0},
+            "range_high": {"type": "number", "minimum": 0},
+            "unit": {"$ref": "#/$defs/non_empty_string"},
+            "magnitude_evidence": {
+              "$ref": "#/$defs/sensitivity_delta_magnitude_evidence"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["status", "reason", "conservative_treatment"],
+          "properties": {
+            "status": {"const": "UNKNOWN"},
+            "reason": {"$ref": "#/$defs/non_empty_string"},
+            "conservative_treatment": {"$ref": "#/$defs/non_empty_string"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "sensitivity_delta_magnitude_evidence": {
+      "type": "object",
+      "required": [
+        "evidence_ids", "component_ids", "responsibility_boundary",
+        "driver_metric", "driver_unit", "horizon", "affected_axis",
+        "delta_unit", "calculation_binding"
+      ],
+      "properties": {
+        "evidence_ids": {"$ref": "#/$defs/non_empty_unique_string_list"},
+        "component_ids": {"$ref": "#/$defs/non_empty_unique_string_list"},
+        "responsibility_boundary": {"$ref": "#/$defs/non_empty_string"},
+        "driver_metric": {"$ref": "#/$defs/non_empty_string"},
+        "driver_unit": {"$ref": "#/$defs/non_empty_string"},
+        "horizon": {"$ref": "#/$defs/non_empty_string"},
+        "affected_axis": {"enum": ["normal_earnings", "owner_cash"]},
+        "delta_unit": {"$ref": "#/$defs/non_empty_string"},
+        "calculation_binding": {
+          "type": "object",
+          "required": ["calculation_id", "expression", "input_evidence_ids"],
+          "properties": {
+            "calculation_id": {"$ref": "#/$defs/non_empty_string"},
+            "expression": {"$ref": "#/$defs/non_empty_string"},
+            "input_evidence_ids": {
+              "$ref": "#/$defs/non_empty_unique_string_list"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sensitivity_transmission": {
+      "type": "object",
+      "required": ["normal_earnings", "owner_cash", "valuation_route_ids"],
+      "properties": {
+        "normal_earnings": {"$ref": "#/$defs/sensitivity_axis_transmission"},
+        "owner_cash": {"$ref": "#/$defs/sensitivity_axis_transmission"},
+        "valuation_route_ids": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/non_empty_string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "economic_derivation_summary": {
+      "type": "object",
+      "required": [
+        "schema_version", "normal_earnings_bridge", "driver_sensitivities"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "enterprise-underwriting-economic-derivation-summary.v1"
+        },
+        "normal_earnings_bridge": {"type": "object"},
+        "driver_sensitivities": {"type": "array", "items": {"type": "object"}}
+      },
+      "additionalProperties": false
+    },
+    "earnings_and_cash_use": {
+      "enum": ["BASE_RANGE", "CONDITIONAL_RANGE", "SCENARIO_ONLY", "EXCLUDED", "UNRESOLVED", "NOT_APPLICABLE"]
+    }
+  },
+  "dependentRequired": {
+    "economic_derivation": ["component_decisions"]
+  },
+  "additionalProperties": false
+}

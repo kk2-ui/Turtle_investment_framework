@@ -1,0 +1,71 @@
+{
+  "receipt_id": "CN601012_BLIND11_FORECASTER_EXECUTION_RECEIPT",
+  "receipt_version": "1.0",
+  "receipt_date": "2026-08-29",
+  "case_identity": "BLIND:CN601012:20240501:FY2024",
+  "role": "fresh_pre_outcome_forecaster",
+  "issuer_name_at_cutoff": "隆基绿能",
+  "security_code": "601012",
+  "cutoff_exclusive": "2024-05-01",
+  "inputs_used": [
+    {
+      "file": "158_BLIND11_FEEDBACK_LINKED_SELECTION_REGISTER.json",
+      "permitted_use": "case identity, cutoff, selected original-report packet, and firewall rules only"
+    },
+    {
+      "file": "159_CN601012_CUTOFF_BEFORE_PACKET_RECEIPT.json",
+      "permitted_use": "packet identity, local paths, publication dates, and cutoff-before-release rules only"
+    },
+    {
+      "file": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2021_1213161635.txt",
+      "document": "隆基股份2021年年度报告",
+      "announcement_id": "1213161635",
+      "publication_date": "2022-04-28",
+      "content_used": "management discussion, operating targets and results, and consolidated financial statements"
+    },
+    {
+      "file": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2022_1216664294.txt",
+      "document": "2022年年度报告",
+      "announcement_id": "1216664294",
+      "publication_date": "2023-04-28",
+      "content_used": "management discussion, operating targets and results, and consolidated financial statements"
+    },
+    {
+      "file": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2023_1219925312.txt",
+      "document": "2023年年度报告",
+      "announcement_id": "1219925312",
+      "publication_date": "2024-04-30",
+      "content_used": "management discussion, operating targets and results, product economics, risks, and consolidated financial statements"
+    }
+  ],
+  "source_boundary": {
+    "admissible_evidence": "Only the registered FY2021-FY2023 original annual-report packet, interpreted through the local text extractions above, plus the two specified packet/register receipts.",
+    "interpretation_boundary": "All enterprise inferences are ex-ante as of the exclusive 2024-05-01 cutoff. Management plans are treated as plans, not as achieved facts; management claims of product advantage are treated as hypotheses pending price, margin, and cash confirmation.",
+    "not_opened_or_used": [
+      "campaign, curriculum, method, or feedback artifacts other than 158 and 159",
+      "FY2024 or later metadata, document bodies, results, or outcomes",
+      "external or browser sources",
+      "market price, return, valuation, or analyst material",
+      "the local PDFs themselves; the authorized local text extractions were sufficient for this role"
+    ]
+  },
+  "execution": {
+    "judgment_file": "161_CN601012_PREOUTCOME_JUDGMENT.json",
+    "judgment_status": "FROZEN_PRE_OUTCOME",
+    "frozen_before_outcome_acquisition": true,
+    "required_enterprise_axes_covered": [
+      "capacity and volume",
+      "price and unit economics",
+      "cash, capital, debt, and permanent-loss treatment"
+    ],
+    "valuation_or_action_boundary": "The judgment contains directional enterprise-value implications only. It contains no market-price input, valuation number, target, rating, or investment action."
+  },
+  "negative_attestations": {
+    "campaign_or_curriculum_content_read_beyond_158_and_159": false,
+    "FY2024_or_later_metadata_identified_or_read": false,
+    "FY2024_or_later_document_body_or_outcome_read": false,
+    "external_or_browser_source_read": false,
+    "price_return_valuation_or_analyst_material_read": false,
+    "repository_commit_created": false
+  }
+}

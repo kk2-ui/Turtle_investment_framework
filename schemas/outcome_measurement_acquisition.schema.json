@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Outcome Measurement Acquisition v1",
+  "description": "A field-level, custodian-only local-static-PDF acquisition result. It has no forecast, label, price, CJO, report, valuation, or investment field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "measurement_contract_ref", "source_inventory_id", "custodian_id", "object_class", "claim_class", "allowed_outputs", "observations"],
+  "properties": {
+    "schema_version": {"const": "turtle-outcome-measurement-acquisition.v1"},
+    "measurement_contract_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["measurement_contract_id", "measurement_contract_version"],
+      "properties": {
+        "measurement_contract_id": {"type": "string", "minLength": 1},
+        "measurement_contract_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "source_inventory_id": {"type": "string", "minLength": 1},
+    "custodian_id": {"type": "string", "minLength": 1},
+    "object_class": {"const": "OUTCOME_MEASUREMENT_ACQUISITION_RESULT"},
+    "claim_class": {"const": "CUSTODIAN_FIELD_ACQUISITION_ONLY"},
+    "allowed_outputs": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"enum": ["FORECAST_OUTCOME_ACQUISITION_ONLY", "MECHANICAL_SETTLEMENT_ONLY"]}},
+    "observations": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["measurement_id", "status", "metric_id", "metric_definition", "report_period_end", "unit"],
+        "properties": {
+          "measurement_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["OBSERVED", "UNKNOWN", "MEASUREMENT_MISMATCH"]},
+          "metric_id": {"type": "string", "minLength": 1},
+          "metric_definition": {"type": "string", "minLength": 1},
+          "report_period_end": {"type": "string", "format": "date"},
+          "unit": {"type": "string", "minLength": 1},
+          "currency": {"type": ["string", "null"]},
+          "reporting_scope": {"type": ["string", "null"]},
+          "statement_kind": {"type": "string"},
+          "current_value": {"type": "number"},
+          "comparative_value": {"type": "number"},
+          "source": {"type": "object"},
+          "sources_considered": {"type": "array"},
+          "consolidation_or_restatement_note": {"type": "string"},
+          "reason": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {"if": {"properties": {"status": {"const": "OBSERVED"}}}, "then": {"required": ["currency", "reporting_scope", "statement_kind", "current_value", "comparative_value", "source", "consolidation_or_restatement_note"], "not": {"required": ["reason"]}}},
+          {"if": {"properties": {"status": {"const": "UNKNOWN"}}}, "then": {"required": ["sources_considered", "reason"]}},
+          {"if": {"properties": {"status": {"const": "MEASUREMENT_MISMATCH"}}}, "then": {"required": ["reason"]}}
+        ]
+      }
+    }
+  }
+}

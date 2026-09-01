@@ -514,6 +514,49 @@ class TestFactor3Step4:
         assert "_w_total" in client._store
         assert "2024" in client._store["_w_total"]
 
+    def test_ap_excess_metrics_output(self):
+        """Output should include AP excess financing diagnostics."""
+        client = _make_client_with_store()
+        result = client._compute_factor3_step4()
+        assert "17.4-bis 因子3·AP超额融资检测" in result
+        assert "AP/成本" in result
+        assert "本年超额AP融资贡献" in result
+
+    def test_stores_ap_adjustment(self):
+        """_store should contain _ap_adjustment after computation."""
+        client = _make_client_with_store()
+        client._compute_factor3_step4()
+        assert "_ap_adjustment" in client._store
+        assert "2024" in client._store["_ap_adjustment"]
+        assert "ap_excess_contribution" in client._store["_ap_adjustment"]["2024"]
+
+    def test_ap_proportional_growth_not_all_increment(self):
+        """AP excess contribution should not treat the full AP increment as financing."""
+        client = _make_client_with_store()
+        client._compute_factor3_step4()
+        ap_2024 = client._store["_ap_adjustment"]["2024"]
+        full_ap_increment = ap_2024["ap"] - ap_2024["ap_prev"]
+        assert ap_2024["ap_excess_contribution"] < full_ap_increment
+
+    def test_ap_excess_helper_detects_only_excess_growth(self):
+        """When AP rises faster than cost, only the excess above baseline is flagged."""
+        client = _make_client()
+        income_years = ["2024", "2023", "2022"]
+        inc_by_year = {
+            "2024": {"oper_cost": 1200.0},
+            "2023": {"oper_cost": 1000.0},
+            "2022": {"oper_cost": 900.0},
+        }
+        bs_by_year = {
+            "2024": {"acct_payable": 180.0},
+            "2023": {"acct_payable": 100.0},
+            "2022": {"acct_payable": 90.0},
+        }
+        result = client._compute_ap_excess_metrics(income_years, inc_by_year, bs_by_year)
+        assert math.isclose(result["2024"]["baseline_ratio"], 0.1)
+        assert math.isclose(result["2024"]["ap_excess_contribution"], 60.0)
+        assert result["2024"]["ap_excess_contribution"] < 80.0
+
     def test_returns_none_no_data(self):
         """Should return None with no data."""
         client = _make_client()

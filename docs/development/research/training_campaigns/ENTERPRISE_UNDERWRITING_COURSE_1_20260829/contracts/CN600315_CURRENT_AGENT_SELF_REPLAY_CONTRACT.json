@@ -1,0 +1,21 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN600315:20190501:CURRENT_AGENT_SELF_REPLAY:V1",
+  "training_track": "BLIND_REPLAY",
+  "company_id": "CN:600315",
+  "company_name": "Shanghai Jahwa",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "outcome_access": "SEALED",
+  "allowed_sources": [
+    {"source_id": "SOURCE:CN600315:20190501:PRE_CUTOFF", "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/sources/CN600315_20190501_PRE_CUTOFF_SOURCE_PACKAGE.md", "available_at": "2019-04-30T23:59:59+08:00", "time_role": "PRE_CUTOFF"},
+    {"source_id": "MEMORY:COURSE1:CAPITAL_BOUNDARY:V1", "source_ref": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_1_20260829/08_CAPITAL_AND_BOUNDARY_REASONING_REVISION.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "TRAINING_MEMORY"}
+  ],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:CN600315:FY2019", "horizon": "EARLY_SIGNAL", "opens_at": "2020-04-30T00:00:00+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION"], "discriminating_observation": "品牌/渠道销售、毛利、营销费用、库存应收与经营现金是否共同改善。"},
+    {"clock_id": "CLOCK:CN600315:FY2021", "horizon": "NORMALIZATION_AND_CASH", "opens_at": "2022-04-30T00:00:00+08:00", "episode_claims": ["BUSINESS_POSITION_AND_ADAPTATION", "NORMAL_EARNINGS", "OWNER_CASH"], "discriminating_observation": "核心品牌、线上线下渠道和投放是否形成稳定利润、现金与资本回报。"},
+    {"clock_id": "CLOCK:CN600315:FY2023", "horizon": "LONG_TERM_PERMANENT_LOSS", "opens_at": "2024-04-30T00:00:00+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "品牌资产和渠道是否保有可持续现金，或被产品/渠道变化和营销效率下降永久侵蚀。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/competitive_explanation.schema.json",
+  "title": "Turtle V3 Thesis Test Ledger",
+  "type": "object",
+  "required": ["schema_version", "report_id", "revision", "lifecycle", "change_reason", "competitive_tests", "thresholds", "probability_sets", "freeze"],
+  "properties": {
+    "schema_version": {"const": "thesis-test-ledger.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "revision": {"type": "integer", "minimum": 1},
+    "lifecycle": {"enum": ["reviewable", "decision_ready", "monitoring"]},
+    "change_reason": {"type": "string", "minLength": 1},
+    "competitive_tests": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/test"}},
+    "thresholds": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/threshold"}},
+    "analysis_purpose": {"enum": ["INVESTMENT_DECISION", "COMPANY_JUDGMENT_ONLY"]},
+    "probability_mode": {"enum": ["NO_PROBABILITY", "QUALIFIED_PROBABILITY"]},
+    "probability_qualification": {"$ref": "#/$defs/probabilityQualification"},
+    "probability_sets": {"type": "array", "items": {"$ref": "#/$defs/probabilitySet"}},
+    "central_path": {"$ref": "#/$defs/centralPath"},
+    "forward_judgments": {"type": "array", "minItems": 3, "maxItems": 5, "items": {"$ref": "#/$defs/forwardJudgment"}},
+    "freeze": {"type": "object", "required": ["frozen", "fingerprint", "frozen_at"]},
+    "generated_at": {"type": "string"}
+  },
+  "$defs": {
+    "test": {
+      "type": "object",
+      "required": ["test_id", "thesis_claim_id", "primary_explanation", "strongest_alternative", "alternative_evidence_ids", "discriminating_observations", "primary_scenario_id", "alternative_scenario_id", "flip_condition", "chapters"]
+    },
+    "threshold": {
+      "type": "object",
+      "required": ["threshold_id", "metric", "current_value", "threshold_value", "unit", "operator", "basis_type", "basis_description", "source_ids", "observation_frequency", "window", "aggregation", "seasonal_adjustment", "accounting_definition", "precision", "discrimination_target", "chapters"]
+    },
+    "probabilityQualification": {
+      "type": "object",
+      "required": ["event_definition", "calibration_plan", "as_of"],
+      "properties": {
+        "event_definition": {"type": "string", "minLength": 1},
+        "calibration_plan": {"type": "string", "minLength": 1},
+        "as_of": {"type": "string", "minLength": 10},
+        "independent_episode_references": {"type": "array", "items": {"type": "object", "required": ["case_id", "episode_id", "outcome_event_id"]}},
+        "external_frequency_evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "external_frequency_definition": {"type": "string", "minLength": 1}
+      }
+    },
+    "probabilitySet": {
+      "type": "object",
+      "required": ["set_id", "mutually_exclusive", "collectively_exhaustive", "estimates", "chapters"],
+      "properties": {
+        "estimates": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["scenario_id", "label", "kind", "value", "interval", "basis", "source_ids", "as_of"]}}
+      }
+    },
+    "centralPath": {
+      "type": "object",
+      "required": ["path_id", "statement", "as_of", "horizon_years", "selected_scenario_id", "competing_scenario_id", "competitive_test_ids", "chapters"],
+      "properties": {
+        "path_id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "as_of": {"type": "string", "minLength": 10},
+        "horizon_years": {"enum": [3, 5]},
+        "probability_set_id": {"type": "string", "minLength": 1},
+        "selected_scenario_id": {"type": "string", "minLength": 1},
+        "competing_scenario_id": {"type": "string", "minLength": 1},
+        "why_more_likely": {"type": "string", "minLength": 1},
+        "selection_basis": {"type": "string", "minLength": 1},
+        "competitive_test_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "chapters": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 0, "maximum": 14}}
+      }
+    },
+    "forwardJudgment": {
+      "type": "object",
+      "required": ["judgment_id", "statement", "materiality", "claim_id", "competitive_test_id", "scenario_id", "evidence_ids", "leading_signal_threshold_ids", "falsifier", "prediction", "observable_outcome", "transmission"],
+      "properties": {
+        "judgment_id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "materiality": {"enum": ["CENTRAL_THESIS", "INDUSTRY_STRUCTURE", "NORMALIZED_EARNINGS", "OWNER_CASH", "VALUATION", "RETURN", "PERMANENT_LOSS"]},
+        "claim_id": {"type": "string", "minLength": 1},
+        "competitive_test_id": {"type": "string", "minLength": 1},
+        "probability_set_id": {"type": "string", "minLength": 1},
+        "scenario_id": {"type": "string", "minLength": 1},
+        "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "leading_signal_threshold_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "falsifier": {"type": "string", "minLength": 1},
+        "prediction": {"$ref": "#/$defs/forwardPrediction"},
+        "observable_outcome": {"$ref": "#/$defs/observableOutcome"},
+        "transmission": {"$ref": "#/$defs/forwardTransmission"},
+        "valuation_model_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "decision_entry_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "forwardPrediction": {
+      "type": "object",
+      "required": ["metric", "operator", "unit", "horizon", "resolution_due"],
+      "properties": {
+        "metric": {"type": "string", "minLength": 1},
+        "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS", "RANGE"]},
+        "value": {"type": "number"},
+        "range_low": {"type": "number"},
+        "range_high": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "horizon": {"type": "string", "minLength": 1},
+        "resolution_due": {"type": "string", "minLength": 10}
+      }
+    },
+    "observableOutcome": {
+      "type": "object",
+      "required": ["measurement_basis", "measurement_rule", "measurement_period", "allowed_source_types", "settlement_version_policy"],
+      "properties": {
+        "measurement_basis": {"type": "string", "minLength": 1},
+        "measurement_rule": {"type": "string", "minLength": 1},
+        "measurement_period": {
+          "type": "object",
+          "required": ["kind", "start", "end"],
+          "properties": {
+            "kind": {"enum": ["REPORTING_PERIOD", "EVENT_WINDOW"]},
+            "start": {"type": "string", "minLength": 10},
+            "end": {"type": "string", "minLength": 10}
+          }
+        },
+        "allowed_source_types": {"type": "array", "minItems": 1, "items": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]}},
+        "industry_measurement_inference": {"enum": ["WITHIN_PROVIDER_RELATIVE_CHANGE", "LEVEL_WITH_STATED_LIMITS"]},
+        "licensed_industry_series_contract": {"type": "object", "description": "仅当 allowed_source_types 含 LICENSED_INDUSTRY_DATA 且新冻结时必填；冻结稳定面板身份，不冻结未来 release/version/query。", "required": ["pre_cutoff_source_id", "provider_id", "dataset_id", "metric_id", "semantic", "geography", "product_mapping_id", "channel_mapping_id", "brand_mapping_id", "denominator_mapping_id"], "properties": {
+          "pre_cutoff_source_id": {"type": "string", "minLength": 1}, "provider_id": {"type": "string", "minLength": 1}, "dataset_id": {"type": "string", "minLength": 1}, "metric_id": {"type": "string", "minLength": 1}, "semantic": {"type": "string", "minLength": 1}, "geography": {"type": "string", "minLength": 1}, "product_mapping_id": {"type": "string", "minLength": 1}, "channel_mapping_id": {"type": "string", "minLength": 1}, "brand_mapping_id": {"type": "string", "minLength": 1}, "denominator_mapping_id": {"type": "string", "minLength": 1}
+        }},
+        "settlement_version_policy": {"enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]},
+        "metric_reconstruction_contract": {"type": "object", "description": "P-23：仅 SELECTION_ADMITTED 登记的 FJ 必填。未来结果须匹配冻结的来源类型、文件范围、标签和定位；允许转换仅可用同一 outcome 的 conversion_rule。", "required": ["source_targets", "prohibited_substitutes", "definition_change_action"], "properties": {
+          "source_targets": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["source_type", "file_scope", "reported_label", "reported_locator"], "properties": {
+            "source_type": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]},
+            "file_scope": {"type": "string", "minLength": 1},
+            "reported_label": {"type": "string", "minLength": 1},
+            "reported_locator": {"type": "string", "minLength": 1}
+          }}},
+          "prohibited_substitutes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "definition_change_action": {"const": "MEASUREMENT_MISMATCH"}
+        }},
+        "conversion_rule": {"type": "object", "required": ["rule_id", "raw_unit", "converted_unit", "multiplier"], "properties": {
+          "rule_id": {"type": "string", "minLength": 1}, "raw_unit": {"type": "string", "minLength": 1},
+          "converted_unit": {"type": "string", "minLength": 1}, "multiplier": {"type": "number", "exclusiveMinimum": 0}
+        }}
+      }
+    },
+    "forwardTransmission": {
+      "type": "object",
+      "required": ["normalized_earnings", "owner_cash"],
+      "properties": {
+        "normalized_earnings": {"$ref": "#/$defs/transmissionChannel"},
+        "owner_cash": {"$ref": "#/$defs/transmissionChannel"},
+        "valuation": {"$ref": "#/$defs/transmissionChannel"},
+        "expected_return": {"$ref": "#/$defs/transmissionChannel"}
+      }
+    },
+    "transmissionChannel": {
+      "type": "object",
+      "required": ["direction", "basis"],
+      "properties": {
+        "direction": {"enum": ["increase", "decrease", "stable", "range", "not_material", "unknown"]},
+        "basis": {"type": "string", "minLength": 1},
+        "conservative_treatment": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

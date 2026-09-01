@@ -1,0 +1,41 @@
+{
+  "schema_version": "enterprise-judgment-method-feedback-invalidation.v1",
+  "invalidation_id": "METHOD-INVALIDATION:R9:CN600839:FY2019:V1",
+  "method_resolution_ref": "METHOD-RESOLUTION-RECEIPT:R9:CN600839:FY2019:V1",
+  "status": "METHOD_COMPARISON_INVALID_MODEL_ERROR",
+  "root_causes": [
+    "MODEL"
+  ],
+  "economic_impact": "Round 9 cannot establish whether the simple Baseline or the eight-dimensional method would have produced the better investment treatment under an unchanged blind resolver.",
+  "preserved_scope": [
+    "OUTCOME_SOURCE_BINDING",
+    "FIELD_LEVEL_ACQUISITION",
+    "CANONICAL_OUTCOME_SETTLEMENT",
+    "INVESTOR_FACT_READOUT"
+  ],
+  "prohibited_claims": [
+    "METHOD_FEEDBACK_COMPLETED",
+    "NO_MATERIAL_METHOD_ADVANTAGE_PROVED",
+    "AVOIDED_ERROR",
+    "MATERIAL_IMPROVEMENT",
+    "METHOD_TRANSFER"
+  ],
+  "remediation": "Freeze a corrected scalar resolver and unique treatment-delta accounting in a new method epoch, then test it only on a different unseen company-cutoff.",
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "METHOD_FEEDBACK_INVALIDATION",
+  "claim_class": "POST_OUTCOME_MODEL_ERROR_BOUNDARY",
+  "allowed_outputs": [
+    "OUTCOME_SETTLED_CLOSEOUT",
+    "NEW_METHOD_EPOCH",
+    "RESEARCH_AGENDA"
+  ]
+}

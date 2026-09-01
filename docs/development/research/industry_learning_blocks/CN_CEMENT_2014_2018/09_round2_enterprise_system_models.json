@@ -1,0 +1,66 @@
+[
+  {
+    "model_id": "ESM:CN:000401:20170412:R2",
+    "company_id": "ISSUER:CN:000401",
+    "version": "1",
+    "as_of": "2017-04-12T00:00:00+08:00",
+    "responsibility_unit_ids": ["ISSUER_CONSOLIDATED:CN:000401"],
+    "competitive_arena_ids": ["ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"],
+    "nodes": [
+      {
+        "node_id": "NODE:000401:R2:REGIONAL_OPERATING_STATE",
+        "observation_state": "OBSERVED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+        "measurement_scope_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES",
+        "evidence": [{"ref": "CNINFO:000401:ANN:20170323:1203186347", "available_at": "2017-03-23T23:59:59+08:00"}]
+      },
+      {
+        "node_id": "NODE:000401:R2:PLANNED_MARKET_COST_DISCIPLINE",
+        "observation_state": "OBSERVED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+        "measurement_scope_id": "2017_DISCLOSED_OPERATING_PLAN_NOT_IMPLEMENTATION",
+        "evidence": [{"ref": "CNINFO:000401:ANN:20170323:1203186347", "available_at": "2017-03-23T23:59:59+08:00"}]
+      },
+      {
+        "node_id": "NODE:000401:R2:REORGANISATION_PERIMETER",
+        "observation_state": "INFERRED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+        "measurement_scope_id": "PLANNED_ASSET_REORGANISATION_AND_CONSOLIDATION_SCOPE",
+        "evidence": [{"ref": "CNINFO:000401:ANN:20170323:1203186347", "available_at": "2017-03-23T23:59:59+08:00"}]
+      },
+      {
+        "node_id": "NODE:000401:R2:OPERATING_CASH",
+        "observation_state": "OBSERVED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+        "measurement_scope_id": "ISSUER_CONSOLIDATED_D4",
+        "evidence": [{"ref": "CNINFO:000401:ANN:20170323:1203186347", "available_at": "2017-03-23T23:59:59+08:00"}]
+      }
+    ],
+    "edges": [
+      {
+        "edge_id": "EDGE:000401:R2:PLAN_TO_OPERATING",
+        "from_node_id": "NODE:000401:R2:PLANNED_MARKET_COST_DISCIPLINE",
+        "to_node_id": "NODE:000401:R2:REGIONAL_OPERATING_STATE",
+        "relationship": "disclosed_plan_to_future_operating_measurement_question",
+        "actor_side": "ISSUER",
+        "interface": "regional marketing, production-sales coordination, credit and cost discipline",
+        "cross_side_effect": "a disclosed plan is not evidence of executed customer, operating or cash effect",
+        "measurement_scope_id": "2017_DISCLOSED_OPERATING_PLAN_NOT_IMPLEMENTATION",
+        "observation_state": "INFERRED",
+        "evidence": [{"ref": "CNINFO:000401:ANN:20170323:1203186347", "available_at": "2017-03-23T23:59:59+08:00"}]
+      },
+      {
+        "edge_id": "EDGE:000401:R2:PERIMETER_TO_CASH",
+        "from_node_id": "NODE:000401:R2:REORGANISATION_PERIMETER",
+        "to_node_id": "NODE:000401:R2:OPERATING_CASH",
+        "relationship": "reorganisation_to_same_boundary_cash_comparability_question",
+        "actor_side": "ISSUER",
+        "interface": "planned asset injection and changing consolidation scope",
+        "cross_side_effect": "reported cash may be non-comparable without a perimeter bridge, not evidence that the plan worked or failed",
+        "measurement_scope_id": "PLANNED_ASSET_REORGANISATION_AND_CONSOLIDATION_SCOPE",
+        "observation_state": "INFERRED",
+        "evidence": [{"ref": "CNINFO:000401:ANN:20170323:1203186347", "available_at": "2017-03-23T23:59:59+08:00"}]
+      }
+    ]
+  }
+]

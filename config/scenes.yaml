@@ -1,0 +1,46 @@
+# scenes.yaml — V10 场景化 LLM 配置
+#
+# 按任务类型配置不同的 LLM 参数。
+# 借鉴 Dayu 的 prompts/manifests/*.json 场景配置，但简化为 YAML。
+#
+# 环境变量覆盖（优先级高于此文件）：
+#   TURTLE_MODEL_WRITE=claude-opus-4-8
+#   TURTLE_MODEL_AUDIT=claude-sonnet-5
+#   TURTLE_TEMP_WRITE=0.5
+#   TURTLE_MAX_TOKENS_WRITE=16000
+
+write:
+  description: "主要章节写作（因子分析、趋势、估值）"
+  model: default               # 使用 CLAUDE.md 或环境变量中的模型
+  temperature: 0.3
+  max_tokens: 8192
+
+audit:
+  description: "章节质量审计（证据、内容、风格检查）"
+  model: default
+  temperature: 0.1             # 审计需要低温度，保持一致性
+  max_tokens: 4096
+
+repair:
+  description: "章节修复（针对性修补）"
+  model: default
+  temperature: 0.4             # 修复允许稍高创造性
+  max_tokens: 6144
+
+overview:
+  description: "Executive Summary 和决策章节"
+  model: default
+  temperature: 0.3
+  max_tokens: 4096
+
+decision:
+  description: "投资决策综合"
+  model: default
+  temperature: 0.4             # 决策需要权衡，允许略高温度
+  max_tokens: 4096
+
+evidence:
+  description: "证据引用验证与补充"
+  model: default
+  temperature: 0.1
+  max_tokens: 4096

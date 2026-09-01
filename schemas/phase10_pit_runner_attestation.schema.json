@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/phase10_pit_runner_attestation.schema.json",
+  "title": "Phase 10 Point-in-Time Runner Read Attestation",
+  "description": "Declared-process evidence for the source-package read boundary; not a deployment signature or model-memory proof.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "runner",
+    "runner_version",
+    "assurance_level",
+    "source_manifest_schema_version",
+    "cutoff_at",
+    "allowed_source_ids",
+    "source_allowlist",
+    "framework_allowlist",
+    "state",
+    "read_audit",
+    "read_count",
+    "future_read_rejections",
+    "forbidden_success_count",
+    "forbidden_read_rejections"
+  ],
+  "properties": {
+    "schema_version": {"const": "phase10-pit-runner-attestation.v1"},
+    "runner": {"const": "phase10_pit_runner"},
+    "runner_version": {"const": "phase10-pit-runner.v1"},
+    "assurance_level": {"const": "VERIFIED_ARTIFACT_AND_DECLARED_PROCESS"},
+    "source_manifest_schema_version": {"const": "phase10-source-manifest.v1"},
+    "case_id": {"type": ["string", "null"]},
+    "experiment_id": {"type": ["string", "null"]},
+    "run_id": {"type": ["string", "null"]},
+    "manifest_path": {"type": ["string", "null"]},
+    "company_code": {"type": ["string", "null"]},
+    "cutoff_at": {"type": "string", "minLength": 10},
+    "package_root": {"type": "string", "minLength": 1},
+    "allowed_source_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "source_allowlist": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_version", "published_at", "data_as_of", "package_path", "admission_status"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "source_version": {"type": "string", "minLength": 1},
+          "published_at": {"type": "string", "minLength": 10},
+          "data_as_of": {"type": "string", "minLength": 10},
+          "package_path": {"type": "string", "minLength": 1},
+          "content_representation": {"type": "string", "minLength": 1},
+          "reader_text_path": {"type": ["string", "null"]},
+          "admission_status": {"const": "ADMITTED"}
+        }
+      }
+    },
+    "framework_allowlist": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "state": {"enum": ["INVALID", "INCOMPLETE", "REVIEWABLE"]},
+    "invalid_findings": {"type": "array", "items": {"type": "string"}},
+    "incomplete_findings": {"type": "array", "items": {"type": "string"}},
+    "read_audit": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["read_ordinal", "allowed", "decision", "kind", "path", "cutoff_at", "admission_status"],
+        "properties": {
+          "read_ordinal": {"type": "integer", "minimum": 1},
+          "allowed": {"type": "boolean"},
+          "decision": {"enum": ["ALLOW", "DENY"]},
+          "kind": {"enum": ["SOURCE", "FRAMEWORK", "TOOL"]},
+          "path": {"type": "string"},
+          "source_id": {"type": "string"},
+          "source_version": {"type": "string"},
+          "published_at": {"type": "string", "minLength": 10},
+          "data_as_of": {"type": "string", "minLength": 10},
+          "representation": {"type": "string", "minLength": 1},
+          "run_id": {"type": "string", "minLength": 1},
+          "phase": {"const": "FREEZE"},
+          "cutoff_at": {"type": "string", "minLength": 10},
+          "admission_status": {"enum": ["ADMITTED", "REJECTED"]},
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "read_count": {"type": "integer", "minimum": 0},
+    "future_read_rejections": {"type": "integer", "minimum": 0},
+    "forbidden_success_count": {"type": "integer", "minimum": 0},
+    "forbidden_read_rejections": {"type": "integer", "minimum": 0}
+  }
+}

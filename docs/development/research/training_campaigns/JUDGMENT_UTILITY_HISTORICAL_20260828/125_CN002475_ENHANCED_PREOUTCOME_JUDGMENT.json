@@ -1,0 +1,160 @@
+{
+  "schema_version": "holdout-v3-enhanced-preoutcome-judgment.v1",
+  "artifact_type": "HOLDOUT_V3_ENHANCED_PREOUTCOME_JUDGMENT",
+  "status": "FROZEN_PREOUTCOME",
+  "case_id": "CN002475_HOLDOUT_V3",
+  "issuer": "立讯精密工业股份有限公司",
+  "ticker": "002475",
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "target_outcome_period_label": "FY2024",
+  "evidence_boundary": {
+    "company_evidence_used": "Only the three frozen CNINFO original annual-report PDFs for FY2021, FY2022, and FY2023.",
+    "outcome_accessed": false,
+    "price_return_valuation_analyst_or_action_content": "Not used and not stated."
+  },
+  "best_current_judgment": {
+    "conclusion": "Entering FY2024, Luxshare is best described as a high-scale, demonstrably capable precision-manufacturing operator whose FY2023 delivery and inventory absorption improved after a weak end-market period. That operating strength is economically fragile rather than self-proving: consumer electronics supplied 85.03% of FY2023 revenue and the largest disclosed anonymous customer supplied 75.24%. The FY2023 cash jump is real but explicitly working-capital-assisted, while the dominant segment's gross margin fell. The appropriate pre-outcome treatment is positive operating-execution credit, with normal owner cash and permanent-loss protection CONDITIONAL rather than upgraded.",
+    "judgment_confidence": "Medium. The annual reports directly establish the concentration, reported growth, cash-flow composition, margins, and asset base. They do not identify the major customer, disclose customer-program economics, or isolate recurring cash by program.",
+    "economic_consequence": "The central underwriting issue is not whether the company can manufacture at scale; it is whether its concentrated consumer-electronics programs can keep the installed asset base earning cash after normal reinvestment without relying on another working-capital release."
+  },
+  "decisive_evidence": [
+    {
+      "fact": "Revenue increased from RMB153.946bn in FY2021 to RMB214.028bn in FY2022 and RMB231.905bn in FY2023. Attributable profit increased from RMB7.071bn to RMB9.163bn to RMB10.953bn over the same years.",
+      "source": "FY2021 annual report, printed p. 8; FY2022 annual report, printed p. 8; FY2023 annual report, printed p. 8",
+      "economic_read": "The three-year record supports substantial scaling and profitable delivery; it does not by itself identify the recurring profit pool by product or customer."
+    },
+    {
+      "fact": "FY2023 consumer-electronics revenue was RMB197.183bn, 85.03% of total revenue, up 9.75%. Its physical sales volume increased 6.90% and its ending inventory quantity fell 30.46%; the report attributes the inventory reduction to FY2022 strategic stock being sold in FY2023.",
+      "source": "FY2023 annual report, printed pp. 18-19",
+      "economic_read": "This is direct evidence of delivery and inventory absorption in the core revenue carrier, while also showing that part of the period's progress came from releasing prior inventory rather than demonstrating an entirely new run-rate."
+    },
+    {
+      "fact": "Consumer-electronics gross margin was 10.60% in FY2023, down 0.87 percentage points year on year, although attributable profit rose 19.53%. The report also lists RMB1.771bn of investment income as not sustainable.",
+      "source": "FY2023 annual report, printed pp. 8, 18, and 29",
+      "economic_read": "Reported profit improvement is constructive but is not a clean, segment-matched proof that the core consumer-electronics unit economics improved."
+    },
+    {
+      "fact": "FY2023 operating cash flow was RMB27.605bn, versus RMB12.728bn in FY2022. The report says the increase reflected faster customer collections and the sale and collection of opening strategic inventory. Cash paid to acquire long-lived assets was RMB11.387bn, leaving a positive RMB16.218bn operating-cash-less-capital-spend proxy.",
+      "source": "FY2023 annual report, printed p. 28 and cash-flow statement",
+      "economic_read": "FY2023 owner-cash capacity was positive after reported capital spending, but the stated working-capital drivers mean the period is not sufficient evidence for a recurring owner-cash upgrade."
+    },
+    {
+      "fact": "The largest disclosed customer represented 75.24% of FY2023 sales and the top five represented 82.44%. Fixed assets were RMB44.561bn, or 27.51% of total assets; FY2023 inventory and fixed-asset impairment totaled RMB1.319bn.",
+      "source": "FY2023 annual report, printed pp. 21, 29, and financial-statement note 58",
+      "economic_read": "Customer/program concentration is the principal transmission route from an absorption reversal to lower factory utilization, inventory write-downs, and weaker owner cash. The impairment is a real loss carrier, not proof that this route has already become enterprise-wide."
+    }
+  ],
+  "mechanism_claims": [
+    {
+      "claim_id": "M1_CORE_ABSORPTION_AND_SCALE",
+      "claim": "The FY2023 improvement supports positive credit for core consumer-electronics delivery and inventory absorption, not a conclusion that the end-market recovery is durable.",
+      "mechanism": "Consumer electronics is the primary revenue carrier. Higher sales volume and release of strategic inventory raise reported revenue and cash, provided customer programs continue to absorb output.",
+      "support": "Consumer-electronics revenue grew 9.75%, physical sales volume grew 6.90%, and ending inventory quantity fell 30.46%; it represented 85.03% of FY2023 revenue.",
+      "strongest_alternative": "The apparent recovery was principally a one-period release of FY2022 strategic inventory and launch timing rather than a durable increase in underlying demand.",
+      "why_alternative_remains_live": "The report itself identifies the inventory release, and it does not disclose comparable customer-program demand, order duration, or pricing data.",
+      "local_unknowns": [
+        "Underlying consumer-electronics program volumes versus price and product-mix effects.",
+        "Duration and diversification of the programs creating the FY2023 inventory absorption."
+      ],
+      "flip_fact": "FY2024 consumer-electronics revenue below the FY2023 level, especially with a renewed inventory build or lower reported sales volume, would overturn the durability reading."
+    },
+    {
+      "claim_id": "M2_EARNINGS_CONVERSION_IS_NOT_FULLY_MAPPED",
+      "claim": "Aggregate FY2023 profit conversion improved, but the core business's recurring unit economics remain only conditionally established.",
+      "mechanism": "A manufacturing operator creates durable earnings only when revenue, product mix, gross margin, and capital use convert together. A profit increase that is not mapped to the dominant segment can coexist with weaker core margins.",
+      "support": "Attributable profit rose 19.53% against 8.35% total revenue growth, while consumer-electronics gross margin declined 0.87 percentage points to 10.60%. RMB1.771bn of investment income was identified as not sustainable.",
+      "strongest_alternative": "Vertical integration, cost control, and a favorable mix shift generated genuine operating leverage that is not visible in the aggregate segment margin disclosure.",
+      "why_alternative_is_plausible": "The faster profit growth is real, and the company reports broad precision-manufacturing capabilities. The reports, however, do not give a customer- or product-level recurring-profit bridge sufficient to attribute the improvement.",
+      "local_unknowns": [
+        "Recurring gross profit, pricing, and utilization by the dominant consumer-electronics programs.",
+        "The amount of FY2023 profit improvement attributable to operating mix rather than items outside the dominant segment."
+      ],
+      "flip_fact": "A further fall in consumer-electronics gross margin or a decline in attributable profit despite stable consumer-electronics revenue would show that scale is not converting into durable economics."
+    },
+    {
+      "claim_id": "M3_OWNER_CASH_AND_PERMANENT_LOSS_ARE_CONCENTRATION_BOUND",
+      "claim": "FY2023 produced positive cash after reported long-lived-asset spending, but it does not yet reduce the permanent-loss concern created by one customer, one end-market, and a large manufacturing asset base.",
+      "mechanism": "If the dominant customer/program reduces demand or changes mix, the company can experience lower utilization, renewed inventory absorption, asset impairment, and weaker cash generation before its fixed-asset base can adjust. Faster collection and inventory release can temporarily mask that transmission.",
+      "support": "The largest disclosed customer was 75.24% of sales; fixed assets were RMB44.561bn; FY2023 operating cash flow less cash paid for long-lived assets was RMB16.218bn, but operating cash flow was explicitly aided by collections and strategic-inventory release. Inventory and fixed-asset impairment was RMB1.319bn.",
+      "strongest_alternative": "The asset base and working-capital movement reflect an efficiently managed, reusable multi-product manufacturing platform, so concentration does not translate into stranded assets or weaker cash.",
+      "why_alternative_is_plausible": "The company has revenue outside consumer electronics and reported strong FY2023 cash generation. The available reports do not quantify how fungible the assets are across customers and product families.",
+      "local_unknowns": [
+        "Identity, contract duration, and replacement economics of the 75.24% customer.",
+        "Utilization and redeployability of the asset base if that customer's program mix changes.",
+        "Normalized operating cash flow after the FY2023 collection and inventory effects unwind."
+      ],
+      "flip_fact": "A second year of cash conversion at least matching profit, with positive operating cash flow after reported long-lived-asset spending and no worsening concentration, would materially weaken this concern; the opposite combination would strengthen it."
+    }
+  ],
+  "management_execution_treatment": {
+    "delivery_and_inventory_absorption": "POSITIVE. The core revenue carrier grew and released strategic inventory in FY2023.",
+    "recurring_profit_and_cash_conversion": "CONDITIONAL. The reports do not provide a responsibility-matched recurring unit-economics and cash bridge; FY2023 cash has disclosed working-capital assistance.",
+    "incremental_capital_and_permanent_loss_protection": "CONDITIONAL. Positive FY2023 cash after reported capital spending is encouraging, but concentration, fixed assets, and recorded impairments keep the relevant protection unproven.",
+    "enterprise_merge": "Operating execution is positive; the narrower owner-cash and permanent-loss questions remain conditional. The conditional subaxes do not erase the independently supported delivery credit."
+  },
+  "owner_cash_and_permanent_loss": {
+    "owner_cash_treatment": "FY2023 operating cash flow less cash paid for long-lived assets was positive at RMB16.218bn. It is a useful owner-cash proxy for the year, not the assumed recurring level, because the report directly attributes the cash-flow jump to collection acceleration and sale/collection of opening strategic inventory.",
+    "permanent_loss_treatment": "The key risk is a concentrated-program/utilization shock, not a conclusion of current distress. One anonymous customer represented 75.24% of sales, consumer electronics represented 85.03%, and fixed assets were RMB44.561bn. A sustained loss of absorption could transmit into inventory and fixed-asset write-downs and lower cash after reinvestment.",
+    "risk_offset": "The company has demonstrated three years of profitable scaling, positive FY2023 cash after reported long-lived-asset spending, and revenue outside the largest segment. These facts prevent a whole-company failure inference from the concentration risk alone."
+  },
+  "scenarios": [
+    {
+      "scenario": "Conditional base case",
+      "preoutcome_description": "Consumer-electronics programs remain absorbed at roughly the FY2023 scale, the dominant segment's margin is not materially lower, and cash normalizes below the working-capital-aided FY2023 peak but remains positive after reported long-lived-asset spending.",
+      "enterprise_treatment": "Capable operator with positive but conditional owner cash; concentration remains the central permanent-loss carrier."
+    },
+    {
+      "scenario": "Durability upside",
+      "preoutcome_description": "Consumer-electronics revenue and margin hold or improve, while auto and communications growth adds revenue without weakening cash conversion; a second annual report shows cash conversion independent of a one-time inventory or collection release.",
+      "enterprise_treatment": "The recurring owner-cash bridge becomes supported and the concentration risk is more likely to be absorbable, though not eliminated."
+    },
+    {
+      "scenario": "Concentration-and-utilization downside",
+      "preoutcome_description": "The dominant customer/program or consumer end-market absorbs less output; core margin declines, working capital rebuilds, and factory assets or inventory require further impairment.",
+      "enterprise_treatment": "The observed concentration route becomes an active permanent-loss carrier: cash after reinvestment and the value of installed manufacturing assets would be impaired together."
+    }
+  ],
+  "frozen_annual_report_outcome_cells": [
+    {
+      "cell_id": "FY2024_CORE_CONSUMER_REVENUE_ABSORPTION",
+      "FY2023_anchor": "Consumer-electronics revenue RMB197,183,318,387.02",
+      "annual_report_fields": "FY2024 revenue composition table: consumer-electronics revenue, same disclosed classification and consolidated basis.",
+      "pass_rule": "FY2024 consumer-electronics revenue is greater than or equal to RMB197,183,318,387.02.",
+      "fail_rule": "FY2024 consumer-electronics revenue is below RMB197,183,318,387.02.",
+      "settles": "Whether the FY2023 core absorption level persisted rather than merely releasing prior strategic inventory."
+    },
+    {
+      "cell_id": "FY2024_CORE_CONSUMER_MARGIN",
+      "FY2023_anchor": "Consumer-electronics gross margin 10.60%",
+      "annual_report_fields": "FY2024 revenue-and-cost table: consumer-electronics gross margin, same disclosed classification and consolidated basis.",
+      "pass_rule": "FY2024 consumer-electronics gross margin is greater than or equal to 10.60%.",
+      "fail_rule": "FY2024 consumer-electronics gross margin is below 10.60%.",
+      "settles": "Whether the dominant revenue carrier at least stopped the FY2023 margin erosion."
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_CONVERSION",
+      "FY2023_anchor": "Operating cash flow RMB27,605,060,411.16; attributable profit RMB10,952,656,702.16; cash paid for long-lived assets RMB11,387,449,010.98.",
+      "annual_report_fields": "FY2024 consolidated cash-flow statement: operating cash flow and cash paid to acquire fixed assets, intangible assets, and other long-lived assets; FY2024 main financial data: attributable profit.",
+      "pass_rule": "FY2024 operating cash flow is greater than or equal to FY2024 attributable profit, and FY2024 operating cash flow less the stated cash paid for long-lived assets is greater than zero.",
+      "fail_rule": "Either FY2024 operating cash flow is below FY2024 attributable profit or operating cash flow less the stated cash paid for long-lived assets is less than or equal to zero.",
+      "settles": "Whether a second-period cash conversion and cash-after-reinvestment bridge exists, irrespective of FY2023's specific collection and inventory-release explanation."
+    },
+    {
+      "cell_id": "FY2024_LARGEST_CUSTOMER_CONCENTRATION",
+      "FY2023_anchor": "Largest disclosed customer share 75.24% of annual sales",
+      "annual_report_fields": "FY2024 main-customer disclosure: largest customer sales share of annual sales.",
+      "pass_rule": "FY2024 largest disclosed customer share is less than or equal to 75.24%.",
+      "fail_rule": "FY2024 largest disclosed customer share is greater than 75.24%.",
+      "settles": "Whether the already extreme disclosed customer concentration at least did not worsen."
+    }
+  ],
+  "measurement_handling": "Each outcome cell uses the FY2024 annual report's corresponding consolidated disclosure. If the company changes the classification or omits a required field, only that cell is MEASUREMENT_MISMATCH; the other cells and the enterprise judgment remain live.",
+  "v3_declaration": {
+    "exact_rule_used": "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+    "material_treatment_difference_relative_to_ordinary_research": "YES. The enhanced approach declines to convert FY2023 scale, profit, and working-capital-aided cash into an unqualified recurring-owner-cash or lower-permanent-loss conclusion. This comparison is to an ordinary approach only; no baseline material was accessed.",
+    "falsifiable_observation": "The combined FY2024 pass of core consumer revenue, core consumer margin, and owner-cash conversion cells would show that the missing recurring-economics bridge emerged in the next period and would invalidate the enhanced pause."
+  },
+  "method_validation": "NOT_CLAIMED",
+  "outcome_access": "NOT_ACCESSED"
+}
+

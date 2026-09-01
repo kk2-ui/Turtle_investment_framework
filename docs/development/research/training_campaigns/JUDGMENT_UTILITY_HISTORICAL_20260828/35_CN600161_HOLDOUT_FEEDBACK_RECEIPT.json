@@ -1,0 +1,131 @@
+{
+  "schema_version": "historical-holdout-feedback-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600161:20240501:FY2024",
+  "company_id": "CN:600161",
+  "roster_role": "UNTOUCHED_HOLDOUT",
+  "reviewer_id": "/root/cn600161_holdout_postoutcome_review",
+  "input_contract": {
+    "allowed_files": [
+      "28_CN600161_HOLDOUT_FORECASTER_EXECUTION_RECEIPT.json",
+      "29_CN600161_HOLDOUT_PREOUTCOME_JUDGMENT.json",
+      "30_CN600161_HOLDOUT_INDEPENDENT_PREOUTCOME_REVIEW.md",
+      "31_CN600161_HOLDOUT_OUTCOME_ACCESS_AUTHORIZATION.json",
+      "32_CN600161_HOLDOUT_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+    ],
+    "teaching_or_blind_feedback_read": false,
+    "other_cases_read": false,
+    "prices_or_returns_read": false,
+    "old_reports_read": false,
+    "comparative_read": false,
+    "formal_valuation_read": false
+  },
+  "outcome_cell_vector": {
+    "FY2024_ECONOMIC_ABSORPTION": "ABSORPTION_FAVORABLE",
+    "FY2024_OWNER_CASH_AND_CAPITAL_BURDEN": "OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN",
+    "FY2024_QUALITY_AND_REGULATORY_TAIL": "QUALITY_NEUTRAL_RESIDUAL"
+  },
+  "preoutcome_accuracy": {
+    "overall": "DIRECTIONALLY_ACCURATE_WITH_CALIBRATION_GAPS",
+    "accurate": [
+      "Economic absorption was tested with sales, recurring profit, persistent costs and parent adjusted profit rather than station count, plasma collection or nameplate capacity.",
+      "FY2023 cash improvement was not extrapolated and group cash, NCI attribution and parent access were kept separate.",
+      "Quality and regulatory treatment required an observed adverse carrier; absent adverse disclosure remained neutral rather than favorable.",
+      "All five preoutcome treatment directions survived the FY2024 settlement."
+    ],
+    "understated": [
+      "The base scenario understated the magnitude of FY2024 revenue, parent adjusted profit and recurring-margin absorption.",
+      "The scenario narrative underweighted the joint state of favorable operating absorption with negative nonstructural group cash and open parent scope."
+    ],
+    "overstated": [],
+    "prohibited_inference_avoided": [
+      "No parent owner cash was inferred from consolidated cash or parent liquidity.",
+      "No permanent moat was inferred from strong profit or 100 percent self-inspection and batch-release pass rates.",
+      "Local unknown Chengdu Rongsheng post-capex cash, net parent support and R&D measurement did not cancel favorable absorption."
+    ]
+  },
+  "material_treatment_snapshot": {
+    "preoutcome": {
+      "management_execution": "POSITIVE_CREDIT",
+      "normal_earnings": "RAISE",
+      "owner_cash": "COUNT_CONDITIONALLY",
+      "permanent_loss": "MAINTAIN_CONSTRAINT",
+      "valuation_direction": "UP"
+    },
+    "class_axis_updates": {
+      "ABSORPTION_FAVORABLE": {
+        "management_execution": "POSITIVE_CREDIT",
+        "normal_earnings": "RAISE",
+        "valuation_direction": "UP"
+      },
+      "OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN": {
+        "owner_cash": "COUNT_CONDITIONALLY"
+      },
+      "QUALITY_NEUTRAL_RESIDUAL": {}
+    },
+    "postoutcome": {
+      "management_execution": "POSITIVE_CREDIT",
+      "normal_earnings": "RAISE",
+      "owner_cash": "COUNT_CONDITIONALLY",
+      "permanent_loss": "MAINTAIN_CONSTRAINT",
+      "valuation_direction": "UP"
+    },
+    "aggregation": "EXACT_CLASS_AXIS_UPDATES_WITH_FROZEN_AXIS_RISK_PRECEDENCE",
+    "code_change": "NONE",
+    "materiality_assessment": "MATERIAL_EVIDENCE_UPDATE_WITHOUT_MATERIAL_TREATMENT_CODE_CHANGE",
+    "boundary": "Strong absorption reinforces operating and normal-earnings confidence. Negative single-year nonstructural group cash with open parent scope remains conditional only and does not propagate to permanent loss or valuation. Quality neutral preserves prior treatment."
+  },
+  "postoutcome_investor_judgment": {
+    "management_execution": "Positive operating credit is reinforced by sales and recurring-profit absorption, but no permanent management-quality conclusion is authorized.",
+    "normal_earnings": "Raise is reinforced; the single-year FY2024 margin is not capitalized as permanent.",
+    "owner_cash": "Count conditionally until Chengdu Rongsheng post-capex cash, required retention, non-financing parent upstream receipts and net parent support close.",
+    "permanent_loss": "Maintain the quality, licence, demand, working-capital and capital-allocation constraints; no disclosed FY2024 carrier justifies tightening or relaxation.",
+    "valuation_direction": "UP_WITHOUT_PRICE_OR_FORMAL_VALUATION"
+  },
+  "future_training_feedback": {
+    "feedback_id": "HOLDOUT_CN600161_ORTHOGONAL_PROFIT_CASH_SCENARIO",
+    "root_cause": "REASONING",
+    "specific_error": "The preoutcome classes separated operating absorption from owner cash correctly, but the reader-facing scenarios coupled favorable absorption too closely to cash improvement and did not explicitly foreground favorable absorption plus negative nonstructural group cash plus open parent scope.",
+    "economic_impact": "A future forecaster could correctly recognize higher normal earnings yet overcount parent owner cash or mistakenly propagate a one-year cash conversion shortfall into permanent loss and valuation.",
+    "missing_facts_to_target": [
+      "working-capital cash bridge for inventory, receivables and payables",
+      "material subsidiary post-capex cash and required retention",
+      "actual non-financing parent upstream receipts and net parent support"
+    ],
+    "prohibited_assumptions": [
+      "Favorable profit absorption implies parent distributable cash.",
+      "A single-year nonstructural negative group cash proxy implies permanent loss or valuation DOWN.",
+      "Open subsidiary post-capex or parent-support fields cancel an otherwise complete operating-absorption result."
+    ],
+    "executable_research_behavior": "For a future retired-case training cycle, freeze operating absorption and owner-cash conversion as orthogonal scenario axes and require an explicit joint branch for ABSORPTION_FAVORABLE plus OWNER_CASH_GROUP_NONSTRUCTURAL_SCOPE_OPEN, supported by both a recurring-profit bridge and a working-capital/parent-cash bridge.",
+    "acceptance_criteria": "The joint branch preserves management POSITIVE_CREDIT, normal earnings RAISE and valuation UP, keeps owner cash COUNT_CONDITIONALLY, leaves permanent loss MAINTAIN_CONSTRAINT absent a direct carrier, and names the exact facts that would upgrade or worsen the cash axis.",
+    "release_state": "SEALED_UNTIL_THIS_HOLDOUT_CASE_IS_RETIRED",
+    "eligible_use": "FUTURE_TRAINING_ONLY_AFTER_CASE_RETIREMENT",
+    "retroactive_application_to_this_case": "PROHIBITED",
+    "current_case_feedback_application": "NONE"
+  },
+  "holdout_conclusion": {
+    "case_judgment_result": "DIRECTIONALLY_ACCURATE_WITH_CALIBRATION_GAPS",
+    "METHOD_UTILITY": "NOT_APPLICABLE",
+    "METHOD_UTILITY_INTERPRETATION": "Single-arm holdout outcome review has no same-cutoff comparison and therefore neither establishes NO_MATERIAL_UTILITY nor validates transfer.",
+    "TRANSFER_VALIDATED": 0
+  },
+  "outputs": [
+    "33_CN600161_HOLDOUT_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "34_CN600161_HOLDOUT_INVESTOR_READOUT.md",
+    "35_CN600161_HOLDOUT_FEEDBACK_RECEIPT.json"
+  ],
+  "authority": "NONE",
+  "permissions": {
+    "training_utility": "NONE",
+    "transfer_validation": "NONE",
+    "outcome_access": "NONE",
+    "method_freeze": "NONE",
+    "cjo": "NONE",
+    "comparative": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report": "NONE",
+    "investment_action": "NONE"
+  }
+}

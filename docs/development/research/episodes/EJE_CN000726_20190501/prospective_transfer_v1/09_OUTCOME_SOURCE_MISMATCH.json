@@ -1,0 +1,28 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-source-mismatch.v1",
+  "mismatch_id": "PEJMM:CN000726:20190501:FY2019:SOURCE_CLOCK:V1",
+  "authorization_ref": "08_OUTCOME_ACCESS_AUTHORIZATION.json",
+  "official_query": {
+    "issuer_code": "000726",
+    "org_id": "gssz0000726",
+    "category": "ANNUAL_REPORT",
+    "start_on": "2019-01-01",
+    "end_on": "2020-05-01"
+  },
+  "query_result": [
+    {
+      "announcement_id": "1205954263",
+      "title": "2018年年度报告",
+      "published_on": "2019-03-29",
+      "eligibility_for_fy2019": "INELIGIBLE_WRONG_PERIOD"
+    }
+  ],
+  "status": "MEASUREMENT_MISMATCH",
+  "reason": "NO_OFFICIAL_FULL_FY2019_ANNUAL_REPORT_AVAILABLE_BY_FROZEN_DUE_DATE",
+  "outcome_body_access": "NOT_PERFORMED",
+  "outcome_value_access": "NOT_PERFORMED",
+  "price_access": "NOT_PERFORMED",
+  "local_effect": "CN000726_APPLICATION_REMAINS_PREOUTCOME_CANDIDATE_WITHOUT_UTILITY_SETTLEMENT",
+  "global_effect": "NONE"
+}
+

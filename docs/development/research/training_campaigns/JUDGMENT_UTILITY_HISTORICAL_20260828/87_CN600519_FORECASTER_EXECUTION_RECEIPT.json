@@ -1,0 +1,32 @@
+{
+  "receipt_type": "fresh-preoutcome-forecaster-execution-receipt.v1",
+  "case_id": "BLIND:CN600519:20240501:FY2024",
+  "preoutcome_cutoff": "2024-05-01T00:00:00+08:00",
+  "outcome_period_sealed": "FY2024",
+  "role": "fresh_result_isolated_preoutcome_forecaster",
+  "allowed_read_set": [
+    "AGENTS.md",
+    "84_CN600519_BLIND_EXTENSION_SELECTION_REGISTER.json",
+    "85_CN600519_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+    "official issuer FY2021 annual report",
+    "official issuer FY2022 annual report",
+    "official issuer FY2023 annual report"
+  ],
+  "work_performed": [
+    "Reconstructed a cutoff-before enterprise episode in business, customer, cash and capital terms.",
+    "Froze three non-substitutable FY2024 first-match settlement axes.",
+    "After a result-free review, made a non-substantive contract repair: Axis 1 maps all fully comparable three-leg pass/fail combinations exclusively to SUCCESS, FAILURE or MIXED, and corrected four page locators."
+  ],
+  "outcome_isolation_attestation": {
+    "FY2024_or_later_company_source_opened": false,
+    "FY2024_outcome_document_title_or_metadata_searched_or_recorded": false,
+    "FY2024_results_accessed": false,
+    "price_or_return_accessed": false,
+    "valuation_or_investment_action_created": false,
+    "analyst_or_derived_company_material_accessed": false,
+    "prior_case_result_or_training_method_material_accessed": false,
+    "outcome_source_remains_sealed": true
+  },
+  "excluded_outputs": ["formal valuation", "BuyBand", "investment action", "method or training-effectiveness conclusion"],
+  "isolation_status": "MAINTAINED"
+}

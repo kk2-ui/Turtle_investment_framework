@@ -1,0 +1,68 @@
+{
+  "schema_version": "preoutcome-execution-receipt.v1",
+  "case_id": "BLIND:CN600309:20240501:FY2024",
+  "forecaster_role": "fresh_strictly_result_isolated_preoutcome_forecaster",
+  "output_directory": "/tmp/CN600309_BLIND_FORECAST",
+  "authorized_read_set": [
+    {
+      "path": "/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-judgment-first-training-iteration-12h/AGENTS.md",
+      "purpose": "required worktree instructions"
+    },
+    {
+      "path": "/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-judgment-first-training-iteration-12h/docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/72_CN600309_BLIND_SELECTION_REGISTER.json",
+      "purpose": "case identity, cutoff, sealed outcome period, research problem and firewall"
+    },
+    {
+      "path": "/tmp/CN600309_PREOUTCOME_SOURCE/CN600309_FY2023_SOURCE_RECEIPT.json",
+      "purpose": "official source identity, disclosure date and PDF page convention"
+    },
+    {
+      "path": "/tmp/CN600309_PREOUTCOME_SOURCE/CN600309_Wanhua_Chemical_FY2023_Annual_Report_20240319.pdf",
+      "purpose": "only issuer evidence used for enterprise facts and FY2023 baselines"
+    }
+  ],
+  "source_usage": {
+    "issuer": "万华化学集团股份有限公司",
+    "document": "万华化学2023年年度报告",
+    "publisher": "上海证券交易所（上市公司信息披露）",
+    "disclosure_date": "2024-03-19",
+    "page_reference_convention": "PDF page numbers, which the source receipt states match the printed 1/224-224/224 report-page sequence.",
+    "material_pages_used": [
+      "7",
+      "9-11",
+      "13",
+      "15-21",
+      "23-26",
+      "31",
+      "72-73",
+      "76",
+      "79"
+    ]
+  },
+  "isolation_attestation": {
+    "FY2024_or_later_source_opened": false,
+    "price_or_return_accessed": false,
+    "network_or_browser_accessed": false,
+    "old_case_course_result_method_pack_test_script_or_derived_report_accessed": false,
+    "other_repository_or_workspace_content_accessed": false,
+    "written_outside_output_directory": false,
+    "read_boundary_note": "The initially supplied relative selection-register filename was absent at the worktree root. No directory enumeration or search was performed. The parent then supplied the corrected absolute path listed above; only that registered file was read."
+  },
+  "work_performed": [
+    "Read and applied the worktree AGENTS.md judgment-first requirements.",
+    "Used the source receipt to identify the issuer, date and page convention.",
+    "Reconstructed a FY2023 enterprise episode separating capacity/deployment, customer absorption, unit economics, cash conversion and capital return.",
+    "Froze three mutually non-substitutable FY2024 first-match settlement axes in NEGATIVE, POSITIVE, MIXED, LOCAL_UNKNOWN order.",
+    "Wrote exactly PREOUTCOME_JUDGMENT.json and EXECUTION_RECEIPT.json in the designated temporary output directory."
+  ],
+  "prohibited_outputs_not_issued": [
+    "formal valuation",
+    "BuyBand",
+    "buy/sell/hold or position action",
+    "method, migration or training-effectiveness conclusion"
+  ],
+  "output_files": [
+    "/tmp/CN600309_BLIND_FORECAST/PREOUTCOME_JUDGMENT.json",
+    "/tmp/CN600309_BLIND_FORECAST/EXECUTION_RECEIPT.json"
+  ]
+}

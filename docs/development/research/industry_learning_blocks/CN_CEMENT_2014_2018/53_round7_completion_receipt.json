@@ -1,0 +1,43 @@
+{
+  "schema_version": "enterprise-judgment-round7-multidimensional-completion.v1",
+  "completion_id": "R7COMP:CN:CEMENT:600585:20140416:FY2014:V1",
+  "package_ref": "EJMD:CN:CEMENT:600585:20140416:V1",
+  "settlement_ref": "R7SETTLE:CN600585:20140416:FY2014:V1",
+  "review_ref": "R7REVIEW:CN600585:20140416:FY2014:V1",
+  "company_id": "CN:600585",
+  "cutoff_at": "2014-04-16T00:00:00+08:00",
+  "status": "ROUND7_REAL_MULTIDIMENSIONAL_FEEDBACK_COMPLETED",
+  "investor_summary": "海螺 FY2014 在行业增速放缓时仍录得更强销量、现金覆盖和更低净负债，但扩产、收购与外部成本变化尚未与企业自身能力分开；客户优势、owner cash、适应能力和永久损失结论继续保持未知。",
+  "proved": [
+    "同一 cutoff 与同一证据预算下，多维判断能把行业条件、已实施行动、执行、客户响应、单位经济、现金资本和永久损失边界分别保留。",
+    "FY2014 公司销量增速高于行业约 7.49 个百分点，经营现金流和 OCF/现金资本开支上升，净负债率下降，同时存货上升。",
+    "FY2013 毛利率口径包含骨料及石子，局部口径不匹配没有阻断其他十六个判断单元。"
+  ],
+  "not_proved": [
+    "销量增长来自客户护城河、有机执行或管理层整体能力。",
+    "经营现金改善等同普通股 owner cash，或一年的降杠杆已经排除永久损失。",
+    "该方法已经通过无记忆污染的跨公司 holdout、可迁移至 CJO、估值、报告或投资动作。"
+  ],
+  "next_research_action": [
+    "下一 cutoff 先冻结新增与收购产能、存量有机销量以及具名计划里程碑的范围桥。",
+    "补充直接客户响应、同口径价格组合和水泥熟料毛利字段，不用公司总销量替代客户证据。",
+    "拆分维护性与增长性资本开支，并把营运资本变化桥接到保守 owner-cash 候选。",
+    "在未被后期摘要污染的不同公司和时期重复同证据预算测试，才判断是否允许方法迁移。"
+  ],
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND7_COMPLETION_RECEIPT",
+  "claim_class": "REAL_MULTIDIMENSIONAL_PAIRED_UTILITY_COMPLETION",
+  "allowed_outputs": [
+    "ROUND7_REAL_MULTIDIMENSIONAL_FEEDBACK_COMPLETED",
+    "RESEARCH_AGENDA"
+  ]
+}

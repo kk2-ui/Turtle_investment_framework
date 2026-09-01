@@ -1,0 +1,228 @@
+[
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+    "field_id": "FIELD:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 8,
+    "unit": "BOOLEAN_EVENT",
+    "anchor_tokens": [
+      "冰箱产品市场均价下行",
+      "空调产品行业产能过剩"
+    ],
+    "value_expression": {
+      "operator": "BOOLEAN_TOKEN_PRESENCE",
+      "tokens": [
+        "通过降价促销来拉动市场需求"
+      ]
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+    "field_id": "FIELD:600839:FY2019:GROUP_REVENUE_LEVEL",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 77,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "合并利润表",
+      "88,792,895,883.36"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "88,792,895,883.36"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+    "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 14,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "空调冰箱",
+      "14,008,069,937.89",
+      "-6.70"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "14,008,069,937.89"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+    "field_id": "FIELD:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 14,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "空调冰箱",
+      "22.36",
+      "0.17"
+    ],
+    "value_expression": {
+      "operator": "GROSS_MARGIN_TOKENS",
+      "tokens": [
+        "14,008,069,937.89",
+        "10,875,926,873.34"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+    "field_id": "FIELD:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 14,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "空调冰箱",
+      "合并利润表"
+    ],
+    "value_expression": {
+      "operator": "RATIO_TOKENS",
+      "tokens": [
+        "14,008,069,937.89",
+        "88,792,895,883.36"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY",
+    "supporting_pdf_pages": [
+      77
+    ]
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+    "field_id": "FIELD:600839:FY2019:GROUP_OCF_LEVEL",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 81,
+    "unit": "RMB",
+    "anchor_tokens": [
+      "经营活动产生的现金流",
+      "量净额",
+      "1,565,512,587.09",
+      "4,424,454,303.24"
+    ],
+    "value_expression": {
+      "operator": "SCALED_TOKEN",
+      "tokens": [
+        "1,565,512,587.09"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+    "field_id": "FIELD:600839:FY2019:GROUP_OCF_TO_CAPEX",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 81,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "经营活动产生的现金流",
+      "购建固定资产、无形资产和其",
+      "他长期资产支付的现金"
+    ],
+    "value_expression": {
+      "operator": "RATIO_TOKENS",
+      "tokens": [
+        "1,565,512,587.09",
+        "1,521,162,648.20"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY",
+    "supporting_pdf_pages": [
+      82
+    ]
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+    "field_id": "FIELD:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 73,
+    "unit": "RATIO",
+    "anchor_tokens": [
+      "资产总计",
+      "负债合计"
+    ],
+    "value_expression": {
+      "operator": "RATIO_TOKENS",
+      "tokens": [
+        "52,853,641,256.70",
+        "73,989,213,869.68"
+      ],
+      "multiplier": "1"
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY",
+    "supporting_pdf_pages": [
+      74
+    ]
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+    "field_id": "FIELD:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 12,
+    "unit": "BOOLEAN_EVENT",
+    "anchor_tokens": [
+      "以智能白电及特种业务为核心的经开区工业园",
+      "已实现全面投产"
+    ],
+    "value_expression": {
+      "operator": "BOOLEAN_TOKEN_PRESENCE",
+      "tokens": [
+        "智能白电",
+        "全面投产"
+      ]
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  },
+  {
+    "schema_version": "enterprise-page-extraction-receipt.v1",
+    "receipt_id": "PAGEEXTRACT:R9:FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+    "field_id": "FIELD:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+    "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+    "pdf_page": 207,
+    "unit": "BOOLEAN_EVENT",
+    "anchor_tokens": [
+      "四川长虹新能源科技股份有限公司",
+      "不再将长虹新能源公司纳入合并"
+    ],
+    "value_expression": {
+      "operator": "BOOLEAN_TOKEN_PRESENCE",
+      "tokens": [
+        "本公司不再持有长虹新能源公司股权"
+      ]
+    },
+    "object_class": "ENTERPRISE_PAGE_EXTRACTION_RECEIPT",
+    "claim_class": "PDF_PAGE_VALUE_BINDING_ONLY"
+  }
+]

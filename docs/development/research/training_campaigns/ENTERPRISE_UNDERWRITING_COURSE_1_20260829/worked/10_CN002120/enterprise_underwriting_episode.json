@@ -1,0 +1,160 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:CN002120:20190501:WORKED:C1:R10",
+  "company_id": "CN:002120",
+  "company_name": "Yunda Holding",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "判断韵达在加盟快递集中度提升和价格竞争中获得的业务量、份额与经营现金增长，是否已经穿过服务、同口径单位经济、总部与加盟商资本责任形成可持续正常盈利和 owner cash。",
+  "underwriting_route": "加盟网络规模吸收路线：先确认客户与份额结果，再把网络、自动化和加盟支持限定为实施证据，随后用同口径单票经济、总部现金资本覆盖、加盟商现金与资本结构决定经济质量。",
+  "situation_model": {
+    "summary": "韵达处于电商件量增长、行业集中和激烈价格竞争并存的加盟快递阶段。2019 年结果显示规模、份额和总部经营现金扩张，但口径变化使单票经济无法同比，加盟商现金与行动时钟也未闭合；因此可以判断网络获得了真实业务吸收，却不能把这种吸收直接等同于定价权、执行优势或普通股现金质量。",
+    "industry_future_thesis": {
+      "horizon": "以 2019-05-01 为承保锚点，观察 FY2019 的经营吸收，并延伸至同口径单位经济、网络资本和加盟商现金能够被连续复验的中期窗口。",
+      "most_likely_regime": "加盟快递行业将在电商需求增长与集中度提升中继续扩量，但价格让利、平台流量分配、自动化资本需求和加盟商承压会把件量增长与经济回报分开；利润池更可能流向兼顾服务、成本效率和网络稳定的运营者，而非单纯件量最快者。",
+      "profit_pool_transmission": "需求与平台分配先推动件量和份额，服务与网络密度可能降低单位履约成本；与此同时价格竞争、总部资本投入和加盟商末端成本会分走利润。只有同口径单票利润、总部资本覆盖和加盟商现金共同改善，份额才会传导到可持续 owner cash。",
+      "company_exposure": "韵达的全国加盟网络使其能快速承接行业增量，也把服务一致性、加盟商经济和平台依赖留在上市公司合并报表之外；自动化和总部网络投入提供效率选择，但增加了需要由现金回收证明的资本责任。",
+      "adaptation": "FY2019 业务量增长 43.59%、份额增加 2.02 个百分点，说明公司和网络获得了真实市场吸收；年报也描述网络、自动化和加盟支持。但行动实施时间无法唯一定位到 cutoff 后，且规模结果不能识别需求、价格或公司行动各自贡献，所以只能给客户吸收信用，不能给完整因果执行信用。",
+      "normal_economics": "经营现金增长约 35.57%、现金资本开支增长约 26.15%，OCF/现金资本开支仍在稳定区间，显示总部现金没有恶化成明显失配；但新增派费收入和对应成本改变单票口径，加盟商资本又未闭合，因此正常单票盈利和 owner cash 只能按保守、条件性路径处理。",
+      "permanent_loss": "资产负债率提高约 3.67 个百分点说明资本承担上升，但没有单独证明永久损失扩大。真正的损失路径是价格竞争与资本投入同时挤压总部单位经济，加盟商现金恶化又反噬服务和网络稳定；现有规模及现金增长使这一风险尚未成为已发生的不可逆损失。",
+      "valuation_treatment": "价值基础只能来自同口径正常盈利和总部可分配现金，并对加盟商经济和资本结构作压力约束；业务量、份额、自动化部署或网络描述作为机制证据，不单独资本化。",
+      "strongest_rival": "最强相反解释是 FY2019 的件量和份额主要来自行业需求、平台流量分配及价格让利，而不是韵达独有的网络执行；经营现金增长也可能被口径、营运资本或加盟商外部资本承担放大，因此观察到的规模吸收未必代表更高的单位经济或长期 owner cash。",
+      "reversal_observations": [
+        "在统一派费收入与成本定义后，韵达的单票收入、单票成本和单票利润连续显示不依赖激进价格让利的改善。",
+        "总部经营现金扣除维持网络所需资本后仍持续扩张，且不是由一次性营运资本变化主导。",
+        "加盟商现金、退出率或网络不利事件显示末端经济明显恶化并传导至服务和份额，或反向证明加盟网络能够在竞争中稳定自我融资。"
+      ]
+    }
+  },
+  "business_position": "韵达 FY2019 以高于行业基准的件量和份额增长证明其网络具有真实吸收能力，但客户忠诚、定价权和加盟商健康没有随之被证明。它的优势更接近有规模和密度潜力的运营网络，而不是已经完成经济承保的稳定现金特许权。",
+  "survival_case": "总部 OCF 增长且现金资本开支同步扩张，资产负债率只是温和上升，现有资料不支持近端融资危机判断。生存风险主要来自加盟商经济不透明和持续资本竞争的传导，而非 FY2019 已观察到的流动性崩溃；因此可承保近端持续经营，但不能把总部现金代表为全网络的生存质量。",
+  "adaptation_case": "件量和份额增长说明网络适应了 2019 年需求窗口，投诉指标虽存在单位错配但没有阻止这一规模判断。由于管理行动时钟、服务口径及因果贡献未冻结，网络和自动化只能作为可能的适应机制；要升级管理执行评价，必须看到行动后同责任边界的服务、单位经济和加盟商稳定共同改善。",
+  "normalization_case": "正常盈利不应从口径改变后的快递收入、成本和毛利率直接外推。当前最合理处理是承认规模密度可能改善成本的正向机制，同时把单票正常利润保持在需同口径桥验证的保守区间；owner cash 则以总部 OCF 减现金资本开支为起点，但因加盟商资本、维持与增长资本拆分缺失而不作精确认定。",
+  "permanent_loss_map": "第一条路径是价格让利换量却无法通过密度降本抵消，导致单位利润下降；第二条是总部自动化和网络资本先投入、现金回收不足，杠杆继续上升；第三条是加盟商承担末端损失后退出或服务恶化，反向损伤客户与份额。相反路径是同口径单票经济、资本覆盖和加盟稳定同时改善，使规模真正转成现金。",
+  "value_route": {
+    "primary_routes": [
+      "同口径正常经营盈利路线",
+      "总部可分配现金区间路线"
+    ],
+    "excluded_routes": [
+      "业务量与市场份额倍数路线",
+      "自动化和加盟网络规模单独资本化路线"
+    ],
+    "route_reasoning": "韵达已有真实规模吸收，但单位经济口径和加盟商资本责任尚未闭合；因此价值只能由可复验的正常利润与现金资本覆盖支撑，并对网络外部承担作保守约束。",
+    "valuation_model_roles": {
+      "primary": [
+        "同口径正常盈利能力",
+        "总部 owner-cash 保守区间"
+      ],
+      "corroborative": [
+        "业务量与份额的客户吸收趋势"
+      ],
+      "stress": [
+        "价格竞争、加盟商承压与资本投入失配"
+      ]
+    }
+  },
+  "strongest_rival": "最强相反解释是 FY2019 的件量和份额主要来自行业需求、平台流量分配及价格让利，而不是韵达独有的网络执行；经营现金增长也可能被口径、营运资本或加盟商外部资本承担放大，因此观察到的规模吸收未必代表更高的单位经济或长期 owner cash。",
+  "reversal_observations": [
+    "在统一派费收入与成本定义后，韵达的单票收入、单票成本和单票利润连续显示不依赖激进价格让利的改善。",
+    "总部经营现金扣除维持网络所需资本后仍持续扩张，且不是由一次性营运资本变化主导。",
+    "加盟商现金、退出率或网络不利事件显示末端经济明显恶化并传导至服务和份额，或反向证明加盟网络能够在竞争中稳定自我融资。"
+  ],
+  "component_treatments": [
+    {
+      "component_id": "YUNDA:MARKET_ABSORPTION",
+      "treatment": "UNDERWRITE",
+      "reason": "FY2019 业务量增长 43.59%、市场份额增加 2.02 个百分点，结算了真实网络和客户吸收。",
+      "investment_consequence": "承认公司在该窗口扩大了市场位置，但不把份额自动解释为客户忠诚、定价权或行动因果。",
+      "promotion_or_resolution_condition": "后续同口径服务、留存或价格与单位经济共同显示份额来自可持续网络质量。",
+      "evidence_ids": [
+        "E:YUNDA:OPERATING"
+      ]
+    },
+    {
+      "component_id": "YUNDA:NORMAL_UNIT_ECONOMICS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "新增派费收入及对应成本造成单票收入、成本和毛利率口径不匹配，规模密度的利润传导尚未结算。",
+      "investment_consequence": "正常盈利采用保守条件处理，不因缺少精确可比字段拒绝公司判断，也不把件量增长资本化。",
+      "promotion_or_resolution_condition": "建立统一派费口径的单票收入、成本和利润桥，并观察至少一个连续窗口。",
+      "evidence_ids": [
+        "E:YUNDA:MEASUREMENT"
+      ]
+    },
+    {
+      "component_id": "YUNDA:OWNER_CASH_AND_CAPITAL",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "OCF 和现金资本开支都增长且覆盖关系稳定，但总部现金不含加盟商真实资本，也未拆分维持与增长资本。",
+      "investment_consequence": "保留总部现金扩张的正面信号，同时对可分配 owner cash 和网络整体资本回报使用保守区间。",
+      "promotion_or_resolution_condition": "总部 post-capex 现金持续改善，并取得加盟商现金、资本负担和网络稳定的责任匹配证据。",
+      "evidence_ids": [
+        "E:YUNDA:CASH_CAPITAL",
+        "E:YUNDA:BOUNDARY"
+      ]
+    },
+    {
+      "component_id": "YUNDA:PERMANENT_LOSS",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "资产负债率温和上升且加盟商经济未知，存在资本和网络脆弱性路径，但尚无已发生不可逆损失载体。",
+      "investment_consequence": "不机械下调为失败企业，将加盟商退出、服务反噬和杠杆扩张保留为压力情景。",
+      "promotion_or_resolution_condition": "出现或排除加盟商现金恶化、网络不利事件与杠杆持续上升对服务和份额的传导。",
+      "evidence_ids": [
+        "E:YUNDA:CASH_CAPITAL",
+        "E:YUNDA:BOUNDARY"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E:YUNDA:OPERATING",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/13_investor_readout.md",
+      "locator": "结果期实际看到了什么，第 1 项；投资含义",
+      "scope": "FY2019 业务量、份额和客户网络吸收",
+      "used_for": "行业暴露、公司位置、适应与客户吸收判断"
+    },
+    {
+      "evidence_id": "E:YUNDA:CASH_CAPITAL",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/13_investor_readout.md",
+      "locator": "结果期实际看到了什么，第 2–3 项",
+      "scope": "FY2019 OCF、现金资本开支、覆盖关系和资产负债率变化",
+      "used_for": "生存、owner cash、资本承担与永久损失情景"
+    },
+    {
+      "evidence_id": "E:YUNDA:MEASUREMENT",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/13_investor_readout.md",
+      "locator": "结果期实际看到了什么，第 4–6 项",
+      "scope": "派费口径、投诉单位、管理行动时钟和加盟网络事件的局部错配",
+      "used_for": "限制单位经济、服务和行动因果主张，并转为条件化承保"
+    },
+    {
+      "evidence_id": "E:YUNDA:BOUNDARY",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/13_investor_readout.md",
+      "locator": "方法比较真正证明了什么；投资含义",
+      "scope": "总部与加盟商责任边界、行业需求和价格竞争反方",
+      "used_for": "最强反方、正常化边界和网络永久损失路径"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "INDUSTRY_INVESTOR_READOUT",
+      "ref": "docs/development/research/industry_learning_blocks/CN_FRANCHISE_EXPRESS_2018_2019/13_investor_readout.md",
+      "role": "本 Episode 唯一允许的韵达 FY2019 经营反馈、口径边界和投资者读出来源"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:CN002120:20190501:C1:R10",
+    "central_path": "韵达 FY2019 的件量、份额和总部 OCF 增长证明网络获得了真实经营吸收且近端资本覆盖未明显恶化，但派费口径变化、加盟商现金缺失和行动时钟不清使规模尚未穿过同口径单位经济与全网络 owner cash；因此当前应承认市场位置改善，条件性承保正常盈利和总部现金，并把价格竞争及加盟商脆弱性保留为材料压力路径。",
+    "normal_earnings_treatment": "件量密度的正向机制进入基准叙事，但正常单票利润须按统一派费口径重建；在此之前使用保守条件区间，不以收入增速或份额替代盈利。",
+    "owner_cash_treatment": "总部 OCF 与资本开支关系稳定提供有限正面证据，但加盟商资本、维持资本和营运资本驱动未闭合，因此只承保方向性的总部现金韧性，不认定精确可分配现金。",
+    "permanent_loss_treatment": "近端没有已观察的不可逆损失载体；持续价格竞争、杠杆上升和加盟商经济恶化构成条件性损失路径，必须观察其是否传导到服务、份额和现金。",
+    "value_route_treatment": "以同口径正常盈利和总部 owner-cash 保守区间为主，用份额作吸收旁证、用加盟商与资本压力作下行情景，不采用业务量或网络规模倍数。",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "最强相反解释是 FY2019 的件量和份额主要来自行业需求、平台流量分配及价格让利，而不是韵达独有的网络执行；经营现金增长也可能被口径、营运资本或加盟商外部资本承担放大，因此观察到的规模吸收未必代表更高的单位经济或长期 owner cash。",
+    "monitoring": "先统一派费和投诉口径，再按单票利润、总部 post-capex 现金、加盟商现金与退出、服务和份额的责任匹配顺序复验；局部 mismatch 只限制相应主张，不终止整家公司承保。"
+  },
+  "investment_treatment": "本教学 Episode 的价格前处理是：承认韵达市场位置和总部现金信号改善，但正常盈利、全网络 owner cash 与资本回报仍需条件性承保；研究资源优先投入同口径单位经济和加盟商现金，不生成估值结果或投资动作。"
+}

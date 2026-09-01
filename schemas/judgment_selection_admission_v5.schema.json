@@ -1,0 +1,514 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_selection_admission_v5.schema.json",
+  "title": "Turtle V5 pre-outcome judgment-selection admission bundle",
+  "description": "Static shape for the V5 Slice 0 selection bundle. scripts/judgment_selection_v5.py is the executable economic contract; this schema intentionally contains no outcome values, database state, or legacy compatibility path.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_id",
+    "method_epoch_id",
+    "selection_goal",
+    "selection_freeze_id",
+    "episode_collision_key",
+    "sealed_at",
+    "recorded_at",
+    "cohort_snapshot",
+    "action_scope",
+    "scope_bridges",
+    "competitive_arena",
+    "measurement_contracts",
+    "time_contract",
+    "outcome_contract",
+    "materiality_and_resolution_contract",
+    "source_manifest",
+    "source_provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-selection-admission-v5.v1"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "method_epoch_id": {"const": "JUDGMENT_SELECTION_ADMISSION_V5_2_COMPARATOR_PANEL"},
+    "selection_goal": {"enum": ["SELECTION", "TEACHING_ONLY"]},
+    "selection_freeze_id": {"$ref": "#/$defs/nonempty"},
+    "episode_collision_key": {"$ref": "#/$defs/nonempty"},
+    "sealed_at": {"type": "string", "format": "date-time"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "cohort_snapshot": {"$ref": "#/$defs/cohort_snapshot"},
+    "action_scope": {"$ref": "#/$defs/action_scope"},
+    "scope_bridges": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/scope_bridge"}},
+    "competitive_arena": {"$ref": "#/$defs/competitive_arena"},
+    "external_driver_reference": {"$ref": "#/$defs/external_driver_reference"},
+    "counterfactual_panel": {"$ref": "#/$defs/counterfactual_panel"},
+    "measurement_contracts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/metric_contract"}},
+    "time_contract": {"$ref": "#/$defs/time_contract"},
+    "outcome_contract": {"$ref": "#/$defs/outcome_contract"},
+    "materiality_and_resolution_contract": {"$ref": "#/$defs/materiality_contract"},
+    "source_manifest": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+    "source_provenance": {"$ref": "#/$defs/source_provenance"},
+    "independent_pre_outcome_review": {"$ref": "#/$defs/pre_outcome_review"},
+    "source_firewall_receipt": {"$ref": "#/$defs/firewall"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"selection_goal": {"const": "SELECTION"}}, "required": ["selection_goal"]},
+      "then": {"required": ["external_driver_reference", "counterfactual_panel", "independent_pre_outcome_review", "source_firewall_receipt"]}
+    }
+  ],
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "source_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["h1", "h2"],
+      "properties": {
+        "h1": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["receipt_id", "receipt_version", "cohort_id", "selection_as_of", "curator_id"],
+          "properties": {
+            "receipt_id": {"$ref": "#/$defs/nonempty"},
+            "receipt_version": {"type": "integer", "minimum": 1},
+            "cohort_id": {"$ref": "#/$defs/nonempty"},
+            "selection_as_of": {"type": "string", "format": "date-time"},
+            "curator_id": {"$ref": "#/$defs/nonempty"}
+          }
+        },
+        "h2": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["receipt_id", "receipt_version", "parent_receipt_id", "parent_receipt_version", "screen_id", "cutoff_at"],
+          "properties": {
+            "receipt_id": {"$ref": "#/$defs/nonempty"},
+            "receipt_version": {"type": "integer", "minimum": 1},
+            "parent_receipt_id": {"$ref": "#/$defs/nonempty"},
+            "parent_receipt_version": {"type": "integer", "minimum": 1},
+            "screen_id": {"$ref": "#/$defs/nonempty"},
+            "cutoff_at": {"type": "string", "format": "date-time"}
+          }
+        }
+      }
+    },
+    "source_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+    "cohort_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cohort_snapshot_id", "cohort_eligibility_as_of", "arena_family", "members"],
+      "properties": {
+        "cohort_snapshot_id": {"$ref": "#/$defs/nonempty"},
+        "cohort_eligibility_as_of": {"type": "string", "format": "date-time"},
+        "arena_family": {"$ref": "#/$defs/nonempty"},
+        "members": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/cohort_member"}}
+      }
+    },
+    "cohort_member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_id", "issuer_id", "responsibility_unit_id", "control_group_id", "boundary", "carrier_identity_source_ids", "d2_or_cost_field_history", "d3_d4_field_history"],
+      "properties": {
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
+        "control_group_id": {"$ref": "#/$defs/nonempty"},
+        "boundary": {"$ref": "#/$defs/cohort_member_boundary"},
+        "carrier_identity_source_ids": {"$ref": "#/$defs/source_ids"},
+        "d2_or_cost_field_history": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/field_identity"}},
+        "d3_d4_field_history": {"type": "array", "minItems": 5, "items": {"$ref": "#/$defs/field_identity"}}
+      }
+    },
+    "cohort_member_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["responsibility_unit_id", "perimeter_id", "unit"],
+      "properties": {
+        "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
+        "perimeter_id": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "field_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["period_end", "field_id", "source_id"],
+      "properties": {
+        "period_end": {"type": "string", "format": "date"},
+        "field_id": {"$ref": "#/$defs/nonempty"},
+        "source_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "action_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action_id", "focal_issuer_id", "mechanism_topology", "d2_role", "decision_authority", "implementation_status", "action_effective_window", "decision_observable_at", "economic_carriers", "h_a", "h_b", "source_ids"],
+      "properties": {
+        "action_id": {"$ref": "#/$defs/nonempty"},
+        "focal_issuer_id": {"$ref": "#/$defs/nonempty"},
+        "mechanism_topology": {"enum": ["CUSTOMER_RESPONSE", "COST_RESTRUCTURING", "PRODUCT_OR_INNOVATION", "CAPITAL_ALLOCATION_OR_INTEGRATION"]},
+        "d2_role": {"enum": ["CENTRAL_VOTER", "DIAGNOSTIC_NON_VOTER"]},
+        "decision_authority": {"enum": ["ISSUER_MANAGEMENT", "ISSUER_BOARD", "REPORTABLE_SEGMENT_MANAGEMENT"]},
+        "implementation_status": {"type": "string"},
+        "action_effective_window": {"$ref": "#/$defs/action_window"},
+        "decision_observable_at": {"type": "string", "format": "date-time"},
+        "economic_carriers": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/carrier"}},
+        "d2_observations": {"type": "array", "items": {"type": "object"}},
+        "cost_driver_observations": {"type": "array", "items": {"type": "object"}},
+        "h_a": {"$ref": "#/$defs/hypothesis"},
+        "h_b": {"$ref": "#/$defs/hypothesis"},
+        "source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "action_window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end_or_ongoing_status"],
+      "properties": {"start": {"type": "string", "format": "date-time"}, "end_or_ongoing_status": {"$ref": "#/$defs/nonempty"}}
+    },
+    "carrier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["carrier_id", "functional_type", "legal_or_operating_owner", "implementation_source_ids"],
+      "properties": {
+        "carrier_id": {"$ref": "#/$defs/nonempty"},
+        "functional_type": {"$ref": "#/$defs/nonempty"},
+        "legal_or_operating_owner": {"$ref": "#/$defs/nonempty"},
+        "implementation_source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis_id", "mechanism", "central_endpoint_predictions"],
+      "properties": {
+        "hypothesis_id": {"$ref": "#/$defs/nonempty"},
+        "mechanism": {"$ref": "#/$defs/nonempty"},
+        "central_endpoint_predictions": {"type": "object", "required": ["D3", "D4"], "properties": {"D3": {"$ref": "#/$defs/nonempty"}, "D4": {"$ref": "#/$defs/nonempty"}}}
+      }
+    },
+    "scope_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_bridge_id", "bridge_type", "decision_to_carrier_source_ids", "carrier_to_perimeter_source_ids", "carrier_perimeter_ids", "metric_perimeter_ids", "economic_rights_type", "action_cash_boundary", "permitted_conclusion_scope"],
+      "properties": {
+        "scope_bridge_id": {"$ref": "#/$defs/nonempty"},
+        "bridge_type": {"enum": ["IDENTITY", "SEGMENT_MATCH", "QUANTIFIED_ISSUER_AGGREGATION"]},
+        "decision_to_carrier_source_ids": {"$ref": "#/$defs/source_ids"},
+        "carrier_to_perimeter_source_ids": {"$ref": "#/$defs/source_ids"},
+        "carrier_perimeter_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+        "metric_perimeter_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+        "economic_rights_type": {"enum": ["FULLY_CONSOLIDATED", "CONSOLIDATED_WITH_NCI", "REPORTABLE_SEGMENT_OF_CONSOLIDATED_ISSUER", "EQUITY_METHOD", "UNCONSOLIDATED"]},
+        "action_cash_boundary": {"$ref": "#/$defs/nonempty"},
+        "permitted_conclusion_scope": {"$ref": "#/$defs/nonempty"},
+        "implementation_scope": {"type": "string", "minLength": 1},
+        "carrier_reporting_basis": {"type": "string", "minLength": 1},
+        "metric_reporting_basis": {"type": "string", "minLength": 1},
+        "formal_segment_id": {"type": "string", "minLength": 1},
+        "coverage_basis": {"type": "string"},
+        "mechanism_channel": {"type": "string", "minLength": 1},
+        "coverage_channel": {"type": "string", "minLength": 1},
+        "coverage_as_of": {"type": "string", "format": "date"},
+        "coverage_numerator": {"$ref": "#/$defs/coverage_value"},
+        "coverage_denominator": {"$ref": "#/$defs/coverage_value"},
+        "known_omitted_material_items": {"type": "array"},
+        "known_other_material_changes": {"type": "array"},
+        "segment_continuity_policy": {"type": "string", "minLength": 1},
+        "nci_treatment": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "coverage_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "period_end", "source_id"],
+      "properties": {"value": {"type": "number"}, "unit": {"$ref": "#/$defs/nonempty"}, "period_end": {"type": "string", "format": "date"}, "source_id": {"$ref": "#/$defs/nonempty"}}
+    },
+    "competitive_arena": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["competitive_arena_id", "market_scope_type", "product_or_service_scope", "customer_choice_or_cost_driver", "required_overlap_dimensions"],
+      "properties": {
+        "competitive_arena_id": {"$ref": "#/$defs/nonempty"},
+        "market_scope_type": {"enum": ["NATIONAL", "REGIONAL", "EXPORT", "SEGMENT", "MULTI_REGION_PORTFOLIO"]},
+        "product_or_service_scope": {"$ref": "#/$defs/nonempty"},
+        "customer_choice_or_cost_driver": {"$ref": "#/$defs/nonempty"},
+        "dominant_subarena_id": {"type": "string", "minLength": 1},
+        "material_subarena_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+        "required_overlap_dimensions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/dimension"}}
+      }
+    },
+    "external_driver_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["external_driver_reference_id", "driver_description", "required_exposure_dimensions", "target_driver_exposure_source_ids"],
+      "properties": {
+        "external_driver_reference_id": {"$ref": "#/$defs/nonempty"},
+        "driver_description": {"$ref": "#/$defs/nonempty"},
+        "required_exposure_dimensions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/dimension"}},
+        "target_driver_exposure_source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "relation", "rationale_from_mechanism", "target_evidence_source_ids"],
+      "properties": {
+        "dimension": {"enum": ["PRODUCT", "CUSTOMER_TASK", "COST_DRIVER", "GEOGRAPHIC_MARKET", "DESTINATION_MARKET", "CURRENCY", "REGULATION", "TECHNOLOGY_OR_CERTIFICATION"]},
+        "relation": {"enum": ["REQUIRED_EQUAL", "REQUIRED_OVERLAP", "REQUIRED_EXPOSURE", "NOT_REQUIRED"]},
+        "rationale_from_mechanism": {"$ref": "#/$defs/nonempty"},
+        "target_evidence_source_ids": {"$ref": "#/$defs/source_ids"},
+        "peer_evidence_source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "counterfactual_panel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["counterfactual_panel_id", "target_issuer_id", "members", "non_replacement_rule"],
+      "properties": {
+        "counterfactual_panel_id": {"$ref": "#/$defs/nonempty"},
+        "target_issuer_id": {"$ref": "#/$defs/nonempty"},
+        "members": {"type": "array", "items": {"$ref": "#/$defs/panel_member"}},
+        "non_replacement_rule": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "panel_member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer_id", "control_group_id", "causal_role", "mechanism_arena_membership", "external_driver_reference_membership", "shared_driver_exposure", "parallel_action", "target_action_spillover", "eligible_for_relative_baseline", "source_ids"],
+      "properties": {
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "control_group_id": {"$ref": "#/$defs/nonempty"},
+        "causal_role": {"enum": ["EXTERNAL_SHOCK_COMPARATOR", "EQUILIBRIUM_RESPONSE_WITNESS", "FALSIFIER"]},
+        "mechanism_arena_membership": {"type": "object"},
+        "external_driver_reference_membership": {"type": "object"},
+        "shared_driver_exposure": {"enum": ["PROVEN", "UNKNOWN"]},
+        "parallel_action": {"enum": ["DISCLOSED", "BOUNDED_ABSENT", "UNKNOWN"]},
+        "target_action_spillover": {"enum": ["MATERIAL_RISK", "BOUNDED_NONINTERFERENCE", "UNKNOWN"]},
+        "eligible_for_relative_baseline": {"type": "boolean"},
+        "source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "metric_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "clock", "economic_construct", "accounting_perimeter_id", "carrier_or_segment_id", "scope_bridge_id", "currency_and_unit", "period_basis", "gross_or_net_definition", "formula_id", "formula_and_ordered_raw_fields", "raw_field_source_locators", "restatement_or_reclassification_policy", "baseline_observation_matrix", "primary_outcome_matrix", "source_available_at_policy", "allowed_conclusion_scope", "baseline_period_id", "primary_outcome_period_id"],
+      "properties": {
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "clock": {"enum": ["D3", "D4"]},
+        "economic_construct": {"$ref": "#/$defs/nonempty"},
+        "accounting_perimeter_id": {"$ref": "#/$defs/nonempty"},
+        "carrier_or_segment_id": {"$ref": "#/$defs/nonempty"},
+        "scope_bridge_id": {"$ref": "#/$defs/nonempty"},
+        "currency_and_unit": {"$ref": "#/$defs/nonempty"},
+        "period_basis": {"enum": ["FISCAL_YEAR", "QUARTER", "TRAILING_PERIOD"]},
+        "gross_or_net_definition": {"$ref": "#/$defs/nonempty"},
+        "formula_id": {"$ref": "#/$defs/nonempty"},
+        "formula_and_ordered_raw_fields": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonempty"}},
+        "outcome_formula": {"$ref": "#/$defs/d3_outcome_formula"},
+        "raw_field_source_locators": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+        "restatement_or_reclassification_policy": {"$ref": "#/$defs/nonempty"},
+        "baseline_observation_matrix": {"type": "object"},
+        "primary_outcome_matrix": {"type": "object"},
+        "source_available_at_policy": {"$ref": "#/$defs/nonempty"},
+        "allowed_conclusion_scope": {"$ref": "#/$defs/nonempty"},
+        "baseline_period_id": {"$ref": "#/$defs/nonempty"},
+        "primary_outcome_period_id": {"$ref": "#/$defs/nonempty"},
+        "discriminability": {"$ref": "#/$defs/discriminability"},
+        "restructuring_cash_treatment": {"enum": ["IN_OCF_NO_ADDITIONAL_DEDUCTION", "SEPARATE_OPERATING_CASH_DEDUCTION", "OUT_OF_PERIMETER_CANNOT_SETTLE"]},
+        "cash_working_capital_components": {"type": "array", "items": {"$ref": "#/$defs/nonempty"}},
+        "nci_treatment": {"$ref": "#/$defs/nonempty"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"clock": {"const": "D3"}}, "required": ["clock"]},
+          "then": {"required": ["outcome_formula"]}
+        }
+      ]
+    },
+    "time_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cohort_eligibility_as_of", "action_effective_window", "decision_observable_at", "research_cutoff_at", "metric_economic_periods", "outcome_window_id"],
+      "properties": {
+        "cohort_eligibility_as_of": {"type": "string", "format": "date-time"},
+        "action_effective_window": {"$ref": "#/$defs/action_window"},
+        "decision_observable_at": {"type": "string", "format": "date-time"},
+        "research_cutoff_at": {"type": "string", "format": "date-time"},
+        "metric_economic_periods": {"type": "object", "properties": {"D3": {"$ref": "#/$defs/economic_period"}, "D4": {"$ref": "#/$defs/economic_period"}}},
+        "outcome_window_id": {"$ref": "#/$defs/nonempty"},
+        "minimum_decision_exposure_rule": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "d3_outcome_formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["formula_type", "terms"],
+      "properties": {
+        "formula_type": {"const": "LINEAR_COMBINATION"},
+        "terms": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/formula_term"}},
+        "denominator_field_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "formula_term": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field_id", "coefficient"],
+      "properties": {
+        "field_id": {"$ref": "#/$defs/nonempty"},
+        "coefficient": {"type": "number"}
+      }
+    },
+    "outcome_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frozen_raw_matrix", "fiscal_calendar_bridge"],
+      "properties": {
+        "frozen_raw_matrix": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/frozen_raw_cell"}},
+        "fiscal_calendar_bridge": {"$ref": "#/$defs/fiscal_calendar_bridge"}
+      }
+    },
+    "frozen_raw_cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer_id", "metric_id", "period_id", "observation_role", "field_id", "economic_period"],
+      "properties": {
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "metric_id": {"$ref": "#/$defs/nonempty"},
+        "period_id": {"$ref": "#/$defs/nonempty"},
+        "observation_role": {"enum": ["BASELINE", "PRIMARY_OUTCOME", "EARLY_ARROW_NON_VOTER"]},
+        "field_id": {"$ref": "#/$defs/nonempty"},
+        "economic_period": {"$ref": "#/$defs/economic_period"},
+        "perimeter_id": {"$ref": "#/$defs/nonempty"},
+        "currency_and_unit": {"$ref": "#/$defs/nonempty"},
+        "field_locator": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "fiscal_calendar_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["NOT_REQUIRED", "FROZEN"]},
+        "bridge_id": {"$ref": "#/$defs/nonempty"},
+        "comparison_window_id": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "economic_period": {"type": "object", "additionalProperties": false, "required": ["start", "end"], "properties": {"start": {"type": "string", "format": "date-time"}, "end": {"type": "string", "format": "date-time"}}},
+    "threshold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator", "value", "unit"],
+      "properties": {
+        "operator": {"type": "string"},
+        "value": {"type": "number"},
+        "unit": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "primary_threshold": {
+      "allOf": [
+        {"$ref": "#/$defs/threshold"},
+        {"properties": {"operator": {"const": "GTE"}}, "required": ["operator"]}
+      ]
+    },
+    "rival_threshold": {
+      "allOf": [
+        {"$ref": "#/$defs/threshold"},
+        {"properties": {"operator": {"const": "LTE"}}, "required": ["operator"]}
+      ]
+    },
+    "discriminability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "primary_threshold", "rival_threshold"],
+      "properties": {
+        "status": {"const": "SUPPORTED"},
+        "primary_threshold": {"$ref": "#/$defs/primary_threshold"},
+        "rival_threshold": {"$ref": "#/$defs/rival_threshold"}
+      }
+    },
+    "materiality_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_materiality", "d3_outcome_discriminability", "investor_materiality"],
+      "properties": {
+        "decision_materiality": {"type": "object", "required": ["status", "evidence_source_ids"]},
+        "d3_outcome_discriminability": {"$ref": "#/$defs/discriminability"},
+        "d4_outcome_discriminability": {"$ref": "#/$defs/discriminability"},
+        "investor_materiality": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["SUPPORTED", "UNKNOWN", "REFUTED"]}}}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_lane", "publisher", "official_artifact_id", "source_url", "source_type", "issuer_id", "responsibility_unit_id", "perimeter_id", "unit", "published_at_or_date", "availability_precision", "outcome_visibility"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "source_lane": {"enum": ["STAGE0_STATIC", "ACTION_STATIC", "PUBLIC_ARENA_CONTEXT", "OUTCOME_SEALED"]},
+        "publisher": {"$ref": "#/$defs/nonempty"},
+        "official_artifact_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"$ref": "#/$defs/nonempty"},
+        "source_type": {"$ref": "#/$defs/nonempty"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
+        "perimeter_id": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "published_at_or_date": {"type": "string"},
+        "availability_precision": {"enum": ["INTRADAY", "DATE_ONLY"]},
+        "outcome_visibility": {"enum": ["PREOUTCOME_VISIBLE", "SEALED"]}
+      }
+    },
+    "firewall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_id", "researcher_id", "attested_at", "researcher_outcome_body_access", "researcher_outcome_metadata_access", "outcome_access_authorized"],
+      "properties": {
+        "receipt_id": {"$ref": "#/$defs/nonempty"},
+        "researcher_id": {"$ref": "#/$defs/nonempty"},
+        "attested_at": {"type": "string", "format": "date-time"},
+        "researcher_outcome_body_access": {"const": "NONE"},
+        "researcher_outcome_metadata_access": {"const": "NONE"},
+        "outcome_access_authorized": {"const": false}
+      }
+    },
+    "pre_outcome_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_id", "pre_outcome_designer_id", "reviewer_id", "reviewed_at", "verdict", "reviewed_selection_contract", "reviewer_outcome_body_access", "reviewer_outcome_metadata_access"],
+      "properties": {
+        "review_id": {"$ref": "#/$defs/nonempty"},
+        "pre_outcome_designer_id": {"$ref": "#/$defs/nonempty"},
+        "reviewer_id": {"$ref": "#/$defs/nonempty"},
+        "reviewed_at": {"type": "string", "format": "date-time"},
+        "verdict": {"enum": ["ACCEPTED", "REJECTED"]},
+        "reviewed_selection_contract": {"$ref": "#/$defs/reviewed_selection_contract"},
+        "reviewer_outcome_body_access": {"const": "NONE"},
+        "reviewer_outcome_metadata_access": {"const": "NONE"}
+      }
+    },
+    "reviewed_selection_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "candidate_id", "method_epoch_id", "selection_goal", "selection_freeze_id", "episode_collision_key", "sealed_at", "recorded_at", "cohort_snapshot", "action_scope", "scope_bridges", "competitive_arena", "external_driver_reference", "counterfactual_panel", "measurement_contracts", "time_contract", "outcome_contract", "materiality_and_resolution_contract", "source_manifest", "source_provenance", "source_firewall_receipt"],
+      "properties": {
+        "schema_version": {"const": "judgment-selection-admission-v5.v1"},
+        "candidate_id": {"$ref": "#/$defs/nonempty"},
+        "method_epoch_id": {"const": "JUDGMENT_SELECTION_ADMISSION_V5_2_COMPARATOR_PANEL"},
+        "selection_goal": {"const": "SELECTION"},
+        "selection_freeze_id": {"$ref": "#/$defs/nonempty"},
+        "episode_collision_key": {"$ref": "#/$defs/nonempty"},
+        "sealed_at": {"type": "string", "format": "date-time"},
+        "recorded_at": {"type": "string", "format": "date-time"},
+        "cohort_snapshot": {"$ref": "#/$defs/cohort_snapshot"},
+        "action_scope": {"$ref": "#/$defs/action_scope"},
+        "scope_bridges": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/scope_bridge"}},
+        "competitive_arena": {"$ref": "#/$defs/competitive_arena"},
+        "external_driver_reference": {"$ref": "#/$defs/external_driver_reference"},
+        "counterfactual_panel": {"$ref": "#/$defs/counterfactual_panel"},
+        "measurement_contracts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/metric_contract"}},
+        "time_contract": {"$ref": "#/$defs/time_contract"},
+        "outcome_contract": {"$ref": "#/$defs/outcome_contract"},
+        "materiality_and_resolution_contract": {"$ref": "#/$defs/materiality_contract"},
+        "source_manifest": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+        "source_provenance": {"$ref": "#/$defs/source_provenance"},
+        "source_firewall_receipt": {"$ref": "#/$defs/firewall"}
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": "historical-backtest-experiment.v1",
+  "experiment_id": "HBT:current-candidates-pilot-v1",
+  "status": "PRE_REGISTERED",
+  "registered_at": "2026-08-16T00:00:00+08:00",
+  "framework": {
+    "framework_version": "Turtle-G2-2026-08-16",
+    "route_policy": "route-aware-long-owner-finite-xirr-dual",
+    "golden_gate_state": "G3_NOT_READY"
+  },
+  "information_policy": {
+    "cutoff_timezone": "Asia/Shanghai",
+    "source_rule": "published_at_and_data_as_of_must_not_exceed_cutoff",
+    "current_restated_data_rule": "current_restated_values_are_ineligible_without_historical_vintage",
+    "future_file_rule": "future_files_are_unreadable_before_settlement",
+    "survivorship_rule": "retain_delisted_acquired_and_failed_cases_in_registered_universe",
+    "execution_rule": "next_tradable_price_after_frozen_report_or_preregistered_rule"
+  },
+  "credibility": {
+    "model_memory_control": "UNCONTROLLED",
+    "backtest_credibility": "EXPLORATORY",
+    "assessment_basis": "当前模型可能在训练中见过历史发行人及其后续事件；尚无可验证的参数记忆隔离证据。",
+    "control_evidence": [],
+    "calibration_role": "ENGINEERING_DIAGNOSTIC_ONLY"
+  },
+  "universe": {
+    "selection_status": "RESEARCH_PILOT",
+    "eligible_case_count": 0,
+    "calibration_eligible_case_count": 0,
+    "cases": [
+      {"case_id": "HBTCASE:87001.HK", "company_code": "87001.HK", "company_name": "汇贤产业信托", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:900936.SH", "company_code": "900936.SH", "company_name": "鄂尔多斯B", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:000651.SZ", "company_code": "000651.SZ", "company_name": "格力电器", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:01522.HK", "company_code": "01522.HK", "company_name": "京投交通科技", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:02669.HK", "company_code": "02669.HK", "company_name": "中海物业", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:00506.HK", "company_code": "00506.HK", "company_name": "中国食品", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:00882.HK", "company_code": "00882.HK", "company_name": "天津发展", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:600585.SH", "company_code": "600585.SH", "company_name": "海螺水泥", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"},
+      {"case_id": "HBTCASE:601899.SH", "company_code": "601899.SH", "company_name": "紫金矿业", "eligibility_status": "INELIGIBLE_NO_HISTORICAL_VINTAGE", "eligibility_reason": "没有可验证的历史报告版本、逐源发布时间和当时市场数据。", "calibration_eligibility": "NOT_ELIGIBLE_MODEL_MEMORY"}
+    ]
+  },
+  "scoring_policy": {
+    "separate_dimensions": ["REPORT_COVERAGE", "MODEL_FORECAST_ERROR", "INVESTMENT_RETURN_OUTCOME"],
+    "no_compensating_score": true,
+    "minimum_outcome_fields": ["cash_flows", "benchmark_return", "currency", "execution_rule"]
+  }
+}

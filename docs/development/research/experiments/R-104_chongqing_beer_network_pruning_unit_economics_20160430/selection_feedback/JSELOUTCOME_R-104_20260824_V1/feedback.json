@@ -1,0 +1,405 @@
+{
+  "schema_version": "judgment-selection-feedback-card.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "settlement_id": "JSELOUTCOME:R-104:20260824:V1",
+  "settlement_as_of": "2026-08-24T02:59:25Z",
+  "first_outcome_accessed_at": "2026-08-24T02:55:26Z",
+  "activation_id": "JSELRESACT:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:JSELRES:R-104:PRE-OUTCOME-V1",
+  "amendment_review_id": "JSELRESREVIEW:R-104:INDEPENDENT:20260824:V1-ACCEPTED",
+  "custodian_id": "codex-r104-independent-outcome-custodian-20260824",
+  "selection_status": "SELECTION_ADMITTED",
+  "primary_hypothesis_id": "R104-H-A",
+  "strongest_rival_id": "R104-H-B",
+  "simple_baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+  "cards": [
+    {
+      "claim_id": "R-104:D1-TERMINAL",
+      "predicate_id": "R104-D1-NETWORK-IMPLEMENTATION",
+      "stage_id": "D1_IMPLEMENTATION",
+      "observation": {
+        "status": "OBSERVED",
+        "source_ids": [
+          "CNINFO:600132:ANN:20170414:1203295881"
+        ],
+        "measurement_scope": "implementation or reversal of the six-brewery production closure, equivalent capacity rebuild, material supply interruption and transition burden inside the consolidated listed issuer",
+        "prohibited_substitutes": [
+          "management intention",
+          "company survival",
+          "group sales volume",
+          "industry capacity"
+        ],
+        "summary": "The FY2016 audited annual report states that the production-network optimization continued, records impairment on newly closed Bozhou and two persistently loss-making operations, and says that by the financial-statement approval date seven subsidiaries or branches had been closed. It supplies no disclosure of an equivalent-capacity rebuild or material supply interruption. This is a same-issuer implementation observation only and has no selection vote.",
+        "value": null,
+        "unit": null
+      },
+      "comparison": {
+        "primary_hypothesis": {
+          "hypothesis_id": "R104-H-A",
+          "frozen_prediction": "六厂生产业务退出不发生材料性逆转，上市公司在不重建同等冗余产能的情况下完成合并口径生产网络承接。",
+          "frozen_rule": null,
+          "result": {
+            "status": "NO_FROZEN_RULE"
+          }
+        },
+        "strongest_rival": {
+          "hypothesis_id": "R104-H-B",
+          "frozen_prediction": "同样允许关厂维持；若出现同等产能重建、重大供应中断或一次性迁移负担，则削弱 H-A，但 D1 单独不决定选择。",
+          "frozen_rule": null,
+          "result": {
+            "status": "NO_FROZEN_RULE"
+          }
+        },
+        "simple_baseline": {
+          "baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+          "frozen_prediction": "不解释关厂，只延续 FY2015 上市公司法定合并边界。",
+          "frozen_rule": null,
+          "result": {
+            "status": "NO_FROZEN_RULE"
+          }
+        },
+        "verdict": "NOT_DIAGNOSTIC",
+        "role": "DIAGNOSTIC_ONLY",
+        "derivation": "FROZEN_RULES_ONLY_NO_CALLER_SUPPLIED_WINNER"
+      }
+    },
+    {
+      "claim_id": "R-104:D2-TERMINAL",
+      "predicate_id": "R104-D2-BEER-VOLUME-AND-PRICE-MIX",
+      "stage_id": "D2_CUSTOMER_ABSORPTION",
+      "observation": {
+        "status": "OBSERVED",
+        "source_ids": [
+          "CNINFO:600132:ANN:20170414:1203295881"
+        ],
+        "measurement_scope": "FY2016 recurring annual headline beer sales volume and consolidated revenue per headline kl",
+        "prohibited_substitutes": [
+          "production volume",
+          "brand narrative",
+          "industry beer volume",
+          "management sales target"
+        ],
+        "summary": "The FY2016 audited annual report discloses headline beer sales of 946,200 kl and consolidated operating revenue of RMB3,195,921,515.50, equivalent to RMB3,377.63846491 per headline kl. The report describes the 7.87% sales-volume decline versus FY2015 and separately says the decline excluding plant closures was about 2%. This remains diagnostic context and is not an adapter-scored selection test.",
+        "value": null,
+        "unit": null
+      },
+      "comparison": {
+        "primary_hypothesis": {
+          "hypothesis_id": "R104-H-A",
+          "frozen_prediction": "FY2016 啤酒销量可以低于 989,500 kl，但降幅不超过 FY2014 的 12.85%，且合并收入/千升不低于 FY2015 的 3,359.01 元。",
+          "frozen_rule": null,
+          "result": {
+            "status": "NO_FROZEN_RULE"
+          }
+        },
+        "strongest_rival": {
+          "hypothesis_id": "R104-H-B",
+          "frozen_prediction": "FY2016 销量降幅达到或超过 FY2014 的 12.85%，或收入/千升跌破 FY2015，表明客户／组合吸收弱于 H-A。",
+          "frozen_rule": null,
+          "result": {
+            "status": "NO_FROZEN_RULE"
+          }
+        },
+        "simple_baseline": {
+          "baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+          "frozen_prediction": "FY2016 啤酒销量点预测 989,500 kl，收入/千升点预测 3,359.01 元。",
+          "frozen_rule": null,
+          "result": {
+            "status": "NO_FROZEN_RULE"
+          }
+        },
+        "verdict": "NOT_DIAGNOSTIC",
+        "role": "DIAGNOSTIC_ONLY",
+        "derivation": "FROZEN_RULES_ONLY_NO_CALLER_SUPPLIED_WINNER"
+      }
+    },
+    {
+      "claim_id": "R-104:D3-TERMINAL",
+      "predicate_id": "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+      "stage_id": "D3_UNIT_ECONOMICS",
+      "observation": {
+        "status": "OBSERVED",
+        "source_ids": [
+          "CNINFO:600132:ANN:20170414:1203295881"
+        ],
+        "measurement_scope": "FY2016 whole-issuer operating-contribution amount: consolidated revenue less consolidated operating cost, taxes and surcharges, selling expense and administrative expense",
+        "prohibited_substitutes": [
+          "operating contribution divided by beer sales volume",
+          "standalone gross margin",
+          "net profit per kl",
+          "EBITDA without a bridge",
+          "brand margin",
+          "security price"
+        ],
+        "summary": "FY2016 consolidated revenue RMB3,195,921,515.50 minus operating cost RMB1,939,694,949.44, taxes and surcharges RMB269,738,755.10, selling expense RMB445,553,542.47, and administrative expense RMB183,628,554.78 equals RMB357,305,713.71. All components are from the audited consolidated income statement and share the frozen whole-issuer perimeter.",
+        "value": 357305713.71,
+        "unit": "RMB"
+      },
+      "comparison": {
+        "primary_hypothesis": {
+          "hypothesis_id": "R104-H-A",
+          "frozen_prediction": "FY2016 全上市公司同口径经营贡献不低于 272,368,979.53 元，即较 FY2015 增加至少 40,889,994.65 元；该增量等于六厂固定资产减值的 20%，对应五年税前回收，并在 25% 税率下约为 30,667,495.99 元税后正常利润。",
+          "frozen_rule": {
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "unit": "RMB",
+            "value": 272368979.53
+          },
+          "result": {
+            "status": "MET",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "target_value": 272368979.53,
+            "observed_value": 357305713.71,
+            "unit": "RMB"
+          }
+        },
+        "strongest_rival": {
+          "hypothesis_id": "R104-H-B",
+          "frozen_prediction": "FY2016 同口径经营贡献不高于 190,588,990.23 元，即较 FY2015 减少至少 40,889,994.65 元；两端之间为 MIXED。",
+          "frozen_rule": {
+            "operator": "LESS_THAN_OR_EQUAL",
+            "unit": "RMB",
+            "value": 190588990.23
+          },
+          "result": {
+            "status": "MISSED",
+            "operator": "LESS_THAN_OR_EQUAL",
+            "target_value": 190588990.23,
+            "observed_value": 357305713.71,
+            "unit": "RMB"
+          }
+        },
+        "simple_baseline": {
+          "baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+          "frozen_prediction": "FY2016 点预测为 FY2015 的 231,478,984.88 元。",
+          "frozen_rule": {
+            "operator": "EQUAL_POINT_FORECAST",
+            "unit": "RMB",
+            "value": 231478984.88
+          },
+          "result": {
+            "status": "MISSED",
+            "operator": "EQUAL_POINT_FORECAST",
+            "target_value": 231478984.88,
+            "observed_value": 357305713.71,
+            "unit": "RMB"
+          }
+        },
+        "verdict": "A_ONLY",
+        "role": "CENTRAL_DISCRIMINATOR",
+        "derivation": "FROZEN_RULES_ONLY_NO_CALLER_SUPPLIED_WINNER"
+      }
+    },
+    {
+      "claim_id": "R-104:D4-CASH",
+      "predicate_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+      "stage_id": "D4_WORKING_CAPITAL_AND_CASH",
+      "observation": {
+        "status": "OBSERVED",
+        "source_ids": [
+          "CNINFO:600132:ANN:20170414:1203295881"
+        ],
+        "measurement_scope": "FY2016 whole-issuer owner cash after removing any positive cash-working-capital release",
+        "prohibited_substitutes": [
+          "net profit",
+          "parent-only OCF",
+          "cash balance",
+          "debt reduction",
+          "inventory alone",
+          "an estimated maintenance-capex allocation",
+          "OCF less capex without removing positive working-capital release"
+        ],
+        "summary": "Audited consolidated OCF RMB569,431,361.68 less all cash paid to acquire fixed, intangible and other long-term assets RMB165,043,028.20 less the positive five-account cash-working-capital release of RMB276,917,868.28 equals RMB127,470,465.20. The opening working capital is RMB736,504,427.96; the ending value is RMB459,586,559.68 = AR 51,244,805.19 + prepayments 15,397,017.41 + inventory 825,981,328.38 - AP 345,850,595.32 - customer advances 87,185,995.98.",
+        "value": 127470465.2,
+        "unit": "RMB"
+      },
+      "comparison": {
+        "primary_hypothesis": {
+          "hypothesis_id": "R104-H-A",
+          "frozen_prediction": "FY2016 owner cash（OCF 减全部长期资产购建现金，再减 max[期初现金营运资本 - 期末现金营运资本, 0]）不低于 237,216,601.66 元，即较 FY2015 基线增加 40,889,994.65 元。",
+          "frozen_rule": {
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "unit": "RMB",
+            "value": 237216601.66
+          },
+          "result": {
+            "status": "MISSED",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "target_value": 237216601.66,
+            "observed_value": 127470465.2,
+            "unit": "RMB"
+          }
+        },
+        "strongest_rival": {
+          "hypothesis_id": "R104-H-B",
+          "frozen_prediction": "FY2016 同口径 owner cash 不高于 155,436,612.36 元，即较 FY2015 基线减少 40,889,994.65 元；两端之间为 MIXED。",
+          "frozen_rule": {
+            "operator": "LESS_THAN_OR_EQUAL",
+            "unit": "RMB",
+            "value": 155436612.36
+          },
+          "result": {
+            "status": "MET",
+            "operator": "LESS_THAN_OR_EQUAL",
+            "target_value": 155436612.36,
+            "observed_value": 127470465.2,
+            "unit": "RMB"
+          }
+        },
+        "simple_baseline": {
+          "baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+          "frozen_prediction": "FY2016 点预测为 FY2015 的 196,326,607.01 元。",
+          "frozen_rule": {
+            "operator": "EQUAL_POINT_FORECAST",
+            "unit": "RMB",
+            "value": 196326607.01
+          },
+          "result": {
+            "status": "MISSED",
+            "operator": "EQUAL_POINT_FORECAST",
+            "target_value": 196326607.01,
+            "observed_value": 127470465.2,
+            "unit": "RMB"
+          }
+        },
+        "verdict": "B_ONLY",
+        "role": "CENTRAL_DISCRIMINATOR",
+        "derivation": "FROZEN_RULES_ONLY_NO_CALLER_SUPPLIED_WINNER"
+      }
+    },
+    {
+      "claim_id": "R-104:D5-CAPITAL",
+      "predicate_id": "R104-D5-CAPITAL-RETURN",
+      "stage_id": "D5_CAPITAL_RETURN",
+      "observation": {
+        "status": "UNKNOWN",
+        "source_ids": [
+          "CNINFO:600132:ANN:20170414:1203295881",
+          "CNINFO:600132:ANN:20180414:1204627297",
+          "CNINFO:600132:ANN:20190413:1206015424"
+        ],
+        "measurement_scope": "FY2016-FY2018 cumulative OCF less maintenance-oriented capital expenditure, with working-capital change, closure-related permanent loss/disposal proceeds and opening/average operating capital explicitly bridged",
+        "prohibited_substitutes": [
+          "net income called owner cash",
+          "asset impairment double deduction",
+          "market capitalization",
+          "share price or return"
+        ],
+        "summary": "The three audited annual reports disclose consolidated OCF, total cash paid to acquire long-term assets and balance-sheet accounts, but do not allocate total capex into maintenance versus expansion or provide a fully compatible closure-related permanent-loss/disposal and opening/average operating-capital bridge. Estimating a maintenance share or treating impairment as both cash capex and a second capital loss would violate the frozen contract. The continuous capital-return diagnostic therefore remains UNKNOWN and carries no binary verdict.",
+        "value": null,
+        "unit": null
+      },
+      "comparison": {
+        "primary_hypothesis": {
+          "hypothesis_id": "R104-H-A",
+          "frozen_prediction": "2016-2018 累计 owner cash 为正，并相对 FY2015 期初经营资本形成正的连续资本回收读数；本层不设二元命中阈值。",
+          "frozen_rule": null,
+          "result": {
+            "status": "UNKNOWN",
+            "reason": "The three audited annual reports disclose consolidated OCF, total cash paid to acquire long-term assets and balance-sheet accounts, but do not allocate total capex into maintenance versus expansion or provide a fully compatible closure-related permanent-loss/disposal and opening/average operating-capital bridge. Estimating a maintenance share or treating impairment as both cash capex and a second capital loss would violate the frozen contract. The continuous capital-return diagnostic therefore remains UNKNOWN and carries no binary verdict."
+          }
+        },
+        "strongest_rival": {
+          "hypothesis_id": "R104-H-B",
+          "frozen_prediction": "用相同资本与现金恒等式观察网络裁减是否只释放一次性现金或伴随永久损失；不设置反方二元阈值。",
+          "frozen_rule": null,
+          "result": {
+            "status": "UNKNOWN",
+            "reason": "The three audited annual reports disclose consolidated OCF, total cash paid to acquire long-term assets and balance-sheet accounts, but do not allocate total capex into maintenance versus expansion or provide a fully compatible closure-related permanent-loss/disposal and opening/average operating-capital bridge. Estimating a maintenance share or treating impairment as both cash capex and a second capital loss would violate the frozen contract. The continuous capital-return diagnostic therefore remains UNKNOWN and carries no binary verdict."
+          }
+        },
+        "simple_baseline": {
+          "baseline_id": "R104-BASELINE-LAST-OBSERVED-FY2015",
+          "frozen_prediction": "最后一年经营尺度不足以给三年资本回收作公平点预测，记为 UNKNOWN。",
+          "frozen_rule": null,
+          "result": {
+            "status": "UNKNOWN",
+            "reason": "The three audited annual reports disclose consolidated OCF, total cash paid to acquire long-term assets and balance-sheet accounts, but do not allocate total capex into maintenance versus expansion or provide a fully compatible closure-related permanent-loss/disposal and opening/average operating-capital bridge. Estimating a maintenance share or treating impairment as both cash capex and a second capital loss would violate the frozen contract. The continuous capital-return diagnostic therefore remains UNKNOWN and carries no binary verdict."
+          }
+        },
+        "verdict": "NOT_DIAGNOSTIC",
+        "role": "DIAGNOSTIC_ONLY",
+        "derivation": "FROZEN_RULES_ONLY_NO_CALLER_SUPPLIED_WINNER"
+      }
+    }
+  ],
+  "joint_comparison": {
+    "resolution_amendment_id": "JSELRES:R-104:PRE-OUTCOME-V1",
+    "resolution_amendment_status": "CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+    "amendment_review_id": "JSELRESREVIEW:R-104:INDEPENDENT:20260824:V1-ACCEPTED",
+    "activation_id": "JSELRESACT:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:JSELRES:R-104:PRE-OUTCOME-V1",
+    "central_discriminator_claim_ids": [
+      "R-104:D3-TERMINAL",
+      "R-104:D4-CASH"
+    ],
+    "diagnostic_only_claim_ids": [
+      "R-104:D1-TERMINAL",
+      "R-104:D2-TERMINAL",
+      "R-104:D5-CAPITAL"
+    ],
+    "per_item_verdicts": {
+      "R-104:D1-TERMINAL": "NOT_DIAGNOSTIC",
+      "R-104:D2-TERMINAL": "NOT_DIAGNOSTIC",
+      "R-104:D3-TERMINAL": "A_ONLY",
+      "R-104:D4-CASH": "B_ONLY",
+      "R-104:D5-CAPITAL": "NOT_DIAGNOSTIC"
+    },
+    "mapping_key": "A_ONLY|B_ONLY",
+    "overall_verdict": "MIXED",
+    "derivation": "APPEND_ONLY_RESOLUTION_AMENDMENT_MAPPING_ONLY",
+    "aggregation": "NO_WIN_RATE_PROBABILITY_OR_AUTOMATIC_METHOD_UPDATE"
+  },
+  "simple_baseline_resolution": {
+    "resolution_amendment_id": "JSELRES:R-104:PRE-OUTCOME-V1",
+    "loss_function": "MEAN_ABSOLUTE_RELATIVE_POINT_LOSS",
+    "state": "BASELINE_POINT_LOSS",
+    "input_statuses": {
+      "R-104:D3-TERMINAL": "OBSERVED",
+      "R-104:D4-CASH": "OBSERVED"
+    },
+    "component_losses": [
+      {
+        "claim_id": "R-104:D3-TERMINAL",
+        "predicate_id": "R104-D3-UNIT-OPERATING-CONTRIBUTION",
+        "observed_value": 357305713.71,
+        "point_value": 231478984.88,
+        "unit": "RMB",
+        "absolute_relative_point_loss": 0.5435773312001919
+      },
+      {
+        "claim_id": "R-104:D4-CASH",
+        "predicate_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+        "observed_value": 127470465.2,
+        "point_value": 196326607.01,
+        "unit": "RMB",
+        "absolute_relative_point_loss": 0.35072241536009824
+      }
+    ],
+    "aggregate_loss": 0.4471498732801451,
+    "selection_effect": "SEPARATE_COMPARATOR_CANNOT_CHANGE_OVERALL_VERDICT"
+  },
+  "control_activation_lineage": {
+    "activation_source": "CONTROL_DB_RECONSTRUCTED",
+    "program_id": "JTP:turtle-selection-development-candidate-v2",
+    "training_episode_id": "JTE:R-104:chongqing-beer-selection-development-2016",
+    "program_reservation_event_id": "JTAE:8",
+    "feedback_control_registration_event_ids": {
+      "R-104:D1-TERMINAL": "JFE:REGISTERED:FBI:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:R-104:D1-TERMINAL:D1_IMPLEMENTATION",
+      "R-104:D2-TERMINAL": "JFE:REGISTERED:FBI:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:R-104:D2-TERMINAL:D2_CUSTOMER_ABSORPTION",
+      "R-104:D3-TERMINAL": "JFE:REGISTERED:FBI:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:R-104:D3-TERMINAL:D3_UNIT_ECONOMICS",
+      "R-104:D4-CASH": "JFE:REGISTERED:FBI:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:R-104:D4-CASH:D4_WORKING_CAPITAL_AND_CASH",
+      "R-104:D5-CAPITAL": "JFE:REGISTERED:FBI:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430:R-104:D5-CAPITAL:D5_CAPITAL_RETURN"
+    },
+    "outcome_release_event_id": "JFE:SELECTION_OUTCOME_RELEASE:SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+    "activated_at": "2026-08-23T17:51:19+00:00",
+    "recorded_at": "2026-08-23T17:51:19+00:00"
+  },
+  "learning_scope": "SELECTION_METHOD_DEVELOPMENT_PENDING_INDEPENDENT_REVIEW",
+  "prohibited_outputs": [
+    "selection_accuracy",
+    "probability",
+    "win_rate",
+    "investment_return",
+    "security_return",
+    "portfolio_conclusion"
+  ]
+}

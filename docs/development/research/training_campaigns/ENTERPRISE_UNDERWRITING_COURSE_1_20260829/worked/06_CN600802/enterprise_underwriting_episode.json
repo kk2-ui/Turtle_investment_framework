@@ -1,0 +1,158 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:C1:WORKED:CN600802:20150415",
+  "company_id": "CN:600802",
+  "company_name": "Fujian Cement",
+  "cutoff_at": "2015-04-15T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "At the FY2014 reporting cutoff, determine whether the newly started unified-sales arrangement had become a controllable commercial lever for Fujian Cement and whether it could support normalized earnings, owner cash, and recovery. This result-known worked case follows the arrangement into FY2015 and keeps company-wide state separate from action-level attribution.",
+  "underwriting_route": "DISTRESSED_REGIONAL_CYCLICAL_ASSET_WITH_UNCONTROLLED_CHANNEL_ARRANGEMENT",
+  "situation_model": {
+    "summary": "Fujian Cement entered 2015 in a difficult regional cement setting and had formally started unified sales through Furun. Subsequent evidence showed that business and personnel integration remained incomplete, all products sold by Furun came from China Resources Cement, Fujian Cement lacked actual control, and Furun stayed outside its consolidation perimeter. Falling receivables and inventory preserved some liquidity, but a sharp gross-margin and operating-cash deterioration plus higher short-term borrowing outweighed any claim of channel success.",
+    "industry_future_thesis": {
+      "horizon": "Three years after the FY2014 cutoff, spanning channel integration, one regional cement downturn, and a possible recovery test.",
+      "most_likely_regime": "Fujian's cement profit pool remains governed by regional demand, overcapacity, selling conditions, utilization, and delivered costs. A joint sales platform may improve coordination, but it does not protect earnings unless Fujian Cement controls decisions, contributes its own products, retains customers, and converts the arrangement into unit economics and cash.",
+      "profit_pool_transmission": "Weak regional selling conditions lower gross margin and plant absorption; a real channel response would need to improve customer reach, product mix, volume, realized selling conditions, logistics, or unit cost. Working-capital liquidation and capital-spending restraint can delay financing stress but do not themselves restore the profit pool.",
+      "company_exposure": "Fujian Cement was exposed through its own regional plants and financing needs, yet the unified-sales vehicle did not sell Fujian Cement product or sit within its control and consolidation boundary. Company-wide margin, cash, receivables, inventory, and borrowing therefore describe corporate condition rather than the arrangement's economic result.",
+      "adaptation": "The formal launch deserves implementation recognition only. Failure to complete business and personnel integration, absence of actual control, and absence of Fujian Cement products mean management had not turned the alliance into an owned customer or operating lever.",
+      "normal_economics": "Treat normalized earnings as deteriorating until core gross margin, utilization, and cash demonstrate recovery. Do not include unified-sales synergy; working-capital release is a liquidity bridge rather than normal profit.",
+      "permanent_loss": "The combination of a large margin decline, a sharp operating-cash fall, and higher short-term borrowing raises permanent-loss exposure through financial pressure and a weaker earnings base. Lower receivables, inventory, and cash capital expenditure preserve recovery capacity but may be non-repeatable if achieved by shrinking activity.",
+      "valuation_treatment": "Use distressed-cycle asset support and conservative EPV for the controlled operating perimeter. Exclude channel synergy and apply stress treatment to financing and further earnings erosion.",
+      "strongest_rival": "The FY2015 deterioration may have been driven mainly by the regional cement cycle rather than management or the sales arrangement, while lower receivables, inventory, and capital spending may have preserved a valuable recovery option; this rival keeps recovery possible but cannot turn an uncontrolled vehicle selling another company's products into Fujian Cement earnings or cash.",
+      "reversal_observations": [
+        "Actual decision control, consolidation, Fujian Cement product participation, direct customer response, and better realized selling conditions or unit cost followed by operating-cash recovery would establish the unified-sales arrangement as a real adaptation lever.",
+        "A recovery in core gross margin, utilization, operating cash, and short-term debt without relying on further working-capital liquidation would support higher normalized earnings and lower financing risk.",
+        "Continued margin and cash deterioration, rising borrowing, repeated funding needs, idle assets, impairment, or another direct loss carrier would strengthen the distressed asset and permanent-loss route."
+      ]
+    }
+  },
+  "business_position": "Fujian Cement had a real regional manufacturing asset base but no demonstrated control over the newly launched unified-sales platform. Because Furun sold only China Resources Cement product during FY2015, the platform did not establish Fujian Cement customer access, own-product absorption, or bargaining position.",
+  "survival_case": "Receivables fell about 66.92%, inventory about 25.17%, and cash capital expenditure about 37.06%, providing a temporary liquidity buffer. Against that, operating cash fell about 63.27% and short-term borrowing rose about 8.05%, so financial resilience deteriorated and recovery depended on core economics rather than continued balance-sheet release.",
+  "adaptation_case": "The unified-sales arrangement was launched, but FY2015 showed incomplete business and personnel integration, no actual control, no consolidation, and no Fujian Cement product participation. Management therefore receives no economic execution credit for customer, channel, margin, or cash outcomes from Furun.",
+  "normalization_case": "Waterfall the evidence from core gross margin to operating cash: sales expenses fell about 12.68%, yet cement gross margin fell about 14.59 percentage points and operating cash contracted sharply. This is deterioration, not merely an unavailable exact field. A future upcycle remains possible, but normalized earnings and owner cash require a conservative depressed-cycle range until responsibility-matched recovery appears.",
+  "permanent_loss_map": "Permanent-loss exposure comes from prolonged regional overcapacity or weak demand, eroded gross margin, operating-cash shortfall, higher short-term funding, and the inability to control a purported commercial response. Working-capital release and lower capital spending reduce near-term pressure but may also reflect contraction and cannot be repeated indefinitely. Direct impairment or insolvency evidence is not asserted; the observed direction is nevertheless worse.",
+  "value_route": {
+    "primary_routes": [
+      "DISTRESSED_CYCLE_ASSET_VALUE",
+      "CONSERVATIVE_EPV_OF_CONTROLLED_OPERATIONS"
+    ],
+    "excluded_routes": [
+      "UNIFIED_SALES_CHANNEL_SYNERGY",
+      "WORKING_CAPITAL_RELEASE_AS_RECURRING_OWNER_CASH"
+    ],
+    "route_reasoning": "The controlled plant base retains recovery option value, but current profitability and cash evidence are impaired. Asset support and conservative earnings power are more appropriate than capitalizing a sales platform Fujian Cement neither controlled nor supplied with product.",
+    "valuation_model_roles": {
+      "primary": [
+        "ASSET_VALUE",
+        "EPV"
+      ],
+      "corroborative": [
+        "SOTP"
+      ],
+      "stress": [
+        "NAV"
+      ]
+    }
+  },
+  "strongest_rival": "The FY2015 deterioration may have been driven mainly by the regional cement cycle rather than management or the sales arrangement, while lower receivables, inventory, and capital spending may have preserved a valuable recovery option; this rival keeps recovery possible but cannot turn an uncontrolled vehicle selling another company's products into Fujian Cement earnings or cash.",
+  "reversal_observations": [
+    "Actual decision control, consolidation, Fujian Cement product participation, direct customer response, and better realized selling conditions or unit cost followed by operating-cash recovery would establish the unified-sales arrangement as a real adaptation lever.",
+    "A recovery in core gross margin, utilization, operating cash, and short-term debt without relying on further working-capital liquidation would support higher normalized earnings and lower financing risk.",
+    "Continued margin and cash deterioration, rising borrowing, repeated funding needs, idle assets, impairment, or another direct loss carrier would strengthen the distressed asset and permanent-loss route."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CN600802:CONTROLLED_CEMENT_OPERATIONS",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "The company retains real production assets and an eventual cycle-recovery option, but gross margin and operating cash deteriorated materially.",
+      "investment_consequence": "Use a depressed-cycle earnings range and asset support; do not assume rapid mean reversion without utilization, margin, and cash evidence.",
+      "promotion_or_resolution_condition": "Promote only after core gross margin, utilization, and operating cash recover without an offsetting rise in short-term funding.",
+      "evidence_ids": [
+        "E-CN600802-MARGIN",
+        "E-CN600802-CASH"
+      ]
+    },
+    {
+      "component_id": "CN600802:FURUN_UNIFIED_SALES",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "Furun remained outside Fujian Cement's control and consolidation perimeter and sold only China Resources Cement product during FY2015.",
+      "investment_consequence": "Assign no channel synergy, customer absorption, or profit contribution to Fujian Cement's base economics.",
+      "promotion_or_resolution_condition": "Require control, own-product participation, customer evidence, unit economics, and operating-cash contribution before any promotion.",
+      "evidence_ids": [
+        "E-CN600802-FURUN",
+        "E-CN600802-CUSTOMER"
+      ]
+    },
+    {
+      "component_id": "CN600802:WORKING_CAPITAL_AND_CAPEX_RELEASE",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "Receivables, inventory, and cash capital expenditure fell, which can preserve liquidity but may reflect contraction and is not recurring operating economics.",
+      "investment_consequence": "Treat the release as temporary survival support, not normalized owner cash or proof of successful adaptation.",
+      "promotion_or_resolution_condition": "A later period must show stable activity, restored margin, positive operating cash, and lower borrowing after the one-off release is exhausted.",
+      "evidence_ids": [
+        "E-CN600802-LIQUIDITY",
+        "E-CN600802-CASH"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E-CN600802-FURUN",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 5: enterprise mechanism and management-execution feedback",
+      "scope": "Unified sales launched, but integration remained incomplete; Furun was uncontrolled and unconsolidated and sold only China Resources Cement products",
+      "used_for": "Business position, adaptation judgment, and exclusion of channel synergy"
+    },
+    {
+      "evidence_id": "E-CN600802-MARGIN",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 5: consolidated company-state comparison",
+      "scope": "Sales expenses fell about 12.68% while cement gross margin fell about 14.59 percentage points",
+      "used_for": "Normal-earnings deterioration and rejection of cost-line-only improvement"
+    },
+    {
+      "evidence_id": "E-CN600802-LIQUIDITY",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 5: receivables, inventory, and cash capital expenditure",
+      "scope": "Receivables, inventory, and cash capital expenditure decreased materially",
+      "used_for": "Temporary liquidity support and recovery-option treatment"
+    },
+    {
+      "evidence_id": "E-CN600802-CASH",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 5: operating cash and short-term borrowing",
+      "scope": "Operating cash fell about 63.27% while short-term borrowing rose about 8.05%",
+      "used_for": "Survival, owner-cash deterioration, and permanent-loss direction"
+    },
+    {
+      "evidence_id": "E-CN600802-CUSTOMER",
+      "source_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "locator": "Round 5: still unknown and next research behavior",
+      "scope": "Direct customer response, Fujian Cement sales volume, realized selling conditions, and unit costs were not established",
+      "used_for": "Local limit on action attribution and explicit promotion condition"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_TEACHING_SOURCE",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "role": "Only result-known source used to compose this worked case"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:C1:CN600802:20150415",
+    "central_path": "Fujian Cement retains a cycle-recovery option in its controlled plant base, but the FY2015 evidence shows weaker gross margin, operating cash, and financing resilience. The unified-sales arrangement did not become Fujian Cement's customer or operating lever, so recovery must come from controlled core economics rather than unearned channel synergy.",
+    "normal_earnings_treatment": "DETERIORATES: use a conservative depressed-cycle range for controlled operations and exclude the uncontrolled sales arrangement from base earnings.",
+    "owner_cash_treatment": "DETERIORATES: working-capital and capital-spending release offer temporary support, but the sharp operating-cash decline and higher short-term borrowing dominate recurring cash treatment.",
+    "permanent_loss_treatment": "DETERIORATES: weak margin, cash, and financing increase the chance that a cyclical downturn becomes balance-sheet or capital impairment, while asset recovery option value remains.",
+    "value_route_treatment": "Route through distressed-cycle asset value and conservative EPV, stress funding needs, and assign no base value to Furun channel synergy.",
+    "economic_directions": {
+      "normal_earnings": "DETERIORATES",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "The FY2015 deterioration may have been driven mainly by the regional cement cycle rather than management or the sales arrangement, while lower receivables, inventory, and capital spending may have preserved a valuable recovery option; this rival keeps recovery possible but cannot turn an uncontrolled vehicle selling another company's products into Fujian Cement earnings or cash.",
+    "monitoring": "Prioritize control and product perimeter, then direct customers, realized selling conditions, unit cost, utilization, gross margin, operating cash, and short-term debt. Separate any future Furun result from Fujian Cement's consolidated company state before changing the channel judgment."
+  },
+  "investment_treatment": "WORKED_CASE_PRICE_FREE: distressed-cycle research and valuation-route treatment only; no security value, BuyBand, report publication, or investment authority."
+}

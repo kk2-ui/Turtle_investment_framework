@@ -1,0 +1,18 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-authorization.v1",
+  "authorization_id": "PEJOA:CN002083:20190501:FY2019:V1",
+  "preoutcome_commit": "e5e73f0",
+  "selection_record_ref": "00_SELECTION_AND_CONTAMINATION_RECORD.md",
+  "judgment_freeze_ref": "01_PREOUTCOME_JUDGMENT_FREEZE.md",
+  "measurement_contract_ref": "02_OUTCOME_MEASUREMENT_CONTRACT.json",
+  "independent_review_ref": "03_INDEPENDENT_PREOUTCOME_REVIEW.md",
+  "independent_review_status": "PREOUTCOME_FREEZE_ACCEPTED",
+  "authorized_source_scope": "ONE_OFFICIAL_FULL_FY2019_ANNUAL_REPORT_FOR_CN002083",
+  "authorized_fields": "ONLY_FIELDS_LISTED_IN_PEJOC:CN002083:20190501:FY2019:V1",
+  "custodian_context": "MEASUREMENT_CONTRACT_ONLY",
+  "outcome_access": "AUTHORIZED_AFTER_THIS_ARTIFACT_IS_COMMITTED",
+  "price_access": "PROHIBITED",
+  "comparative_access": "PROHIBITED",
+  "valuation_access": "PROHIBITED",
+  "investment_access": "PROHIBITED"
+}

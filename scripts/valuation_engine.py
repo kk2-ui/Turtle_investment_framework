@@ -20,6 +20,15 @@ import pandas as pd
 from config import get_token, validate_stock_code
 from format_utils import format_number, format_table, format_header
 
+
+def _prepare_client_inputs(ts_code: str, output_dir: str, client) -> None:
+    """Attach output context and HK report fallback required by assemble_data_pack."""
+    client._store["_output_dir"] = output_dir
+    if ts_code.upper().endswith(".HK"):
+        from tushare_collector import ensure_hk_report_fallback
+
+        ensure_hk_report_fallback(ts_code, output_dir)
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -120,11 +129,40 @@ class ValuationEngine:
         return {
             "close": close,
             "pe_ttm": self._sf(row.get("pe_ttm") or row.get("pe")),
-            "pb": self._sf(row.get("pb")),
+            "pb": self._sf(row.get("pb_ttm") or row.get("pb")),
             "mkt_cap_mm": mkt_cap_mm,
             "total_shares": total_shares,
-            "name": row.get("name", ""),
+            "name": row.get("name") or row.get("fullname") or "",
         }
+
+    def _roe_field(self) -> str:
+        """Return market-specific ROE field name stored in fina_indicators."""
+        return "roe_avg" if self.market in {"HK", "US"} else "roe_waa"
+
+    def _pb_field(self) -> str:
+        """Return market-specific PB field name stored in basic/fina data."""
+        return "pb_ttm" if self.market in {"HK", "US"} else "pb"
+
+    def _income_amount(self, row, field: str) -> float | None:
+        """Read income-statement numeric values in display/store units."""
+        val = self._sf(row.get(field))
+        if val is None:
+            return None
+        return val
+
+    def _cashflow_amount(self, row, field: str) -> float | None:
+        """Read cashflow numeric values in display/store units."""
+        val = self._sf(row.get(field))
+        if val is None:
+            return None
+        return val
+
+    def _balance_amount(self, row, field: str) -> float | None:
+        """Read balance-sheet numeric values in display/store units."""
+        val = self._sf(row.get(field))
+        if val is None:
+            return None
+        return val
 
     @staticmethod
     def _cagr(vals: list[float | None]) -> float | None:
@@ -154,12 +192,13 @@ class ValuationEngine:
         """Classify company and select valuation methods."""
         income_df = self._annual_df("income")
         fi_df = self._annual_df("fina_indicators")
+        roe_field = self._roe_field()
 
         # ROE 5yr avg
         roe_vals = []
-        if not fi_df.empty and "roe_waa" in fi_df.columns:
+        if not fi_df.empty and roe_field in fi_df.columns:
             for _, r in fi_df.head(5).iterrows():
-                v = self._sf(r.get("roe_waa"))
+                v = self._sf(r.get(roe_field))
                 if v is not None:
                     roe_vals.append(v)
         if not roe_vals and not income_df.empty:
@@ -168,8 +207,8 @@ class ValuationEngine:
                 bs_by_year = {str(r["end_date"])[:4]: r for _, r in bs_df.iterrows()}
                 for _, r in income_df.head(5).iterrows():
                     yr = str(r["end_date"])[:4]
-                    np_val = self._sf(r.get("n_income_attr_p"))
-                    eq = self._sf(bs_by_year.get(yr, {}).get("total_hldr_eqy_exc_min_int"))
+                    np_val = self._income_amount(r, "n_income_attr_p")
+                    eq = self._balance_amount(bs_by_year.get(yr, {}), "total_hldr_eqy_exc_min_int")
                     if np_val and eq and eq > 0:
                         roe_vals.append(np_val / eq * 100)
         roe_avg = statistics.mean(roe_vals) if roe_vals else None
@@ -181,12 +220,12 @@ class ValuationEngine:
         payout_avg = statistics.mean(payout_vals) if payout_vals else None
 
         # Revenue CAGR 5yr
-        rev_series = [self._sf(r.get("revenue")) for _, r in income_df.head(5).iterrows()]
+        rev_series = [self._income_amount(r, "revenue") for _, r in income_df.head(5).iterrows()]
         rev_cagr = self._cagr(rev_series)
         rev_cagr_pct = rev_cagr * 100 if rev_cagr is not None else None
 
         # Net profit CAGR 5yr
-        np_series = [self._sf(r.get("n_income_attr_p")) for _, r in income_df.head(5).iterrows()]
+        np_series = [self._income_amount(r, "n_income_attr_p") for _, r in income_df.head(5).iterrows()]
         np_cagr = self._cagr(np_series)
         np_cagr_pct = np_cagr * 100 if np_cagr is not None else None
 
@@ -213,7 +252,7 @@ class ValuationEngine:
             company_type = "混合型"
 
         # Check for loss company override
-        latest_np = self._sf(income_df.iloc[0].get("n_income_attr_p")) if not income_df.empty else None
+        latest_np = self._income_amount(income_df.iloc[0], "n_income_attr_p") if not income_df.empty else None
         if latest_np is not None and latest_np < 0:
             company_type = "成长型"  # force growth (PE/PEG N/A, use PS)
 
@@ -272,7 +311,7 @@ class ValuationEngine:
         bs_df = self._annual_df("balance_sheet")
         finance_exp = None
         if not income_df.empty:
-            finance_exp = self._sf(income_df.iloc[0].get("finance_exp"))
+            finance_exp = self._income_amount(income_df.iloc[0], "finance_exp")
 
         debt_latest = 0.0
         debt_prev = 0.0
@@ -353,8 +392,8 @@ class ValuationEngine:
         # FCF series
         fcf_list = []
         for _, r in cf_df.head(5).iterrows():
-            ocf = self._sf(r.get("n_cashflow_act"))
-            capex = self._sf(r.get("c_pay_acq_const_fiolta"))
+            ocf = self._cashflow_amount(r, "n_cashflow_act")
+            capex = self._cashflow_amount(r, "c_pay_acq_const_fiolta")
             if ocf is not None and capex is not None:
                 fcf_list.append(ocf - abs(capex))
 
@@ -372,7 +411,7 @@ class ValuationEngine:
             g_hist = fcf_cagr * 100
         else:
             # Fallback to revenue CAGR
-            rev_series = [self._sf(r.get("revenue")) for _, r in self._annual_df("income").head(5).iterrows()]
+            rev_series = [self._income_amount(r, "revenue") for _, r in self._annual_df("income").head(5).iterrows()]
             rev_cagr = self._cagr(rev_series)
             g_hist = rev_cagr * 100 if rev_cagr is not None else 5.0
 
@@ -404,7 +443,7 @@ class ValuationEngine:
         tv_pct = pv_tv / ev * 100 if ev > 0 else 0
 
         # Cash and debt
-        cash = self._sf(bs_df.iloc[0].get("money_cap")) if not bs_df.empty else 0
+        cash = self._balance_amount(bs_df.iloc[0], "money_cap") if not bs_df.empty else 0
         cash = cash or 0
         debt_raw = self._interest_bearing_debt(bs_df.iloc[0]) if not bs_df.empty else 0
 
@@ -472,29 +511,29 @@ class ValuationEngine:
             g_terminal = wacc - 2.0
 
         # Historical metrics
-        rev_series = [self._sf(r.get("revenue")) for _, r in income_df.head(5).iterrows()]
+        rev_series = [self._income_amount(r, "revenue") for _, r in income_df.head(5).iterrows()]
         rev_cagr = self._cagr(rev_series)
         rev_cagr_pct = rev_cagr * 100 if rev_cagr is not None else 10.0
 
         # Latest financials
         latest_inc = income_df.iloc[0]
         latest_cf = cf_df.iloc[0]
-        revenue = self._sf(latest_inc.get("revenue")) or 0
-        np_val = self._sf(latest_inc.get("n_income_attr_p")) or 0
+        revenue = self._income_amount(latest_inc, "revenue") or 0
+        np_val = self._income_amount(latest_inc, "n_income_attr_p") or 0
         net_margin = np_val / revenue * 100 if revenue > 0 else 5.0
 
-        ocf = self._sf(latest_cf.get("n_cashflow_act")) or 0
-        capex = abs(self._sf(latest_cf.get("c_pay_acq_const_fiolta")) or 0)
+        ocf = self._cashflow_amount(latest_cf, "n_cashflow_act") or 0
+        capex = abs(self._cashflow_amount(latest_cf, "c_pay_acq_const_fiolta") or 0)
         capex_rev = capex / revenue if revenue > 0 else 0.05
 
         da_components = [
-            self._sf(latest_cf.get("depr_fa_coga_dpba")) or 0,
-            self._sf(latest_cf.get("amort_intang_assets")) or 0,
-            self._sf(latest_cf.get("lt_amort_deferred_exp")) or 0,
+            self._cashflow_amount(latest_cf, "depr_fa_coga_dpba") or 0,
+            self._cashflow_amount(latest_cf, "amort_intang_assets") or 0,
+            self._cashflow_amount(latest_cf, "lt_amort_deferred_exp") or 0,
         ]
         da = sum(da_components)
 
-        cash = self._sf(bs_df.iloc[0].get("money_cap")) if not bs_df.empty else 0
+        cash = self._balance_amount(bs_df.iloc[0], "money_cap") if not bs_df.empty else 0
         cash = cash or 0
         debt_raw = self._interest_bearing_debt(bs_df.iloc[0]) if not bs_df.empty else 0
 
@@ -634,8 +673,9 @@ class ValuationEngine:
         # ROE for sustainable growth
         fi_df = self._annual_df("fina_indicators")
         roe_avg = None
-        if not fi_df.empty and "roe_waa" in fi_df.columns:
-            roe_vals = [self._sf(r.get("roe_waa")) for _, r in fi_df.head(5).iterrows()]
+        roe_field = self._roe_field()
+        if not fi_df.empty and roe_field in fi_df.columns:
+            roe_vals = [self._sf(r.get(roe_field)) for _, r in fi_df.head(5).iterrows()]
             roe_clean = [v for v in roe_vals if v is not None]
             roe_avg = statistics.mean(roe_clean) if roe_clean else None
 
@@ -677,10 +717,10 @@ class ValuationEngine:
         for k in ke_range:
             row = []
             for gs in g_sens_range:
-                if gs >= k:
-                    row.append(None)
-                    continue
                 if use_gordon:
+                    if gs >= k:
+                        row.append(None)
+                        continue
                     v = dps_latest * (1 + gs / 100) / (k / 100 - gs / 100)
                 else:
                     pv1 = 0
@@ -809,17 +849,17 @@ class ValuationEngine:
             return None
 
         # Earnings growth (3yr CAGR first, fallback to 5yr)
-        np_series = [self._sf(r.get("n_income_attr_p")) for _, r in income_df.head(4).iterrows()]
+        np_series = [self._income_amount(r, "n_income_attr_p") for _, r in income_df.head(4).iterrows()]
         g = self._cagr(np_series)
         if g is None or g <= 0:
-            np_series_5 = [self._sf(r.get("n_income_attr_p")) for _, r in income_df.head(5).iterrows()]
+            np_series_5 = [self._income_amount(r, "n_income_attr_p") for _, r in income_df.head(5).iterrows()]
             g = self._cagr(np_series_5)
         if g is None or g <= 0:
             return None
 
         g_pct = g * 100
         if g_pct > 80:
-            np_series_5 = [self._sf(r.get("n_income_attr_p")) for _, r in income_df.head(5).iterrows()]
+            np_series_5 = [self._income_amount(r, "n_income_attr_p") for _, r in income_df.head(5).iterrows()]
             g5 = self._cagr(np_series_5)
             if g5 is not None and g5 > 0:
                 g_pct = g5 * 100
@@ -873,11 +913,11 @@ class ValuationEngine:
         mkt_cap_mm = bi["mkt_cap_mm"]
 
         # Current PS
-        latest_rev = self._sf(income_df.iloc[0].get("revenue"))
+        latest_rev = self._income_amount(income_df.iloc[0], "revenue")
         if not latest_rev or latest_rev <= 0:
             return None
 
-        rev_mm = latest_rev / 1e6 if self.market == "A" else latest_rev / 1e6
+        rev_mm = latest_rev / 1e6 if self.market in {"HK", "US"} else latest_rev / 1e6
         ps_current = mkt_cap_mm / rev_mm if rev_mm > 0 else None
 
         # Historical PS
@@ -893,10 +933,10 @@ class ValuationEngine:
         ps_series = []
         for _, r in income_df.iterrows():
             yr = str(r["end_date"])[:4]
-            rev = self._sf(r.get("revenue"))
+            rev = self._income_amount(r, "revenue")
             if rev and rev > 0 and yr in year_end_prices:
                 mc_yr = year_end_prices[yr] * total_shares
-                rev_yr = rev
+                rev_yr = rev / 1e6 if self.market in {"HK", "US"} else rev
                 ps_yr = mc_yr / rev_yr if rev_yr > 0 else None
                 if ps_yr and ps_yr > 0:
                     ps_series.append(ps_yr)
@@ -962,11 +1002,14 @@ class ValuationEngine:
         cf_df = self._annual_df("cashflow")
         fcf_list = []
         for _, r in cf_df.head(3).iterrows():
-            ocf = self._sf(r.get("n_cashflow_act"))
-            capex = self._sf(r.get("c_pay_acq_const_fiolta"))
+            ocf = self._cashflow_amount(r, "n_cashflow_act")
+            capex = self._cashflow_amount(r, "c_pay_acq_const_fiolta")
             if ocf is not None and capex is not None:
                 fcf_list.append(ocf - abs(capex))
-        fcf_base_mm = (statistics.mean(fcf_list) / 1e6) if fcf_list else None
+        if self.market in {"HK", "US"}:
+            fcf_base_mm = (statistics.mean(fcf_list) / 1e6) if fcf_list else None
+        else:
+            fcf_base_mm = (statistics.mean(fcf_list) / 1e6) if fcf_list else None
 
         implied_g_fcf = None
         fcf_yield = None
@@ -1496,6 +1539,7 @@ def main():
 
     print(f"[valuation_engine] 正在采集 {ts_code} 数据...", file=sys.stderr)
     client = TushareClient(token)
+    _prepare_client_inputs(ts_code, args.output_dir, client)
     if args.no_cache:
         client._cache_enabled = False
     client.assemble_data_pack(ts_code)

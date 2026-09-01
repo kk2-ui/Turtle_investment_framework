@@ -1,0 +1,58 @@
+{
+  "schema_version": "blind-outcome-access-authorization.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "case_id": "BLIND:CN600309:20240501:FY2024",
+  "company": {
+    "ticker": "CN:600309",
+    "name": "万华化学"
+  },
+  "authorized_custodian_role": "fresh isolated outcome custodian",
+  "required_read_only_contracts": [
+    "72_CN600309_BLIND_SELECTION_REGISTER.json",
+    "73_CN600309_FORECASTER_EXECUTION_RECEIPT.json",
+    "74_CN600309_PREOUTCOME_JUDGMENT.json",
+    "75_CN600309_INDEPENDENT_PREOUTCOME_REVIEW.md"
+  ],
+  "authorized_source": {
+    "count": 1,
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "document": "万华化学 FY2024 年度报告",
+    "permitted_use": "仅提取74号工件中三条冻结责任轴所需的FY2024和FY2023比较数，并按其NEGATIVE→POSITIVE→MIXED→LOCAL_UNKNOWN的first-match顺序结算。"
+  },
+  "authorized_axes": [
+    "A_CORE_POLYURETHANE_CUSTOMER_ABSORPTION_AND_SPREAD",
+    "B_PETROCHEMICAL_AND_NEW_MATERIALS_UNIT_ECONOMICS",
+    "C_GROWTH_CAPEX_CASH_CONVERSION_AND_DEBT_LOAD"
+  ],
+  "settlement_rules": [
+    "一个轴的产能、销量、毛利、现金或负债事实不得代替另一个轴。",
+    "项目投产、收入、总体利润、正经营现金或没有减值都不自动构成资本回报。",
+    "缺失字段只令受影响轴LOCAL_UNKNOWN；不得用别的轴填补。",
+    "不得修改74号工件的判断、阈值、场景、责任边界或预先冻结结算顺序。"
+  ],
+  "required_output": {
+    "path": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/77_CN600309_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "must_include": [
+      "唯一官方年报身份、披露日与页码/定位",
+      "每轴原始输入、直接推导、首个命中cell及局部经济含义",
+      "每个LOCAL_UNKNOWN的精确缺失字段和不跨轴理由",
+      "不作方法、迁移、估值或投资行动结论"
+    ]
+  },
+  "prohibited": [
+    "价格、回报、市场表现、新闻、卖方研究、旧派生报告、其他公司或其他结果期资料",
+    "重写结果前判断或以结果改造合同",
+    "总体成功/失败、方法验证、迁移验证、CJO、正式估值、BuyBand、报告或投资权限结论"
+  ],
+  "role_isolation": {
+    "fresh_agent_required": true,
+    "preoutcome_artifacts_read_only": true,
+    "outcome_may_not_be_shared_with_preoutcome_forecaster": true,
+    "postoutcome_reviewer_must_be_fresh_and_separate": true
+  },
+  "browser_cleanup_if_needed": {
+    "skill_must_be_read_before_use": "ego-browser",
+    "completion": "completeTaskSpace(..., { keep: false }) then listTaskSpaces(); when none remain, run /Users/xiami/.codexcc/scripts/quit_ego_lite.py"
+  },
+  "authorization_state": "AUTHORIZED_FOR_SINGLE_FY2024_OFFICIAL_REPORT_ONLY"
+}

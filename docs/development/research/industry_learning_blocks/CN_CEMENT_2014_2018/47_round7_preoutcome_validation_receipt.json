@@ -1,0 +1,42 @@
+{
+  "schema_version": "enterprise-judgment-round7-preoutcome-validation-receipt.v1",
+  "receipt_id": "R7POVR:CN:CEMENT:600585:20140416:V1",
+  "selection_ref": "R7SEL:CN:CEMENT:600585:20140416:V1",
+  "package_ref": "EJMD:CN:CEMENT:600585:20140416:V1",
+  "validated_at": "2026-08-27T08:30:00+00:00",
+  "validation_status": "PRE_OUTCOME_VALID",
+  "mechanical_selection_confirmed": true,
+  "same_evidence_budget_confirmed": true,
+  "full_enterprise_chain_confirmed": true,
+  "judgment_dimensions": [
+    "INITIAL_CONDITIONS",
+    "IMPLEMENTED_MANAGEMENT_ACTION",
+    "EXECUTION",
+    "CUSTOMER_COMPETITION_RESPONSE",
+    "UNIT_ECONOMICS",
+    "WORKING_CAPITAL_CASH_CAPITAL",
+    "ADAPTATION_PERMANENT_LOSS",
+    "STRONGEST_ALTERNATIVE_EXPLANATION"
+  ],
+  "baseline_method_id": "METHOD:CONSOLIDATED_TREND_AND_MANAGEMENT_NARRATIVE:V1",
+  "enhanced_method_id": "METHOD:CUMULATIVE_ENTERPRISE_JUDGMENT_CHAIN:V1",
+  "outcome_source_access_state": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+  "outcome_content_read": false,
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_PREOUTCOME_VALIDATION_RECEIPT",
+  "claim_class": "MULTIDIMENSIONAL_PAIRED_PREOUTCOME_FREEZE_CONFIRMATION",
+  "allowed_outputs": [
+    "PREOUTCOME_FREEZE_CONFIRMATION",
+    "OUTCOME_CUSTODY_REQUEST",
+    "RESEARCH_AGENDA"
+  ]
+}

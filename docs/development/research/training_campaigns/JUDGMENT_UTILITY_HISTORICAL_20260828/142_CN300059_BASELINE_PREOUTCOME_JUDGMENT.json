@@ -1,0 +1,232 @@
+{
+  "schema_version": "historical-holdout-baseline-preoutcome-judgment.v1",
+  "judgment_id": "HOLDOUT_BASELINE_PREOUTCOME_JUDGMENT:CN300059:CUTOFF_2024-05-01:FY2021_FY2023",
+  "issuer": {
+    "issuer_code": "CN300059",
+    "issuer_name": "东方财富"
+  },
+  "as_of_boundary": {
+    "cutoff_date": "2024-05-01",
+    "information_set": "FY2021-FY2023 annual reports only",
+    "outcome_access": false,
+    "prohibited_material_not_used": [
+      "FY2024 and post-cutoff information",
+      "price, return, valuation, and analyst material",
+      "external sources and browser material"
+    ]
+  },
+  "source_map": {
+    "FY2021": {
+      "source_id": "CNINFO:1212623862",
+      "document": "东方财富信息股份有限公司2021年年度报告",
+      "publication_date": "2022-03-19",
+      "used_sections": [
+        "主要会计数据和财务指标",
+        "管理层讨论与分析",
+        "分部信息"
+      ]
+    },
+    "FY2022": {
+      "source_id": "CNINFO:1216145341",
+      "document": "东方财富信息股份有限公司2022年年度报告",
+      "publication_date": "2023-03-18",
+      "used_sections": [
+        "主要会计数据和财务指标",
+        "管理层讨论与分析",
+        "分部信息",
+        "商誉"
+      ]
+    },
+    "FY2023": {
+      "source_id": "CNINFO:1219307793",
+      "document": "东方财富信息股份有限公司2023年年度报告",
+      "publication_date": "2024-03-15",
+      "used_sections": [
+        "主要会计数据和财务指标",
+        "管理层讨论与分析",
+        "可能面对的风险",
+        "分部信息",
+        "商誉"
+      ]
+    }
+  },
+  "best_current_view": {
+    "judgment": "东方财富 remains a substantial internet wealth-management franchise, but the disclosed FY2021-FY2023 evidence is more consistent with a market-sensitive platform whose activity and distribution economics weakened than with a demonstrated, steadily compounding conversion of customer assets into owner cash. Reported profit resilience is real, but its quality and cash conversion need to be separated from the activity carrier before it can support a stronger normal-earnings conclusion.",
+    "inference_confidence": "moderate",
+    "outcome_probability": "No calibrated probability is asserted from this three-report packet."
+  },
+  "enterprise_judgments": [
+    {
+      "rank": 1,
+      "judgment": "The fund-distribution franchise still has material reach, but its observed activity carrier deteriorated materially across FY2021-FY2023 and is a warning against anchoring on peak platform throughput.",
+      "evidence": [
+        "天天基金 reported non-money-market public-fund holdings of RMB 673.9bn at FY2021, RMB 584.5bn at FY2022, and RMB 549.6bn at FY2023; its average daily active visitors were 3.147m, 2.137m, and 1.477m respectively. [FY2021, FY2022, FY2023]",
+        "Reported financial electronic-commerce-service revenue moved in the same direction, from RMB 5.073bn in FY2021 to RMB 4.326bn in FY2022 and RMB 3.625bn in FY2023. [FY2021, FY2022, FY2023]",
+        "The company describes its securities, fund-distribution, and data services as an internet wealth-management ecosystem, so user reach can plausibly feed more than one service. [FY2021]"
+      ],
+      "mechanism": "Weaker capital-market participation and investor demand can reduce fund transactions, assets held on the distribution platform, and engagement; this weakens the opportunity set for distribution revenue. The reported activity and electronic-commerce revenue directions are consistent with that mechanism.",
+      "strongest_countercase": "The decline may predominantly be a cyclical market and fund-performance effect, rather than customer loss or weaker competitive position. A market recovery could lift flows, engagement, and monetisation without requiring a rebuilt franchise.",
+      "current_investor_treatment": "Treat the platform as a valuable but cyclical demand carrier. Do not extrapolate FY2021 activity or distribution revenue as a normal run-rate, while preserving recovery upside as a conditional scenario.",
+      "reversal_observation": "A later annual report showing stabilising or rising non-money fund holdings and engagement together with renewed electronic-commerce revenue growth would weaken this judgment; continued activity erosion despite a healthier market backdrop would strengthen it."
+    },
+    {
+      "rank": 2,
+      "judgment": "Consolidated earnings were resilient relative to revenue, but the packet does not establish that the FY2023 reported profit is a clean measure of repeatable core normal earnings.",
+      "evidence": [
+        "Revenue was RMB 13.094bn, RMB 12.486bn, and RMB 11.081bn in FY2021-FY2023, while attributable profit was RMB 8.553bn, RMB 8.509bn, and RMB 8.193bn. [FY2021, FY2022, FY2023]",
+        "FY2023 securities revenue was RMB 7.194bn and financial electronic-commerce revenue RMB 3.625bn, both below FY2022; the company says capital-market conditions affected operations. [FY2023]",
+        "The FY2023 report states that investment income and fair-value-change gains, not included in operating revenue, were RMB 2.236bn and rose sharply year on year. [FY2023]",
+        "The segment note reports revenue but does not allocate total assets, liabilities, or period expenses to segments because of mixed operations. [FY2021, FY2022, FY2023]"
+      ],
+      "mechanism": "A lower market-activity cycle can pressure brokerage and fund-distribution revenue while investment returns and group-level cost or capital effects cushion consolidated profit. Without segment profit and cost allocation, the packet cannot show how much of the consolidated profit is recurring platform economics versus variable financial-result support.",
+      "strongest_countercase": "A low-cost digital franchise may genuinely retain high operating leverage, and the near-stable three-year attributable-profit series could represent durable earnings power rather than merely a temporary cushion.",
+      "current_investor_treatment": "Use a cycle-sensitive earnings-capacity range rather than a single FY2023 profit figure as normal earnings. Retain the resilience as evidence of business quality, but do not give the FY2023 non-revenue investment and fair-value gains the same persistence assumption as recurring service economics.",
+      "reversal_observation": "A subsequent annual report that shows recovery in both core segment revenue and attributable profit without a similarly material non-revenue investment/fair-value contribution would support a higher normal-earnings interpretation."
+    },
+    {
+      "rank": 3,
+      "judgment": "The business is not shown to be facing an immediate permanent-loss event, but owner-cash quality and capital-side downside remain less certain than the income statement alone suggests.",
+      "evidence": [
+        "Consolidated operating cash flow changed from RMB 8.974bn in FY2021 to RMB 1.277bn in FY2022 and negative RMB 3.138bn in FY2023, despite positive attributable profit in each year. [FY2021, FY2022, FY2023]",
+        "FY2021 disclosed large broker-related balance-sheet items, including RMB 63.929bn of agency securities-trading payables, alongside material financial assets; these make consolidated cash-flow interpretation different from that of a simple operating company. [FY2021]",
+        "Goodwill was RMB 2.946bn in FY2022 and FY2023, principally related to securities and other subsidiaries. The audited reports identified impairment testing as a key audit matter, but reported no new impairment in those years. [FY2022, FY2023]"
+      ],
+      "mechanism": "In a securities-and-distribution group, reported operating cash flow can be affected by balance-sheet and customer-related financial activity as well as earnings. A sustained weakening in core activity, competitive take-rate, or the economics of the acquired securities businesses could therefore reduce both normal earnings and recoverable franchise value, but one negative consolidated cash-flow year does not itself prove that outcome.",
+      "strongest_countercase": "The cash-flow swings may be largely timing and financial-business balance-sheet movements; stable reported profits, no fresh goodwill impairment, and broad user reach may mean permanent-loss risk is contained rather than rising sharply.",
+      "current_investor_treatment": "Do not equate consolidated CFO with distributable owner cash, either positively or negatively. Permanent-loss assessment remains conditional on whether the core revenue carriers recover and on whether later disclosures reconcile cash movements and preserve the economics of the securities and distribution businesses.",
+      "reversal_observation": "Evidence of recurring core-revenue deterioration together with persistent weak cash conversion, material credit or impairment losses, or an impairment of the securities-related goodwill would materially worsen this judgment; a clear cash-flow reconciliation with resilient core earnings would improve it."
+    }
+  ],
+  "material_activity_customer_assets_carrier": {
+    "carrier": "天天基金服务平台: non-money-market public-fund holdings, fund subscription/purchase transaction count and value, and average daily active visitors.",
+    "reported_perimeter": "The carrier is reported for 天天基金/the 天天基金 service platform. [FY2021, FY2022, FY2023]",
+    "economic_conversion_claim": "The economically plausible path is platform assets and engagement -> fund transactions and distribution activity -> financial electronic-commerce revenue -> consolidated earnings and owner cash. The packet supports the first directional relationship: FY2021-FY2023 holdings, activity, transaction value, and electronic-commerce revenue all declined. It does not provide a disclosed reconciliation from the platform carrier to segment revenue, segment profit, or owner cash.",
+    "perimeter_boundary": "The related income figure is reported for the company's financial electronic-commerce-service segment, whereas the activity and asset figures are reported for 天天基金/the service platform. Segment expenses, assets, and liabilities are not allocated. Therefore the carrier and the economic-output figures should not be combined into a per-asset monetisation, margin, or cash-conversion claim.",
+    "current_investor_treatment_supported": "Use the carrier as a material demand and franchise-health signal and as a reason to resist peak-throughput extrapolation. Treat any conversion to revenue, normal earnings, owner cash, or valuation as unproven beyond the observed directional association."
+  },
+  "management_execution_treatment": {
+    "judgment": "Management appears to have maintained operations and pursued product and efficiency initiatives through a difficult market, but the packet does not yet establish that these initiatives have improved monetisation or reduced cyclicality.",
+    "evidence": [
+      "FY2023 describes internal operating improvement and AI capability work; its self-developed financial large model entered internal testing in January 2024. [FY2023]",
+      "FY2021-FY2023 attributable profits remained near RMB 8bn while revenue and fund-platform activity fell. [FY2021, FY2022, FY2023]"
+    ],
+    "treatment": "Regard the AI and operating initiatives as implementation and preparedness evidence, and profit resilience as partial execution evidence. Do not promote them to proven customer retention, revenue conversion, owner-cash improvement, or counter-cyclical competitive advantage until the relevant customer, utilisation, and economics evidence appears.",
+    "strongest_countercase": "The actions may already be protecting engagement and cost structure, with the payoff obscured by the market cycle; a recovery could reveal effective execution quickly."
+  },
+  "normal_earnings_handling": {
+    "treatment": "The three reported attributable-profit figures demonstrate a large profitable franchise, but the base normal-earnings view is below a mechanical use of FY2023 attributable profit. It is a qualitative, cycle-sensitive range because activity-linked revenue declined and FY2023 included a material investment and fair-value gain outside operating revenue. No earnings number is manufactured from incomplete segment economics.",
+    "evidence_boundary": "The packet lacks reportable-segment profit, expense, asset, liability, and cash-flow allocation. [FY2021, FY2022, FY2023]",
+    "what_would_change_it": "A later disclosure separating recurring brokerage/distribution earnings from financial-result support and showing renewed carrier-to-revenue conversion."
+  },
+  "owner_cash_handling": {
+    "treatment": "Do not capitalise a single consolidated CFO figure as owner cash. The FY2021-FY2023 CFO series is volatile and the reported financial-business balance sheet contains large broker/customer-related items; use the income statement only as a provisional indicator of capacity, with owner-cash confidence lower until notes reconcile the cash movements.",
+    "not_asserted": "The negative FY2023 CFO is not treated as proof of a cash crisis or permanent impairment, and the positive FY2021 CFO is not treated as proof of steady distributable cash."
+  },
+  "permanent_loss_handling": {
+    "treatment": "Permanent-loss risk is moderate and conditional, rather than an immediate conclusion. The major path is a prolonged erosion of activity, distribution economics, and securities earnings that is not offset by a market-cycle recovery, potentially exposing goodwill and franchise value. The current reports do not show this event, but neither do they isolate enough segment economics to dismiss it.",
+    "avoidance_of_false_precision": "No solvency probability, impairment amount, or terminal value is inferred from the packet."
+  },
+  "conditional_scenarios": [
+    {
+      "name": "optimistic",
+      "condition": "Capital-market participation and fund investor demand recover; 天天基金 holdings, activity, and transaction throughput stabilise and turn up, while securities activity improves.",
+      "enterprise_effect": "The existing digital distribution and brokerage reach converts the recovery into renewed electronic-commerce and securities revenue, and group earnings retain operating leverage. Better evidence of recurring cash conversion would follow.",
+      "normal_earnings_and_owner_cash_treatment": "Normal earnings move upward from the conservative cycle-sensitive base; owner-cash confidence improves only if cash-flow notes support the recovery.",
+      "permanent_loss_effect": "Lower, because activity decline proves cyclical rather than structural.",
+      "directional_valuation_implication": "Upward relative to a case that assumes FY2021-FY2023 activity decline persists."
+    },
+    {
+      "name": "base",
+      "condition": "The franchise remains relevant, but fund-platform activity stays below FY2021 levels and market-sensitive revenue recovers only unevenly; financial-result support is not assumed to repeat at the FY2023 contribution level.",
+      "enterprise_effect": "The group remains profitable but demonstrates lower and more cyclical normal earnings than a peak-throughput extrapolation would imply.",
+      "normal_earnings_and_owner_cash_treatment": "Use a broad, below-peak normal-earnings range and keep owner-cash confidence discounted until the cash-flow bridge is available.",
+      "permanent_loss_effect": "Contained but not eliminated, because the franchise retains reach while conversion remains unproven.",
+      "directional_valuation_implication": "More cautious than a linear platform-scale conversion case; no valuation number or action is asserted."
+    },
+    {
+      "name": "adverse",
+      "condition": "Weak market activity persists, fee competition or regulation compresses the economics of brokerage and fund distribution, and platform assets, engagement, and transactions continue to decline.",
+      "enterprise_effect": "Core securities and electronic-commerce revenue fall further; non-core financial-result gains fail to offset that decline, exposing lower normal earnings and potentially goodwill or other capital-side stress.",
+      "normal_earnings_and_owner_cash_treatment": "Normal earnings and owner-cash expectations decline materially; owner-cash uncertainty becomes an adverse evidence rather than merely a measurement limitation if reconciliations remain weak.",
+      "permanent_loss_effect": "Materially higher, especially if impairment, credit, or sustained core-revenue deterioration appears.",
+      "directional_valuation_implication": "Downward."
+    }
+  ],
+  "directional_valuation_implication": {
+    "judgment": "The available evidence supports a more cautious valuation direction than a thesis that capitalises FY2021 platform activity or treats FY2023 profit as wholly recurring. It retains upside if the customer/activity carrier recovers and demonstrably converts to recurring economics.",
+    "excluded": [
+      "valuation number",
+      "multiple",
+      "price target",
+      "investment action"
+    ]
+  },
+  "local_unknowns_and_current_treatment": [
+    {
+      "unknown": "The exact bridge from 天天基金 platform assets, visitors, and transactions to the financial electronic-commerce segment's revenue, take rate, profit, and cash generation.",
+      "why_material": "It decides whether the visible activity carrier can substantiate a normal-earnings and owner-cash conversion claim.",
+      "current_treatment": "Keep only the directional demand signal; do not calculate a per-asset conversion or assume a segment cash margin."
+    },
+    {
+      "unknown": "The recurring share of FY2023 attributable profit after separating investment and fair-value gains outside operating revenue from sustainable core economics.",
+      "why_material": "It can materially change normal earnings and valuation direction.",
+      "current_treatment": "Do not treat all FY2023 profit as recurring; use a qualitative cycle-sensitive range."
+    },
+    {
+      "unknown": "The causes of the FY2021-FY2023 consolidated CFO swing and the portion that represents durable distributable owner cash rather than financial-business balance-sheet movement.",
+      "why_material": "It can materially change cash conversion and permanent-loss treatment.",
+      "current_treatment": "Do not infer a cash crisis or a steady owner-cash yield from the disclosed aggregate CFO series."
+    },
+    {
+      "unknown": "Whether initiatives described as efficiency improvement and AI capability have produced measurable user retention, product uptake, revenue, or margin benefits.",
+      "why_material": "It determines whether management execution can reduce the franchise's observed cyclicality.",
+      "current_treatment": "Treat them as execution options, not as established economic conversion."
+    }
+  ],
+  "fy2024_annual_report_mechanically_resolvable_cells": [
+    {
+      "rank": 1,
+      "annual_report_location": "主要会计数据和财务指标",
+      "cell": "FY2024 operating cash flow from operating activities (经营活动产生的现金流量净额).",
+      "decision_changed_if_resolved": "Separates a one-year cash-flow anomaly from persistent weak cash conversion and therefore changes owner-cash and permanent-loss treatment."
+    },
+    {
+      "rank": 2,
+      "annual_report_location": "分部信息 / 报告分部的财务信息",
+      "cell": "FY2024 financial electronic-commerce-service revenue (金融电子商务服务营业总收入).",
+      "decision_changed_if_resolved": "Tests whether the declining fund-platform carrier is still converting into weaker distribution revenue or has stabilised."
+    },
+    {
+      "rank": 3,
+      "annual_report_location": "管理层讨论与分析 / 天天基金业务运营数据",
+      "cell": "FY2024 天天基金非货币市场公募基金保有规模.",
+      "decision_changed_if_resolved": "Tests the direction of the material asset carrier that precedes any distribution-revenue recovery claim."
+    },
+    {
+      "rank": 4,
+      "annual_report_location": "主要会计数据和财务指标",
+      "cell": "FY2024 attributable profit after non-recurring items (归属于上市公司股东的扣除非经常性损益的净利润).",
+      "decision_changed_if_resolved": "Tests whether earnings resilience persists after excluding disclosed non-recurring items, sharpening the normal-earnings range."
+    }
+  ],
+  "frozen_baseline_treatment": {
+    "explicit_treatment": "Treat the disclosed 天天基金 activity and non-money-fund holdings as a material franchise-demand indicator, but do not convert those platform metrics into recurring segment revenue, normal earnings, owner cash, or a platform valuation claim without an issuer-provided bridge and responsibility-matched economics. Treat FY2023 consolidated profit as resilient but not wholly normal until that bridge and the cash-flow reconciliation are available.",
+    "rank_one_next_research_action": "In the FY2024 annual report, first trace whether the 天天基金 non-money-fund-holdings carrier and the financial electronic-commerce segment revenue move together, then use the operating-cash-flow cell to determine whether a revenue recovery is accompanied by a more credible owner-cash bridge.",
+    "materiality_of_later_comparison": "A later treatment that grants or rejects this carrier-to-economics bridge could materially alter normal earnings, owner cash, permanent-loss assessment, valuation direction, and the rank-one next research action.",
+    "freeze_status": "Frozen before any FY2024 or post-cutoff access."
+  },
+  "source_limit_attestation": {
+    "only_sources_used": [
+      "FY2021",
+      "FY2022",
+      "FY2023"
+    ],
+    "no_outcome_access": true,
+    "no_comparison_to_any_other_forecaster": true,
+    "allocation_used": {
+      "report_reading_turns": 3,
+      "synthesis_turns": 1,
+      "total_turns": 4
+    }
+  }
+}

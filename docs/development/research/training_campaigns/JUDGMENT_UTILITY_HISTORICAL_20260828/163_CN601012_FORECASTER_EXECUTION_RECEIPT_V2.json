@@ -1,0 +1,43 @@
+{
+  "receipt_id": "CN601012_FORECASTER_EXECUTION_RECEIPT_V2",
+  "receipt_version": "2.0",
+  "receipt_date": "2026-08-29",
+  "case_identity": "BLIND:CN601012:20240501:FY2024",
+  "issuer_name_at_cutoff": "隆基绿能",
+  "security_code": "601012",
+  "purpose": "Pre-reveal repair of the FY2024 annual-report resolution contract returned in 162; this receipt does not acquire, identify, or interpret FY2024 outcome material.",
+  "authorized_inputs_read": [
+    "158_BLIND11_FEEDBACK_LINKED_SELECTION_REGISTER.json",
+    "159_CN601012_CUTOFF_BEFORE_PACKET_RECEIPT.json",
+    "161_CN601012_PREOUTCOME_JUDGMENT.json",
+    "162_CN601012_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "FY2021_1213161635.txt",
+    "FY2022_1216664294.txt",
+    "FY2023_1219925312.txt"
+  ],
+  "repair_scope": {
+    "root_cause": "REASONING",
+    "repair": "Freeze the field scope, arithmetic, threshold, and every outcome-to-judgment treatment for FY2024_CELL_1, FY2024_CELL_2, FY2024_CELL_3, and FY2024_CELL_4 before reveal.",
+    "preserved": [
+      "The three enterprise judgments J1_CAPACITY_AND_VOLUME, J2_PRICE_AND_UNIT_ECONOMICS, and J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS.",
+      "The FY2021-FY2023 evidence boundary and the exclusive 2024-05-01 cutoff.",
+      "The absence of market-price, return, valuation-number, analyst, and investment-action authority."
+    ]
+  },
+  "frozen_contract_summary": {
+    "FY2024_CELL_1": "Actual external cell sales plus actual total module shipments, both in GW and both from the FY2024 report, are the only eligible arithmetic; the frozen threshold is 90GW.",
+    "FY2024_CELL_2": "The consolidated 主营业务分产品情况 row labelled 组件及电池 is tested against FY2023 revenue of RMB99,199,497,228.50 and gross margin of 18.38%; all four margin/revenue quadrants are resolved.",
+    "FY2024_CELL_3": "The consolidated operating-cash-less-cash-capex screen is operating cash flow minus cash paid to acquire fixed, intangible, and other long-lived assets; zero is the fixed threshold.",
+    "FY2024_CELL_4": "The consolidated cash buffer, exact financing components, RMB37,886,066,738.04 FY2023 baseline, 20% weakening threshold, and RMB1,351,416,111.91 impairment-materiality threshold are fixed; all resolved CELL_3/CELL_4 combinations map to J3."
+  },
+  "pre_reveal_attestation": {
+    "repaired_forecaster_frozen_before_outcome_acquisition": true,
+    "FY2024_outcome_metadata_identified_or_read": false,
+    "FY2024_outcome_body_read": false,
+    "external_or_browser_source_read": false,
+    "market_price_return_valuation_or_analyst_material_read": false,
+    "other_campaign_curriculum_or_method_artifact_read": false,
+    "repository_commit_created": false
+  },
+  "output": "164_CN601012_PREOUTCOME_JUDGMENT_V2.json"
+}

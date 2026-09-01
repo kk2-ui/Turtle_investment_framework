@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/monitoring_event.schema.json",
+  "title": "Turtle append-only monitoring event",
+  "type": "object",
+  "required": ["schema_version", "event_id", "event_type", "report_id", "snapshot_fingerprint", "observed_at", "source_evidence", "recorded_at", "event_fingerprint"],
+  "properties": {
+    "schema_version": {"const": "research-monitoring-event.v2"},
+    "event_id": {"type": "string", "pattern": "^MON:"},
+    "event_type": {"enum": ["disclosure_observed", "fact_observation", "trigger_evaluation", "trigger_event", "prediction_resolution", "decision_review", "decision_revision", "return_observation", "process_observation", "thesis_action", "monitoring_failure"]},
+    "report_id": {"type": "string", "minLength": 1},
+    "snapshot_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observed_at": {"type": "string"},
+    "source_evidence": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "sha256", "disclosed_at"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "disclosed_at": {"type": "string"},
+          "data_as_of": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "recorded_at": {"type": "string"},
+    "event_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true
+}

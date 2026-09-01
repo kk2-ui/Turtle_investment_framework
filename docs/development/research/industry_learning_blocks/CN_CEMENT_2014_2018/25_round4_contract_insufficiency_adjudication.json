@@ -1,0 +1,118 @@
+{
+  "schema_version": "enterprise-mechanism-feedback-superseding-adjudication.v1",
+  "adjudication_id": "EMFSA:CN:CEMENT:600802:20140416:V1",
+  "supersedes": {
+    "commit": "ee3f4c3",
+    "artifact_ref": "EMFS:CN:CEMENT:600802:20140416:V1",
+    "transition_id": "CCR:600802:20140416:20150415",
+    "selected_rank": 17
+  },
+  "adjudication_status": "CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY",
+  "outcome_access_confirmed": true,
+  "permanent_no_refreeze": true,
+  "training_admission": "DENIED",
+  "invalidated_claims": [
+    "ALL_NINE_CELL_SETTLEMENT_LABELS",
+    "LOCAL_H_A_SUPPORTED_WITHOUT_ACTION_ATTRIBUTION",
+    "FORECAST_OBSERVED_DIRECTION",
+    "FORECAST_OBSERVED_VALUE",
+    "REAL_CELL_LEVEL_MECHANISM_FEEDBACK_COMPLETED",
+    "MECHANISM_FEEDBACK"
+  ],
+  "specific_attribution_correction": "Production-line and technical-upgrade commissioning cannot support IMPLEMENTATION or EXECUTION of the frozen channel, terminal-partner and logistics plan.",
+  "independent_review_findings": [
+    {
+      "finding_id": "P1:CANONICAL_J1_BYPASSED",
+      "priority": "P1",
+      "root_cause_class": "MODEL",
+      "why_below_standard": "The test registered CN:600802 into a caller-owned in-memory SQLite database and invoked private J2/J3 compilers. The company was never admitted through the canonical Frozen J1 production identity and public projection boundary.",
+      "economic_impact": "A result can appear traceable while its enterprise boundary and frozen cutoff state are not the production object used by later judgments, creating a material risk of training on a non-replayable company state.",
+      "missing_facts": [
+        "canonical Frozen J1 registration receipt",
+        "public J2 projection receipt",
+        "public J3 request projection receipt"
+      ],
+      "prohibited_assumption": "A caller-owned test registry is equivalent to canonical production registration.",
+      "executable_remediation": "Register the complete J1 bundle through the canonical registry control layer and call only public J2/J3 APIs using Frozen J1 identity.",
+      "acceptance_criteria": "The builder has no caller connection or private compiler dependency, canonical lookup succeeds by Frozen J1 identity, and public J2/J3 outputs bind that identity."
+    },
+    {
+      "finding_id": "P1:MEASUREMENT_CONTRACT_NOT_MECHANICAL",
+      "priority": "P1",
+      "root_cause_class": "MODEL",
+      "why_below_standard": "The nine measurement cells omitted outcome period, responsibility boundary, field identity, unit, formula or event threshold, ordered labels, composite-signal rules and sibling-local mismatch propagation.",
+      "economic_impact": "The same filing can be assigned different operating, execution, cash or loss labels by researcher discretion, which can falsely upgrade management quality or action causality.",
+      "missing_facts": [
+        "atomic source fields",
+        "period and responsibility boundary per field",
+        "unit and computation rule",
+        "event or numeric threshold",
+        "ordered label precedence",
+        "conflict and composite rules",
+        "local UNKNOWN and MEASUREMENT_MISMATCH propagation"
+      ],
+      "prohibited_assumption": "Narrative or aggregate improvement uniquely settles implementation, execution, customer response or action effect.",
+      "executable_remediation": "Split composites into atomic cells and freeze a static Outcome Measurement Contract containing every missing identity and decision rule before outcome access.",
+      "acceptance_criteria": "A custodian can mechanically produce one label per atomic cell, and a synthetic mismatch changes only declared dependants while siblings remain OBSERVED or UNKNOWN."
+    },
+    {
+      "finding_id": "P2:SELECTION_SELF_REPORTED_COMPLETIONS",
+      "priority": "P2",
+      "root_cause_class": "REASONING",
+      "why_below_standard": "The pre-outcome package supplied completed_company_ids instead of deriving them from immutable roster rows and formal completion or settlement receipts.",
+      "economic_impact": "A judgment owner can skip inconvenient companies or cutoffs by editing package input, introducing outcome-linked sampling bias into enterprise learning.",
+      "missing_facts": [
+        "receipt-to-roster transition projection",
+        "formal disposition for the outcome-contaminated transition"
+      ],
+      "prohibited_assumption": "Caller-declared completed companies are equivalent to mechanically verified prior feedback receipts.",
+      "executable_remediation": "Derive completed companies and consumed transitions from formal receipts, then select the first remaining immutable roster row without a lifecycle or ease filter.",
+      "acceptance_criteria": "Changing caller-supplied company IDs cannot change selection; changing a validated receipt set or immutable roster can."
+    }
+  ],
+  "retained_post_outcome_data": {
+    "source_ref": "CNINFO:600802:ANN:20150324:1200733162",
+    "retention_reason": "The official raw values may document data availability and support post-outcome teaching, but cannot settle the frozen mechanism contract.",
+    "retained_classes": [
+      "POST_OUTCOME_TEACHING",
+      "DATA_COVERAGE"
+    ],
+    "prohibited_uses": [
+      "DIRECTIONAL_LEARNING",
+      "FORECAST_SCORING",
+      "MANAGEMENT_EXECUTION_LABEL",
+      "ACTION_EFFECT_ATTRIBUTION",
+      "ENTERPRISE_LEARNING_CANDIDATE",
+      "METHOD_TRANSFER"
+    ]
+  },
+  "active_training_projection": {
+    "transition_status": "CONTRACT_INVALID_POST_OUTCOME_TEACHING_ONLY",
+    "allowed_outputs": [
+      "POST_OUTCOME_TEACHING",
+      "DATA_COVERAGE",
+      "RESEARCH_AGENDA"
+    ],
+    "cell_settlements": [],
+    "forecast_settlements": [],
+    "mechanism_feedback": null,
+    "enterprise_learning_status": "DENIED"
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "mechanism_feedback": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_MECHANISM_FEEDBACK_SUPERSEDING_ADJUDICATION",
+  "claim_class": "CONTRACT_INSUFFICIENCY_AND_POST_OUTCOME_QUARANTINE",
+  "allowed_outputs": [
+    "POST_OUTCOME_TEACHING",
+    "DATA_COVERAGE",
+    "RESEARCH_AGENDA"
+  ]
+}

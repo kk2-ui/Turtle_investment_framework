@@ -1,0 +1,50 @@
+{
+  "receipt_type": "BLIND9_FORECASTER_EXECUTION_RECEIPT",
+  "status": "ISSUED",
+  "candidate": {
+    "security_id": "CN:600276",
+    "legal_name": "江苏恒瑞医药股份有限公司"
+  },
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "role": "forecaster",
+  "fixed_source_boundary": {
+    "packet_manifest_receipt_read": "109_CN600276_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json",
+    "selection_register_read": "108_CN600276_BLIND_EXTENSION_SELECTION_REGISTER.json",
+    "official_source_bodies_read": [
+      {
+        "source_key": "FY2021_ORIGINAL_ANNUAL_REPORT",
+        "fiscal_year": 2021,
+        "announcement_id": "1213053755",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2022-04-23/1213053755.PDF"
+      },
+      {
+        "source_key": "FY2022_ORIGINAL_ANNUAL_REPORT",
+        "fiscal_year": 2022,
+        "announcement_id": "1216518776",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2023-04-22/1216518776.PDF"
+      },
+      {
+        "source_key": "FY2023_ORIGINAL_ANNUAL_REPORT",
+        "fiscal_year": 2023,
+        "announcement_id": "1219650115",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2024-04-18/1219650115.PDF"
+      }
+    ],
+    "source_substitution_or_expansion": false,
+    "temporary_local_handling": "The three permitted PDFs were downloaded to this isolated temporary directory and text was extracted locally for page-cited reading. The temporary PDFs and extracted text are removed before issue; only this receipt and the pre-outcome judgment remain."
+  },
+  "negative_attestation": {
+    "fy2024_or_later_source_or_metadata_accessed": false,
+    "outcome_material_accessed": false,
+    "market_price_return_or_valuation_material_accessed": false,
+    "analyst_material_accessed": false,
+    "browser_search_or_ego_browser_used": false,
+    "other_company_material_accessed": false,
+    "other_repository_documents_campaigns_curriculum_tests_or_local_outputs_accessed": false,
+    "outcome_aware_reviewer_feedback_received": false
+  },
+  "deliverable": {
+    "preoutcome_judgment_path": "/tmp/BLIND9_HENGRUI_FORECASTER/111_CN600276_PREOUTCOME_JUDGMENT.json",
+    "contains": "A cutoff-fixed enterprise judgment, locally bounded unknowns, and mechanically settleable FY2024 annual-report cells; it contains no valuation, price, return, investment action, method-validation, or transfer claim."
+  }
+}

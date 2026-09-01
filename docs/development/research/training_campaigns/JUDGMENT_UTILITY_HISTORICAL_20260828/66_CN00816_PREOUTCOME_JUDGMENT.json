@@ -1,0 +1,445 @@
+{
+  "schema_version": "blind_forecaster.preoutcome_judgment.v3",
+  "company": {
+    "name": "金茂物业服务发展股份有限公司",
+    "ticker": "HK:00816"
+  },
+  "cutoff": "2024-05-01",
+  "forecast_horizon": "FY2024",
+  "outcome_status": "SEALED",
+  "judgment_scope": "仅凭截至cutoff可得的2022及2023官方年报作企业判断；不使用价格、回报或FY2024结果；不作正式估值或买卖建议。",
+  "executive_call": {
+    "overall_status": "经营韧性尚可、增长质量承压、资本可得性需打折",
+    "confidence": "MEDIUM_HIGH",
+    "synthesis": "基础物管正在替代地产链增值服务成为收入支柱，规模和第三方覆盖扩大，但2023年收入增长11.0%只带来母公司拥有人应占利润0.4%的增长，整体及基础物管毛利率继续下行。经营现金流在2023年明显修复，说明业务并非没有现金创造力；但大额关联方履约保证金、关联应收、并购计划以及母公司现金极少，使‘集团有现金’不能直接推出‘普通股股东可自由取得这些现金’。最可能的FY2024形态是基础物管继续增长、利润增速落后于规模、经营现金尚可但资本继续被并购和关联业务占用。"
+  },
+  "three_judgments": [
+    {
+      "id": "J1",
+      "title": "收入引擎向基础物管迁移，但尚未证明规模增长能转化为等比例利润",
+      "status": "MIXED_NEGATIVE",
+      "confidence": "HIGH",
+      "mechanism_chain": {
+        "state": "2023年在管面积84.2百万平方米，同比增长48.0%；物管收入增长30.5%至人民币1,574.9百万元，占收入58.2%。与此同时，非业主增值服务收入下降13.7%，社区增值服务收入下降3.1%。",
+        "management_choice_or_no_action": "管理层选择继续聚焦核心城市、商企及城市服务、第三方外拓和并购，并增加品质投入；没有通过收缩低回报规模来保护基础物管利润率。",
+        "customer_operating_effect": "基础物管带来更经常性的客户关系，第三方在管面积占比由37.7%升至46.6%，降低单纯依赖母集团开发交付的方向性风险。基础物管毛利率由18.2%(2021)降至16.8%(2022)、再降至15.8%(2023)；年报已披露的解释是2022年防疫投入及2023年品质提升投入增加。外包采购和新项目爬坡可能影响单位经济，但两份年报没有量化证明它们已导致上述毛利率下降，故仅作为待验证机制，不作既成原因。",
+        "cash_capital_mechanism": "2023年收入增长11.0%，毛利只增1.7%，母公司拥有人应占利润仅增0.4%；规模增加若继续伴随低毛利和应收增长，增量收入会先占用营运资本而不是等比例形成股东收益。"
+      },
+      "key_evidence": [
+        "2023年报pp.14-18、20-22：在管面积、业务分部收入及毛利率。",
+        "2022年报pp.15-24：2021-2022的在管面积、来源结构及连续毛利率轨迹。",
+        "2023年报p.65：最大客户（中化控股及其附属公司、合营及联营公司合并口径）占收入31.5%，五大客户占35.5%。"
+      ],
+      "strongest_countercase": "新增在管项目有爬坡期，基础物管的经常性收入质量高于地产链增值服务；2023年全职员工由2,614人降至2,098人、员工成本大致持平而面积大增，后续密度和数字化效益可能滞后释放。",
+      "flip_facts": {
+        "to_positive": "FY2024基础物管收入继续双位数增长，同时基础物管毛利率稳定或回升至至少15.8%，母公司拥有人应占利润增速明显高于2023年且应收增长不快于收入。",
+        "to_negative": "基础物管面积继续高速增长但基础物管毛利率跌破14.5%，总利润下降，或一年以上贸易应收继续显著增加。"
+      }
+    },
+    {
+      "id": "J2",
+      "title": "经营现金修复是真实改善，但现金质量和股东可得性弱于表面净现金",
+      "status": "MIXED_WITH_MATERIAL_CONSTRAINT",
+      "confidence": "HIGH",
+      "mechanism_chain": {
+        "state": "2023年经营现金流净额为人民币450.8百万元，高于年内利润342.9百万元；集团现金及现金等价物为1,252.0百万元且无银行借款。",
+        "management_choice_or_no_action": "管理层维持车位代理独家模式，允许向金茂关联方支付最高达项目最低总售价的可退回押金；2023年末相关车位代销履约保证金约502.0百万元，并把115.0百万元存于关联财务公司。没有把集团现金大规模留在香港母公司。",
+        "customer_operating_effect": "押金支持高毛利车位代理佣金与关联客户协同，但使客户关系同时成为资金占用渠道；关联贸易应收361.4百万元、关联方其他应收564.7百万元进一步扩大单一生态风险。",
+        "cash_capital_mechanism": "2023年末香港母公司现金仅2.9百万元，可供分派储备142.9百万元，而拟派末期股息约139.6百万元；集团现金要成为普通股股东现金，仍取决于附属公司上划、外汇及税务安排和董事会资本分配。故不能把1,252.0百万元集团现金全额视为parent owner cash。"
+      },
+      "key_evidence": [
+        "2023年报pp.85-86：经营现金流450.8百万元、资本性购买约56.0百万元、股息现金流出159.2百万元。",
+        "2023年报pp.131-132：关联方其他应收564.7百万元、集团现金1,252.0百万元、其中115.0百万元存于中化财务。",
+        "2023年报pp.68-70：车位代理押金机制及2024-2026每日最高余额上限人民币600百万元。",
+        "2023年报pp.60、150-151：母公司可供分派储备142.9百万元、母公司现金2.9百万元、留存利润142.9百万元。"
+      ],
+      "strongest_countercase": "履约保证金按合同可退回、关联方为大型央企体系且审计师未对持续关联交易出具保留结论；2023年经营现金流已覆盖基础资本开支和已付股息，集团层短期流动性并不紧张。",
+      "flip_facts": {
+        "to_positive": "FY2024关联方履约保证金及其他应收绝对额下降，经营现金流继续覆盖利润、资本开支和股息，且母公司现金或可供分派储备在派息后得到实质补充。",
+        "to_negative": "关联方押金接近或超过600百万元上限、关联应收出现明显减值或延迟回收，经营现金流低于利润的60%，或母公司需要举债/资本动作才能维持分派。"
+      }
+    },
+    {
+      "id": "J3",
+      "title": "管理层以并购和组织提效追求第二增长曲线，资本配置纪律尚待新一轮验证",
+      "status": "PROVISIONAL_CONCERN",
+      "confidence": "MEDIUM_HIGH",
+      "mechanism_chain": {
+        "state": "2022年以人民币450.0百万元收购首置服务，形成249.1百万元商誉及86.2百万元合约权利；2024年1月又同意以人民币323.8百万元现金收购润物嘉业。2023年末商誉未减值。",
+        "management_choice_or_no_action": "管理层选择把IPO余款重新分配至物管并购，并以自有资金支付润物嘉业部分代价；同时更换董事长/首席执行官、削减全职员工并推进数字化和供应链提效。没有回购股份，维持每股0.17港元末期股息。",
+        "customer_operating_effect": "并购可快速增加核心城市项目密度、商写与高端住宅能力，组织提效可降低单位人工；但整合、酒店运营和新项目质量会决定客户留存、收费与毛利，而不是面积本身。",
+        "cash_capital_mechanism": "首置收购自收购日至2022年末贡献利润23.7百万元，按450.0百万元代价看回报需要持续增长与协同；新收购将再消耗约323.8百万元现金。若利润仍停滞或发生商誉/合约权利减值，永久损失会从‘现金被占用’升级为‘资本不可收回’。"
+      },
+      "key_evidence": [
+        "2022年报pp.136-138：首置服务收购代价、可识别净资产、商誉、收入和利润贡献。",
+        "2023年报pp.61、151：润物嘉业现金代价人民币323.8百万元及期后事项。",
+        "2023年报pp.10-11、19-20、28-31：战略升级、提质增效、员工数量及管理层变化。",
+        "2023年报p.65：年内无购买、出售或赎回本公司上市证券。"
+      ],
+      "strongest_countercase": "首置服务2022年部分年度利润贡献23.7百万元且2023年商誉测试未显示减值；并购目标位于核心城市、物管占比较高，项目密度和采购协同可能使实际回报优于静态首年观察。",
+      "flip_facts": {
+        "to_positive": "FY2024披露的被收购业务利润、现金回收和项目留存支持双位数资本回报，整体利润增长重新跟上收入，且无商誉/合约权利减值。",
+        "to_negative": "出现商誉或合约权利减值、并购后利润率继续下降、被收购业务现金贡献不足，或继续进行大额收购而不披露可验证的整合回报。"
+      }
+    }
+  ],
+  "current_treatment": {
+    "management": {
+      "rating": "MIXED_PROVISIONAL",
+      "treatment": "认可其执行规模扩张、第三方拓展、组织降本和2023现金修复的能力；对资本配置只给临时通过，因为董事长与CEO均有变动，且第二笔大额并购尚无结果。管理层承诺不能替代FY2024的利润、回款和并购回报证据。"
+    },
+    "normal_earnings": {
+      "rating": "BELOW_REPORTED_TO_NEAR_REPORTED",
+      "treatment": "以人民币280-330百万元作为当前保守的归母正常盈利观察带，而非把2023年337.3百万元机械外推。理由是高毛利非业主增值服务下滑、基础物管毛利率连续下降、2023利润停滞；反向支撑是基础物管经常性收入增长和2023经营现金修复。该范围是企业判断锚，不是估值。",
+      "prohibited_inference": "不把面积增长率直接当作盈利增长率。"
+    },
+    "owner_cash": {
+      "rating": "GROUP_GENERATIVE_BUT_PARENT_CONSTRAINED",
+      "treatment": "集团层2023经营现金流450.8百万元，减去购买物业设备32.3百万元及无形资产23.7百万元后，得到约394.8百万元的粗略经营owner-cash代理；这不是自由现金的正式定义，也未扣除并购。股东层只确认母公司现金2.9百万元和可供分派储备142.9百万元，绝不把集团现金1,252.0百万元全额冒充parent owner cash。",
+      "capital_claims": "至少需单列502.0百万元关联方车位保证金、115.0百万元关联财务公司存款、323.8百万元已同意新收购代价及正常营运资金。"
+    },
+    "permanent_loss": {
+      "rating": "MODERATE_NOT_IMMINENT",
+      "treatment": "短期偿付风险低：无银行借款、流动比率1.57、经营现金为正。永久损失主要不是债务爆雷，而是三条资本路径：关联方资金长期占用或信用恶化；并购商誉/合约权利无法产生回报；低毛利规模扩张稀释每股经济价值。控股股东体系同时是客户、资金占用对手方与控制人，使该风险需要高于普通净现金物管公司处理。",
+      "unknown_limit": "无法从两份年报判断关联方开发商在FY2024的实际付款能力；该UNKNOWN仅限制关联信用轴，不取消对资金集中度的负面判断。"
+    },
+    "valuation_direction": {
+      "direction": "REQUIRE_DISCOUNT_AND_EARNINGS_CONFIRMATION",
+      "treatment": "估值方向应以保守正常盈利为主锚，只给集团净现金有限、分层的价值，不给一元现金一元股权价值；在基础物管毛利率企稳、关联资金占用下降和并购回报得到验证前，应要求相对纯独立、现金可上划的同类企业有折价或更高收益要求。",
+      "not_performed": "未计算目标价、倍数、公允价值、预期回报或买卖结论。"
+    }
+  },
+  "scenarios": {
+    "optimistic": {
+      "operating_path": "基础物管双位数增长，第三方项目密度提升，基础物管毛利率至少稳定在15.8%；数字化和人员效率转化为费用率下降。",
+      "cash_capital_path": "经营现金流不低于归母利润，关联方保证金回落，新并购在首年即贡献现金利润且无减值。",
+      "investor_readthrough": "正常盈利上移、现金折价收窄、管理层资本配置评级转正。"
+    },
+    "base": {
+      "operating_path": "基础物管继续增长，非业主及社区增值服务弱稳，综合收入增长但利润增速明显落后，基础物管毛利率在15%-16%附近。",
+      "cash_capital_path": "经营现金保持正向但部分用于并购和关联保证金；集团现金充足，母公司可分派能力仍依赖上划。",
+      "investor_readthrough": "企业可持续但经济进展有限，维持对现金和并购的折价。"
+    },
+    "pessimistic": {
+      "operating_path": "地产链服务继续收缩，基础物管毛利率跌破14.5%，应收账龄恶化，利润下降。",
+      "cash_capital_path": "关联保证金/应收继续上升，新并购吸收现金却不贡献利润，并触发商誉或合约权利减值。",
+      "investor_readthrough": "从增长质量问题升级为永久资本损失，正常盈利和现金可信度同时下调。"
+    }
+  },
+  "outcome_settlement": {
+    "purpose": "FY2024结果解封后，在J1、J2、J3三个责任匹配的轴内分别按顺序只匹配第一个满足的cell，避免事后挑选指标或让无共同经济载体的事实互相代判。",
+    "allowed_axis_outputs": [
+      "POSITIVE",
+      "NEGATIVE",
+      "MIXED",
+      "LOCAL_UNKNOWN"
+    ],
+    "independence_rule": "三个轴各自结算。单年经营现金流只能进入J2；关联信用、保证金、中化财务存款和母公司资金可得性只能进入J2；并购减值及被收购业务贡献只能进入J3。J1只可使用剔除年报明示并购相关商誉/合约权利减值后的J1责任匹配归母利润；不得让同一并购减值经报告归母利润再次改变J1。重大事件只影响其责任匹配轴。",
+    "missing_data_rule": "UNKNOWN不等于条件为假。每轴先检验已披露且足以触发的NEGATIVE，再检验完整POSITIVE，再检验完整MIXED；缺少该轴必需字段且没有已披露的充分负面事件时，该轴输出LOCAL_UNKNOWN。缺失不跨轴传播。尤其是基础物管分部收入或毛利率缺失时J1=LOCAL_UNKNOWN，J2和J3仍按各自事实独立结算。若年报确认并购相关商誉/合约权利减值、但不能直接计算其归母影响，则仅将J1利润子条件记为UNKNOWN；J1仍可由基础物管收入、毛利率及非关联应收的已披露方向作局部结算，且不得因该并购减值或受其影响的报告归母利润判负面。",
+    "boolean_and_threshold_definitions": {
+      "and_or_precedence": "每个cell均以括号明确AND/OR；不得依赖自然语言中的隐含优先级。",
+      "material_acquisition_impairment": "FY2024确认的单项并购相关商誉或合约权利减值金额 >= 人民币33.7百万元（约为FY2023归母利润337.315百万元的10%），或 >= 该受影响资产FY2024期初账面值的10%；两者任一满足即为重大。",
+      "material_related_credit_event": "年报明确披露关联贸易应收、关联方其他应收或履约保证金发生违约、重组或合同到期后延迟偿还；或相关年度信用减值损失同时 >= 人民币16.9百万元（约为FY2023归母利润的5%）且 >= 对应期初余额的5%。",
+      "significant_balance_increase": "期末余额同比增加至少10%且绝对增加至少人民币20百万元；两项必须同时满足。",
+      "significant_aged_receivable_increase": "一年以上非关联贸易应收毛额同比增加至少20%且绝对增加至少人民币10百万元；两项必须同时满足。",
+      "high_speed_area_growth": "基础物管在管面积同比增长至少20%。",
+      "large_new_acquisition": "新承诺的单项现金收购代价 >= FY2024期初集团现金及现金等价物的25%，或 >= 人民币300百万元；两者任一满足。",
+      "group_cash_coverage": "FY2024期末集团现金及现金等价物 /（已披露未来12个月到期的未付现金收购代价 + 已承诺资本开支现金付款 + 已宣派但未付股息）；分母各项只计尚未支付者，分母为零时记为充分覆盖。",
+      "parent_post_dividend_replenishment": "（本公司单体现金 - 已宣派未付股息）>= 人民币20百万元，或（本公司可供分派储备 - 已宣派未付股息）>= 人民币20百万元；且所用口径较FY2023同口径至少改善人民币20百万元。两者任一满足，方为实质补充。",
+      "j1_adjusted_parent_profit": "J1责任匹配归母利润 = 年报披露的母公司拥有人应占利润，加回年报明示计入当期损益、且可由披露直接确定归属母公司拥有人影响金额的并购相关商誉减值及合约权利减值。FY2024与FY2023均按同一口径计算后比较同比增速。若年报确认该类减值但只披露无法直接归属到归母利润的总额，或缺少可直接计算的减值影响金额，则J1利润子条件为UNKNOWN；不得自行估计税务或非控股权益影响，也不得改用受减值影响的报告归母利润。一般信用减值、其他无形资产摊销及未明示与并购相关的项目不作加回。",
+      "profit_return": "年报对单项重大被收购业务单独披露的FY2024利润贡献 / 该项现金收购代价；直接使用报告期实际贡献，不自行年化。未披露记为UNKNOWN，不等于0。",
+      "operating_cash_return": "年报对单项重大被收购业务单独披露的FY2024经营现金贡献 / 该项现金收购代价；直接使用报告期实际贡献，不自行年化。未披露记为UNKNOWN，不等于0。",
+      "j3_return_divergence": "同一项重大被收购业务的profit_return及operating_cash_return均已披露，且[一项 >= 10%、另一项 < 5%] OR [利润贡献与经营现金贡献一正一负]。在无重大并购减值及其他独立充分J3负面事件时，该项分化进入MIXED，不得选择性取用其中一个回报。",
+      "matched_low_return_deterioration": "低于5%的profit_return只与该被收购业务年报单独披露的毛利率或利润率同比下降至少2个百分点匹配；低于5%的operating_cash_return只与该业务年报单独披露的经营现金贡献同比下降（绝对额减少大于0）匹配。利润率恶化不得替经营现金回报作匹配证据，经营现金恶化也不得替利润回报作匹配证据。"
+    },
+    "axis_tables": [
+      {
+        "axis": "J1_OPERATING_AND_CUSTOMER_ABSORPTION",
+        "responsibility": "基础物管规模是否被利润率、剔除年报明示并购相关商誉/合约权利减值后的J1责任匹配归母利润和非关联客户回款质量吸收。不得使用CFO、关联方信用、并购减值本身或受该减值影响的未调整报告归母利润代判。",
+        "essential_fields": [
+          "基础物管收入及同比增速",
+          "基础物管毛利率",
+          "J1责任匹配归母利润及同比增速；如并购相关商誉/合约权利减值的归母影响不能由年报直接计算，仅该利润子条件为UNKNOWN",
+          "非关联贸易应收毛额及同比增速；如年报只披露总额和关联方额，可直接相减",
+          "一年以上非关联贸易应收毛额（仅用于对应负面条件）"
+        ],
+        "ordered_cells": [
+          {
+            "order": 1,
+            "output": "NEGATIVE",
+            "first_match_condition": "（基础物管收入及毛利率均已披露） AND [（（基础物管收入同比增长 > 0 OR 基础物管在管面积同比增长 >= 20%） AND 基础物管毛利率 < 14.5%） OR （J1责任匹配归母利润同比下降 > 10% AND 该利润子条件非UNKNOWN AND 基础物管毛利率 < 15.8%） OR （一年以上非关联贸易应收毛额同比增加 >= 20% AND 绝对增加 >= 人民币10百万元 AND 基础物管毛利率 <= 15.8%）]。若并购相关减值的归母影响不能直接计算，第二个利润分支不可触发，但其余两个经营/回款分支仍独立结算。",
+            "interpretation": "仅J1负面：规模、责任匹配利润率/利润或非关联客户回款质量没有形成经营闭环；不据此宣告J2或J3失败。并购减值只进入J3，绝不以受其影响的未调整报告归母利润让J1重复翻负。"
+          },
+          {
+            "order": 2,
+            "output": "POSITIVE",
+            "first_match_condition": "（基础物管收入同比增长 >= 10%） AND （基础物管毛利率 >= 15.8%） AND （J1责任匹配归母利润同比增长 >= 10%） AND （非关联贸易应收毛额同比增速 <= 集团收入同比增速） AND （上述四项均已披露或可由年报披露直接计算）。",
+            "interpretation": "仅J1正面：基础物管规模已被利润率、利润和非关联客户回款质量共同吸收。"
+          },
+          {
+            "order": 3,
+            "output": "MIXED",
+            "first_match_condition": "（基础物管收入、基础物管毛利率及非关联贸易应收毛额均已披露或可直接计算） AND （未满足本轴NEGATIVE） AND （未满足本轴POSITIVE） AND [（J1责任匹配归母利润可直接计算） OR （仅因年报确认并购相关商誉/合约权利减值但无法直接计算其归母影响而使J1利润子条件为UNKNOWN）]。",
+            "interpretation": "J1维持混合：已能观察基础物管收入、毛利率和非关联客户回款方向，但尚未达到完整正负翻转阈值；并购减值金额不可直接调整时只保留利润子条件UNKNOWN，不用未调整报告利润代判。"
+          },
+          {
+            "order": 4,
+            "output": "LOCAL_UNKNOWN",
+            "first_match_condition": "未满足本轴前三个cell；包括基础物管分部收入或毛利率缺失，或除上述并购减值调整数不可直接计算这一特定情形外，缺失字段使正负方向均无法局部判断。",
+            "interpretation": "仅J1未解决；不得由整体利润、单年CFO、关联事件或并购事件补位，J2/J3继续独立结算。"
+          }
+        ]
+      },
+      {
+        "axis": "J2_GROUP_CASH_RELATED_CREDIT_AND_PARENT_AVAILABILITY",
+        "responsibility": "集团现金转换、关联信用/资金占用以及香港母公司实际可得性。不得由并购减值或基础物管毛利率代判。",
+        "baseline_2023_rmb_million": {
+          "related_party_other_receivables": 564.703,
+          "parking_agency_performance_deposit_with_related_parties": 502.0,
+          "gross_related_party_trade_receivables": 361.427,
+          "deposit_at_sinochem_finance": 115.0,
+          "group_cash_and_cash_equivalents": 1252.038,
+          "company_only_cash": 2.923,
+          "company_distributable_reserves": 142.906,
+          "proposed_final_dividend_approx": 139.6
+        },
+        "essential_fields_for_nonnegative_settlement": [
+          "经营现金流、年内利润、资本开支现金付款及已付股息",
+          "集团现金及现金等价物及未来12个月已披露未付现金承诺",
+          "关联方其他应收款、其中车位代销履约保证金（必须分别披露或可直接识别）",
+          "关联方贸易应收毛额",
+          "存放中化财务的存款",
+          "本公司单体现金、可供分派储备及已宣派未付股息"
+        ],
+        "ordered_cells": [
+          {
+            "order": 1,
+            "output": "NEGATIVE",
+            "first_match_condition": "[经营现金流 < 0] OR [年内利润 > 0 AND 经营现金流 < 年内利润的60%] OR [发生material_related_credit_event定义的关联信用事件] OR [车位代销履约保证金 >= 人民币570百万元（2024-2026年600百万元上限的95%）] OR [关联方其他应收款满足significant_balance_increase] OR [关联方贸易应收毛额满足significant_balance_increase] OR [中化财务存款 > 人民币120百万元的已披露日终上限，或中化财务被明确披露为无法按约支取] OR [group_cash_coverage < 1.0] OR [本公司明确需要借款、发行股本或其他资本动作才能支付已宣派股息]。",
+            "interpretation": "仅J2负面。若触发项只是单年现金转换转弱，结论只限于现金转换，不能写成关联违约、并购失败或永久损失已经实现；若触发项是关联信用事件，永久损失表述也只限于相应关联资产。"
+          },
+          {
+            "order": 2,
+            "output": "POSITIVE",
+            "first_match_condition": "（经营现金流 >= 年内利润） AND （经营现金流 >= 资本开支现金付款 + 已付股息） AND （关联方其他应收款 < 人民币564.703百万元） AND （其中车位代销履约保证金 < 人民币502.0百万元） AND （关联方贸易应收毛额 < 人民币361.427百万元） AND （中化财务存款 <= 人民币115.0百万元） AND （group_cash_coverage >= 1.5） AND （满足parent_post_dividend_replenishment） AND （没有material_related_credit_event） AND （上述字段全部披露或可直接计算）。",
+            "interpretation": "仅J2正面：关联其他应收/保证金与关联贸易应收分别改善，经营现金和集团现金覆盖成立，且母公司派息后现金或可分派能力得到实质补充。"
+          },
+          {
+            "order": 3,
+            "output": "MIXED",
+            "first_match_condition": "（本轴essential_fields_for_nonnegative_settlement全部披露或可直接计算） AND （未满足本轴NEGATIVE） AND （未满足本轴POSITIVE）。",
+            "interpretation": "J2维持混合或受约束：集团现金生成、关联信用和母公司可得性已有足够事实，但没有同向达到正面或负面阈值。"
+          },
+          {
+            "order": 4,
+            "output": "LOCAL_UNKNOWN",
+            "first_match_condition": "未满足本轴前三个cell；包括关联方其他应收/保证金、关联贸易应收、集团现金覆盖或母公司派息后资金能力中的任一必需字段缺失，且没有已披露的充分J2负面事件。",
+            "interpretation": "仅J2未解决；不得由J1经营表现或J3并购减值补位，J1/J3继续独立结算。"
+          }
+        ]
+      },
+      {
+        "axis": "J3_ACQUISITION_CAPITAL_ALLOCATION",
+        "responsibility": "并购现金代价是否分别形成可观察的被收购业务利润回报或经营现金回报，以及是否发生并购资产损失。profit_return与operating_cash_return必须分别计算；不得把未披露的一项当作0、事后择优取用，或由单年集团CFO及关联信用代判。",
+        "material_acquisitions_in_scope": "首置服务人民币450.0百万元收购及润物嘉业人民币323.8百万元现金收购；FY2024新增符合large_new_acquisition定义的交易亦纳入。",
+        "essential_fields_for_nonnegative_settlement": [
+          "每项范围内重大被收购业务单独可归属的FY2024利润贡献及经营现金贡献分别记录；每项收购至少披露其中一项，未披露项为UNKNOWN而非0",
+          "对应现金收购代价",
+          "并购相关商誉及合约权利减值",
+          "被收购项目留存或重大客户流失（仅在年报披露时使用，不因未披露单独判负面）",
+          "只有使用低于5%回报的负面分支时，才需要该项回报对应的利润率或经营现金恶化证据"
+        ],
+        "ordered_cells": [
+          {
+            "order": 1,
+            "output": "NEGATIVE",
+            "first_match_condition": "[发生material_acquisition_impairment定义的重大并购减值] OR [某项范围内重大被收购业务至少披露利润贡献或经营现金贡献一项，且该项业务所有已披露贡献均 <= 0] OR [某项范围内重大被收购业务至少一项已披露的profit_return或operating_cash_return < 5%，对应满足matched_low_return_deterioration，且该项业务不满足j3_return_divergence] OR [FY2024又承诺large_new_acquisition，而首置服务或润物嘉业仍未披露任何可归属利润或经营现金贡献]。",
+            "interpretation": "仅J3负面：并购资本损失、与匹配经营恶化同时出现的低回报、所有可观察贡献均不为正，或继续在回报不可观察时投入大额资本。只披露一种贡献且该贡献 <= 0即可结算负面，另一种未披露仍为UNKNOWN而不是0；若两种均披露而高低分化或正负相反，则在没有重大减值或其他独立充分负面事件时进入MIXED。"
+          },
+          {
+            "order": 2,
+            "output": "POSITIVE",
+            "first_match_condition": "（每项范围内重大被收购业务均单独披露FY2024利润贡献或经营现金贡献至少一项） AND （每项至少一项已披露的profit_return或operating_cash_return >= 10%） AND （任何已披露利润贡献或经营现金贡献均不为负） AND （每项业务均不满足j3_return_divergence） AND （没有并购相关商誉或合约权利减值） AND （若披露项目留存，则没有重大客户或项目流失）。",
+            "interpretation": "仅J3正面：每项重大收购至少一种可观察贡献支持双位数实际回报，且没有已披露负贡献、回报分化或减值；不得以整体利润增长、单年集团CFO或无减值单独代替。"
+          },
+          {
+            "order": 3,
+            "output": "MIXED",
+            "first_match_condition": "（每项范围内重大被收购业务均披露至少一项可归属利润或经营现金贡献） AND （未满足本轴NEGATIVE） AND （未满足本轴POSITIVE）；明确包括同一项业务的profit_return与operating_cash_return均披露且一项 >= 10%、另一项 < 5%，或两项贡献一正一负。",
+            "interpretation": "J3仍待验证但已有可观察证据；资本配置尚未达到明确正负翻转。双指标高低分化或正负相反时必须保留MIXED，不得选择性取利润回报或经营现金回报。"
+          },
+          {
+            "order": 4,
+            "output": "LOCAL_UNKNOWN",
+            "first_match_condition": "未满足本轴前三个cell；尤其是首置服务或润物嘉业没有单独披露任何FY2024利润或经营现金贡献，且没有已披露的充分J3负面事件。",
+            "interpretation": "仅J3局部未知。没有单独贡献且无其他充分J3负面事件时必须为LOCAL_UNKNOWN；无减值、整体利润增长、经营现金良好或关联回款良好均不能把未披露的并购回报推定为成功或把未披露贡献当作0。"
+          }
+        ]
+      }
+    ],
+    "overall_synthesis": {
+      "form": "AXIS_VECTOR_ONLY",
+      "output": "[J1 output, J2 output, J3 output]",
+      "rule": "总体综合只是三个独立轴结果的向量及各轴触发事实，不设置新的总门、不选唯一总cell、不取多数票，也不允许任何单轴事件覆盖其他轴。投资者对正常盈利、现金折价和并购资本配置的后续处理分别读取责任匹配轴；只有某轴直接承载的损失才可改变该轴的永久损失判断。"
+    },
+    "reviewer_counterexamples": [
+      {
+        "id": "R1_IMPAIRMENT_ONLY",
+        "facts": "基础物管收入同比增长至少10%、毛利率至少15.8%、非关联贸易应收增速不快于集团收入，剔除年报明示并可直接计算的并购相关商誉/合约权利减值后，J1责任匹配归母利润同比增长至少10%；报告归母利润仅因达到阈值的并购减值而同比下降超过10%。J2全部正面条件满足。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "POSITIVE",
+          "NEGATIVE"
+        ],
+        "prohibited_result": "不得使用仅因并购减值下降的未调整报告归母利润把J1或J2判负面；该减值只让J3判负面。"
+      },
+      {
+        "id": "R2_ONE_YEAR_CFO_NEGATIVE_ONLY",
+        "facts": "经营现金流单年为负；没有关联违约或并购减值，被收购业务现金贡献支持至少10%回报，J1全部正面条件满足。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "NEGATIVE",
+          "POSITIVE"
+        ],
+        "prohibited_result": "不得把单年CFO为负写成J3失败或总体永久损失已经显性化。"
+      },
+      {
+        "id": "R3_RELATED_DEFAULT_ONLY",
+        "facts": "关联贸易应收发生达到阈值的重大违约；基础物管经营质量稳定且J1字段完整，被收购业务回报介于5%至10%且无减值。",
+        "expected_axis_vector": [
+          "MIXED",
+          "NEGATIVE",
+          "MIXED"
+        ],
+        "prohibited_result": "不得由关联违约代判并购失败。"
+      },
+      {
+        "id": "R4_ACQUISITION_CONTRIBUTION_MISSING",
+        "facts": "J1和J2全部正面条件满足；没有并购减值，但首置服务或润物嘉业的可归属利润及经营现金贡献均未披露，且没有新增大额收购。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "POSITIVE",
+          "LOCAL_UNKNOWN"
+        ],
+        "prohibited_result": "不得以整体运营、现金良好或无减值把J3转正。"
+      },
+      {
+        "id": "R5_RELATED_COMPONENTS_DIVERGE",
+        "facts": "关联方其他应收持平、履约保证金下降，但关联贸易应收同比增加至少20%且绝对增加至少人民币20百万元，母公司派息后未获实质补充；J1及J3正面条件满足。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "NEGATIVE",
+          "POSITIVE"
+        ],
+        "prohibited_result": "不得把其他应收持平概括为全部关联信用改善，也不得让集团CFO覆盖代替母公司可得性。"
+      },
+      {
+        "id": "R6_SEGMENT_MARGIN_MISSING",
+        "facts": "归母利润同比持平、经营现金为正，但基础物管毛利率缺失；J2全部正面条件满足；并购贡献缺失且没有J3负面事件。",
+        "expected_axis_vector": [
+          "LOCAL_UNKNOWN",
+          "POSITIVE",
+          "LOCAL_UNKNOWN"
+        ],
+        "prohibited_result": "不得以归母利润和正经营现金把J1吸收到稳定cell，也不得阻止J2按已披露事实结算。"
+      },
+      {
+        "id": "R7_ONLY_PROFIT_CONTRIBUTION_NEGATIVE",
+        "facts": "J1和J2全部正面条件满足；某项范围内重大被收购业务只披露FY2024利润贡献且profit_return为负，经营现金贡献未披露；其他范围内重大收购至少披露一种非负贡献，没有并购减值或新增大额收购。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "POSITIVE",
+          "NEGATIVE"
+        ],
+        "prohibited_result": "经营现金贡献UNKNOWN不等于0，也不阻止已披露负利润贡献使J3唯一结算为NEGATIVE。"
+      },
+      {
+        "id": "R8_ONLY_OPERATING_CASH_CONTRIBUTION_NEGATIVE",
+        "facts": "J1和J2全部正面条件满足；某项范围内重大被收购业务只披露FY2024经营现金贡献且operating_cash_return为负，利润贡献未披露；其他范围内重大收购至少披露一种非负贡献，没有并购减值或新增大额收购。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "POSITIVE",
+          "NEGATIVE"
+        ],
+        "prohibited_result": "利润贡献UNKNOWN不等于0，也不阻止已披露负经营现金贡献使J3唯一结算为NEGATIVE。"
+      },
+      {
+        "id": "R9_DUAL_RETURN_HIGH_LOW_DIVERGENCE",
+        "facts": "J1和J2全部正面条件满足；某项范围内重大被收购业务同时披露profit_return为12%及operating_cash_return为3%，且披露匹配的经营现金证据恶化；其他范围内重大收购至少披露一种5%至10%的正回报。没有并购减值、新增大额收购或其他独立充分J3负面事件。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "POSITIVE",
+          "MIXED"
+        ],
+        "prohibited_result": "不得选择12%把J3判POSITIVE，也不得选择3%及匹配恶化把J3判NEGATIVE；双指标一高一低必须唯一结算为MIXED。"
+      }
+    ],
+    "per_axis_missing_counterexamples": [
+      {
+        "missing_axis": "J1",
+        "facts": "基础物管分部毛利率未披露；J2和J3各自全部正面字段完整。",
+        "expected_axis_vector": [
+          "LOCAL_UNKNOWN",
+          "POSITIVE",
+          "POSITIVE"
+        ]
+      },
+      {
+        "missing_axis": "J2",
+        "facts": "本公司单体现金或可供分派储备未披露，且没有充分J2负面事件；J1和J3各自全部正面字段完整。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "LOCAL_UNKNOWN",
+          "POSITIVE"
+        ]
+      },
+      {
+        "missing_axis": "J3",
+        "facts": "被收购业务利润及经营现金贡献均未披露，且没有充分J3负面事件；J1和J2各自全部正面字段完整。",
+        "expected_axis_vector": [
+          "POSITIVE",
+          "POSITIVE",
+          "LOCAL_UNKNOWN"
+        ]
+      }
+    ]
+  },
+  "axis_limited_unknowns": [
+    {
+      "axis": "2024并购回报",
+      "unknown": "润物嘉业交易在cutoff前刚完成，年报未提供可用于计算收购回报的完整财务信息。",
+      "judgment_preserved": "因此不预设收购成功或失败，但现金占用和整合风险已确定存在。"
+    },
+    {
+      "axis": "关联方最终信用与保证金回收时间",
+      "unknown": "两份年报没有FY2024实际回款结果。",
+      "judgment_preserved": "不推定违约；仍对集中度、非自由现金属性和回收依赖给予折价。"
+    },
+    {
+      "axis": "母公司后续上划现金",
+      "unknown": "母公司现金在某一时点很低，不等于永远无法从附属公司取得股息。",
+      "judgment_preserved": "在实际上划前，只确认现有母公司现金和可供分派储备，不把集团现金直接归属于普通股股东。"
+    }
+  ],
+  "source_evidence": [
+    {
+      "document": "00816.HK_2022_年报.pdf",
+      "type": "official_annual_report",
+      "period": "FY2022"
+    },
+    {
+      "document": "00816.HK_2023_年报.pdf",
+      "type": "official_annual_report",
+      "period": "FY2023"
+    }
+  ],
+  "explicit_exclusions": [
+    "FY2024结果",
+    "任何价格或回报数据",
+    "互联网信息",
+    "旧报告、模型、测试、脚本或模板",
+    "正式估值",
+    "买卖建议",
+    "除指定/tmp/CN00816_BLIND_REVISED_FINAL_REVIEW.md外的外部审阅"
+  ]
+}

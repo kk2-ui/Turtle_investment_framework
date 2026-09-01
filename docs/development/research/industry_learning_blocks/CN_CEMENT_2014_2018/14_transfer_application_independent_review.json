@@ -1,0 +1,19 @@
+{
+  "schema_version": "enterprise-judgment-transfer-application-review.v1",
+  "review_id": "TRR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "source_feedback_id": "FBS:600801:20170412:001",
+  "continuation_settlement_id": "CFS:000401:20170412:R2:001",
+  "reviewer_id": "ROLE:CEMENT:TRANSFER_APPLICATION_REVIEWER",
+  "verdict": "MATERIAL_METHOD_CHANGE_CAUSALLY_ATTRIBUTABLE",
+  "materiality_statement": "For both target-local fields, field_id, dimension, definition and claim_ids are unchanged; the sole baseline-to-enhanced difference is adding the perimeter-first measurement gate. That gate can change whether listed-consolidated operating-cash and operating fields are treated as comparable, preventing a consolidation-boundary change from being read as an economic, operating or cash change.",
+  "causal_trace_statement": "FBS:600801:20170412:001 records a same-boundary continuity measurement mismatch and creates AGENDA:600801:20180422:ADD_BOUNDARY:POST_2017_ACQUISITION. The application names that exact agenda change as reason_ref for each target-field gate before target outcome access; this is direct measurement-method lineage rather than an enterprise-level causal claim.",
+  "prohibited_conclusion": "NO_ENTERPRISE_PERFORMANCE_ACTION_CAUSALITY_OR_INVESTMENT_CONCLUSION",
+  "transfer_status": "TRANSFER_CANDIDATE_CREATED",
+  "allowed_outputs": [
+    "TRANSFER_CANDIDATE_CREATED",
+    "RESEARCH_AGENDA"
+  ],
+  "object_class": "ENTERPRISE_JUDGMENT_TRANSFER_APPLICATION_REVIEW",
+  "claim_class": "INDEPENDENT_METHOD_TRANSFER_ADJUDICATION"
+}

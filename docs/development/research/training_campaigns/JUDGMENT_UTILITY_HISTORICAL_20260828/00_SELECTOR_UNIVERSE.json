@@ -1,0 +1,49 @@
+{
+  "schema_version": "historical-selector-universe.v1",
+  "selector_id": "/root/fresh_selector_execution",
+  "selection_policy": "BUSINESS_MODEL_HETEROGENEITY_THEN_CUTOFF_SOURCE_READINESS",
+  "candidates": [
+    {
+      "company_id": "CN:603195",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "CONSUMER_ELECTRICAL_CHANNEL_AND_NEW_ENERGY_OPTION",
+      "preoutcome_source_count": 3,
+      "outcome_existence_confirmed": true
+    },
+    {
+      "company_id": "CN:601598",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "CONTRACT_LOGISTICS_AND_FORWARDING_NETWORK",
+      "preoutcome_source_count": 3,
+      "outcome_existence_confirmed": true
+    },
+    {
+      "company_id": "CN:600549",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "RESOURCE_DEEP_PROCESSING_AND_NEW_MATERIALS_CAPEX",
+      "preoutcome_source_count": 3,
+      "outcome_existence_confirmed": true
+    },
+    {
+      "company_id": "CN:603338",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "INDUSTRIAL_EQUIPMENT_CAPACITY_AND_EXPORT_ABSORPTION",
+      "preoutcome_source_count": 3,
+      "outcome_existence_confirmed": true
+    },
+    {
+      "company_id": "CN:600323",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "ENVIRONMENTAL_UTILITY_PROJECT_CASH_AND_RECEIVABLES",
+      "preoutcome_source_count": 3,
+      "outcome_existence_confirmed": true
+    },
+    {
+      "company_id": "CN:600161",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "BIOLOGICS_COLLECTION_CAPACITY_AND_PRODUCT_YIELD",
+      "preoutcome_source_count": 3,
+      "outcome_existence_confirmed": true
+    }
+  ]
+}

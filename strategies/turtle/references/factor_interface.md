@@ -95,6 +95,12 @@
 | net_cash_mm | float | 步骤9 | 广义净现金 |
 | fcf_sequence | list[float] | 步骤2 | 近5年FCF序列 |
 | residual_sequence | list[float] | 步骤8 | 近5年可支配现金结余序列 |
+| bps_current | float | S17/S4 | 每股净资产（最新值） |
+| pb_current | float | S17 | 当前市净率 |
+| net_cash_coverage_pct | float | S17 | 净现金覆盖率（%） |
+| net_cash_per_share | float | S17 | 净现金/股 |
+| goodwill_concentration_pct | float | S17 | 商誉/归母权益（%） |
+| portfolio_cap_pct | float | .env / threshold.json | 用户组合上限%，默认5 |
 
 ---
 

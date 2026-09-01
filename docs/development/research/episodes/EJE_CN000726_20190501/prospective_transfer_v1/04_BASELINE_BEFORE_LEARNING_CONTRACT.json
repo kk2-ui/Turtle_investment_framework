@@ -1,0 +1,37 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-contract.v1",
+  "contract_id": "PEJOC:CN000726:20190501:FY2019:BASELINE_BEFORE_LEARNING:V1",
+  "method_lineage": {
+    "policy_source": "EJE_CN002394_20190501/prospective_judgment_v1/02_OUTCOME_MEASUREMENT_CONTRACT.json",
+    "policy_state": "COMMITTED_BEFORE_CN002394_OUTCOME_FEEDBACK",
+    "projection_rule": "SAME_FIELD_CLASSES_ADAPTED_TO_CN000726_WITHOUT_NEW_LEARNING"
+  },
+  "company_id": "CN:000726",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "period": "FY2019",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000726",
+  "primary_research_action": "CHECK_PROJECT_COMPLETION_AND_CURRENT_PERIOD_BUSINESS_LEVELS",
+  "management_credit_rule": "AN_ACTUAL_PRODUCTION_MILESTONE_MAY_RAISE_LIMITED_EXECUTION_CREDIT_BUT_NOT_CAPITAL_ALLOCATION_CREDIT",
+  "fields": [
+    {"field_id": "FABRIC_REVENUE_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "FABRIC_GROSS_MARGIN_PCT_FY2019_LEVEL", "unit": "PERCENT", "trend_baseline_registered": false},
+    {"field_id": "FABRIC_SALES_VOLUME_FY2019_LEVEL", "unit": "TEN_THOUSAND_METERS", "trend_baseline_registered": false},
+    {"field_id": "TOP5_CUSTOMER_SALES_SHARE_PCT_FY2019_LEVEL", "unit": "PERCENT", "trend_baseline_registered": false},
+    {"field_id": "VIETNAM_COLOR_WOVEN_PROJECT_STATUS_EVENT", "unit": "EVENT", "settles": "BUILD_OR_PRODUCTION_MILESTONE_ONLY"},
+    {"field_id": "NET_OPERATING_CASH_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CASH_CAPEX_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "ACCOUNTS_RECEIVABLE_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_INVENTORY_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "SHORT_TERM_BORROWINGS_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "LONG_TERM_BORROWINGS_RMB_FY2019_LEVEL", "unit": "RMB", "trend_baseline_registered": false}
+  ],
+  "not_registered": [
+    "FABRIC_PRODUCTION_AND_PHYSICAL_INVENTORY_CHAIN",
+    "SYSTEMATIC_SAME_DEFINITION_FY2018_COMPARATORS",
+    "PROJECT_SPECIFIC_PRODUCTION_SALES_AND_MARGIN_AFTER_STARTUP"
+  ],
+  "allowed_outcome_source": "ONE_OFFICIAL_FULL_FY2019_CNINFO_ANNUAL_REPORT",
+  "outcome_access": "SEALED",
+  "price_access": "PROHIBITED"
+}
+

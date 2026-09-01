@@ -1,0 +1,88 @@
+[
+  {
+    "model_id": "ESM:CN:600425:20140416:R3",
+    "company_id": "ISSUER:CN:600425",
+    "version": "1",
+    "as_of": "2014-04-16T00:00:00+08:00",
+    "responsibility_unit_ids": [
+      "ISSUER_CONSOLIDATED:CN:600425"
+    ],
+    "competitive_arena_ids": [
+      "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+    ],
+    "nodes": [
+      {
+        "node_id": "NODE:600425:R3:CONSOLIDATED_BOUNDARY",
+        "observation_state": "OBSERVED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+        "measurement_scope_id": "FY2013_LISTED_CONSOLIDATED_STATEMENTS",
+        "evidence": [
+          {
+            "ref": "CNINFO:600425:ANN:20140403:63781007",
+            "available_at": "2014-04-03T23:59:59+08:00"
+          }
+        ]
+      },
+      {
+        "node_id": "NODE:600425:R3:OPERATING_FIELD",
+        "observation_state": "OBSERVED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+        "measurement_scope_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE",
+        "evidence": [
+          {
+            "ref": "CNINFO:600425:ANN:20140403:63781007",
+            "available_at": "2014-04-03T23:59:59+08:00"
+          }
+        ]
+      },
+      {
+        "node_id": "NODE:600425:R3:OPERATING_CASH_FIELD",
+        "observation_state": "OBSERVED",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+        "measurement_scope_id": "ISSUER_CONSOLIDATED_OPERATING_CASH",
+        "evidence": [
+          {
+            "ref": "CNINFO:600425:ANN:20140403:63781007",
+            "available_at": "2014-04-03T23:59:59+08:00"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "edge_id": "EDGE:600425:R3:BOUNDARY_TO_OPERATING",
+        "from_node_id": "NODE:600425:R3:CONSOLIDATED_BOUNDARY",
+        "to_node_id": "NODE:600425:R3:OPERATING_FIELD",
+        "relationship": "boundary_identity_precedes_operating_comparison",
+        "actor_side": "ISSUER",
+        "interface": "listed-consolidated accounting perimeter",
+        "cross_side_effect": "a later reported operating field is not treated as comparable before perimeter continuity is checked",
+        "measurement_scope_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE",
+        "observation_state": "INFERRED",
+        "evidence": [
+          {
+            "ref": "CNINFO:600425:ANN:20140403:63781007",
+            "available_at": "2014-04-03T23:59:59+08:00"
+          }
+        ]
+      },
+      {
+        "edge_id": "EDGE:600425:R3:BOUNDARY_TO_CASH",
+        "from_node_id": "NODE:600425:R3:CONSOLIDATED_BOUNDARY",
+        "to_node_id": "NODE:600425:R3:OPERATING_CASH_FIELD",
+        "relationship": "boundary_identity_precedes_cash_comparison",
+        "actor_side": "ISSUER",
+        "interface": "listed-consolidated accounting perimeter",
+        "cross_side_effect": "a later operating-cash field is not treated as comparable before perimeter continuity is checked",
+        "measurement_scope_id": "ISSUER_CONSOLIDATED_OPERATING_CASH",
+        "observation_state": "INFERRED",
+        "evidence": [
+          {
+            "ref": "CNINFO:600425:ANN:20140403:63781007",
+            "available_at": "2014-04-03T23:59:59+08:00"
+          }
+        ]
+      }
+    ]
+  }
+]

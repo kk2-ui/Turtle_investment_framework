@@ -1,0 +1,54 @@
+{
+  "schema_version": "turtle-live-forward-outcome-contract.v1",
+  "purpose": "POST_FREEZE_EXECUTION_ONLY_NO_NEW_CURRENT_FACT_OR_PREDICTION",
+  "case_id": "R-XX:ENTITY:MECHANISM:YYYYMMDD",
+  "report_freeze": {"freeze_id": "R-XX:ENTITY:MECHANISM:YYYYMMDD"},
+  "simulation_cutoff": "YYYY-MM-DDTHH:MM:SS+08:00",
+  "research_identity": {"experiment_id": "R-XX", "company_cluster_id": "COMPANY:ENTITY"},
+  "calibration_ledger": {
+    "claims": [
+      {
+        "claim_id": "RXX-S1",
+        "observable_outcome": {
+          "metric": "frozen_metric_id",
+          "unit": "frozen_unit",
+          "measurement_basis": "the frozen scope, exclusions and definition",
+          "measurement_period": {"kind": "ISSUER_FISCAL_PERIOD", "label": "FYXXXX QX"},
+          "allowed_source_types": ["OTHER_OFFICIAL"],
+          "publisher_domains": ["issuer.example.com"],
+          "observation_window": {"opens_after": "YYYY-MM-DDTHH:MM:SS-08:00", "closes_at": "YYYY-MM-DDTHH:MM:SS-07:00"},
+          "settlement_version_policy": "INITIAL_DISCLOSURE",
+          "metric_reconstruction_contract": {
+            "source_targets": [{"source_type": "OTHER_OFFICIAL", "file_scope": "FYXXXX QX results release", "reported_label": "issuer-reported metric label", "reported_locator": "table / page / section"}],
+            "prohibited_substitutes": ["nearby KPI", "management explanation", "price or return"],
+            "definition_change_action": "MEASUREMENT_MISMATCH"
+          }
+        }
+      }
+    ]
+  },
+  "mechanism_signal_pair": {
+    "pair_id": "RXX:MECHANISM_SIGNAL_PAIR",
+    "selection_status": "NO_PRIMARY",
+    "hypothesis_a_id": "H-A",
+    "hypothesis_b_id": "H-B",
+    "signals": [
+      {
+        "signal_id": "RXX-S1",
+        "claim_id": "RXX-S1",
+        "stage": "EARLY_MECHANISM",
+        "hypothesis_a_prediction": {"operator": "GREATER_THAN", "value": 0},
+        "hypothesis_b_prediction": {"operator": "LESS_THAN_OR_EQUAL", "value": 0},
+        "frozen_locator": "06_forward_freeze.md:line"
+      },
+      {
+        "signal_id": "RXX-S2",
+        "claim_id": "RXX-S2",
+        "stage": "CONTINUATION_SIGNAL",
+        "hypothesis_a_prediction": {"operator": "GREATER_THAN", "value": 0},
+        "hypothesis_b_prediction": {"operator": "LESS_THAN_OR_EQUAL", "value": 0},
+        "frozen_locator": "06_forward_freeze.md:line"
+      }
+    ]
+  }
+}

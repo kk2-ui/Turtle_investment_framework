@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Zone J Governance Tension Assessment",
+  "description": "V12.15: 少数股东治理张力评估。评估少数股东结构、双重身份利益冲突、分红决策权、治理折价。",
+  "type": "object",
+  "properties": {
+    "_provenance": {
+      "type": "object",
+      "properties": {
+        "generated_at": { "type": "string" },
+        "agent": { "type": "string" },
+        "context_files": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "minority_structure": {
+      "type": ["object", "null"],
+      "description": "少数股东结构。null表示无显著少数股东。",
+      "properties": {
+        "minority_shareholders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "stake_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+              "board_seats": { "type": "integer", "minimum": 0 },
+              "dual_role": { "type": "string" },
+              "dual_role_description": { "type": "string" }
+            },
+            "required": ["name", "stake_pct"]
+          }
+        },
+        "parent_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "control_assessment": { "type": "string" }
+      }
+    },
+    "dividend_decision_power": {
+      "type": "object",
+      "properties": {
+        "who_controls": { "type": "string" },
+        "blocking_threshold": { "type": "string" },
+        "minority_can_block": { "type": "boolean" },
+        "historical_behavior": { "type": "string" },
+        "improvement_feasibility": { "type": "string" },
+        "improvement_feasibility_confidence": { "type": "string", "enum": ["high", "medium", "low"] }
+      }
+    },
+    "conflict_of_interest": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "description": { "type": "string" },
+          "severity": { "type": "string", "enum": ["high", "medium", "low"] },
+          "historical_evidence": { "type": "string" },
+          "quote": { "type": "string" }
+        }
+      }
+    },
+    "governance_discount": {
+      "type": "object",
+      "properties": {
+        "additional_discount_pct": { "type": "number", "minimum": 0, "maximum": 10 },
+        "rationale": { "type": "string" },
+        "is_structural": { "type": "boolean" },
+        "can_improve": { "type": "string" },
+        "confidence": { "type": "string", "enum": ["high", "medium", "low"] }
+      },
+      "required": ["additional_discount_pct", "rationale", "is_structural", "confidence"]
+    },
+    "governance_tension_rating": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "high=少数股东治理张力显著影响估值; medium=存在张力但可控; low=无显著治理张力"
+    },
+    "tension_summary": { "type": "string" }
+  },
+  "required": ["governance_discount", "governance_tension_rating", "tension_summary"]
+}

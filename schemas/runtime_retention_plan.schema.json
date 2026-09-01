@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "runtime_retention_plan.schema.json",
+  "type": "object",
+  "required": ["schema_version", "root", "generated_at", "mode", "candidates", "protected_count", "candidate_bytes", "plan_fingerprint"],
+  "properties": {
+    "schema_version": {"const": "runtime-retention-plan.v1"},
+    "root": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "mode": {"const": "PREVIEW"},
+    "candidates": {"type": "array", "items": {"type": "object", "required": ["path", "reason", "size_bytes"]}},
+    "protected_count": {"type": "integer", "minimum": 0},
+    "candidate_bytes": {"type": "integer", "minimum": 0},
+    "plan_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

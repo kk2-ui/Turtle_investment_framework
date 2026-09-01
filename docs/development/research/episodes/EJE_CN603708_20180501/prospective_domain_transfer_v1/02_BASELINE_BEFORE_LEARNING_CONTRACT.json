@@ -1,0 +1,64 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-contract.v1",
+  "contract_id": "PEJOC:CN603708:20180501:FY2018:BASELINE_BEFORE_RANK1_FEEDBACK:V1",
+  "method_lineage": {
+    "state": "FROZEN_ENTERPRISE_JUDGMENT_BEFORE_CN002080_OUTCOME",
+    "projection_rule": "USE_THE_ACTUAL_PRE_RANK1_DOMAIN_TRANSFER_RESEARCH_POLICY_WITHOUT_LATER_NO_UTILITY_NARROWING"
+  },
+  "company_id": "CN:603708",
+  "issuer_id": "ISSUER:CN:603708",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "period": "FY2018",
+  "core_network_scope": "JIAODONG_AND_MATURE_STORE_NETWORK_AS_DISCLOSED",
+  "new_domain_scope": "WESTERN_SHANDONG_MICRO_STORE_LOGISTICS_AND_QINGDAO_WEIKE_EXPANSION_BUNDLE",
+  "primary_research_action": "CHECK_STORE_EXPANSION_MATURE_NETWORK_CURRENT_QUALITY_WEIKE_INTEGRATION_AND_CURRENT_GROUP_CASH",
+  "fair_baseline_capabilities": [
+    "STORE_COUNT_IS_NOT_STORE_ECONOMICS",
+    "MATURE_CORE_NETWORK_CAN_BE_JUDGED_SEPARATELY_FROM_NEW_DOMAIN_TRANSFER",
+    "CURRENT_MATURE_STORE_MEMBER_MARGIN_INVENTORY_WEIKE_AND_CASH_LEVELS_CAN_INFORM_RISK",
+    "NEW_DOMAIN_AND_ACQUISITION_RECEIVE_NO_BASE_CASE_GROWTH_VALUE_WITHOUT_LOCAL_ECONOMIC_EVIDENCE",
+    "CONSOLIDATED_CASH_CANNOT_PROVE_NEW_STORE_OR_ACQUISITION_RETURN"
+  ],
+  "fields": [
+    {"field_id": "ENDING_STORE_COUNT_FY2018_LEVEL", "unit": "STORES", "trend_baseline_registered": false},
+    {"field_id": "STORE_OPENINGS_FY2018_LEVEL", "unit": "STORES", "trend_baseline_registered": false},
+    {"field_id": "STORE_CLOSURES_FY2018_LEVEL", "unit": "STORES", "trend_baseline_registered": false},
+    {"field_id": "STORE_REGION_AND_FORMAT_MIX_FY2018_LEVEL", "unit": "STORES_AND_EVENT", "trend_baseline_registered": false},
+    {"field_id": "MATURE_OVER_TWO_YEAR_STORE_REVENUE_CHANGE_FY2018_LEVEL", "unit": "PERCENT", "trend_baseline_registered": false},
+    {"field_id": "MEMBER_TRAFFIC_CHANGE_FY2018_LEVEL", "unit": "PERCENT", "trend_baseline_registered": false},
+    {"field_id": "MEMBER_TICKET_CHANGE_FY2018_LEVEL", "unit": "PERCENT", "trend_baseline_registered": false},
+    {"field_id": "MEMBER_SALES_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "COMMERCIAL_GROSS_MARGIN_FY2018_LEVEL", "unit": "PERCENT", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_INVENTORY_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "QINGDAO_WEIKE_INTEGRATION_STATUS_FY2018", "unit": "EVENT", "settles": "INTEGRATION_MILESTONE_ONLY"},
+    {"field_id": "QINGDAO_WEIKE_REVENUE_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "QINGDAO_WEIKE_OPERATING_PROFIT_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "QINGDAO_WEIKE_NET_PROFIT_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "QINGDAO_WEIKE_OCF_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_OCF_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_CASH_CAPEX_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_WORKING_CAPITAL_CASH_SUPPORT_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_CASH_BALANCE_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_INTEREST_BEARING_DEBT_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATED_SUPPLIER_AND_CUSTOMER_FLOAT_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "MINIMUM_LEASE_COMMITMENT_RMB_FY2018_LEVEL", "unit": "RMB", "trend_baseline_registered": false},
+    {"field_id": "ACQUISITION_AND_NEW_DOMAIN_CASH_BURDEN_FY2018_LEVEL", "unit": "RMB_AND_EVENT", "trend_baseline_registered": false},
+    {"field_id": "CONSOLIDATION_PERIMETER_CONTINUITY_EVENT", "unit": "EVENT", "settles": "MEASUREMENT_COMPARABILITY_ONLY"}
+  ],
+  "not_registered": [
+    "SAME_DEFINITION_FY2017_COMPARATORS_FOR_EVERY_DIRECTIONAL_FIELD",
+    "SEPARATE_CORE_NETWORK_NEW_DOMAIN_AND_WEIKE_DECISION_CELLS",
+    "DETERMINISTIC_DOMAIN_TRANSFER_CAPITAL_ALLOCATION_BRANCH",
+    "DECISION_CRITICAL_FIELD_MINIMUM_AFTER_NO_UTILITY"
+  ],
+  "baseline_treatment": {
+    "management": "MEDIUM_HIGH_CORE_EXECUTION_AND_CONDITIONAL_DOMAIN_TRANSFER_CAPITAL_ALLOCATION",
+    "owner_cash": "USE_CURRENT_OCF_CAPEX_WORKING_CAPITAL_AND_COMMITMENTS_WITHOUT_PROJECT_ATTRIBUTION",
+    "permanent_loss": "LOW_NEAR_TERM_AND_MEDIUM_IF_DOMAIN_TRANSFER_FAILS",
+    "valuation_direction": "VALUE_MATURE_CORE_NORMALLY_BUT_WITHHOLD_NEW_DOMAIN_MICRO_STORE_LOGISTICS_AND_WEIKE_GROWTH_VALUE"
+  },
+  "local_resolution_rule": "A_MOVING_MATURE_STORE_COHORT_LIMITS_FIXED_COHORT_ATTRIBUTION_ONLY; MEMBER_METRICS_COVER_MEMBER_TRANSACTIONS_ONLY; WEIKE_AND_NEW_DOMAIN_REQUIRE_SEPARATE_ECONOMIC_SUPPORT; A_LOCAL_SCOPE_MISMATCH_DOES_NOT_CANCEL_CORE_NETWORK_GROUP_CASH_OR_PERMANENT_LOSS_JUDGMENT",
+  "allowed_outcome_source": "ONE_OFFICIAL_FULL_FY2018_CNINFO_ANNUAL_REPORT_PUBLISHED_BY_2019_05_01",
+  "outcome_access": "SEALED",
+  "price_access": "PROHIBITED"
+}

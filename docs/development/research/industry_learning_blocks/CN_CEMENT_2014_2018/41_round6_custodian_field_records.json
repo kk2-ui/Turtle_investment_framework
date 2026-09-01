@@ -1,0 +1,815 @@
+[
+  {
+    "cell_id": "CELL:600801:20160427:ACTION_PROGRESS",
+    "field_id": "FIELD:600801:FY2016:ACTION_PROGRESS_EVENT",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2016-04-28",
+        "event_end": "2016-12-31",
+        "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "status": "OBSERVED",
+    "raw_value": true,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 9,
+      "field_ref": "PDF p.9",
+      "field_identity": "FIELD:600801:FY2016:ACTION_PROGRESS_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2016-04-28",
+          "event_end": "2016-12-31",
+          "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+        }
+      },
+      "unit": "BOOLEAN_EVENT",
+      "table_or_note": "FY2016 management discussion or material investment disclosure",
+      "line_item": "explicit board or regulatory approval advancing the 15-company relationship toward acquisition or integration",
+      "period_column": "2016-04-28..2016-12-31",
+      "custodian_locator": {
+        "table_or_note": "Management discussion - operating development",
+        "line_item": "Shareholder approval completed for acquisition covering 15 cement factories",
+        "period_column": "FY2016 event window"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:DECISION_CONTROL",
+    "field_id": "FIELD:600801:FY2016:DECISION_CONTROL_EVENT",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2016-04-28",
+        "event_end": "2016-12-31",
+        "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "status": "OBSERVED",
+    "raw_value": false,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 134,
+      "field_ref": "PDF p.134",
+      "field_identity": "FIELD:600801:FY2016:DECISION_CONTROL_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2016-04-28",
+          "event_end": "2016-12-31",
+          "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+        }
+      },
+      "unit": "BOOLEAN_EVENT",
+      "table_or_note": "FY2016 management discussion or material investment disclosure",
+      "line_item": "explicit issuer decision control over the 15 supported companies",
+      "period_column": "2016-04-28..2016-12-31",
+      "custodian_locator": {
+        "table_or_note": "Note 11 - other related parties",
+        "line_item": "Supported Lafarge entities remained controlled by LafargeHolcim Ltd.",
+        "period_column": "As of 2016-12-31"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION",
+    "field_id": "FIELD:600801:FY2016:ISSUER_PRODUCT_PARTICIPATION_EVENT",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2016-04-28",
+        "event_end": "2016-12-31",
+        "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "status": "UNKNOWN",
+    "reason": "The report discloses fee-based entrusted-management services but does not uniquely state issuer-product production or sales inside the supported-company scope.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+        "report_period_end": "2016-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600801",
+        "source_available_date": "2017-03-24",
+        "pdf_page": 135,
+        "field_ref": "PDF p.135",
+        "custodian_locator": {
+          "table_or_note": "Note 11 - related-party transactions",
+          "line_item": "Entrusted-management service revenue",
+          "period_column": "FY2016"
+        }
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CONSOLIDATION_SCOPE",
+    "field_id": "FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2016-04-28",
+        "event_end": "2016-12-31",
+        "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "status": "OBSERVED",
+    "raw_value": false,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 16,
+      "field_ref": "PDF p.16",
+      "field_identity": "FIELD:600801:FY2016:CONSOLIDATION_SCOPE_EVENT",
+      "measurement_clock": {
+        "clock_kind": "EVENT_WINDOW",
+        "event_window": {
+          "event_start": "2016-04-28",
+          "event_end": "2016-12-31",
+          "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+        }
+      },
+      "unit": "BOOLEAN_EVENT",
+      "table_or_note": "FY2016 management discussion or material investment disclosure",
+      "line_item": "explicit inclusion of the 15-company assets in the issuer consolidated perimeter",
+      "period_column": "2016-04-28..2016-12-31",
+      "custodian_locator": {
+        "table_or_note": "Management discussion - acquisition integration risk",
+        "line_item": "The acquired factories were expected to enter issuer consolidation in 2017",
+        "period_column": "FY2016 year-end status"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CUSTOMER_RESPONSE",
+    "field_id": "FIELD:600801:FY2016:CUSTOMER_RESPONSE_EVENT",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2016-04-28",
+        "event_end": "2016-12-31",
+        "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "status": "UNKNOWN",
+    "reason": "Issuer-wide projects and digital-channel activity are disclosed, but no customer response is tied to the supported-company scope.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+        "report_period_end": "2016-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600801",
+        "source_available_date": "2017-03-24",
+        "pdf_page": 9,
+        "field_ref": "PDF p.9",
+        "custodian_locator": {
+          "table_or_note": "Management discussion - value marketing",
+          "line_item": "Issuer-wide customer and digital-channel activity",
+          "period_column": "FY2016"
+        }
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+    "field_id": "FIELD:600801:FY2015:CEMENT_CLINKER_SALES_VOLUME",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "TONNE",
+    "status": "UNKNOWN",
+    "reason": "The report gives the FY2016 combined absolute volume and growth rate, but no directly disclosed FY2015 combined absolute value; it was not reverse-engineered.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+        "report_period_end": "2016-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600801",
+        "source_available_date": "2017-03-24",
+        "pdf_page": 9,
+        "field_ref": "PDF p.9",
+        "custodian_locator": {
+          "table_or_note": "Management discussion - principal operating results",
+          "line_item": "Combined cement and clinker volume",
+          "period_column": "FY2015 comparative not directly disclosed"
+        }
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+    "field_id": "FIELD:600801:FY2016:CEMENT_CLINKER_SALES_VOLUME",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2016-01-01",
+        "period_end": "2016-12-31",
+        "fiscal_period": "FY2016"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "TONNE",
+    "status": "OBSERVED",
+    "raw_value": 52700000,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 9,
+      "field_ref": "PDF p.9",
+      "field_identity": "FIELD:600801:FY2016:CEMENT_CLINKER_SALES_VOLUME",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2016-01-01",
+          "period_end": "2016-12-31",
+          "fiscal_period": "FY2016"
+        }
+      },
+      "unit": "TONNE",
+      "table_or_note": "production-sales-inventory analysis",
+      "line_item": "cement and clinker sales volume",
+      "period_column": "FY2016",
+      "custodian_locator": {
+        "table_or_note": "Management discussion - principal operating results",
+        "line_item": "Combined cement and clinker sales volume of 52.70 million tonnes",
+        "period_column": "FY2016"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+    "field_id": "FIELD:600801:FY2015:CEMENT_GROSS_MARGIN",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RATIO",
+    "status": "UNKNOWN",
+    "reason": "The report gives FY2016 cement margin and its percentage-point change, but no directly disclosed FY2015 gross-margin ratio; it was not reverse-engineered.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+        "report_period_end": "2016-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600801",
+        "source_available_date": "2017-03-24",
+        "pdf_page": 10,
+        "field_ref": "PDF p.10",
+        "custodian_locator": {
+          "table_or_note": "Principal business by industry",
+          "line_item": "Cement gross-margin ratio",
+          "period_column": "FY2015 comparative not directly disclosed"
+        }
+      }
+    ]
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CEMENT_GROSS_MARGIN",
+    "field_id": "FIELD:600801:FY2016:CEMENT_GROSS_MARGIN",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2016-01-01",
+        "period_end": "2016-12-31",
+        "fiscal_period": "FY2016"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RATIO",
+    "status": "OBSERVED",
+    "raw_value": 0.2578,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 10,
+      "field_ref": "PDF p.10",
+      "field_identity": "FIELD:600801:FY2016:CEMENT_GROSS_MARGIN",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2016-01-01",
+          "period_end": "2016-12-31",
+          "fiscal_period": "FY2016"
+        }
+      },
+      "unit": "RATIO",
+      "table_or_note": "principal business by product",
+      "line_item": "cement gross-margin ratio",
+      "period_column": "FY2016",
+      "custodian_locator": {
+        "table_or_note": "Principal business by industry",
+        "line_item": "Cement gross-margin ratio of 25.78%",
+        "period_column": "FY2016"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:OPERATING_CASH",
+    "field_id": "FIELD:600801:FY2015:OPERATING_CASH",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RMB",
+    "status": "OBSERVED",
+    "raw_value": 2753246189,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 51,
+      "field_ref": "PDF p.51",
+      "field_identity": "FIELD:600801:FY2015:OPERATING_CASH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "unit": "RMB",
+      "table_or_note": "consolidated cash-flow statement",
+      "line_item": "net cash flows from operating activities",
+      "period_column": "FY2015",
+      "custodian_locator": {
+        "table_or_note": "Consolidated cash-flow statement",
+        "line_item": "Net cash flows from operating activities",
+        "period_column": "Prior-period amount (FY2015)"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:OPERATING_CASH",
+    "field_id": "FIELD:600801:FY2016:OPERATING_CASH",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2016-01-01",
+        "period_end": "2016-12-31",
+        "fiscal_period": "FY2016"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RMB",
+    "status": "OBSERVED",
+    "raw_value": 3096150887,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 51,
+      "field_ref": "PDF p.51",
+      "field_identity": "FIELD:600801:FY2016:OPERATING_CASH",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2016-01-01",
+          "period_end": "2016-12-31",
+          "fiscal_period": "FY2016"
+        }
+      },
+      "unit": "RMB",
+      "table_or_note": "consolidated cash-flow statement",
+      "line_item": "net cash flows from operating activities",
+      "period_column": "FY2016",
+      "custodian_locator": {
+        "table_or_note": "Consolidated cash-flow statement",
+        "line_item": "Net cash flows from operating activities",
+        "period_column": "Current-period amount (FY2016)"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CASH_CAPEX",
+    "field_id": "FIELD:600801:FY2015:CASH_CAPEX",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2015-01-01",
+        "period_end": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RMB",
+    "status": "OBSERVED",
+    "raw_value": 1591631924,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 52,
+      "field_ref": "PDF p.52",
+      "field_identity": "FIELD:600801:FY2015:CASH_CAPEX",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2015-01-01",
+          "period_end": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "unit": "RMB",
+      "table_or_note": "consolidated cash-flow statement",
+      "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+      "period_column": "FY2015",
+      "custodian_locator": {
+        "table_or_note": "Consolidated cash-flow statement",
+        "line_item": "Cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "Prior-period amount (FY2015)"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:CASH_CAPEX",
+    "field_id": "FIELD:600801:FY2016:CASH_CAPEX",
+    "measurement_clock": {
+      "clock_kind": "FLOW_PERIOD",
+      "flow_period": {
+        "period_start": "2016-01-01",
+        "period_end": "2016-12-31",
+        "fiscal_period": "FY2016"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RMB",
+    "status": "OBSERVED",
+    "raw_value": 1212058252,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 52,
+      "field_ref": "PDF p.52",
+      "field_identity": "FIELD:600801:FY2016:CASH_CAPEX",
+      "measurement_clock": {
+        "clock_kind": "FLOW_PERIOD",
+        "flow_period": {
+          "period_start": "2016-01-01",
+          "period_end": "2016-12-31",
+          "fiscal_period": "FY2016"
+        }
+      },
+      "unit": "RMB",
+      "table_or_note": "consolidated cash-flow statement",
+      "line_item": "cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+      "period_column": "FY2016",
+      "custodian_locator": {
+        "table_or_note": "Consolidated cash-flow statement",
+        "line_item": "Cash paid to acquire and construct fixed assets, intangible assets and other long-term assets",
+        "period_column": "Current-period amount (FY2016)"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+    "field_id": "FIELD:600801:FY2015:SHORT_TERM_BORROWINGS",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2015-12-31",
+        "fiscal_period": "FY2015"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RMB",
+    "status": "OBSERVED",
+    "raw_value": 1162000000,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 47,
+      "field_ref": "PDF p.47",
+      "field_identity": "FIELD:600801:FY2015:SHORT_TERM_BORROWINGS",
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2015-12-31",
+          "fiscal_period": "FY2015"
+        }
+      },
+      "unit": "RMB",
+      "table_or_note": "consolidated balance sheet",
+      "line_item": "short-term borrowings",
+      "period_column": "FY2015",
+      "custodian_locator": {
+        "table_or_note": "Consolidated balance sheet",
+        "line_item": "Short-term borrowings",
+        "period_column": "Opening balance (2015-12-31)"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:SHORT_TERM_BORROWINGS",
+    "field_id": "FIELD:600801:FY2016:SHORT_TERM_BORROWINGS",
+    "measurement_clock": {
+      "clock_kind": "BALANCE_AS_OF",
+      "balance_as_of": {
+        "as_of": "2016-12-31",
+        "fiscal_period": "FY2016"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+    },
+    "unit": "RMB",
+    "status": "OBSERVED",
+    "raw_value": 904000000,
+    "source": {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "report_period_end": "2016-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "scope_requirement": "issuer-consolidated same-definition field; action attribution prohibited"
+      },
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2017-03-24",
+      "pdf_page": 47,
+      "field_ref": "PDF p.47",
+      "field_identity": "FIELD:600801:FY2016:SHORT_TERM_BORROWINGS",
+      "measurement_clock": {
+        "clock_kind": "BALANCE_AS_OF",
+        "balance_as_of": {
+          "as_of": "2016-12-31",
+          "fiscal_period": "FY2016"
+        }
+      },
+      "unit": "RMB",
+      "table_or_note": "consolidated balance sheet",
+      "line_item": "short-term borrowings",
+      "period_column": "FY2016",
+      "custodian_locator": {
+        "table_or_note": "Consolidated balance sheet",
+        "line_item": "Short-term borrowings",
+        "period_column": "Closing balance (2016-12-31)"
+      }
+    }
+  },
+  {
+    "cell_id": "CELL:600801:20160427:DIRECT_LOSS_EVENT",
+    "field_id": "FIELD:600801:FY2016:DIRECT_LOSS_EVENT_EVENT",
+    "measurement_clock": {
+      "clock_kind": "EVENT_WINDOW",
+      "event_window": {
+        "event_start": "2016-04-28",
+        "event_end": "2016-12-31",
+        "window_name": "POST_CUTOFF_FY2016_EVENT_WINDOW"
+      }
+    },
+    "responsibility_boundary": {
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "scope_requirement": "issuer-specific support, control, product participation and consolidation must remain distinct"
+    },
+    "unit": "BOOLEAN_EVENT",
+    "status": "UNKNOWN",
+    "reason": "The report does not uniquely disclose an issuer-level irreversible capital loss, default, covenant breach or going-concern event within the contracted event window.",
+    "sources_considered": [
+      {
+        "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+        "source_url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+        "report_period_end": "2016-12-31",
+        "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600801",
+        "source_available_date": "2017-03-24",
+        "pdf_page": 21,
+        "field_ref": "PDF p.21",
+        "custodian_locator": {
+          "table_or_note": "Material matters and integrity status",
+          "line_item": "No material overdue debt non-payment disclosed",
+          "period_column": "FY2016 event window"
+        }
+      }
+    ]
+  }
+]

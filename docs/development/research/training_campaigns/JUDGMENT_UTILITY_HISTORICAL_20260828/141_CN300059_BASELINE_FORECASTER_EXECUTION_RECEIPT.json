@@ -1,0 +1,101 @@
+{
+  "schema_version": "historical-holdout-baseline-forecaster-execution-receipt.v1",
+  "receipt_id": "HOLDOUT_BASELINE_EXECUTION_RECEIPT:CN300059:CUTOFF_2024-05-01:FY2021_FY2023",
+  "role": "Baseline forecaster",
+  "candidate": {
+    "case_id": "HOLDOUT:CN300059:20240501:FY2021_FY2023:PAIR",
+    "company_cluster_id": "COMPANY:CN300059",
+    "issuer_code": "CN300059",
+    "issuer_name": "东方财富",
+    "issuer_market": "CNINFO_SZSE"
+  },
+  "cutoff_firewall": {
+    "cutoff_date": "2024-05-01",
+    "admitted_information": "Only the three specified, full FY2021-FY2023 annual reports and their supplied local text extractions, all published before the cutoff.",
+    "not_accessed": [
+      "FY2024 or later announcement metadata, report bodies, or other outcome material",
+      "post-cutoff events",
+      "price, return, valuation, or analyst material",
+      "browser or external sources",
+      "method packs, other campaign artifacts, curricula, tests, or repository research artifacts"
+    ],
+    "outcome_access": false,
+    "post_cutoff_metadata_access": false,
+    "browser_used": false,
+    "external_source_used": false
+  },
+  "exact_source_packet": [
+    {
+      "source_key": "FY2021",
+      "fiscal_year": "FY2021",
+      "source_id": "CNINFO:1212623862",
+      "announcement_title": "2021年年度报告",
+      "publication_date": "2022-03-19",
+      "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2022-03-19/1212623862.PDF",
+      "released_local_files": [
+        "FY2021_CNINFO_1212623862.pdf",
+        "FY2021_CNINFO_1212623862.txt"
+      ],
+      "source_use": "Management discussion, annual financial highlights, cash-flow discussion, and reportable-segment disclosure."
+    },
+    {
+      "source_key": "FY2022",
+      "fiscal_year": "FY2022",
+      "source_id": "CNINFO:1216145341",
+      "announcement_title": "2022年年度报告",
+      "publication_date": "2023-03-18",
+      "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2023-03-18/1216145341.PDF",
+      "released_local_files": [
+        "FY2022_CNINFO_1216145341.pdf",
+        "FY2022_CNINFO_1216145341.txt"
+      ],
+      "source_use": "Management discussion, annual financial highlights, cash-flow discussion, reportable-segment disclosure, and audit notes."
+    },
+    {
+      "source_key": "FY2023",
+      "fiscal_year": "FY2023",
+      "source_id": "CNINFO:1219307793",
+      "announcement_title": "2023年年度报告",
+      "publication_date": "2024-03-15",
+      "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2024-03-15/1219307793.PDF",
+      "released_local_files": [
+        "FY2023_CNINFO_1219307793.pdf",
+        "FY2023_CNINFO_1219307793.txt"
+      ],
+      "source_use": "Management discussion, annual financial highlights, risk disclosures, reportable-segment disclosure, and audit notes."
+    }
+  ],
+  "allocation_used": {
+    "report_reading_turns_used": 3,
+    "report_reading_turns": [
+      {
+        "turn": 1,
+        "source_key": "FY2021",
+        "method": "Local search and local supplied-text extraction only"
+      },
+      {
+        "turn": 2,
+        "source_key": "FY2022",
+        "method": "Local search and local supplied-text extraction only"
+      },
+      {
+        "turn": 3,
+        "source_key": "FY2023",
+        "method": "Local search and local supplied-text extraction only"
+      }
+    ],
+    "synthesis_turns_used": 1,
+    "total_turns_used": 4,
+    "allocation_status": "Fully used; no additional report-reading allocation was used."
+  },
+  "deliverables": [
+    "141_CN300059_BASELINE_FORECASTER_EXECUTION_RECEIPT.json",
+    "142_CN300059_BASELINE_PREOUTCOME_JUDGMENT.json"
+  ],
+  "attestations": {
+    "same_released_packet_only": true,
+    "no_outcome_inference": true,
+    "no_investment_action_or_valuation_number_produced": true,
+    "no_commit_created": true
+  }
+}

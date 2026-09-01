@@ -1,0 +1,343 @@
+{
+  "schema_version": "historical-backtest-case.v1",
+  "case_id": "HBTCASE:600340:20200427",
+  "experiment_id": "HBT:phase10-600340-20200427-engineering",
+  "company_code": "600340.SH",
+  "simulation_cutoff": "2020-04-27T18:00:00+08:00",
+  "report_freeze": {
+    "frozen_at": "2026-08-17T06:51:21+08:00",
+    "evidence_cutoff": "2020-04-27T18:00:00+08:00",
+    "settlement_locked": true,
+    "report_status": "FROZEN_WITH_QUALITY_FAILURE",
+    "mode": "PIT_ENGINEERING",
+    "freeze_id": "HBTFRZ:8ff08ee91e04d193",
+    "frozen_report": {
+      "report_id": "HBTREP:600340:20200427:PIT_ENGINEERING",
+      "variant_id": "8ff08ee91e04d193",
+      "origin": {
+        "kind": "PIT_ENGINEERING",
+        "review_artifact_path": "output/phase10_pit_review_600340_20260817/engineering_freeze_contract_review.md",
+        "legacy_attestation_experiment_id": "HBTEXP:PHASE10:FIRST_CASE",
+        "pit_runner": {
+          "attestation_path": "output/phase10_pit_writer_600340_direct_20260817/pit_runner_attestation.json",
+          "source_package_manifest_path": "config/historical_backtest_600340_source_manifest.package-v5.json",
+          "package_root": "data/phase10/600340/precutoff-v2",
+          "status": "PASS"
+        }
+      },
+      "artifact_path": "output/phase10_pit_writer_600340_direct_20260817/pit_writer_report.md",
+      "artifact_sha256": "8ff08ee91e04d19353fabfcd0c18d77956b8a97e882fcaa8f877936e09009229",
+      "format": "MARKDOWN",
+      "writer_id": "pit-writer:current-codex-agent",
+      "writer_provenance": {
+        "actor_type": "model",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "context_id": "pit-writer-direct-20260817-r5"
+      },
+      "writer_status": "QUALITY_FAILURE",
+      "claim_ids": [
+        "HBTCLM:600340:P10B:ORDINARY_CASH",
+        "HBTCLM:600340:P10B:GOV_RECEIVABLES",
+        "HBTCLM:600340:P10B:DEBT_REFINANCING",
+        "HBTCLM:600340:P10B:GUARANTEE_RECOVERY"
+      ],
+      "section_markers": [
+        "## Point-in-time scope",
+        "## Evidence",
+        "## Business and financial implications",
+        "## Unknowns and monitoring"
+      ]
+    },
+    "independent_review": {
+      "review_id": "HBTREV:8ff08ee91e04d193",
+      "reviewed_variant_id": "8ff08ee91e04d193",
+      "reviewer_id": "reviewer:phase10-independent",
+      "reviewer_provenance": {
+        "actor_type": "model",
+        "provider": "openai",
+        "model": "gpt-5.6-terra",
+        "context_id": "phase10-independent-review-20260817"
+      },
+      "independence": {
+        "did_not_generate_candidate": true,
+        "no_prior_review_seen": true,
+        "reviewer_context_isolated": true,
+        "generator_identity_disjoint": true
+      },
+      "reviewed_report_sha256": "8ff08ee91e04d19353fabfcd0c18d77956b8a97e882fcaa8f877936e09009229",
+      "status": "FAIL",
+      "claim_reviews": [
+        {
+          "claim_id": "HBTCLM:600340:P10B:ORDINARY_CASH",
+          "disposition": "UNKNOWN_PRESERVED",
+          "source_ids": [
+            "SSE:600340:AR2017:REVISED",
+            "SSE:600340:AR2018:ORIGINAL",
+            "SSE:600340:AR2019:ORIGINAL"
+          ],
+          "notes": [
+            "工程冻结独立复审已确认来源边界和冻结处置。"
+          ]
+        },
+        {
+          "claim_id": "HBTCLM:600340:P10B:GOV_RECEIVABLES",
+          "disposition": "UNKNOWN_PRESERVED",
+          "source_ids": [
+            "SSE:600340:AR2017:INQUIRY_REPLY",
+            "SSE:600340:AR2019:ORIGINAL"
+          ],
+          "notes": [
+            "工程冻结独立复审已确认来源边界和冻结处置。"
+          ]
+        },
+        {
+          "claim_id": "HBTCLM:600340:P10B:DEBT_REFINANCING",
+          "disposition": "UNKNOWN_PRESERVED",
+          "source_ids": [
+            "SSE:600340:AR2017:INQUIRY_REPLY",
+            "SSE:600340:AR2018:ORIGINAL",
+            "SSE:600340:AR2019:ORIGINAL"
+          ],
+          "notes": [
+            "工程冻结独立复审已确认来源边界和冻结处置。"
+          ]
+        },
+        {
+          "claim_id": "HBTCLM:600340:P10B:GUARANTEE_RECOVERY",
+          "disposition": "UNKNOWN_PRESERVED",
+          "source_ids": [
+            "SSE:600340:AR2017:REVISED",
+            "SSE:600340:AR2018:ORIGINAL",
+            "SSE:600340:AR2019:ORIGINAL"
+          ],
+          "notes": [
+            "工程冻结独立复审已确认来源边界和冻结处置。"
+          ]
+        }
+      ]
+    },
+    "quality_failure": {
+      "classifications": [
+        "ACQUISITION_MODULE",
+        "MODEL",
+        "WRITING"
+      ],
+      "economic_impact": "没有生产来源链、经营预测、估值或行动，因此不能输出可执行回报、永久损失边界或选股结论。",
+      "missing_facts": [
+        "统一生产 writer 的 Phase 08/V3 acceptance 与 publication artifacts。",
+        "完整的经营预测、估值、价格身份和行动契约。"
+      ],
+      "prohibited_assumptions": [
+        "不得将四节工程草案视为生产完整报告。",
+        "不得以后续债务事件或市场价格回填冻结结论。"
+      ],
+      "remediation": "以规范实验 identity 重跑受限 writer，补齐生产章节、独立 claim review 和 Phase 08/V3 origin gates。",
+      "acceptance_criteria": "新 variant 通过完整生产 origin、报告章节、逐 claim review 和模型记忆/校准资格门。"
+    }
+  },
+  "credibility": {
+    "model_memory_control": "UNCONTROLLED",
+    "backtest_credibility": "EXPLORATORY",
+    "assessment_basis": "PIT source reads and review are replayable, but the deployed model has no memory-control attestation.",
+    "control_evidence": [],
+    "calibration_role": "ENGINEERING_DIAGNOSTIC_ONLY"
+  },
+  "route": "DUAL",
+  "forecast": {
+    "horizon_years": 1,
+    "terminal_handling": "DUAL_TERMINAL_PATH",
+    "cash_flow_basis": "No ordinary-share cash forecast was frozen; all material cash and refinancing claims remain UNKNOWN."
+  },
+  "sources": [
+    {
+      "source_id": "SSE:600340:AR2017:INQUIRY_REPLY",
+      "source_version": "annual-report-inquiry-reply-2018-04-21",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "published_at": "2018-04-21",
+      "data_as_of": "2017-12-31",
+      "revision_policy": "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF",
+      "admissible": true
+    },
+    {
+      "source_id": "SSE:600340:AR2017:REVISED",
+      "source_version": "annual-report-2017-revised-2018-04-21",
+      "source_type": "ANNUAL_REPORT",
+      "published_at": "2018-04-21",
+      "data_as_of": "2017-12-31",
+      "revision_policy": "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF",
+      "admissible": true
+    },
+    {
+      "source_id": "SSE:600340:AR2018:ORIGINAL",
+      "source_version": "annual-report-2018-original",
+      "source_type": "ANNUAL_REPORT",
+      "published_at": "2019-04-20",
+      "data_as_of": "2018-12-31",
+      "revision_policy": "ORIGINAL_VINTAGE",
+      "admissible": true
+    },
+    {
+      "source_id": "SSE:600340:AR2019:ORIGINAL",
+      "source_version": "annual-report-2019-original",
+      "source_type": "ANNUAL_REPORT",
+      "published_at": "2020-04-25",
+      "data_as_of": "2019-12-31",
+      "revision_policy": "ORIGINAL_VINTAGE",
+      "admissible": true
+    }
+  ],
+  "inputs": [],
+  "calibration_ledger": {
+    "claims": [
+      {
+        "claim_id": "HBTCLM:600340:P10B:ORDINARY_CASH",
+        "statement": "普通股可得现金不能由合并货币资金减短期负债的简单差额确定。",
+        "materiality": "PERMANENT_LOSS",
+        "frozen_disposition": "UNKNOWN",
+        "source_ids": [
+          "SSE:600340:AR2017:REVISED",
+          "SSE:600340:AR2018:ORIGINAL",
+          "SSE:600340:AR2019:ORIGINAL"
+        ],
+        "prediction": null,
+        "threshold": null,
+        "unknown": {
+          "statement": "债务本金和利息、永续债支付、受限现金、NCI、维护性资本和担保/关联方回收尚未形成普通股现金桥。",
+          "economic_impact": "无法确认普通股现金安全垫或永久损失边界。",
+          "resolution_observation": "后续官方年报/公告逐项披露现金可达性和普通股归属桥。"
+        },
+        "counter_thesis": "销售回款和货币资金可能覆盖近期现金需求。",
+        "flip_condition": "仅在完整现金桥可复算且受限现金、债务、NCI和维护资本均有可比官方口径后重新判断。",
+        "observable_outcome": {
+          "metric": "ordinary_shareholder_cash_bridge",
+          "unit": "CNY billion",
+          "measurement_basis": "consolidated cash less restricted cash, debt service, NCI, maintenance capital and contingent guarantee scenario",
+          "measurement_rule": "Use the first comparable official disclosure after cutoff; do not estimate undisclosed fields.",
+          "period_start": "2020-04-28",
+          "period_end": "2021-04-27",
+          "allowed_source_types": [
+            "ANNUAL_REPORT",
+            "INTERIM_REPORT",
+            "EXCHANGE_ANNOUNCEMENT"
+          ],
+          "settlement_version_policy": "INITIAL_DISCLOSURE"
+        }
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:GOV_RECEIVABLES",
+        "statement": "政府园区应收的回收时点和损失率仍未知，管理层的一年内回款比例不是已实现回收。",
+        "materiality": "PERMANENT_LOSS",
+        "frozen_disposition": "UNKNOWN",
+        "source_ids": [
+          "SSE:600340:AR2017:INQUIRY_REPLY",
+          "SSE:600340:AR2019:ORIGINAL"
+        ],
+        "prediction": null,
+        "threshold": null,
+        "unknown": {
+          "statement": "项目级账龄、预算纳入、期后真实回款和损失率未闭合。",
+          "economic_impact": "应收资产可能无法按账面金额转化为普通股现金。",
+          "resolution_observation": "按项目和账龄读取后续官方披露及期后回款说明。"
+        },
+        "counter_thesis": "政府预算支付和历史回款安排可能使应收最终收回。",
+        "flip_condition": "需要可比项目级回款观察，不把管理层计划当作 actual。",
+        "observable_outcome": {
+          "metric": "government_receivable_collection_rate",
+          "unit": "percent",
+          "measurement_basis": "cash collected divided by the frozen comparable government receivable cohort",
+          "measurement_rule": "Match the same cohort and period; mark scope drift or undisclosed cohorts as not comparable.",
+          "period_start": "2020-04-28",
+          "period_end": "2021-04-27",
+          "allowed_source_types": [
+            "ANNUAL_REPORT",
+            "INTERIM_REPORT",
+            "EXCHANGE_ANNOUNCEMENT"
+          ],
+          "settlement_version_policy": "INITIAL_DISCLOSURE"
+        }
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:DEBT_REFINANCING",
+        "statement": "债务到期置换、融资成本和永续债利率重置的实际路径仍未知。",
+        "materiality": "PERMANENT_LOSS",
+        "frozen_disposition": "UNKNOWN",
+        "source_ids": [
+          "SSE:600340:AR2017:INQUIRY_REPLY",
+          "SSE:600340:AR2018:ORIGINAL",
+          "SSE:600340:AR2019:ORIGINAL"
+        ],
+        "prediction": null,
+        "threshold": null,
+        "unknown": {
+          "statement": "当前来源显示融资总额、成本和短期到期压力，但没有 cutoff 后实际偿还/置换序列。",
+          "economic_impact": "无法确认流动性压力是否下降或转化为更高融资成本。",
+          "resolution_observation": "按真实发布时间读取到期债务、置换、成本和永续债重置公告。"
+        },
+        "counter_thesis": "长期债替短债可能改善期限结构。",
+        "flip_condition": "只在实际偿还/置换和成本变化可比时更新判断。",
+        "observable_outcome": {
+          "metric": "debt_maturity_and_refinancing_cash_outflow",
+          "unit": "CNY billion",
+          "measurement_basis": "actual principal repayment, refinancing proceeds and interest cost by maturity bucket",
+          "measurement_rule": "Use published cash flows and debt schedules; do not infer successful refinancing from intent language.",
+          "period_start": "2020-04-28",
+          "period_end": "2021-04-27",
+          "allowed_source_types": [
+            "ANNUAL_REPORT",
+            "INTERIM_REPORT",
+            "EXCHANGE_ANNOUNCEMENT"
+          ],
+          "settlement_version_policy": "INITIAL_DISCLOSURE"
+        }
+      },
+      {
+        "claim_id": "HBTCLM:600340:P10B:GUARANTEE_RECOVERY",
+        "statement": "担保和关联方拆借/展期的实际损失或回收仍未知，担保余额不能机械视为已发生损失。",
+        "materiality": "PERMANENT_LOSS",
+        "frozen_disposition": "UNKNOWN",
+        "source_ids": [
+          "SSE:600340:AR2017:REVISED",
+          "SSE:600340:AR2018:ORIGINAL",
+          "SSE:600340:AR2019:ORIGINAL"
+        ],
+        "prediction": null,
+        "threshold": null,
+        "unknown": {
+          "statement": "被担保主体现金流、触发概率、抵押物变现和关联方实际回款未闭合。",
+          "economic_impact": "现金桥需要情景化处理或有负债和回收，而非全额扣除或归零。",
+          "resolution_observation": "后续官方披露逐笔追踪担保触发、回款、展期和抵押物处置。"
+        },
+        "counter_thesis": "部分担保有反担保或抵押，可能不产生实际损失。",
+        "flip_condition": "只有逐笔可比观察支持时，才能改变风险情景权重。",
+        "observable_outcome": {
+          "metric": "guarantee_and_related_party_cash_recovery",
+          "unit": "CNY billion",
+          "measurement_basis": "actual guarantee calls, settlements, related-party repayment and collateral realization",
+          "measurement_rule": "Record actual events separately from disclosed balances and management assurances.",
+          "period_start": "2020-04-28",
+          "period_end": "2021-04-27",
+          "allowed_source_types": [
+            "ANNUAL_REPORT",
+            "INTERIM_REPORT",
+            "EXCHANGE_ANNOUNCEMENT"
+          ],
+          "settlement_version_policy": "INITIAL_DISCLOSURE"
+        }
+      }
+    ]
+  },
+  "taxes_fees_fx": {
+    "tax_rate": 0.0,
+    "transaction_fee_rate": 0.0,
+    "dividend_tax_rate": 0.0,
+    "base_currency": "CNY",
+    "fx_rule": "No investment action or return is frozen in this engineering case."
+  },
+  "price_identity": {
+    "primary_route": "PRIMARY_ROUTE_UNKNOWN",
+    "primary_price_identity": "UNKNOWN",
+    "prices": []
+  },
+  "status": "FROZEN_WITH_QUALITY_FAILURE"
+}

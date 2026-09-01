@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "receipt_id": "HOLDOUT_BASELINE_EXECUTION:CN601933:FY2023",
+  "status": "SYNTHESIS_COMPLETED_PRE_OUTCOME",
+  "forecaster_role": "BASELINE",
+  "candidate_and_cutoff": {
+    "company_id": "CN:601933",
+    "security_code": "601933",
+    "company_name": "永辉超市",
+    "cutoff_at": "2024-05-01"
+  },
+  "source_attestation": {
+    "selection_register_read": "148_V5_MEMORY_HOLDOUT_SELECTION_REGISTER.json",
+    "packet_receipt_read": "150_CN601933_CUTOFF_BEFORE_PACKET_RECEIPT.json",
+    "report_texts_read": [
+      {
+        "fiscal_year": 2021,
+        "announcement_id": "1213271083",
+        "local_pdf_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2021_1213271083.pdf",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2021_1213271083.txt"
+      },
+      {
+        "fiscal_year": 2022,
+        "announcement_id": "1216707511",
+        "local_pdf_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2022_1216707511.pdf",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2022_1216707511.txt"
+      },
+      {
+        "fiscal_year": 2023,
+        "announcement_id": "1219878384",
+        "local_pdf_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2023_1219878384.pdf",
+        "local_text_extraction_path": "/tmp/cn601933-v5-holdout-packet.LGq8Ii/FY2023_1219878384.txt"
+      }
+    ],
+    "source_method": "Local search and reading of the three released text extractions only; the paired PDFs were available in the released packet but were not separately interpreted.",
+    "source_basis": "The released annual reports are the sole company-evidence basis for the attached judgment. The selection register and packet receipt establish target identity, cutoff, packet identity, and the permitted allocation; they are not used as company-operating evidence."
+  },
+  "allocation_attestation": {
+    "report_reads_authorized": 3,
+    "report_reads_used": 3,
+    "reports_read_in_order": [
+      "FY2023_1219878384.txt",
+      "FY2022_1216707511.txt",
+      "FY2021_1213271083.txt"
+    ],
+    "synthesis_turns_authorized": 1,
+    "synthesis_turns_used": 1,
+    "permitted_methods_used": [
+      "local packet search",
+      "local text-extraction reading"
+    ],
+    "browser_or_external_source_or_query_used": false
+  },
+  "firewall_attestation": {
+    "target_result_or_outcome_content_read": false,
+    "outcome_proxy_read": false,
+    "post_cutoff_filing_metadata_or_body_read": false,
+    "fy2024_or_later_metadata_or_body_read": false,
+    "price_return_analyst_or_valuation_material_read": false,
+    "other_campaign_or_curriculum_artifact_read": false,
+    "excluded_artifacts_not_read": [
+      "147_MEMORY_RETRIEVAL_INTERVENTION_DESIGN.md",
+      "149_V5_MEMORY_RETRIEVAL_CURATION_RECEIPT.json"
+    ],
+    "result_isolation_preserved": true
+  },
+  "completion_checks": {
+    "required_output_files_created": [
+      "151_CN601933_BASELINE_FORECASTER_EXECUTION_RECEIPT.json",
+      "152_CN601933_BASELINE_PREOUTCOME_JUDGMENT.json"
+    ],
+    "json_parse_check": "PASS",
+    "diff_check": "PASS"
+  }
+}

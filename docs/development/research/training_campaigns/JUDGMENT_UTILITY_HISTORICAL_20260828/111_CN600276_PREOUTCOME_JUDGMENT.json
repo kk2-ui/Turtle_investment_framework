@@ -1,0 +1,223 @@
+{
+  "artifact_type": "BLIND9_PREOUTCOME_ENTERPRISE_JUDGMENT",
+  "status": "ISSUED",
+  "as_of_cutoff": "2024-05-01T00:00:00+08:00",
+  "candidate": {
+    "security_id": "CN:600276",
+    "legal_name": "江苏恒瑞医药股份有限公司"
+  },
+  "scope_and_prohibitions": {
+    "permitted_question": "At the cutoff, assess the enterprise mechanism from R&D and approvals through commercialization, product mix, collection and reinvestment.",
+    "not_included": [
+      "formal valuation",
+      "share price, return, or market-performance analysis",
+      "investment action or recommendation",
+      "method-validation or transfer claim",
+      "individual-drug, patient-cohort, or asset-level economics"
+    ],
+    "inference_boundary": "The judgments below are conditional economic inferences from company disclosures. They identify a plausible mechanism and falsifiers; they do not claim that approvals, sales actions, access changes, or cash movements caused one another."
+  },
+  "evidence_source_key": {
+    "FY2021": {
+      "title": "恒瑞医药2021年年度报告",
+      "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2022-04-23/1213053755.PDF"
+    },
+    "FY2022": {
+      "title": "恒瑞医药2022年年度报告",
+      "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2023-04-22/1216518776.PDF"
+    },
+    "FY2023": {
+      "title": "恒瑞医药2023年年度报告",
+      "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2024-04-18/1219650115.PDF"
+    },
+    "citation_convention": "All page references are PDF pages, which match the report's printed page where shown."
+  },
+  "best_current_enterprise_judgment": {
+    "direction": "Conditional recovery of a pharma enterprise that is shifting its revenue carrier from policy-exposed legacy products toward approved innovative products is more plausible than a simple return to the former generic-drug model. The transition is economically promising but not yet proven as a durable, cash-funded reinvestment flywheel.",
+    "confidence": "Moderate on the direction of mix change and commercialization progress; low-to-moderate on the durability and incremental cash economics because disclosed aggregate revenue and cash-flow data do not isolate volumes, prices, working capital, or project returns.",
+    "economic_consequence": "The core enterprise question is whether approvals and market access keep producing aggregate innovative-drug revenue and collection that can fund a disciplined R&D program. Until that is demonstrated through a further period, owner-cash treatment should not capitalize the 2023 collection rebound as a settled recurring level."
+  },
+  "material_company_judgments": [
+    {
+      "id": "J1_PRODUCT_MIX_TO_COMMERCIALIZATION",
+      "judgment": "The disclosed 2023 rebound is most consistent with an emerging innovative-product revenue carrier that can offset, but has not yet neutralized, the structural pressure on the legacy generic portfolio.",
+      "confidence": "Moderate",
+      "causal_chain_hypothesis": "R&D and approvals create marketable innovative products; reimbursement/access and a specialized commercial network can increase patient and provider reach; aggregate innovative-drug sales then become a larger carrier of enterprise revenue as centralized procurement erodes older generic-product sales. This is a mechanism hypothesis, not causal proof.",
+      "decisive_evidence": [
+        {
+          "citation": "FY2021, PDF p. 8",
+          "fact": "The company reported 2021 revenue of RMB25.906bn, down 6.59%, and described high procurement price reductions and reimbursement-price cuts that compressed legacy and some innovative-product sales; it also reported three innovative drugs approved in the year, bringing the listed innovative-drug count to 10."
+        },
+        {
+          "citation": "FY2022, PDF p. 9",
+          "fact": "2022 revenue was RMB21.275bn, down 17.87%; innovative-drug sales were RMB8.116bn (RMB8.613bn including VAT). The report described 35 generic products involved in centralized procurement, 22 awards and an average winning-price reduction of 74.5%, while new reimbursement prices for named innovative drugs averaged a 33% reduction and access was difficult."
+        },
+        {
+          "citation": "FY2023, PDF p. 8",
+          "fact": "2023 revenue rose 7.26% to RMB22.820bn; innovative-drug revenue reached RMB10.637bn including VAT and excluding out-licensing revenue, up 22.1%. The company disclosed seven newly approved drugs and 15 domestic class-1 plus four class-2 innovative drugs at year end, while generic-drug revenue still faced procurement pressure."
+        },
+        {
+          "citation": "FY2023, PDF p. 9",
+          "fact": "The company disclosed a commercial network covering more than 2,500 tier-3 and 17,000 tier-1/2 hospitals, alongside retail and DTP channel development."
+        }
+      ],
+      "customer_and_operating_response": "The observable customer/operating response is aggregate, not patient-level: innovative-drug revenue increased from RMB8.116bn in 2022 to RMB10.637bn in 2023 despite disclosed price and access friction. Management also reports broader hospital, retail and DTP channel coverage. Treat this as evidence that approvals can be commercialized through the network, not as proof of product-specific demand, pricing power, or persistence.",
+      "strongest_alternative": "The 2023 improvement may be predominantly a one-year normalization in medical activity, reimbursement/access timing, and portfolio mix rather than durable innovative-product commercial traction; procurement-related generic declines may remain large enough to absorb future gains. The company itself says generic sales declined by RMB0.702bn for two second-round procurement products and RMB0.911bn for seventh-round products in 2023 (FY2023, PDF p. 8).",
+      "treatment_if_alternative_is_right": "Do not assume the 2023 innovative-drug growth rate is a normal run rate. Treat the business as a mixed portfolio with a still-declining legacy carrier until FY2024 confirms a growing innovative carrier and non-declining aggregate revenue.",
+      "specific_flip_facts": [
+        "FY2024 innovative-drug revenue, using the company-disclosed comparable definition, is below FY2023's RMB10.637bn.",
+        "FY2024 revenue declines by more than 5% year on year while the FY2024 report again attributes a material reduction to centralized procurement or access/price pressure.",
+        "The FY2024 report no longer discloses a comparable innovative-drug revenue carrier, preventing a clean test of the transition."
+      ]
+    },
+    {
+      "id": "J2_APPROVALS_AND_REINVESTMENT_DISCIPLINE",
+      "judgment": "Management appears to be changing the operating system around R&D—from expansion of spend and pipeline activity toward explicit commercial-value review and resource allocation—but the economic quality of that reinvestment remains unproven.",
+      "confidence": "Moderate on disclosed actions and weak-to-moderate on their economic effect",
+      "causal_chain_hypothesis": "A staged R&D governance process that assesses unmet clinical need and commercial value can concentrate capital behind candidates with a better chance of approval and commercialization; recurring revenue and cash collection can then fund further R&D. The filings evidence the processes and outputs, not the counterfactual return on capital.",
+      "decisive_evidence": [
+        {
+          "citation": "FY2021, PDF p. 8",
+          "fact": "R&D investment was RMB6.203bn, up 24.34% year on year and 23.95% of revenue; the filing said the increase materially affected current profit."
+        },
+        {
+          "citation": "FY2022, PDF pp. 9-11",
+          "fact": "R&D investment was RMB6.346bn, 29.83% of revenue, including RMB4.887bn expensed. Management reported an R&D management committee and four stage-specific committees intended to incorporate clinical unmet need and commercial market value in allocation; six marketing applications were accepted, eight trials advanced to phase III, 11 to phase II and 23 to phase I."
+        },
+        {
+          "citation": "FY2023, PDF pp. 8, 10-11",
+          "fact": "R&D investment was RMB6.150bn, including RMB4.954bn expensed. The filing reports lifecycle digital management, dynamic project budgets and a move from quantity orientation to quality orientation; it also reports 14 marketing applications accepted and 12/35/30 trials moving to phases III/II/I."
+        }
+      ],
+      "management_action_no_action_baseline": {
+        "observed_management_action": "Across 2021-2023, management kept R&D near RMB6.2bn while revenue first fell and then recovered, reorganized selling resources, and in 2022-2023 disclosed committee-based R&D decisions, commercial-value review, budget management, and a quality-over-quantity orientation.",
+        "no_action_baseline": "Without this reprioritization, the relevant baseline is an undifferentiated expansion of pipeline and selling expense while procurement and reimbursement pressure compress the old revenue base; that would make the same level of R&D less plausibly self-funded and increase the risk of profit and cash absorption.",
+        "assessment": "The disclosed actions are a credible response to the problem, but not evidence that management has selected a superior portfolio or earned a return on the R&D spend."
+      },
+      "strongest_alternative": "The committees, approval counts and stated quality orientation may be process descriptions while R&D remains a high fixed cost with uncertain commercial conversion; a broad pipeline can still consume capital before revenue benefits arrive, and approvals do not establish adoption or unit economics.",
+      "treatment_if_alternative_is_right": "Keep new pipeline and approvals conditional rather than treating them as owner-cash accretion. The base case gives credit only to already disclosed aggregate innovative-drug revenue, with continued R&D treated as required reinvestment rather than surplus cash.",
+      "specific_flip_facts": [
+        "FY2024 total R&D investment rises above 32% of revenue while total revenue declines year on year, indicating a more stressed reinvestment burden than the 2023 configuration.",
+        "FY2024 reports materially weaker approval/progression output without an accompanying disclosed reduction or reprioritization of total R&D investment.",
+        "FY2024 innovative-drug revenue declines despite continuing R&D at or above the FY2023 absolute level of RMB6.150bn."
+      ]
+    },
+    {
+      "id": "J3_COLLECTION_AND_OWNER_CASH",
+      "judgment": "The 2023 improvement in operating cash flow restores capacity to finance reinvestment, but it should be treated as a recovery to be verified rather than a settled owner-cash level because the 2022 shortfall was explicitly linked to slower customer collection and the 2023 recovery was explicitly linked to faster collection.",
+      "confidence": "High on the reported cash-flow swing; low-to-moderate on its recurring quality",
+      "causal_chain_hypothesis": "Product sales must be collected to create cash available for R&D, commercial infrastructure and other enterprise needs. Faster collection can improve operating cash conversion even when it does not itself prove a durable change in end demand or product economics.",
+      "decisive_evidence": [
+        {
+          "citation": "FY2021, PDF p. 6",
+          "fact": "Operating cash flow was RMB4.219bn against revenue of RMB25.906bn."
+        },
+        {
+          "citation": "FY2022, PDF pp. 6-7",
+          "fact": "Operating cash flow fell 70.01% to RMB1.265bn while revenue fell 17.87% to RMB21.275bn; management attributed the cash-flow decline to lower revenue and slower customer collections reducing cash received from sales."
+        },
+        {
+          "citation": "FY2023, PDF pp. 6-7",
+          "fact": "Operating cash flow rose 504.12% to RMB7.644bn while revenue rose 7.26% to RMB22.820bn; management attributed the change to revenue growth and faster customer collection increasing cash received from sales."
+        }
+      ],
+      "owner_cash_treatment": "Use 2023 operating cash flow as evidence of funding capacity, not as a normalized distributable amount. Continue to deduct the R&D needed to sustain approvals and commercialization, and require another period of cash conversion before treating the rebound as a repeatable owner-cash base.",
+      "permanent_loss_treatment": "Permanent-loss exposure is not only a clinical failure risk: it arises if product-price/access pressure and slow collection force the enterprise to maintain R&D and commercial infrastructure from a weakened cash base. The 2023 cash recovery reduces immediate funding stress, but does not remove that risk until it persists alongside the innovative revenue carrier.",
+      "strongest_alternative": "The cash rebound could be chiefly a working-capital timing reversal rather than a durable improvement in product economics or collection discipline. Conversely, the 2022 cash compression may have been unusually affected by disrupted medical activity; neither filing isolates the recurring component.",
+      "treatment_if_alternative_is_right": "Avoid extrapolating the 2023 operating cash flow figure. Scenario treatment relies on an explicit FY2024 cash-conversion threshold and otherwise retains a conservative funding burden for R&D.",
+      "specific_flip_facts": [
+        "FY2024 consolidated operating cash flow is below 80% of FY2024 profit attributable to shareholders, after both figures are taken from the same annual report.",
+        "FY2024 operating cash flow falls below RMB4.219bn, the FY2021 level, while total R&D investment remains at or above RMB6.150bn.",
+        "FY2024 reports a repeat of materially slower customer collection as a principal reason for lower cash received from sales."
+      ]
+    }
+  ],
+  "local_unknowns_and_conservative_handling": [
+    {
+      "unknown": "The filings do not disclose product-level net price, volume, gross margin, market share, or patient-cohort economics for the innovative-drug aggregate.",
+      "affected_claim": "Whether the 2023 innovative-drug revenue increase is durable demand-led commercialization rather than price, mix, access timing, or accounting-boundary movement.",
+      "handling": "Use only the disclosed comparable aggregate innovative-drug revenue carrier in the base case. Do not assign individual-drug economics, market-share gains, or durable pricing power; promote the claim only if FY2024 repeats a comparable disclosure and meets the settlement cell."
+    },
+    {
+      "unknown": "The filings do not supply project-level R&D probability of success, cost-to-completion, launch cost, or return on invested capital.",
+      "affected_claim": "Whether approval counts and pipeline progress create economic returns exceeding the reinvestment burden.",
+      "handling": "Treat R&D as necessary reinvestment, not surplus owner cash. Keep pipeline upside in the optimistic scenario only, contingent on aggregate commercialization and cash-conversion evidence."
+    },
+    {
+      "unknown": "The filings identify slower 2022 collection and faster 2023 collection but do not isolate the recurring versus temporary working-capital component.",
+      "affected_claim": "Whether 2023 operating cash flow is a normal owner-cash level.",
+      "handling": "Do not normalize the RMB7.644bn 2023 operating cash flow. Require FY2024 operating cash flow to at least match attributable profit for a pass, and otherwise retain the cash-conversion concern."
+    },
+    {
+      "unknown": "The filings show commercial-network coverage but do not link an individual channel, sales-force change, or reimbursement action to particular revenue growth.",
+      "affected_claim": "Whether management's commercialization changes, rather than external normalization, produced the revenue recovery.",
+      "handling": "Credit only the observable aggregate outcome and preserve the external-normalization alternative. No management-execution premium is inferred unless the revenue and cash cells pass together."
+    }
+  ],
+  "business_scenarios": {
+    "optimistic": {
+      "business_state": "Approvals and access continue to convert into a growing innovative-drug revenue carrier while collection stays strong enough to fund R&D without renewed cash stress.",
+      "observable_conditions": "Comparable innovative-drug revenue grows at least 10% from RMB10.637bn; total revenue grows at least 5%; operating cash flow is at least attributable profit; R&D investment is 22%-30% of revenue.",
+      "owner_cash_and_permanent_loss_treatment": "Funding capacity improves and the probability that the transition can self-finance rises, although R&D remains required reinvestment rather than distributable cash."
+    },
+    "base": {
+      "business_state": "Innovative-drug sales remain non-declining but access and legacy procurement pressure limit the pace of enterprise recovery; R&D remains substantial and cash conversion is adequate but not clearly exceptional.",
+      "observable_conditions": "Comparable innovative-drug revenue is flat to up less than 10%; total revenue is between -5% and +5%; operating cash flow is 80%-100% of attributable profit; R&D investment is 20%-32% of revenue.",
+      "owner_cash_and_permanent_loss_treatment": "Treat cash as largely absorbed by preserving the pipeline and commercialization transition. Permanent-loss risk remains tied to whether the old portfolio declines faster than innovative products commercialize."
+    },
+    "pessimistic": {
+      "business_state": "Price/access pressure and the legacy decline overwhelm innovative-product commercialization, while collection weakens and R&D becomes heavier relative to a falling revenue base.",
+      "observable_conditions": "Comparable innovative-drug revenue declines; total revenue declines by more than 5%; operating cash flow is below 80% of attributable profit; or R&D investment exceeds 32% of revenue while revenue declines.",
+      "owner_cash_and_permanent_loss_treatment": "Treat the R&D program and commercial infrastructure as cash-absorbing under a weaker revenue carrier; permanent-loss risk rises because the enterprise may need sustained reinvestment without reliable cash conversion."
+    }
+  },
+  "frozen_settlement_cells": [
+    {
+      "cell_id": "S1_INNOVATIVE_REVENUE_CARRIER",
+      "proposition": "At FY2024, Hengrui's innovative-drug revenue carrier continues to commercialize rather than reverse after the 2023 recovery.",
+      "metric_and_definition": "FY2024 innovative-drug revenue, exactly as disclosed by the company and, where the comparable disclosure is available, including VAT and excluding out-licensing revenue; FY2023 comparator is RMB10.637bn on that definition (FY2023, PDF p. 8).",
+      "period_and_comparator": "FY2024 annual report versus FY2023 annual report.",
+      "threshold": {
+        "pass": "FY2024 comparable innovative-drug revenue is at least RMB11.701bn (at least 10% above RMB10.637bn).",
+        "mixed": "FY2024 comparable innovative-drug revenue is at least RMB10.637bn but below RMB11.701bn, or the report supplies an explicitly non-comparable innovation-revenue definition.",
+        "fail": "FY2024 comparable innovative-drug revenue is below RMB10.637bn."
+      },
+      "investor_treatment_changed": "Pass strengthens the product-mix commercial-conversion judgment; fail rejects the current revenue-carrier premise and keeps new approvals as options rather than demonstrated enterprise support."
+    },
+    {
+      "cell_id": "S2_COLLECTION_TO_OWNER_CASH",
+      "proposition": "FY2024 operations convert reported profit to operating cash sufficiently to fund the business without repeating the 2022 collection stress.",
+      "metric_and_definition": "Consolidated net cash flows from operating activities divided by profit attributable to shareholders, using the two FY2024 annual-report headline financial-statement figures. FY2023 reference values are RMB7.644bn operating cash flow and RMB4.302bn attributable profit (FY2023, PDF p. 6).",
+      "period_and_comparator": "FY2024 annual report; ratio judged against 100% and 80% thresholds, with FY2023 as the immediately preceding cash-recovery reference.",
+      "threshold": {
+        "pass": "FY2024 operating cash flow divided by FY2024 attributable profit is at least 100%.",
+        "mixed": "The ratio is at least 80% but below 100%.",
+        "fail": "The ratio is below 80%, or FY2024 operating cash flow is below RMB4.219bn while total R&D investment is at least RMB6.150bn."
+      },
+      "investor_treatment_changed": "Pass permits the 2023 collection recovery to be treated as repeated funding capacity; fail requires a more conservative owner-cash treatment and raises the permanent-loss concern from a cash-funded transition."
+    },
+    {
+      "cell_id": "S3_REINVESTMENT_DISCIPLINE",
+      "proposition": "FY2024 R&D remains a deliberate, financeable reinvestment burden rather than expanding faster than the revenue carrier can support.",
+      "metric_and_definition": "Total R&D investment divided by total operating revenue, both as disclosed in the FY2024 annual report. FY2023 comparator is RMB6.150bn total R&D investment divided by RMB22.820bn revenue, or approximately 26.95% (FY2023, PDF pp. 6 and 8).",
+      "period_and_comparator": "FY2024 annual report versus FY2023 annual report, coupled with FY2024 year-on-year revenue direction.",
+      "threshold": {
+        "pass": "FY2024 R&D investment/revenue is 22%-30%, inclusive, and FY2024 revenue is at least FY2023 revenue of RMB22.820bn.",
+        "mixed": "FY2024 R&D investment/revenue is 20%-32%, inclusive, and FY2024 revenue is no more than 5% below FY2023 revenue.",
+        "fail": "FY2024 R&D investment/revenue exceeds 32% while FY2024 revenue declines year on year, or FY2024 R&D investment/revenue is below 20% together with a decline in comparable innovative-drug revenue."
+      },
+      "investor_treatment_changed": "Pass supports the view that R&D is being held within a revenue-funded transition; fail shifts treatment toward a cash-absorbing pipeline with higher reinvestment and permanent-loss risk."
+    }
+  ],
+  "settlement_protocol": {
+    "custodian_instruction": "Read only the FY2024 annual report, locate the named company-disclosed metrics, preserve their reported units and definitions, calculate only the stated comparisons, and assign pass/mixed/fail exactly as written. Do not use price, valuation, later sources, product-level estimates, or outcome narratives.",
+    "joint_interpretation": "S1 tests whether approvals/commercialization created a continuing revenue carrier; S2 tests whether sales are turning into operating cash; S3 tests whether the scale of R&D remains financeable relative to the revenue base. A single cell is not a whole-case conclusion, but S1 fail plus S2 or S3 fail overturns the conditional recovery judgment."
+  },
+  "access_boundary_attestation": {
+    "sources_used_for_judgment": "Only the three official CNINFO annual-report PDFs enumerated in the source packet, FY2021-FY2023.",
+    "no_outcomes_accessed": true,
+    "no_fy2024_or_later_source_or_metadata_accessed": true,
+    "no_market_or_analyst_material_accessed": true,
+    "no_individual_drug_or_cohort_economics_invented": true
+  }
+}

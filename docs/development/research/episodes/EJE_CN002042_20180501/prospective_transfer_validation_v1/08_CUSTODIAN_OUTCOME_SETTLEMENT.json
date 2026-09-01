@@ -1,0 +1,400 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-settlement.v1",
+  "source_receipt": {
+    "company_id": "CN:002042",
+    "issuer": "华孚时尚股份有限公司",
+    "announcement_id": "1206093259",
+    "title": "华孚时尚：2018年年度报告",
+    "cninfo_announcement_title": "2018年年度报告",
+    "published_at": "2019-04-25T00:00:00+08:00",
+    "url": "https://static.cninfo.com.cn/finalpage/2019-04-25/1206093259.PDF",
+    "detail_url": "https://www.cninfo.com.cn/new/disclosure/detail?plate=szse&orgId=gssz0002042&stockCode=002042&announcementId=1206093259&announcementTime=2019-04-25",
+    "report_period": {
+      "label": "FY2018",
+      "start": "2018-01-01",
+      "end": "2018-12-31"
+    },
+    "pages": 192,
+    "local_pdf_path": "/tmp/turtle_cn002042_outcome_custody/CN002042_2018_annual_report_1206093259.pdf",
+    "eligibility": {
+      "status": "ELIGIBLE_UNIQUE_FULL_REPORT",
+      "official_cninfo": true,
+      "security_code_matches": true,
+      "full_annual_report": true,
+      "is_abstract": false,
+      "is_english_version": false,
+      "is_updated_version": false,
+      "published_on_or_before_2019_05_01": true,
+      "uniqueness_check": {
+        "query_scope": "CNINFO; CN:002042; annual-report category; 2019-01-01 through 2019-05-01",
+        "results": [
+          {
+            "announcement_id": "1206093259",
+            "title": "2018年年度报告",
+            "eligibility": "ELIGIBLE_FULL_REPORT"
+          },
+          {
+            "announcement_id": "1206093246",
+            "title": "2018年年度报告摘要",
+            "eligibility": "INELIGIBLE_ABSTRACT"
+          }
+        ],
+        "eligible_full_report_count": 1
+      }
+    }
+  },
+  "field_settlement": {
+    "scope": "UNION_OF_BASELINE_AND_ENHANCED_CONTRACT_FIELD_IDS_ONLY",
+    "perimeter_gate": {
+      "fy2018_group_scope_status": "CHANGED",
+      "eight_entrusted_operators_continuity": "BRIDGED_AND_CONTINUED",
+      "eight_entrusted_operators": [
+        "阿瓦提银花",
+        "库车银花",
+        "沙雅银花",
+        "新和银花",
+        "库车纵横",
+        "库车恒丰",
+        "呼图壁宏盛",
+        "华孚恒丰"
+      ],
+      "bridge_evidence": {
+        "pdf_pages": [30, 84, 86, 87, 168],
+        "section": "第四节 托管情况；第十一节 财务报告（三）财务报表范围；九、在其他主体中的权益",
+        "quote": "本期纳入合并财务报表范围的主体共62户；八家列为受托经营管理公司"
+      },
+      "other_scope_change": {
+        "status": "SEVEN_ENTITIES_NEWLY_INCLUDED_IN_FY2018",
+        "pdf_pages": [13, 86, 87],
+        "quote": "本期新纳入合并范围的子公司；本期无不纳入合并范围的子公司"
+      },
+      "local_application": "FY2018 values and mechanical deltas are retained; enhanced group financial trend comparisons are marked LOCAL_MEASUREMENT_MISMATCH because of the seven other additions, not because of the eight entrusted operators. Textile-industry physical tonnes and project-level events continue.",
+      "affected_enhanced_group_trend_fields": [
+        "YARN_REVENUE_RMB",
+        "YARN_GROSS_MARGIN_PCT",
+        "NETWORK_CHAIN_REVENUE_RMB",
+        "NETWORK_CHAIN_GROSS_MARGIN_PCT",
+        "TOP5_CUSTOMER_SALES_SHARE_PCT",
+        "NET_OPERATING_CASH_RMB",
+        "CASH_CAPEX_RMB",
+        "DIRECTIONAL_OCF_LESS_CAPEX_RMB",
+        "CASH_BALANCE_RMB",
+        "ACCOUNTS_RECEIVABLE_RMB",
+        "CONSOLIDATED_INVENTORY_RMB",
+        "SHORT_TERM_BORROWINGS_RMB",
+        "CURRENT_PORTION_NONCURRENT_LIABILITIES_RMB",
+        "LONG_TERM_BORROWINGS_RMB"
+      ]
+    },
+    "fields": [
+      {
+        "field_id": "YARN_REVENUE_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 7221664140.38, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 11, "section": "第四节/主营业务分析/营业收入构成/分产品", "quote": "纱线 7,221,664,140.38"}
+      },
+      {
+        "field_id": "YARN_GROSS_MARGIN_PCT_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 15.69, "status": "REPORTED", "unit": "PERCENT"},
+        "evidence": {"pdf_page": 12, "section": "第四节/主营业务分析/占营业收入或营业利润10%以上情况/分产品", "quote": "纱线 毛利率15.69%"}
+      },
+      {
+        "field_id": "TEXTILE_INDUSTRY_SALES_VOLUME_TONNES_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 226095.34, "status": "REPORTED_COMPANY_LEVEL_PHYSICAL_TONNAGE_NOT_PROJECT_UTILIZATION", "unit": "TONNES"},
+        "evidence": {"pdf_page": 12, "section": "第四节/主营业务分析/公司实物销售收入是否大于劳务收入", "quote": "纺织行业 销售量 226,095.34吨"}
+      },
+      {
+        "field_id": "NETWORK_CHAIN_REVENUE_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 7016563056.41, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 11, "section": "第四节/主营业务分析/营业收入构成/分产品", "quote": "网链 7,016,563,056.41"}
+      },
+      {
+        "field_id": "NETWORK_CHAIN_GROSS_MARGIN_PCT_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 4.74, "status": "REPORTED", "unit": "PERCENT"},
+        "evidence": {"pdf_page": 12, "section": "第四节/主营业务分析/占营业收入或营业利润10%以上情况/分产品", "quote": "网链 毛利率4.74%"}
+      },
+      {
+        "field_id": "TOP5_CUSTOMER_SALES_SHARE_PCT_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 7.88, "status": "REPORTED", "unit": "PERCENT"},
+        "evidence": {"pdf_page": 14, "section": "第四节/主营业务分析/主要销售客户", "quote": "前五名客户合计销售占比7.88%"}
+      },
+      {
+        "field_id": "AKSU_160K_PROJECT_STATUS_AND_DISCLOSED_BENEFIT_EVENT",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {
+          "value": {
+            "status_event": "FULLY_COMPLETED_REACHED_USABLE_STATE_AND_PUT_INTO_USE_ON_2018_03_27",
+            "reported_period_benefit_rmb": 99035800,
+            "investment_progress_pct": 86.00,
+            "investment_progress_classification": "PROJECT_INVESTMENT_PROGRESS_NOT_UTILIZATION",
+            "benefit_classification": "REPORTED_PERIOD_BENEFIT_NOT_CAPITAL_RETURN"
+          },
+          "status": "REPORTED_EVENT_AND_PERIOD_BENEFIT",
+          "unit": "EVENT_AND_RMB"
+        },
+        "evidence": {"pdf_page": 19, "section": "第四节/募集资金投资项目情况", "quote": "全部建设完毕并投入使用；本期效益9,903.58万元"}
+      },
+      {
+        "field_id": "VIETNAM_160K_PROJECT_STATUS_AND_DISCLOSED_BENEFIT_EVENT",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {
+          "value": {
+            "status_event": "OVERALL_PROJECT_CONSTRUCTION_BASICALLY_COMPLETE_WITH_SOME_EQUIPMENT_IN_INSTALLATION_AND_COMMISSIONING",
+            "reported_period_benefit_rmb": 66175100,
+            "investment_progress_pct": 74.10,
+            "investment_progress_classification": "PROJECT_INVESTMENT_PROGRESS_NOT_UTILIZATION",
+            "benefit_classification": "REPORTED_PERIOD_BENEFIT_NOT_CAPITAL_RETURN"
+          },
+          "status": "REPORTED_EVENT_AND_PERIOD_BENEFIT",
+          "unit": "EVENT_AND_RMB"
+        },
+        "evidence": {"pdf_page": 19, "section": "第四节/募集资金投资项目情况", "quote": "整体建设基本完成；本期效益6,617.51万元"}
+      },
+      {
+        "field_id": "NET_OPERATING_CASH_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": -485799889.22, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 73, "section": "第十一节/合并现金流量表", "quote": "经营活动产生的现金流量净额 -485,799,889.22"}
+      },
+      {
+        "field_id": "CASH_CAPEX_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 506612106.23, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 73, "section": "第十一节/合并现金流量表/投资活动", "quote": "购建长期资产支付现金506,612,106.23"}
+      },
+      {
+        "field_id": "CASH_BALANCE_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 2963834636.23, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 63, "section": "第十一节/合并资产负债表", "quote": "货币资金 2,963,834,636.23"}
+      },
+      {
+        "field_id": "ACCOUNTS_RECEIVABLE_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 829086495.07, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 63, "section": "第十一节/合并资产负债表", "quote": "应收账款 829,086,495.07"}
+      },
+      {
+        "field_id": "CONSOLIDATED_INVENTORY_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 5493956680.19, "status": "REPORTED_CONSOLIDATED_WORKING_CAPITAL_NOT_PHYSICAL_TONNAGE", "unit": "RMB"},
+        "evidence": {"pdf_page": 63, "section": "第十一节/合并资产负债表", "quote": "存货 5,493,956,680.19"}
+      },
+      {
+        "field_id": "SHORT_TERM_BORROWINGS_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 9000185599.03, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 64, "section": "第十一节/合并资产负债表", "quote": "短期借款 9,000,185,599.03"}
+      },
+      {
+        "field_id": "CURRENT_PORTION_NONCURRENT_LIABILITIES_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 20000000.00, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 65, "section": "第十一节/合并资产负债表", "quote": "一年内到期的非流动负债20,000,000.00"}
+      },
+      {
+        "field_id": "LONG_TERM_BORROWINGS_RMB_FY2018_LEVEL",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING"],
+        "fy2018": {"value": 276172939.57, "status": "REPORTED", "unit": "RMB"},
+        "evidence": {"pdf_page": 65, "section": "第十一节/合并资产负债表", "quote": "长期借款 276,172,939.57"}
+      },
+      {
+        "field_id": "CONSOLIDATION_PERIMETER_CONTINUITY_EVENT",
+        "contract_membership": ["BASELINE_BEFORE_LEARNING", "ENHANCED_AFTER_LEARNING"],
+        "fy2018": {
+          "value": {
+            "group_scope": "CHANGED_SEVEN_ENTITIES_NEWLY_INCLUDED",
+            "eight_entrusted_operators": "CONTINUED_IN_FY2018_CONSOLIDATION_SCOPE",
+            "entities_removed": 0
+          },
+          "status": "REPORTED_GROUP_SCOPE_CHANGED_EIGHT_ENTRUSTED_CONTINUED",
+          "unit": "EVENT"
+        },
+        "fy2017_frozen_baseline": {"value": "EIGHT_ENTRUSTED_OPERATORS_INCLUDED_FROM_2017_02_01", "unit": "EVENT"},
+        "change": {
+          "type": "PERIMETER_EVENT",
+          "value": "EIGHT_ENTRUSTED_CONTINUITY_CONFIRMED; GROUP_SCOPE_EXPANDED_BY_SEVEN_OTHER_ENTITIES",
+          "trend_status": "LOCAL_MEASUREMENT_MISMATCH_FOR_AFFECTED_GROUP_TRENDS"
+        },
+        "evidence": {"pdf_pages": [30, 84, 86, 87, 168], "section": "第四节/托管情况；第十一节/合并财务报表范围", "quote": "八家受托经营管理公司持续列入；新增七家，无移出"}
+      },
+      {
+        "field_id": "YARN_REVENUE_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 7221664140.38, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 5886423335.67, "unit": "RMB"},
+        "change": {"absolute": 1335240804.71, "percent": 22.68, "direction": "INCREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 11, "section": "第四节/主营业务分析/营业收入构成/分产品", "quote": "纱线：2018年7,221,664,140.38；2017年5,886,423,335.67"}
+      },
+      {
+        "field_id": "YARN_GROSS_MARGIN_PCT",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 15.69, "status": "REPORTED", "unit": "PERCENT"},
+        "fy2017_frozen_baseline": {"value": 15.01, "unit": "PERCENT"},
+        "change": {"absolute": 0.68, "direction": "INCREASE", "unit": "PERCENTAGE_POINT", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 12, "section": "第四节/主营业务分析/分产品", "quote": "纱线毛利率15.69%，同比增加0.68个百分点"}
+      },
+      {
+        "field_id": "TEXTILE_INDUSTRY_SALES_VOLUME_TONNES",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 226095.34, "status": "REPORTED_COMPANY_LEVEL_PHYSICAL_TONNAGE_NOT_PROJECT_UTILIZATION", "unit": "TONNES"},
+        "fy2017_frozen_baseline": {"value": 201379.45, "unit": "TONNES"},
+        "change": {"absolute": 24715.89, "percent": 12.27, "direction": "INCREASE", "unit": "TONNES", "trend_status": "SETTLED_PRODUCT_PHYSICAL"},
+        "evidence": {"pdf_page": 12, "section": "第四节/公司实物销售收入是否大于劳务收入", "quote": "销售量226,095.34吨；上年201,379.45吨"}
+      },
+      {
+        "field_id": "TEXTILE_INDUSTRY_PRODUCTION_VOLUME_TONNES",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 251172.38, "status": "REPORTED_COMPANY_LEVEL_PHYSICAL_TONNAGE_NOT_PROJECT_UTILIZATION", "unit": "TONNES"},
+        "fy2017_frozen_baseline": {"value": 194610.65, "unit": "TONNES"},
+        "change": {"absolute": 56561.73, "percent": 29.06, "direction": "INCREASE", "unit": "TONNES", "trend_status": "SETTLED_PRODUCT_PHYSICAL"},
+        "evidence": {"pdf_page": 12, "section": "第四节/公司实物销售收入是否大于劳务收入", "quote": "生产量251,172.38吨；上年194,610.65吨"}
+      },
+      {
+        "field_id": "TEXTILE_INDUSTRY_ENDING_INVENTORY_VOLUME_TONNES",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 67897.22, "status": "REPORTED_COMPANY_LEVEL_PHYSICAL_TONNAGE_NOT_PROJECT_INVENTORY_OR_UTILIZATION", "unit": "TONNES"},
+        "fy2017_frozen_baseline": {"value": 42820.18, "unit": "TONNES"},
+        "change": {"absolute": 25077.04, "percent": 58.56, "direction": "INCREASE", "unit": "TONNES", "trend_status": "SETTLED_PRODUCT_PHYSICAL"},
+        "evidence": {"pdf_page": 12, "section": "第四节/公司实物销售收入是否大于劳务收入", "quote": "库存量67,897.22吨；上年42,820.18吨"}
+      },
+      {
+        "field_id": "NETWORK_CHAIN_REVENUE_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 7016563056.41, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 6538016227.54, "unit": "RMB"},
+        "change": {"absolute": 478546828.87, "percent": 7.32, "direction": "INCREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 11, "section": "第四节/主营业务分析/营业收入构成/分产品", "quote": "网链：2018年7,016,563,056.41；2017年6,538,016,227.54"}
+      },
+      {
+        "field_id": "NETWORK_CHAIN_GROSS_MARGIN_PCT",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 4.74, "status": "REPORTED", "unit": "PERCENT"},
+        "fy2017_frozen_baseline": {"value": 5.63, "unit": "PERCENT"},
+        "change": {"absolute": -0.89, "direction": "DECREASE", "unit": "PERCENTAGE_POINT", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 12, "section": "第四节/主营业务分析/分产品", "quote": "网链毛利率4.74%，同比减少0.89个百分点"}
+      },
+      {
+        "field_id": "TOP5_CUSTOMER_SALES_SHARE_PCT",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 7.88, "status": "REPORTED", "unit": "PERCENT"},
+        "fy2017_frozen_baseline": {"value": 9.83, "unit": "PERCENT"},
+        "change": {"absolute": -1.95, "direction": "DECREASE", "unit": "PERCENTAGE_POINT", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 14, "section": "第四节/主要销售客户", "quote": "前五名客户合计销售占比7.88%"}
+      },
+      {
+        "field_id": "NET_OPERATING_CASH_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": -485799889.22, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": -1320866636.34, "unit": "RMB"},
+        "change": {"absolute": 835066747.12, "reported_yoy_percent": 63.22, "direction": "LESS_NEGATIVE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 73, "section": "第十一节/合并现金流量表", "quote": "经营现金净额：-485,799,889.22；上年-1,320,866,636.34"}
+      },
+      {
+        "field_id": "CASH_CAPEX_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 506612106.23, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 1216030015.12, "unit": "RMB"},
+        "change": {"absolute": -709417908.89, "percent": -58.34, "direction": "DECREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 73, "section": "第十一节/合并现金流量表/投资活动", "quote": "购建长期资产现金506,612,106.23；上年1,216,030,015.12"}
+      },
+      {
+        "field_id": "DIRECTIONAL_OCF_LESS_CAPEX_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": -992411995.45, "status": "DERIVED_FROM_REPORTED_OCF_AND_CASH_CAPEX", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": -2536896651.46, "unit": "RMB"},
+        "change": {"absolute": 1544484656.01, "direction": "LESS_NEGATIVE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 73, "section": "第十一节/合并现金流量表；机械计算OCF减现金资本开支", "quote": "-485,799,889.22减506,612,106.23"}
+      },
+      {
+        "field_id": "CASH_BALANCE_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 2963834636.23, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 2237366260.13, "unit": "RMB"},
+        "change": {"absolute": 726468376.10, "percent": 32.47, "direction": "INCREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 63, "section": "第十一节/合并资产负债表", "quote": "货币资金2,963,834,636.23；期初2,237,366,260.13"}
+      },
+      {
+        "field_id": "ACCOUNTS_RECEIVABLE_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 829086495.07, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 785557890.94, "unit": "RMB"},
+        "change": {"absolute": 43528604.13, "percent": 5.54, "direction": "INCREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 63, "section": "第十一节/合并资产负债表", "quote": "应收账款829,086,495.07；期初785,557,890.94"}
+      },
+      {
+        "field_id": "CONSOLIDATED_INVENTORY_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 5493956680.19, "status": "REPORTED_CONSOLIDATED_WORKING_CAPITAL_NOT_PHYSICAL_TONNAGE", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 4830387360.87, "unit": "RMB"},
+        "change": {"absolute": 663569319.32, "percent": 13.74, "direction": "INCREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 63, "section": "第十一节/合并资产负债表", "quote": "存货5,493,956,680.19；期初4,830,387,360.87"}
+      },
+      {
+        "field_id": "SHORT_TERM_BORROWINGS_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 9000185599.03, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 6257248617.58, "unit": "RMB"},
+        "change": {"absolute": 2742936981.45, "percent": 43.84, "direction": "INCREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 64, "section": "第十一节/合并资产负债表", "quote": "短期借款9,000,185,599.03；期初6,257,248,617.58"}
+      },
+      {
+        "field_id": "CURRENT_PORTION_NONCURRENT_LIABILITIES_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 20000000.00, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 281367992.07, "unit": "RMB"},
+        "change": {"absolute": -261367992.07, "percent": -92.89, "direction": "DECREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 65, "section": "第十一节/合并资产负债表", "quote": "一年内到期非流动负债20,000,000.00；期初281,367,992.07"}
+      },
+      {
+        "field_id": "LONG_TERM_BORROWINGS_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 276172939.57, "status": "REPORTED", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 131951109.44, "unit": "RMB"},
+        "change": {"absolute": 144221830.13, "percent": 109.30, "direction": "INCREASE", "unit": "RMB", "trend_status": "LOCAL_MEASUREMENT_MISMATCH"},
+        "evidence": {"pdf_page": 65, "section": "第十一节/合并资产负债表", "quote": "长期借款276,172,939.57；期初131,951,109.44"}
+      },
+      {
+        "field_id": "AKSU_160K_PROJECT_STATUS_EVENT",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": "FULLY_COMPLETED_REACHED_USABLE_STATE_AND_PUT_INTO_USE_ON_2018_03_27", "status": "REPORTED_EXECUTION_EVENT_ONLY", "unit": "EVENT"},
+        "fy2017_frozen_baseline": {"value": "FULLY_COMPLETED_AND_IN_OPERATION_BY_2018_03", "unit": "EVENT"},
+        "change": {"type": "EVENT", "value": "NO_SUBSTANTIVE_CHANGE; EXACT_DATE_SETTLED_AS_2018_03_27", "trend_status": "SETTLED_PROJECT_EVENT"},
+        "evidence": {"pdf_page": 19, "section": "第四节/募集资金投资项目情况", "quote": "2018年3月27日全部建设完毕并投入使用"}
+      },
+      {
+        "field_id": "AKSU_160K_PROJECT_DISCLOSED_PERIOD_BENEFIT_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 99035800.00, "status": "REPORTED_PERIOD_BENEFIT_NOT_CAPITAL_RETURN", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 17590000.00, "unit": "RMB"},
+        "change": {"absolute": 81445800.00, "percent": 463.02, "direction": "INCREASE", "unit": "RMB", "trend_status": "MECHANICAL_REPORTED_BENEFIT_CHANGE_NOT_CAPITAL_RETURN"},
+        "evidence": {"pdf_page": 19, "section": "第四节/募集资金投资项目情况/本报告期实现的效益", "quote": "阿克苏项目本报告期效益9,903.58万元"}
+      },
+      {
+        "field_id": "VIETNAM_160K_PROJECT_STATUS_EVENT",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {
+          "value": "OVERALL_PROJECT_CONSTRUCTION_BASICALLY_COMPLETE_WITH_SOME_EQUIPMENT_IN_INSTALLATION_AND_COMMISSIONING; INVESTMENT_PROGRESS_74_10_PERCENT_NOT_UTILIZATION",
+          "status": "REPORTED_EXECUTION_EVENT_ONLY",
+          "unit": "EVENT"
+        },
+        "fy2017_frozen_baseline": {"value": "CONSTRUCTION_62_26_PERCENT_WITH_WASTEWATER_WORK_OUTSTANDING", "unit": "EVENT"},
+        "change": {"type": "EVENT_TRANSITION", "value": "ADVANCED_TO_BASICALLY_COMPLETE_WITH_SOME_EQUIPMENT_INSTALLATION_AND_COMMISSIONING", "trend_status": "SETTLED_PROJECT_EVENT_NO_UTILIZATION_INFERENCE"},
+        "evidence": {"pdf_page": 19, "section": "第四节/募集资金投资项目情况", "quote": "整体项目建设基本完成，尚有部分设备安装调试"}
+      },
+      {
+        "field_id": "VIETNAM_160K_PROJECT_DISCLOSED_PERIOD_BENEFIT_RMB",
+        "contract_membership": ["ENHANCED_AFTER_LEARNING"],
+        "fy2018": {"value": 66175100.00, "status": "REPORTED_PERIOD_BENEFIT_NOT_CAPITAL_RETURN", "unit": "RMB"},
+        "fy2017_frozen_baseline": {"value": 16460000.00, "unit": "RMB"},
+        "change": {"absolute": 49715100.00, "percent": 302.04, "direction": "INCREASE", "unit": "RMB", "trend_status": "MECHANICAL_REPORTED_BENEFIT_CHANGE_NOT_CAPITAL_RETURN"},
+        "evidence": {"pdf_page": 19, "section": "第四节/募集资金投资项目情况/本报告期实现的效益", "quote": "越南项目本报告期效益6,617.51万元"}
+      }
+    ]
+  }
+}

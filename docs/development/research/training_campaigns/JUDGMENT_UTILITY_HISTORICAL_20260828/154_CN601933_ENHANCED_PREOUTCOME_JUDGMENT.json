@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0",
+  "judgment_id": "V5_ENHANCED_PREOUTCOME_JUDGMENT:CN601933:FY2023",
+  "status": "FROZEN_PRE_OUTCOME",
+  "arm": "ENHANCED",
+  "candidate_and_cutoff": {
+    "company_id": "CN:601933",
+    "security_code": "601933",
+    "company_name": "永辉超市",
+    "cutoff_at": "2024-05-01"
+  },
+  "best_current_enterprise_judgments": [
+    {
+      "judgment": "The released record supports a mixed operating reset, not a demonstrated earnings recovery: the company is pruning and digitising a large grocery network while reported revenue and the reported profit base remain weak.",
+      "confidence": "moderate",
+      "decisive_pre_cutoff_evidence": [
+        "FY2021 reported revenue of RMB 91.062 billion and attributable net loss of RMB 3.944 billion; management attributed the loss partly to lower revenue and gross margin, alongside financial-asset, investment, store-closure, goodwill, and lease-standard effects.",
+        "FY2022 reported revenue of RMB 90.091 billion and attributable net loss of RMB 2.763 billion; management said revenue decline and still-low gross margin left operations loss-making, with RMB 437 million of impairments for long-loss-making and planned-closure stores.",
+        "FY2023 reported revenue of RMB 78.642 billion, down 12.71%, and attributable net loss of RMB 1.329 billion; the report identifies RMB 11.449 billion lower revenue and RMB 1.028 billion lower gross profit as loss drivers, plus investment and store/sales-network impairments."
+      ],
+      "causal_mechanism": "Store pruning and digital/supply-chain work can reduce friction and remove structurally loss-making locations, but a smaller network creates normal earnings only if retained stores recover customer throughput and gross contribution sufficiently to absorb store, fulfilment, central, and replacement-capital burdens.",
+      "strongest_countercase": "The sequential narrowing of reported losses, system rollout, higher online mix, and claimed operational efficiencies may be early proof that the retained network is improving, while prior losses and impairments are largely reset costs rather than a durable earnings deficit.",
+      "why_countercase_is_not_base_case": "The same FY2023 report still records material revenue and gross-profit contraction and a reported loss. It does not provide a responsibility-matched retained-store cohort bridge from customer activity to contribution after fulfilment, central costs, closures, and replacement capital.",
+      "reversal_observation": "A disclosed retained/cohort bridge showing sustained comparable customer demand, positive store contribution after fulfilment and central costs, and cash generation after maintenance and closure costs would promote the recovery case."
+    },
+    {
+      "judgment": "Management execution is credible as operational intervention but unproven as economic repair: it has closed weak locations, expanded digital and delivery capability, and reported supply-chain and labour-process gains, yet those implementation milestones are not owner-cash or capital-return evidence.",
+      "confidence": "moderate",
+      "decisive_pre_cutoff_evidence": [
+        "The network moved from 1,057 stores at FY2021 year-end to 1,033 after 36 openings and 60 closures in FY2022, then to 1,000 after 12 openings and 45 closures in FY2023.",
+        "FY2022 online revenue was RMB 15.936 billion, 17.69% of revenue; self-operated delivery covered 984 stores, reported RMB 8.8 billion sales, and reported 51.5% monthly average repeat purchase.",
+        "FY2023 online revenue was RMB 16.1 billion, 20.5% of revenue, with online merchandise gross margin up 0.9 percentage points; the report also describes completed core digital infrastructure, 93%+ full-store inventory accuracy, 20% average picking-efficiency improvement, and 9.3% lower per-order warehouse labour cost.",
+        "FY2023 supply-chain activity included three origin warehouses, reported 50% higher new-product introduction efficiency, 20% higher fresh-order labour productivity in promoted regions, and logistics inventory days down 2.5 days."
+      ],
+      "causal_mechanism": "These actions may improve availability, fulfilment, inventory accuracy, purchasing, and labour productivity, which can improve retained-store contribution. They cannot be credited to management success on the economic question until the customer response and incremental contribution net of fulfilment, central systems, exit cost, and capital replacement are observed on the responsible cohort.",
+      "strongest_countercase": "The reported online repeat rate, online margin improvement, inventory and labour metrics, and lower loss already demonstrate that management's plan is working through the network.",
+      "why_countercase_is_not_base_case": "The observed metrics are aggregate or operational proxies, not retained-store economic carriers. Network composition changed through closures, revenue fell sharply, and the report does not connect the proxies to post-cost store contribution or cash recovery.",
+      "reversal_observation": "A reconciled retained-versus-exited store disclosure with comparable sales/traffic, contribution margin, fulfilment cost, and closure/replacement-capital treatment would settle whether the intervention has become economic repair."
+    },
+    {
+      "judgment": "Permanent-loss risk remains elevated because the reports show repeated losses and impairments across a shrinking network, while owner cash and capital recovery are not established by the released evidence.",
+      "confidence": "moderate",
+      "decisive_pre_cutoff_evidence": [
+        "FY2021 included RMB 309 million of impairment for long-loss-making and planned-closure stores, in addition to other investment and goodwill impairment effects.",
+        "FY2022 included RMB 437 million of impairment for long-loss-making and planned-closure stores.",
+        "FY2023 included RMB 87 million of impairment for assets and sales networks of long-loss-making and planned-closure stores, while the company remained loss-making and closed more stores than it opened."
+      ],
+      "causal_mechanism": "Closing or impairing a weak unit may limit additional losses, but it realises prior capital shortfall and may require exit cash. Aggregate activity, a smaller footprint, or future operating cash cannot demonstrate capital recovery without separating retained, exited, and replacement cohorts and their working-capital and lease effects.",
+      "strongest_countercase": "Impairments and closures may be finite cleanup costs that remove the drag, so a leaner network could generate cash despite the historic accounting losses.",
+      "why_countercase_is_not_base_case": "That is plausible recovery optionality, but the released reports do not disclose a maintenance-versus-expansion/exit cash bridge or a retained-cohort return bridge. Treating cleanup as completed recovery would assume the missing capital evidence.",
+      "reversal_observation": "Cash-flow and capital-expenditure disclosures that reconcile operating cash, working-capital movements, lease/exit cash, maintenance investment, and retained-network contribution would lower the permanent-loss treatment if they demonstrate recoverable economics."
+    }
+  ],
+  "explicit_activity_credit_treatment": {
+    "customer_activity": "FY2022 delivery repeat purchase and FY2023 online scale/member/activity disclosures are credited only as evidence of customer engagement. They receive no direct credit to retained-store unit economics, normal earnings, owner cash, or capital recovery because pricing, gross contribution after fulfilment, customer-acquisition/retention cost, and cohort mix are not bridged.",
+    "store_activity": "Openings, closures, and a smaller total store count are credited only as implementation and exposure-management actions. They receive no credit to a repaired retained network, normal earnings, owner cash, or capital recovery absent retained/exited cohort contribution, exit cash, and replacement-capital evidence.",
+    "network_and_digital_activity": "Digital, supply-chain, inventory, picking, and labour metrics are credited as potentially relevant efficiency leading indicators. They receive no credit to normal earnings, owner cash, or capital recovery until their gross-margin, central-cost, fulfilment, and capital consequences are responsibility-matched and disclosed."
+  },
+  "management_execution_assessment": {
+    "assessment": "MIXED: active and potentially useful operational execution, but no demonstrated economic closure.",
+    "basis": "The company has taken observable pruning, digital, delivery, supply-chain, and labour-efficiency actions. The released evidence does not establish that the retained network earns its capital after the costs of operating, fulfilling, exiting, and replacing it.",
+    "management_claim_treatment": "Management-reported operational metrics are treated as evidence of implementation and hypotheses for unit economics, not as proof of cash recovery or capital return."
+  },
+  "normal_earnings_and_owner_cash_treatment": {
+    "normal_earnings": {
+      "treatment": "Conservative and below a profitable-network normalization: do not add back the multi-year losses or assume that recurring impairments are wholly non-recurring. The base case remains an unproven retained-store earnings base, with recovery optionality outside the base case.",
+      "reason": "FY2021-FY2023 contained successive reported attributable losses, and FY2023's loss still included a substantial revenue and gross-profit decline. Reported digital and online indicators do not disclose post-fulfilment, post-central-cost cohort contribution."
+    },
+    "owner_cash": {
+      "treatment": "LOCAL_UNKNOWN with a conservative non-credit: do not infer positive sustainable owner cash from operating activity, reduced footprint, lower replacement investment, or future reported operating cash without a bridge for working capital, leases, exit cash, maintenance capital, and retained-store contribution.",
+      "reason": "The three permitted report reads establish no complete owner-cash bridge. A cash-flow line by itself would still be insufficient for the stated owner-cash proposition without the listed capital and cohort reconciliation."
+    },
+    "permanent_loss": {
+      "treatment": "Elevated: recognise that recurring losses, impairments, and closures show capital at risk; do not offset that treatment with unproven network activity or presumed cleanup completion.",
+      "reason": "Exit and impairment actions may contain future damage, but the evidence does not establish recovery of already committed or replacement capital."
+    }
+  },
+  "scenario_conditions": {
+    "optimistic": {
+      "conditions": [
+        "Retained stores show durable comparable traffic/sales and contribution improvement after fulfilment and central costs.",
+        "Online/customer activity carries acceptable incremental gross contribution rather than only sales scale.",
+        "Operating cash remains after working-capital normalization, leases/exit cash, and maintenance investment, while further impairment and closure needs fall."
+      ],
+      "treatment": "The operational reset becomes a credible normal-earnings and owner-cash recovery case; capital-recovery confidence and valuation direction improve."
+    },
+    "base": {
+      "conditions": [
+        "Closures and digital/supply-chain actions yield selected efficiency improvements but not a disclosed retained-cohort economic bridge.",
+        "Revenue/traffic and margin remain insufficient to absorb the fixed, fulfilment, central, and replacement-capital burden.",
+        "Cash conversion remains unproven because exit, lease, working-capital, and maintenance-capital effects are not separated."
+      ],
+      "treatment": "Retain a loss-making/unbridged normal-earnings and owner-cash view; activity remains optionality, not a base-case capital-recovery credit."
+    },
+    "adverse": {
+      "conditions": [
+        "The smaller network loses customer throughput or price/margin faster than costs can be removed.",
+        "Online scale requires low contribution or raises fulfilment and promotion burdens.",
+        "Additional closures, impairments, exit cash, or replacement capital absorb cash and impair capital recovery."
+      ],
+      "treatment": "Permanent-loss risk rises; normal earnings and owner cash remain negative or deteriorate, and valuation direction weakens."
+    }
+  },
+  "directional_valuation_implication": {
+    "implication": "Constrained/downward relative to a proven profitable grocery-network normalisation: no favourable valuation credit is warranted for store, customer, online, or digital activity until it bridges to sustained unit economics, owner cash, and capital recovery.",
+    "no_number_or_investment_action": true
+  },
+  "local_unknowns_and_present_treatment": [
+    {
+      "unknown": "Retained-store cohort customer, contribution, fulfilment, and central-cost economics after the closure program.",
+      "present_treatment": "Do not credit customer/store/network activity to unit economics or normal earnings; preserve recovery only as a conditional upside case."
+    },
+    {
+      "unknown": "Sustainable owner cash after working-capital movements, lease and exit cash, maintenance capital, and any replacement/digital/supply-chain investment.",
+      "present_treatment": "No positive owner-cash or capital-recovery credit; aggregate operating cash, if later observed, would require a bridge rather than settle the issue."
+    },
+    {
+      "unknown": "Whether falling impairments and store closures represent completed cleanup or ongoing capital attrition.",
+      "present_treatment": "Keep permanent-loss risk elevated; neither assume a perpetual impairment run-rate nor assume cleanup completion."
+    }
+  ],
+  "fy2024_annual_report_mechanically_resolvable_cells": [
+    {
+      "cell": "Store-network reconciliation",
+      "required_disclosure": "FY2024 opening stores, gross openings, gross closures, and ending stores by disclosed format or region, with the arithmetic reconciliation.",
+      "decision_change": "Separates a retained-network improvement claim from a composition change caused by exits."
+    },
+    {
+      "cell": "Retained-store customer and unit-economics disclosure",
+      "required_disclosure": "FY2024 comparable-store sales or traffic together with retained-store gross/contribution margin after disclosed fulfilment and store operating costs; if the annual report does not disclose it, record NOT_DISCLOSED rather than infer it from aggregate online sales.",
+      "decision_change": "Can promote or reject credit from customer and digital activity to normal earnings."
+    },
+    {
+      "cell": "Operating-cash-flow statement row",
+      "required_disclosure": "FY2024 net cash generated from operating activities and the disclosed inventory, receivable, payable, and other working-capital movements that reconcile it.",
+      "decision_change": "Tests whether reported cash is operating conversion or working-capital timing; it is necessary but not sufficient for owner-cash credit."
+    },
+    {
+      "cell": "Capital and exit-cash bridge",
+      "required_disclosure": "FY2024 cash paid for property, plant, equipment, intangible and other long-lived assets, cash payments for lease liabilities and store exits where disclosed, and impairment/asset-disposal rows tied to loss-making or closed stores; record each undisclosed component as NOT_DISCLOSED.",
+      "decision_change": "Distinguishes maintenance/replacement and exit cash from apparent free cash, and therefore tests capital recovery and permanent-loss treatment."
+    }
+  ],
+  "enhanced_card_application": {
+    "same_mechanism_card": {
+      "bounded_mechanism": "Incremental/changed network activity needs jointly consistent customer absorption, cohort unit economics, cash recovery, and capital bridge before it earns base-case credit.",
+      "strongest_rival_preserved": "Early cash use and losses can reflect investment in a maturing network rather than failed expansion.",
+      "non_transfer_limit_applied": "No store count, financing capacity, negative capital direction, or outcome from the teaching case was transferred to CN601933."
+    },
+    "near_miss_card": {
+      "bounded_mechanism": "A smaller footprint, lower replacement investment, exit costs, or aggregate cash cannot establish the economics of retained units.",
+      "strongest_rival_preserved": "Aggregate changes may reflect external demand, operating-day variation, or survivorship rather than the management action.",
+      "non_transfer_limit_applied": "The contraction-case path does not imply that CN601933 should contract, has recovered, or will follow the teaching case."
+    },
+    "material_current_treatment_changed_by_memory": false,
+    "attestation": "The cards did not answer the holdout. They bounded interpretation of independently read pre-cutoff evidence and did not force a contrast with an unseen baseline."
+  },
+  "frozen_material_enhanced_treatment": {
+    "treatment": "Until a retained/exited cohort and cash/capital bridge is disclosed, give zero base-case credit from customer, store, online, supply-chain, or digital activity to owner cash or capital recovery, and no profitable normal-earnings normalization credit beyond the evidence.",
+    "expected_decision_consequence": "Valuation direction remains constrained; the rank-one research action is to resolve the FY2024 retained-network customer/unit-economics and cash/capital bridge cells before changing the recovery treatment."
+  },
+  "source_and_firewall_attestation": {
+    "target_sources": "Only the three released local FY2021-FY2023 annual-report text extractions listed in 150_CN601933_CUTOFF_BEFORE_PACKET_RECEIPT.json.",
+    "training_state": "149_V5_MEMORY_RETRIEVAL_PACK.json only; it is a bounded mechanism prompt, not a target-company source.",
+    "allocation": "Exactly three report-reading turns and one synthesis turn were used.",
+    "firewall": "No 147 or other campaign/curriculum/repository artifact, FY2024+ metadata/body, browser/external source, price/return/valuation/analyst material, target outcome, or outcome proxy was read.",
+    "outcome_guessing": false
+  }
+}

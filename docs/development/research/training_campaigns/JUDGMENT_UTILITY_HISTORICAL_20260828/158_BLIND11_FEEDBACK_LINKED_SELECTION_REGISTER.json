@@ -1,0 +1,142 @@
+{
+  "register_id": "BLIND11_FEEDBACK_LINKED_SELECTION_REGISTER",
+  "register_version": "1.0",
+  "registered_at": "2026-08-29",
+  "selection_track": "BLIND_JUDGMENT",
+  "selection_purpose": "Generate fresh real feedback after the documented Holdout convergence; this is a pre-outcome case-selection action and does not seek or imply a result.",
+  "candidate_identity": {
+    "market": "CN_A_SHARE",
+    "security_code": "601012",
+    "issuer_name_at_cutoff": "隆基绿能",
+    "issuer_name_in_FY2021_metadata": "隆基股份",
+    "company_cluster": "CN_RENEWABLE_ENERGY_MANUFACTURING__PHOTOVOLTAIC_INTEGRATED_MANUFACTURING",
+    "case_identity": "BLIND:CN601012:20240501:FY2024",
+    "cutoff_exclusive": "2024-05-01"
+  },
+  "selection_rationale": {
+    "pre_outcome_structure": "A Chinese renewable-energy manufacturing cluster with a broad, decision-relevant pre-outcome structure in which capacity and shipment-volume expansion can diverge from unit economics and pricing, working-capital absorption, capital-spending and debt requirements, and permanent-loss protection.",
+    "learning_value": "The structure can produce real feedback on whether a blind assessment keeps scale, margin, cash absorption, funding needs, and permanent-loss treatment separate rather than treating capacity growth as a sufficient conclusion.",
+    "selection_rule": "Select one previously unseen company cluster that satisfies the required mechanism class and has an original FY2021-FY2023 CNINFO annual-report packet publicly available before the cutoff.",
+    "result_independence": "No outcome, price, return, analyst, or FY2024 information was used to choose this candidate."
+  },
+  "exclusion": {
+    "previously_seen_curriculum_check": {
+      "permitted_curriculum_fields_reviewed": [
+        "case_id",
+        "case_identity",
+        "track",
+        "company_cluster"
+      ],
+      "candidate_code_present_in_curriculum": false,
+      "candidate_cluster_previously_seen": false,
+      "decision": "eligible_as_previously_unseen"
+    },
+    "metadata_document_exclusions": [
+      {
+        "announcement_id": "1213161622",
+        "title": "隆基股份2021年年度报告摘要",
+        "reason": "annual-report summary; not the original full annual report selected for the packet"
+      },
+      {
+        "announcement_id": "1216664285",
+        "title": "2022年年度报告摘要",
+        "reason": "annual-report summary; not the original full annual report selected for the packet"
+      },
+      {
+        "announcement_id": "1217282698",
+        "title": "2022年年度报告（修订版）",
+        "reason": "revision; packet uses the originally published FY2022 full annual report"
+      },
+      {
+        "announcement_id": "1219925323",
+        "title": "2023年年度报告摘要",
+        "reason": "annual-report summary; not the original full annual report selected for the packet"
+      }
+    ]
+  },
+  "source_metadata": {
+    "source_authority": "CNINFO official disclosure metadata",
+    "issuer_lookup": {
+      "endpoint": "https://www.cninfo.com.cn/new/information/topSearch/query",
+      "query": {
+        "keyWord": "601012",
+        "maxNum": 10
+      },
+      "returned_identity": {
+        "code": "601012",
+        "org_id": "9900022338",
+        "name": "隆基绿能",
+        "market_type": "shj"
+      }
+    },
+    "annual_report_query": {
+      "endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+      "query": {
+        "stock": "601012,9900022338",
+        "tabName": "fulltext",
+        "column": "sse",
+        "category": "category_ndbg_szsh;",
+        "plate": "sse",
+        "seDate": "2021-01-01~2024-05-01",
+        "pageNum": 1,
+        "pageSize": 30
+      },
+      "metadata_only": true
+    },
+    "original_annual_report_packet": [
+      {
+        "fiscal_year": 2021,
+        "announcement_id": "1213161635",
+        "announcement_title": "隆基股份2021年年度报告",
+        "announcement_date": "2022-04-28",
+        "adjunct_url": "https://static.cninfo.com.cn/finalpage/2022-04-28/1213161635.PDF",
+        "original_full_annual_report": true,
+        "published_before_cutoff": true
+      },
+      {
+        "fiscal_year": 2022,
+        "announcement_id": "1216664294",
+        "announcement_title": "2022年年度报告",
+        "announcement_date": "2023-04-28",
+        "adjunct_url": "https://static.cninfo.com.cn/finalpage/2023-04-28/1216664294.PDF",
+        "original_full_annual_report": true,
+        "published_before_cutoff": true
+      },
+      {
+        "fiscal_year": 2023,
+        "announcement_id": "1219925312",
+        "announcement_title": "2023年年度报告",
+        "announcement_date": "2024-04-30",
+        "adjunct_url": "https://static.cninfo.com.cn/finalpage/2024-04-30/1219925312.PDF",
+        "original_full_annual_report": true,
+        "published_before_cutoff": true
+      }
+    ],
+    "packet_cleanliness_rule": "Each selected item is the original full annual-report disclosure for one required fiscal year; report summaries and the FY2022 revision are excluded."
+  },
+  "firewall_and_role_separation": {
+    "selection_role": "This selector may inspect only curriculum identity/track/company-cluster fields and official CNINFO metadata needed to identify the pre-cutoff original annual-report packet.",
+    "blind_investigator_role": "A subsequent blind investigator may use only the selected FY2021-FY2023 packet and other separately authorized pre-cutoff evidence to form and freeze an ex-ante judgment.",
+    "outcome_role": "A separate outcome operator may acquire and assess post-cutoff evidence only after the blind judgment is frozen; that operator must not influence candidate selection or pre-outcome reasoning.",
+    "feedback_role": "A separate feedback integrator may compare the frozen judgment with outcome evidence after outcome acquisition, focusing on mechanism calibration rather than score-seeking.",
+    "prohibited_for_this_role": [
+      "campaign artifacts and reports",
+      "annual-report or other source bodies",
+      "external or browser sources",
+      "price, return, or analyst data",
+      "FY2024 outcome metadata or body"
+    ]
+  },
+  "negative_attestations": {
+    "campaign_artifacts_or_reports_read": false,
+    "curriculum_content_read_beyond_identity_track_company_cluster": false,
+    "annual_report_or_other_source_body_read": false,
+    "external_or_browser_source_read": false,
+    "price_return_or_analyst_data_read": false,
+    "FY2024_outcome_metadata_identified_or_read": false,
+    "FY2024_outcome_body_read": false,
+    "selection_used_outcome_information": false,
+    "selection_used_result_seeking": false,
+    "repository_commit_created": false
+  }
+}

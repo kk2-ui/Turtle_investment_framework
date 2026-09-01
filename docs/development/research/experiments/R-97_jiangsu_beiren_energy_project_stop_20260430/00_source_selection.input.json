@@ -1,0 +1,34 @@
+{
+  "selection_policy_id": "r97-jiangsu-beiren-energy-project-stop-pre-read.v1",
+  "selection_reason": "在完整上交所公告清单于 2026-05-01T00:00:00+08:00 冻结后，只读取核实综合能源管理建设项目终止决定、项目的行动前经营与资本边界所必需的三份法定披露；不读取截止日后的经营结果。",
+  "source_research_rationales": [
+    {
+      "source_id": "SSE:688218:ANN:20260430:688218_20260430_2UOU",
+      "selection_reason": "确认终止决定的授权、实施状态、项目范围、资金去向、停止条件和公司列示的竞争与客户风险。",
+      "research_question_ids": [
+        "R97-Q1-decision-and-implementation",
+        "R97-Q2-customer-and-competition",
+        "R97-Q5-capital-boundary"
+      ]
+    },
+    {
+      "source_id": "SSE:688218:ANN:20260430:688218_20260430_UC14",
+      "selection_reason": "建立行动前的业务、项目、客户、单位经济、营运资本及资本配置基线；若只披露合并或异质项目口径，明确保留 UNKNOWN。",
+      "research_question_ids": [
+        "R97-Q2-customer-and-competition",
+        "R97-Q3-unit-economics-bridge",
+        "R97-Q4-cash-origin-bridge",
+        "R97-Q5-capital-boundary"
+      ]
+    },
+    {
+      "source_id": "SSE:688218:ANN:20260430:688218_20260430_1AMJ",
+      "selection_reason": "确认截至 2026Q1 的最近一期经营、营运资本和现金披露仅作为决策前基线，不把其当作终止项目的结果。",
+      "research_question_ids": [
+        "R97-Q3-unit-economics-bridge",
+        "R97-Q4-cash-origin-bridge",
+        "R97-Q5-capital-boundary"
+      ]
+    }
+  ]
+}

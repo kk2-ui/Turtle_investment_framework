@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "acceptance_candidate_seed.schema.json",
+  "type": "object",
+  "required": ["schema_version", "source_dir", "target_dir", "created_at", "policy", "files"],
+  "properties": {
+    "schema_version": {"const": "acceptance-candidate-seed.v1"},
+    "source_dir": {"type": "string"},
+    "target_dir": {"type": "string"},
+    "created_at": {"type": "string"},
+    "policy": {"type": "object", "required": ["prior_reports_copied", "prior_chapters_copied", "prior_decision_ledgers_copied", "raw_filings_preserved"]},
+    "files": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["name", "sha256", "size_bytes", "role"]}}
+  }
+}

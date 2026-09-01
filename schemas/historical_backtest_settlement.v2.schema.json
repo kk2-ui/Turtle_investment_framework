@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/historical_backtest_settlement.v2.schema.json",
+  "title": "Turtle Historical Backtest Settlement v2",
+  "type": "object",
+  "required": ["schema_version", "settlement_id", "experiment_id", "case_id", "freeze_id", "settlement_as_of", "actual_sources", "operating_source_timeline", "actual_outcomes", "report_coverage", "model_forecast_error", "investment_return_outcome", "status"],
+  "properties": {
+    "schema_version": {"const": "historical-backtest-settlement.v2"},
+    "settlement_id": {"type": "string", "pattern": "^HBTSET:"},
+    "experiment_id": {"type": "string", "pattern": "^HBT:"},
+    "case_id": {"type": "string", "pattern": "^HBTCASE:"},
+    "freeze_id": {"type": "string", "pattern": "^HBTFRZ:"},
+    "settlement_as_of": {"type": "string"},
+    "settlement_series_id": {"type": "string", "pattern": "^HBTSETS:"},
+    "settlement_sequence": {"type": "integer", "minimum": 1},
+    "previous_settlement_id": {"type": ["string", "null"]},
+    "settlement_stage": {"enum": ["EARLY_MECHANISM", "TERMINAL_OPERATING"]},
+    "outcome_acquisition": {
+      "type": "object",
+      "description": "Production CJO rival-pair settlements bind later sources and observations to a post-cutoff raw/reader/read-audit/extraction package; they cannot hand-enter an actual result.",
+      "properties": {
+        "package_root": {"type": "string", "minLength": 1},
+        "manifest_path": {"type": "string", "minLength": 1},
+        "read_attestation_path": {"type": "string", "minLength": 1},
+        "extraction_path": {"type": "string", "minLength": 1}
+      }
+    },
+    "actual_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_type", "official", "published_at", "source_version", "content_access"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "source_type": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS", "OFFICIAL_MARKET_DATA", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]},
+          "official": {"type": "boolean"},
+          "published_at": {"type": "string"},
+          "source_version": {"type": "string", "minLength": 1},
+          "data_as_of": {"type": ["string", "null"]},
+          "content_access": {"enum": ["BODY_READ", "METADATA_ONLY"]}
+        }
+      }
+    },
+    "operating_source_timeline": {
+      "type": "object",
+      "required": ["enumeration_status", "source_ids"],
+      "properties": {
+        "enumeration_status": {"enum": ["COMPLETE", "INCOMPLETE"]},
+        "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "actual_outcomes": {
+      "type": "object",
+      "required": ["currency", "cash_flows", "operating_observations"],
+      "properties": {
+        "currency": {"type": "string", "minLength": 1},
+        "cash_flows": {
+          "type": "array",
+          "items": {"type": "object", "required": ["date", "amount", "source_ids"], "properties": {"date": {"type": "string"}, "amount": {"type": "number"}, "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}}
+        },
+        "operating_observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["observation_id", "claim_id", "metric", "value", "unit", "measurement_basis", "measurement_period", "source_ids", "comparability_status"],
+            "properties": {
+              "observation_id": {"type": "string", "pattern": "^HBTOBS:"},
+              "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
+              "metric": {"type": "string", "minLength": 1},
+              "value": {},
+              "unit": {"type": "string", "minLength": 1},
+              "measurement_basis": {"type": "string", "minLength": 1},
+              "measurement_period": {
+                "type": "object",
+                "required": ["kind", "start", "end"],
+                "properties": {
+                  "kind": {"enum": ["REPORTING_PERIOD", "EVENT_WINDOW"]},
+                  "start": {"type": "string", "minLength": 10},
+                  "end": {"type": "string", "minLength": 10}
+                }
+              },
+              "event_period": {
+                "type": "object",
+                "required": ["start", "end"],
+                "properties": {
+                  "start": {"type": "string", "minLength": 10},
+                  "end": {"type": "string", "minLength": 10}
+                }
+              },
+              "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+              "comparability_status": {"enum": ["COMPARABLE", "CONVERTIBLE_WITH_PREREGISTERED_RULE", "PERIOD_MISMATCH", "SCOPE_OR_ACCOUNTING_DRIFT", "NOT_COMPARABLE", "NOT_DISCLOSED"]},
+              "reported_file_scope": {"type": ["string", "null"]},
+              "reported_label": {"type": ["string", "null"]},
+              "reported_locator": {"type": ["string", "null"]},
+              "raw_value": {"type": ["number", "null"]},
+              "raw_unit": {"type": ["string", "null"]},
+              "conversion_rule_id": {"type": ["string", "null"]}
+            },
+            "allOf": [{
+              "if": {
+                "properties": {"measurement_period": {"properties": {"kind": {"const": "EVENT_WINDOW"}}, "required": ["kind"]}},
+                "required": ["measurement_period"]
+              },
+              "then": {"required": ["event_period"]}
+            }]
+          }
+        }
+      }
+    },
+    "report_coverage": {"type": "object", "required": ["status", "review_id", "claim_reviews", "supported_claim_count", "unsupported_claim_count", "unknowns_preserved", "notes"], "properties": {"status": {"enum": ["PASS", "PARTIAL", "INCOMPLETE", "INVALID"]}, "review_id": {"type": "string", "pattern": "^HBTREV:"}, "claim_reviews": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["claim_id", "disposition", "source_ids"], "properties": {"claim_id": {"type": "string", "pattern": "^HBTCLM:"}, "disposition": {"enum": ["SUPPORTED", "PARTIAL", "UNSUPPORTED", "UNKNOWN_PRESERVED"]}, "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}}}, "supported_claim_count": {"type": "integer", "minimum": 0}, "unsupported_claim_count": {"type": "integer", "minimum": 0}, "unknowns_preserved": {"type": "boolean"}, "notes": {"type": "array", "items": {"type": "string"}}}},
+    "model_forecast_error": {"type": "object", "required": ["status", "claim_settlements", "metrics", "notes"], "properties": {"status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE"]}, "claim_settlements": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["claim_id", "frozen_disposition", "status", "observation_ids"], "properties": {"claim_id": {"type": "string", "pattern": "^HBTCLM:"}, "frozen_disposition": {"enum": ["PREDICTION", "UNKNOWN"]}, "status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE", "UNRESOLVED_AS_OF_SETTLEMENT", "PARTIALLY_RESOLVED", "RESOLVED_MATERIAL", "RESOLVED_IMMATERIAL"]}, "observation_ids": {"type": "array", "items": {"type": "string", "pattern": "^HBTOBS:"}}}}}, "metrics": {"type": "array", "items": {"type": "object", "required": ["claim_id", "observation_id", "metric", "actual_value", "unit", "actual_source_ids"], "properties": {"claim_id": {"type": "string", "pattern": "^HBTCLM:"}, "observation_id": {"type": "string", "pattern": "^HBTOBS:"}, "metric": {"type": "string", "minLength": 1}, "forecast_value": {"type": ["number", "null"]}, "forecast_range_low": {"type": ["number", "null"]}, "forecast_range_high": {"type": ["number", "null"]}, "interval_disposition": {"enum": ["WITHIN_RANGE", "BELOW_RANGE", "ABOVE_RANGE", null]}, "actual_value": {"type": "number"}, "unit": {"type": "string", "minLength": 1}, "actual_source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}}}, "notes": {"type": "array", "items": {"type": "string"}}}},
+    "investment_return_outcome": {
+      "type": "object",
+      "required": ["status", "action", "total_return", "benchmark_return", "currency", "notes", "frozen_action", "frozen_price_identity", "execution", "cash_flow_ledger", "corporate_actions", "taxes_fees_fx", "benchmark_identity"],
+      "properties": {
+        "status": {"enum": ["CALCULATED", "PARTIAL", "NOT_CALCULABLE", "NOT_APPLICABLE"]},
+        "action": {"enum": ["BUY", "HOLD", "WAIT", "SELL", "NO_BUY", "UNKNOWN"]},
+        "frozen_action": {"enum": ["BUY", "HOLD", "WAIT", "SELL", "NO_BUY", "UNKNOWN"]},
+        "frozen_price_identity": {"enum": ["P_LONG", "P_XIRR", "P_LEGAL", "P_BUSINESS_VALUE_EXIT", "UNKNOWN"]},
+        "total_return": {"type": ["number", "null"]},
+        "benchmark_return": {"type": ["number", "null"]},
+        "currency": {"type": "string"},
+        "notes": {"type": "array", "items": {"type": "string"}},
+        "execution": {
+          "type": "object",
+          "required": ["execution_rule", "fill_status", "entry", "exit"],
+          "properties": {
+            "execution_rule": {"type": "string", "minLength": 1},
+            "fill_status": {"enum": ["FILLED", "PARTIALLY_FILLED", "NOT_FILLED", "NOT_APPLICABLE"]},
+            "entry": {"$ref": "#/$defs/execution_leg"},
+            "exit": {
+              "allOf": [
+                {"$ref": "#/$defs/execution_leg"},
+                {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["EXITED", "MARKED_TO_MARKET", "OPEN", "NOT_APPLICABLE"]}}}
+              ]
+            }
+          }
+        },
+        "cash_flow_ledger": {"type": "array", "items": {"$ref": "#/$defs/cash_flow"}},
+        "corporate_actions": {"type": "array", "items": {"$ref": "#/$defs/corporate_action"}},
+        "taxes_fees_fx": {"$ref": "#/$defs/taxes_fees_fx"},
+        "benchmark_identity": {"$ref": "#/$defs/benchmark_identity"}
+      }
+    },
+    "status": {"enum": ["REVIEWABLE", "INCOMPLETE", "INVALID"]}
+  },
+  "$defs": {
+    "execution_leg": {
+      "type": "object",
+      "required": ["date", "price", "quantity", "currency", "source_ids"],
+      "properties": {
+        "date": {"type": ["string", "null"]},
+        "price": {"type": ["number", "null"]},
+        "quantity": {"type": ["number", "null"]},
+        "currency": {"type": ["string", "null"]},
+        "source_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "cash_flow": {
+      "type": "object",
+      "required": ["flow_id", "date", "flow_type", "gross_amount", "tax_amount", "fee_amount", "net_amount", "currency", "fx_rate_to_base", "net_base_amount", "source_ids"],
+      "properties": {
+        "flow_id": {"type": "string", "minLength": 1},
+        "date": {"type": "string"},
+        "flow_type": {"enum": ["ENTRY", "EXIT", "MARK_TO_MARKET", "DIVIDEND", "CORPORATE_ACTION_CASH", "CASH_ALTERNATIVE"]},
+        "gross_amount": {"type": "number"},
+        "tax_amount": {"type": "number", "minimum": 0},
+        "fee_amount": {"type": "number", "minimum": 0},
+        "net_amount": {"type": "number"},
+        "currency": {"type": "string", "minLength": 1},
+        "fx_rate_to_base": {"type": "number", "exclusiveMinimum": 0},
+        "net_base_amount": {"type": "number"},
+        "corporate_action_id": {"type": ["string", "null"]},
+        "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "corporate_action": {
+      "type": "object",
+      "required": ["action_id", "action_type", "effective_date", "treatment", "source_ids", "cash_flow_ids"],
+      "properties": {
+        "action_id": {"type": "string", "minLength": 1},
+        "action_type": {"enum": ["CASH_DIVIDEND", "STOCK_SPLIT", "RIGHTS_ISSUE", "MERGER", "DELISTING", "SPINOFF", "OTHER"]},
+        "effective_date": {"type": "string"},
+        "treatment": {"type": "string", "minLength": 1},
+        "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "cash_flow_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "taxes_fees_fx": {
+      "type": "object",
+      "required": ["tax_rate", "transaction_fee_rate", "dividend_tax_rate", "base_currency", "fx_rule"],
+      "properties": {
+        "tax_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "transaction_fee_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "dividend_tax_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "base_currency": {"type": "string", "minLength": 3},
+        "fx_rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "benchmark_identity": {
+      "type": "object",
+      "required": ["benchmark_id", "market", "currency", "return_basis", "calculation_rule", "source_ids"],
+      "properties": {
+        "benchmark_id": {"type": "string", "minLength": 1},
+        "market": {"type": "string", "minLength": 1},
+        "currency": {"type": "string", "minLength": 1},
+        "return_basis": {"enum": ["PRICE_RETURN", "TOTAL_RETURN_GROSS", "TOTAL_RETURN_NET"]},
+        "calculation_rule": {"type": "string", "minLength": 1},
+        "source_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  }
+}

@@ -1,0 +1,1559 @@
+{
+  "authority": "PRICE_FREE_RESEARCH_CANDIDATES_ONLY",
+  "boundary": {
+    "contains_outcome_results": false,
+    "contains_price_or_valuation_results": false,
+    "grants_investment_authority": false
+  },
+  "company_id": "CN:600720",
+  "contract_id": "UWTRAIN:CN600720:20180430:COURSE2C:ENHANCED:V1",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "primary_training_product": {
+    "episode_id": "UWEP:CN600720:20180430:COURSE2C:ENHANCED:V1",
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "underwriting_thesis_id": "UWTHESIS:CN600720:20180430:COURSE2C:ENHANCED:V1"
+  },
+  "projections": {
+    "cjo_candidate_projection": {
+      "authority": "TEACHING_CANDIDATE_ONLY",
+      "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
+      "central_path": "最可能路径是水泥行业在需求平淡下因有效供给纪律和价格修复而恢复利润池，祁连山成熟区域网络已通过单位毛利、区域毛利和正 OCF 获得传导，并以降债提高生存韧性；但过剩产能尚存，故只承保跨周期成熟核心，owner cash 保留维护资本条件，具名增长、未完工项目和边界变化不进入基础价值。",
+      "company_id": "CN:600720",
+      "component_decisions": [
+        {
+          "component_id": "COMPONENT:MATURE_CORE_NETWORK",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "REDUCES",
+          "invalidation_test": "供给纪律减弱后销量承载、单位毛利和多数区域毛利率持续同步恶化，撤销成熟核心基础范围。",
+          "normal_earnings_use": "BASE_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "区域量价成本桥继续支持稳定销量承载和跨周期正单位经济，可缩窄基础正常盈利范围。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "PRIMARY_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "维护缺口、环保强制资本或在建承诺显著高于当前支出时，撤销 owner-cash 条件范围并提高融资压力。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "维护、技改和扩产拆分证明维护需求可持续且无重大递延，才允许形成更窄 owner-cash 范围。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "利润改善而 OCF、可用现金或短债覆盖持续恶化，则提高永久损失压力并撤销现金交叉验证。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "经营现金持续覆盖营运资本吸收和到期债务，且可用现金/短债覆盖改善，则降低融资压力。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "CORROBORATIVE_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CORROBORATIVE_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            }
+          ],
+          "valuation_use": "CORROBORATIVE_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "责任单元利润转亏、客户吸收不足或资本责任桥无法闭合时，撤销条件处理并转入压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "具名 cohort 的项目级销量、OCF、维护资本和完整投入资本同时建立后，才可晋级增长资本回报。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "EXCLUDED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "UNRESOLVED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+          "economic_scope": "OTHER_MATERIAL_COMPONENT",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "责任单元亏损持续或公司资金支持义务扩大时，提高融资和永久损失压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "STRESS_ONLY",
+          "promotion_test": "控制安排、普通股现金归属、资本责任和持续盈利均有同边界证据时才重新分类。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            }
+          ],
+          "valuation_use": "STRESS_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+          "economic_scope": "OTHER_MATERIAL_COMPONENT",
+          "financing_pressure_effect": "NOT_APPLICABLE",
+          "invalidation_test": "若口径变化继续主导同比或新增资本责任无法识别，维持未决并禁止作为增长。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "并表前后同责任边界的经营、现金和投入资本桥闭合后，才可用于连续正常化。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "UNRESOLVED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:UNFINISHED_PROJECTS",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "持续延误、成本上升、需求不足或新增减值时撤销情景并提高融资压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "SCENARIO_ONLY",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "投产、客户吸收、利用率、项目 OCF、维护资本和完整投入资本均可见后才从情景晋级。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "SCENARIO_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE",
+              "use": "SCENARIO_ONLY"
+            }
+          ],
+          "valuation_use": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:YUMEN_TERMINATED_PROJECT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "新增减值、清理现金流或关联义务扩大时，提高已实现永久损失。",
+          "normal_earnings_use": "EXCLUDED",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "原项目不晋级；任何新方案必须作为独立组件重新证明客户、现金和资本回报。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "STRESS_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:NONRECURRING_DISPOSALS",
+          "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+          "financing_pressure_effect": "NOT_APPLICABLE",
+          "invalidation_test": "任何新的处置收益或现金均继续逐项排除，不因连续两年出现而自动视为经营。",
+          "normal_earnings_use": "EXCLUDED",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "NOT_APPLICABLE",
+          "promotion_test": "只有来源于核心责任边界且可重复的现金才可另行进入正常化。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "EXCLUDED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:NONRECURRING_CAPITALIZATION",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "EXCLUDED"
+        }
+      ],
+      "component_treatments": [
+        {
+          "component_id": "COMPONENT:MATURE_CORE_NETWORK",
+          "evidence_ids": [
+            "EVIDENCE:OPERATING_AND_REGIONAL_SERIES",
+            "EVIDENCE:CASH_CAPITAL_AND_DEBT"
+          ],
+          "investment_consequence": "允许以跨周期销量和单位毛利形成成熟核心正常盈利基础；owner cash 仍受经济维护资本约束，不把 2017 年恢复永久化。",
+          "promotion_or_resolution_condition": "区域销量、实现售价和单位成本桥可缩窄正常盈利区间；若销量承载和多数区域毛利在供给纪律减弱时同步恶化，则降级成熟核心。",
+          "reason": "成熟水泥/熟料销量承载相对稳定，单位毛利经历低谷后恢复，七个区域 2015 至 2017 年毛利率普遍改善，且集团连续产生正 OCF。",
+          "treatment": "UNDERWRITE"
+        },
+        {
+          "component_id": "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+          "evidence_ids": [
+            "EVIDENCE:CASH_CAPITAL_AND_DEBT"
+          ],
+          "investment_consequence": "只以 OCF 减经济维护资本形成条件性 owner-cash 范围；OCF 减全部长期资产支出仅反映当期资本配置和融资压力，不能改名为维护资本。",
+          "promotion_or_resolution_condition": "取得同口径维护、技改、扩产与项目承诺拆分并验证无重大维护递延后，可晋级 owner-cash 范围；维护缺口或强制性资本需求上升则撤销。",
+          "reason": "年报披露 OCF 和全部长期资产现金支出，但未完整拆分维护、技改和扩产；固定资产修理费已费用化，不能代替维护资本。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+          "evidence_ids": [
+            "EVIDENCE:CASH_CAPITAL_AND_DEBT"
+          ],
+          "investment_consequence": "把降债和现金积累作为生存与 EPV 的交叉验证，把营运资本和期限结构保留为 owner cash 条件及永久损失压力。",
+          "promotion_or_resolution_condition": "经营现金持续覆盖营运资本吸收和到期债务时可降低融资压力；利润上升而 OCF、可用现金或短债覆盖恶化时撤销。",
+          "reason": "五年 OCF 均为正且债务明显下降，但五年经营性营运资本变化合计项均吸收现金，FY2017 短借和一年内到期债务仍高于可用现金。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+          "evidence_ids": [
+            "EVIDENCE:NAMED_CAPITAL_COHORTS"
+          ],
+          "investment_consequence": "允许其作为经营存在和条件性永久损失观察，不单独增加成熟核心 EPV、owner cash 或增长资本回报。",
+          "promotion_or_resolution_condition": "只有项目级销量、客户吸收、OCF、维护资本及完整投入资本共同支持时才晋级增长回报；责任单元利润转亏或资本桥不闭合则撤销。",
+          "reason": "陇南收购及漳县、古浪、成县已投产责任单元有多年利润代理，但它们是整个子公司利润，不是新增线增量利润，也没有项目级 OCF、维护资本或完整独立投入资本。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+          "evidence_ids": [
+            "EVIDENCE:NAMED_CAPITAL_COHORTS",
+            "EVIDENCE:PERIMETER_AND_NONRECURRING"
+          ],
+          "investment_consequence": "不形成单独基础盈利或价值加项，只进入融资与搁浅资产压力观察，避免把合并利润或亏损等同于普通股全额经济。",
+          "promotion_or_resolution_condition": "取得控制安排、归属普通股现金、项目资本和持续经营桥后才可重新分类；亏损和资金支持责任扩大则强化压力处理。",
+          "reason": "张掖巨龙仅持股 26% 但依一致行动协议并表，责任单元净利润在 2015 和 2017 年为负，边界和经济归属均不同于全资子公司。",
+          "treatment": "EXCLUDE_FROM_BASE"
+        },
+        {
+          "component_id": "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+          "evidence_ids": [
+            "EVIDENCE:PERIMETER_AND_NONRECURRING"
+          ],
+          "investment_consequence": "合并总量仍需口径警戒，但不得将并表变化作为新增投资、经营改善或增长价值输入。",
+          "promotion_or_resolution_condition": "取得并表前后同责任边界的收入、利润、现金和投入资本桥后，才可用于连续正常化；任何新投入回报主张仍须独立证据。",
+          "reason": "酒钢宏达 FY2015 并表来自既有经济持股后的治理安排到期，不代表当年新投入同额资本；缺少连续的责任匹配桥。",
+          "treatment": "EXCLUDE_FROM_BASE"
+        },
+        {
+          "component_id": "COMPONENT:UNFINISHED_PROJECTS",
+          "evidence_ids": [
+            "EVIDENCE:NAMED_CAPITAL_COHORTS"
+          ],
+          "investment_consequence": "不进入正常盈利或基础 owner cash，只把后续资金承诺、投产和回报作为情景与融资压力。",
+          "promotion_or_resolution_condition": "项目投产后以客户吸收、利用率、项目 OCF、维护资本和完整投入资本晋级；持续延误、成本增加或需求不足则撤销情景。",
+          "reason": "西藏线工程进度约 5%，肃南和天水项目仍属早期或未完工 CIP，截止时没有投产、客户吸收或项目现金证据。",
+          "treatment": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:YUMEN_TERMINATED_PROJECT",
+          "evidence_ids": [
+            "EVIDENCE:NAMED_CAPITAL_COHORTS"
+          ],
+          "investment_consequence": "从盈利、owner cash 和项目价值排除，并把已发生减值及任何后续义务纳入永久损失和融资压力观察。",
+          "promotion_or_resolution_condition": "只有新的、独立批准且具完整资本和客户证据的项目才可另立组件；原终止工程新增减值或清理现金流将强化损失。",
+          "reason": "玉门 2×4500T/D 工程已终止并在 FY2017 确认在建工程减值 21.31 百万元，没有可承保的运营能力。",
+          "treatment": "EXCLUDE_FROM_BASE"
+        },
+        {
+          "component_id": "COMPONENT:NONRECURRING_DISPOSALS",
+          "evidence_ids": [
+            "EVIDENCE:PERIMETER_AND_NONRECURRING"
+          ],
+          "investment_consequence": "从正常盈利、owner cash 和资本化路线排除，避免用一次资产处置支撑持续经营经济。",
+          "promotion_or_resolution_condition": "只有可重复、属于核心经营责任边界的现金来源才可进入正常化；新的处置收益继续逐项排除。",
+          "reason": "FY2015 股票出售增利约 1.07 亿元，FY2017 土地处置现金约 2.62 亿元、收益约 1.01 亿元，均为可见非持续事件。",
+          "treatment": "EXCLUDE_FROM_BASE"
+        }
+      ],
+      "cutoff_at": "2018-04-30T23:59:59+08:00",
+      "episode_id": "UWEP:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
+      "financing_pressure_component_route": {
+        "active_effects": [
+          "REDUCES",
+          "NEUTRAL",
+          "CONDITIONAL",
+          "NOT_APPLICABLE"
+        ],
+        "components_by_effect": {
+          "CONDITIONAL": [
+            "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+            "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+            "COMPONENT:UNFINISHED_PROJECTS"
+          ],
+          "INCREASES": [],
+          "NEUTRAL": [
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+            "COMPONENT:YUMEN_TERMINATED_PROJECT"
+          ],
+          "NOT_APPLICABLE": [
+            "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+            "COMPONENT:NONRECURRING_DISPOSALS"
+          ],
+          "REDUCES": [
+            "COMPONENT:MATURE_CORE_NETWORK"
+          ],
+          "UNRESOLVED": []
+        }
+      },
+      "monitoring": "按 FY2018、FY2019、FY2020、FY2022 四个钟依次检查全国利润池、公司区域传导、正常现金与债务、具名 cohort 和永久损失；任何局部证据失败只降级所依赖组件和路线。",
+      "normal_earnings_component_route": {
+        "components_by_use": {
+          "BASE_RANGE": [
+            "COMPONENT:MATURE_CORE_NETWORK"
+          ],
+          "CONDITIONAL_RANGE": [],
+          "EXCLUDED": [
+            "COMPONENT:YUMEN_TERMINATED_PROJECT",
+            "COMPONENT:NONRECURRING_DISPOSALS"
+          ],
+          "NOT_APPLICABLE": [
+            "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+          ],
+          "SCENARIO_ONLY": [
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+            "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+            "COMPONENT:UNFINISHED_PROJECTS"
+          ],
+          "UNRESOLVED": [
+            "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+          ]
+        },
+        "range_authority": "BASE_RANGE"
+      },
+      "normal_earnings_treatment": "以稳定销量承载和 2013 至 2017 年单位毛利周期区间形成成熟核心基础范围，排除股票、土地处置及项目单独加项；不将 2017 年恢复或 2015 年低谷单点永久化，并对酒钢宏达并表保留连续性条件。",
+      "owner_cash_component_route": {
+        "components_by_use": {
+          "BASE_RANGE": [],
+          "CONDITIONAL_RANGE": [
+            "COMPONENT:MATURE_CORE_NETWORK",
+            "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+          ],
+          "EXCLUDED": [
+            "COMPONENT:YUMEN_TERMINATED_PROJECT",
+            "COMPONENT:NONRECURRING_DISPOSALS"
+          ],
+          "NOT_APPLICABLE": [],
+          "SCENARIO_ONLY": [
+            "COMPONENT:UNFINISHED_PROJECTS"
+          ],
+          "UNRESOLVED": [
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+            "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+            "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+          ]
+        },
+        "range_authority": "CONDITIONAL_RANGE"
+      },
+      "owner_cash_treatment": "正常 owner cash 是 OCF 减经济维护资本；OCF 减全部长期资产现金支出只回答当期资本配置和融资压力，增长资本后续回报另行判断。FY2013 至 FY2017 的 OCF 与全部长期资产支出可作上下文锚，但维护/技改/扩产未拆分且修理费已费用化，因此不发明点估计，只形成依赖维护拆分、营运资本和普通股现金归属的条件范围。",
+      "permanent_loss_component_route": {
+        "components_by_use": {
+          "BASE_PATH": [
+            "COMPONENT:MATURE_CORE_NETWORK",
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+            "COMPONENT:YUMEN_TERMINATED_PROJECT"
+          ],
+          "CONDITIONAL_PATH": [
+            "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+            "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+            "COMPONENT:UNFINISHED_PROJECTS"
+          ],
+          "EXCLUDED": [],
+          "NOT_APPLICABLE": [
+            "COMPONENT:NONRECURRING_DISPOSALS"
+          ],
+          "STRESS_ONLY": [
+            "COMPONENT:ZHANGYE_JULONG_BOUNDARY"
+          ],
+          "UNRESOLVED": []
+        },
+        "path_authority": "BASE_PATH"
+      },
+      "permanent_loss_treatment": "基础路径纳入区域单位毛利反转、营运资本与再融资、玉门终止减值；条件或压力路径纳入维护缺口、具名 cohort 回报不足、张掖巨龙亏损和未完工项目继续吸资。连续正 OCF 与降债降低但不消除永久损失。",
+      "projection_id": "UW-CJO:UWEP:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-cjo-candidate-projection.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "截止前可观察到区域毛利恢复、持续正经营现金、现金增加和有息债务下降；这些结果支持经营与融资韧性改善，但缺少管理选择、区域量价成本桥和项目级现金，不能据此单独归因于管理能力或形成新增资本回报结论。",
+          "company_exposure": "公司依赖甘肃、青海及邻近西北 delivered markets，水泥/熟料销量代理在 2013 至 2017 年约 1,898 至 2,162 万吨，2014 至 2017 年名义水泥产能维持 2,800 万吨；稳定承载使单位经济而非扩量成为当前正常化的关键。",
+          "horizon": "以 2018 年后一个至四个年度观察钟检验从早期量价信号、区域适应、正常化现金到长期永久损失。",
+          "most_likely_regime": "最可能是需求平淡背景下由阶段性有效供给纪律和价格修复驱动的周期恢复，而非已经确立的永久高利润制度；名义过剩产能仍会限制利润池持续性。",
+          "normal_economics": "成熟核心以跨周期销量承载和单位毛利区间正常化，排除 2015 年股票出售和 2017 年土地处置；2017 年恢复值不能直接永久化，2015 年低谷也不单独代表常态。",
+          "permanent_loss": "主要路径是有效供给纪律失效或区域竞争加剧令单位毛利回落，持续营运资本吸收和到期债务再融资放大现金压力，随后未完工或终止项目形成沉没资本；持续正 OCF、降债与较低近年长期资产现金支出是缓冲，但不消除维护资本未知。",
+          "profit_pool_transmission": "全国价格和利润池恢复是候选上游机制；公司侧混合单位收入由 2015 年 219.13 元/吨升至 2017 年 253.73 元/吨、单位毛利由 47.30 升至 78.41 元/吨，且 2015 至 2017 年披露的七个区域毛利率普遍改善，支持传导已经发生。区域销量、实现售价与单位成本未拆分，因此不能把传导归因为公司提价权或成本优势。",
+          "reversal_observations": [
+            "FY2018 观察全国水泥产量、均价和利润率是否同向延续，或需求平淡与过剩产能重新压低利润池。",
+            "FY2018 至 FY2019 观察公司销量承载、混合单位收入/毛利及七个区域收入和毛利率是否普遍延续，还是仅少数区域或低基数反弹。",
+            "FY2018 至 FY2020 观察经营现金、营运资本吸收、可用现金与短期到期债务是否继续改善，或出现利润恢复但现金和债务背离。",
+            "取得维护、技改、扩产及在建项目承诺的可复核拆分；若显示维护需求显著高于当前长期资产现金支出，则撤销条件性 owner-cash 范围。",
+            "对陇南收购及漳县、古浪、成县已投产 cohort 取得项目级销量、OCF、维护资本和独立投入资本；只有责任单元利润继续存在时不得晋级为增量回报。",
+            "跟踪张掖巨龙、酒钢宏达并表桥以及西藏、肃南、天水、玉门项目状态；新增亏损、减值、资金承诺或边界不可比将提高永久损失压力。"
+          ],
+          "strongest_rival": "2017 年恢复主要是低基数、区域性供给扰动和阶段性错峰造成的暂时利润，而未退出的过剩产能会在盈利改善后复产；公司区域改善因此未必能维持为正常盈利和 owner cash。",
+          "valuation_treatment": "只让成熟核心跨周期正常盈利进入主要 EPV 路线，让 owner cash 在经济维护资本得到约束后条件性进入；具名增长 cohort、未完工项目、终止项目、非经常处置和并表变化分别进入未决、情景、压力或排除路线，禁止重复计值。"
+        },
+        "summary": "2017 年上半年全国水泥量近乎横盘而价格、收入和利润池显著恢复，新增产能约束、错峰与重组政策构成有效供给纪律的候选机制；但官方同时确认过剩产能未根本解决。祁连山 2015 至 2017 年单位收入、单位毛利和各区域毛利率普遍恢复，销量/名义产能代理仍约四分之三，说明利润池已向公司传导但未证明结构性竞争优势。"
+      },
+      "strongest_rival": "2017 年恢复主要是低基数、区域性供给扰动和阶段性错峰造成的暂时利润，而未退出的过剩产能会在盈利改善后复产；公司区域改善因此未必能维持为正常盈利和 owner cash。",
+      "underwriting_thesis_id": "UWTHESIS:CN600720:20180430:COURSE2C:ENHANCED:V1"
+    },
+    "golden_report_underwriting_handoff": {
+      "adaptation_case": "公司在行业低谷后恢复单位毛利和区域毛利，同时降低债务与长期资产现金支出，并对玉门终止工程确认减值；这些是适应结果的候选信号。由于缺少决策备选方案、责任人行动桥及项目级回报，不把结果升级为管理质量判断；后续适应必须以区域量价成本、现金转换和具名 cohort 责任边界共同验证。",
+      "authority": "UNDERWRITING_HANDOFF_ONLY",
+      "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
+      "business_position": "公司在西北多个 delivered markets 拥有成熟水泥和商品混凝土网络，销量/产能代理在五年内相对稳定，2015 至 2017 年多数区域毛利率同步恢复，显示其资产能够承接行业利润池。现有资料没有区域销量、实现售价、单位成本或直接竞争者份额，故只能承保区域经营存在性与承载能力，不能承保持久提价权或成本护城河。",
+      "central_path": "最可能路径是水泥行业在需求平淡下因有效供给纪律和价格修复而恢复利润池，祁连山成熟区域网络已通过单位毛利、区域毛利和正 OCF 获得传导，并以降债提高生存韧性；但过剩产能尚存，故只承保跨周期成熟核心，owner cash 保留维护资本条件，具名增长、未完工项目和边界变化不进入基础价值。",
+      "company_id": "CN:600720",
+      "component_decisions": [
+        {
+          "component_id": "COMPONENT:MATURE_CORE_NETWORK",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "REDUCES",
+          "invalidation_test": "供给纪律减弱后销量承载、单位毛利和多数区域毛利率持续同步恶化，撤销成熟核心基础范围。",
+          "normal_earnings_use": "BASE_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "区域量价成本桥继续支持稳定销量承载和跨周期正单位经济，可缩窄基础正常盈利范围。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "PRIMARY_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "维护缺口、环保强制资本或在建承诺显著高于当前支出时，撤销 owner-cash 条件范围并提高融资压力。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "维护、技改和扩产拆分证明维护需求可持续且无重大递延，才允许形成更窄 owner-cash 范围。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "利润改善而 OCF、可用现金或短债覆盖持续恶化，则提高永久损失压力并撤销现金交叉验证。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "经营现金持续覆盖营运资本吸收和到期债务，且可用现金/短债覆盖改善，则降低融资压力。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "CORROBORATIVE_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CORROBORATIVE_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            }
+          ],
+          "valuation_use": "CORROBORATIVE_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "责任单元利润转亏、客户吸收不足或资本责任桥无法闭合时，撤销条件处理并转入压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "具名 cohort 的项目级销量、OCF、维护资本和完整投入资本同时建立后，才可晋级增长资本回报。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "EXCLUDED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "UNRESOLVED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+          "economic_scope": "OTHER_MATERIAL_COMPONENT",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "责任单元亏损持续或公司资金支持义务扩大时，提高融资和永久损失压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "STRESS_ONLY",
+          "promotion_test": "控制安排、普通股现金归属、资本责任和持续盈利均有同边界证据时才重新分类。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            }
+          ],
+          "valuation_use": "STRESS_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+          "economic_scope": "OTHER_MATERIAL_COMPONENT",
+          "financing_pressure_effect": "NOT_APPLICABLE",
+          "invalidation_test": "若口径变化继续主导同比或新增资本责任无法识别，维持未决并禁止作为增长。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "并表前后同责任边界的经营、现金和投入资本桥闭合后，才可用于连续正常化。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "UNRESOLVED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:UNFINISHED_PROJECTS",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "持续延误、成本上升、需求不足或新增减值时撤销情景并提高融资压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "SCENARIO_ONLY",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "投产、客户吸收、利用率、项目 OCF、维护资本和完整投入资本均可见后才从情景晋级。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "SCENARIO_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE",
+              "use": "SCENARIO_ONLY"
+            }
+          ],
+          "valuation_use": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:YUMEN_TERMINATED_PROJECT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "新增减值、清理现金流或关联义务扩大时，提高已实现永久损失。",
+          "normal_earnings_use": "EXCLUDED",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "原项目不晋级；任何新方案必须作为独立组件重新证明客户、现金和资本回报。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "STRESS_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:NONRECURRING_DISPOSALS",
+          "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+          "financing_pressure_effect": "NOT_APPLICABLE",
+          "invalidation_test": "任何新的处置收益或现金均继续逐项排除，不因连续两年出现而自动视为经营。",
+          "normal_earnings_use": "EXCLUDED",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "NOT_APPLICABLE",
+          "promotion_test": "只有来源于核心责任边界且可重复的现金才可另行进入正常化。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "EXCLUDED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:NONRECURRING_CAPITALIZATION",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "EXCLUDED"
+        }
+      ],
+      "component_economic_routes": {
+        "financing_pressure": {
+          "active_effects": [
+            "REDUCES",
+            "NEUTRAL",
+            "CONDITIONAL",
+            "NOT_APPLICABLE"
+          ],
+          "components_by_effect": {
+            "CONDITIONAL": [
+              "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+              "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+              "COMPONENT:UNFINISHED_PROJECTS"
+            ],
+            "INCREASES": [],
+            "NEUTRAL": [
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+              "COMPONENT:YUMEN_TERMINATED_PROJECT"
+            ],
+            "NOT_APPLICABLE": [
+              "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+              "COMPONENT:NONRECURRING_DISPOSALS"
+            ],
+            "REDUCES": [
+              "COMPONENT:MATURE_CORE_NETWORK"
+            ],
+            "UNRESOLVED": []
+          }
+        },
+        "normal_earnings": {
+          "components_by_use": {
+            "BASE_RANGE": [
+              "COMPONENT:MATURE_CORE_NETWORK"
+            ],
+            "CONDITIONAL_RANGE": [],
+            "EXCLUDED": [
+              "COMPONENT:YUMEN_TERMINATED_PROJECT",
+              "COMPONENT:NONRECURRING_DISPOSALS"
+            ],
+            "NOT_APPLICABLE": [
+              "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+            ],
+            "SCENARIO_ONLY": [
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+              "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+              "COMPONENT:UNFINISHED_PROJECTS"
+            ],
+            "UNRESOLVED": [
+              "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+            ]
+          },
+          "range_authority": "BASE_RANGE"
+        },
+        "owner_cash": {
+          "components_by_use": {
+            "BASE_RANGE": [],
+            "CONDITIONAL_RANGE": [
+              "COMPONENT:MATURE_CORE_NETWORK",
+              "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+            ],
+            "EXCLUDED": [
+              "COMPONENT:YUMEN_TERMINATED_PROJECT",
+              "COMPONENT:NONRECURRING_DISPOSALS"
+            ],
+            "NOT_APPLICABLE": [],
+            "SCENARIO_ONLY": [
+              "COMPONENT:UNFINISHED_PROJECTS"
+            ],
+            "UNRESOLVED": [
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+              "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+              "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+            ]
+          },
+          "range_authority": "CONDITIONAL_RANGE"
+        },
+        "permanent_loss": {
+          "components_by_use": {
+            "BASE_PATH": [
+              "COMPONENT:MATURE_CORE_NETWORK",
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+              "COMPONENT:YUMEN_TERMINATED_PROJECT"
+            ],
+            "CONDITIONAL_PATH": [
+              "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+              "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+              "COMPONENT:UNFINISHED_PROJECTS"
+            ],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [
+              "COMPONENT:NONRECURRING_DISPOSALS"
+            ],
+            "STRESS_ONLY": [
+              "COMPONENT:ZHANGYE_JULONG_BOUNDARY"
+            ],
+            "UNRESOLVED": []
+          },
+          "path_authority": "BASE_PATH"
+        },
+        "schema_version": "enterprise-underwriting-component-decision-summary.v1",
+        "valuation": {
+          "components_by_use": {
+            "CONDITIONAL_PRIMARY_INPUT": [
+              "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND"
+            ],
+            "CORROBORATIVE_INPUT": [
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+            ],
+            "EXCLUDED": [
+              "COMPONENT:NONRECURRING_DISPOSALS"
+            ],
+            "NOT_APPLICABLE": [],
+            "PRIMARY_INPUT": [
+              "COMPONENT:MATURE_CORE_NETWORK"
+            ],
+            "SCENARIO_ONLY": [
+              "COMPONENT:UNFINISHED_PROJECTS"
+            ],
+            "STRESS_ONLY": [
+              "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+              "COMPONENT:YUMEN_TERMINATED_PROJECT"
+            ],
+            "UNRESOLVED": [
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+              "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+            ]
+          },
+          "route_authority": "PRIMARY_INPUT",
+          "route_component_bindings": [
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [
+                  "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+                  "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+                  "COMPONENT:UNFINISHED_PROJECTS",
+                  "COMPONENT:YUMEN_TERMINATED_PROJECT"
+                ],
+                "UNRESOLVED": []
+              },
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [
+                  "COMPONENT:UNFINISHED_PROJECTS"
+                ],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": [
+                  "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+                  "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+                ]
+              },
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [
+                  "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+                ],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [
+                  "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+                ],
+                "EXCLUDED": [
+                  "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+                  "COMPONENT:NONRECURRING_DISPOSALS"
+                ],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [
+                  "COMPONENT:MATURE_CORE_NETWORK"
+                ],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": [
+                  "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+                ]
+              },
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [
+                  "COMPONENT:NONRECURRING_DISPOSALS"
+                ],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "ROUTE:CN600720:NONRECURRING_CAPITALIZATION"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [
+                  "COMPONENT:MATURE_CORE_NETWORK",
+                  "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND"
+                ],
+                "CORROBORATIVE_INPUT": [
+                  "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+                ],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": [
+                  "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+                ]
+              },
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [
+                  "COMPONENT:YUMEN_TERMINATED_PROJECT"
+                ],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [
+                  "COMPONENT:UNFINISHED_PROJECTS"
+                ],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE"
+            }
+          ]
+        }
+      },
+      "cutoff_at": "2018-04-30T23:59:59+08:00",
+      "episode_id": "UWEP:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
+      "handoff_id": "UW-GR:UWEP:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "normal_earnings_treatment": "以稳定销量承载和 2013 至 2017 年单位毛利周期区间形成成熟核心基础范围，排除股票、土地处置及项目单独加项；不将 2017 年恢复或 2015 年低谷单点永久化，并对酒钢宏达并表保留连续性条件。",
+      "normalization_case": "成熟核心的正常化以约 1,900 至 2,160 万吨历史销量承载、稳定的 2,800 万吨名义产能和 2013 至 2017 年 47.30 至 86.82 元/吨混合单位毛利周期区间为锚，不机械选取 2017 年恢复点。2015 年约 1.07 亿元股票处置增利和 2017 年约 1.01 亿元土地处置收益排除；酒钢宏达 FY2015 并表须保持口径警戒。责任单元利润只说明相关实体曾运营，不能作为项目增量 ROIC。",
+      "owner_cash_treatment": "正常 owner cash 是 OCF 减经济维护资本；OCF 减全部长期资产现金支出只回答当期资本配置和融资压力，增长资本后续回报另行判断。FY2013 至 FY2017 的 OCF 与全部长期资产支出可作上下文锚，但维护/技改/扩产未拆分且修理费已费用化，因此不发明点估计，只形成依赖维护拆分、营运资本和普通股现金归属的条件范围。",
+      "permanent_loss_map": "路径一：全国或区域有效供给纪律松动，价格回落而固定成本高，使成熟核心单位毛利压缩。路径二：经营性营运资本继续吸收现金，叠加短期到期债务，使会计盈利无法缓解再融资压力。路径三：未完工项目继续投入、终止项目减值或张掖巨龙亏损扩大，造成资本永久损失。路径四：把酒钢宏达并表或非经常处置误作增长，会高估正常经济并导致错误资本承诺。缓冲是五年正 OCF、降债和 FY2017 较低长期资产现金支出；维护资本及增长回报未知保留为局部条件。",
+      "permanent_loss_treatment": "基础路径纳入区域单位毛利反转、营运资本与再融资、玉门终止减值；条件或压力路径纳入维护缺口、具名 cohort 回报不足、张掖巨龙亏损和未完工项目继续吸资。连续正 OCF 与降债降低但不消除永久损失。",
+      "reader_order": [
+        "central_path",
+        "industry_future_transmission",
+        "situation_and_route",
+        "survival_and_adaptation",
+        "normalization_and_owner_cash",
+        "permanent_loss_and_rival",
+        "value_route_and_research_treatment",
+        "reversal_observations"
+      ],
+      "reversal_observations": [
+        "FY2018 观察全国水泥产量、均价和利润率是否同向延续，或需求平淡与过剩产能重新压低利润池。",
+        "FY2018 至 FY2019 观察公司销量承载、混合单位收入/毛利及七个区域收入和毛利率是否普遍延续，还是仅少数区域或低基数反弹。",
+        "FY2018 至 FY2020 观察经营现金、营运资本吸收、可用现金与短期到期债务是否继续改善，或出现利润恢复但现金和债务背离。",
+        "取得维护、技改、扩产及在建项目承诺的可复核拆分；若显示维护需求显著高于当前长期资产现金支出，则撤销条件性 owner-cash 范围。",
+        "对陇南收购及漳县、古浪、成县已投产 cohort 取得项目级销量、OCF、维护资本和独立投入资本；只有责任单元利润继续存在时不得晋级为增量回报。",
+        "跟踪张掖巨龙、酒钢宏达并表桥以及西藏、肃南、天水、玉门项目状态；新增亏损、减值、资金承诺或边界不可比将提高永久损失压力。"
+      ],
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-golden-report-handoff.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "截止前可观察到区域毛利恢复、持续正经营现金、现金增加和有息债务下降；这些结果支持经营与融资韧性改善，但缺少管理选择、区域量价成本桥和项目级现金，不能据此单独归因于管理能力或形成新增资本回报结论。",
+          "company_exposure": "公司依赖甘肃、青海及邻近西北 delivered markets，水泥/熟料销量代理在 2013 至 2017 年约 1,898 至 2,162 万吨，2014 至 2017 年名义水泥产能维持 2,800 万吨；稳定承载使单位经济而非扩量成为当前正常化的关键。",
+          "horizon": "以 2018 年后一个至四个年度观察钟检验从早期量价信号、区域适应、正常化现金到长期永久损失。",
+          "most_likely_regime": "最可能是需求平淡背景下由阶段性有效供给纪律和价格修复驱动的周期恢复，而非已经确立的永久高利润制度；名义过剩产能仍会限制利润池持续性。",
+          "normal_economics": "成熟核心以跨周期销量承载和单位毛利区间正常化，排除 2015 年股票出售和 2017 年土地处置；2017 年恢复值不能直接永久化，2015 年低谷也不单独代表常态。",
+          "permanent_loss": "主要路径是有效供给纪律失效或区域竞争加剧令单位毛利回落，持续营运资本吸收和到期债务再融资放大现金压力，随后未完工或终止项目形成沉没资本；持续正 OCF、降债与较低近年长期资产现金支出是缓冲，但不消除维护资本未知。",
+          "profit_pool_transmission": "全国价格和利润池恢复是候选上游机制；公司侧混合单位收入由 2015 年 219.13 元/吨升至 2017 年 253.73 元/吨、单位毛利由 47.30 升至 78.41 元/吨，且 2015 至 2017 年披露的七个区域毛利率普遍改善，支持传导已经发生。区域销量、实现售价与单位成本未拆分，因此不能把传导归因为公司提价权或成本优势。",
+          "reversal_observations": [
+            "FY2018 观察全国水泥产量、均价和利润率是否同向延续，或需求平淡与过剩产能重新压低利润池。",
+            "FY2018 至 FY2019 观察公司销量承载、混合单位收入/毛利及七个区域收入和毛利率是否普遍延续，还是仅少数区域或低基数反弹。",
+            "FY2018 至 FY2020 观察经营现金、营运资本吸收、可用现金与短期到期债务是否继续改善，或出现利润恢复但现金和债务背离。",
+            "取得维护、技改、扩产及在建项目承诺的可复核拆分；若显示维护需求显著高于当前长期资产现金支出，则撤销条件性 owner-cash 范围。",
+            "对陇南收购及漳县、古浪、成县已投产 cohort 取得项目级销量、OCF、维护资本和独立投入资本；只有责任单元利润继续存在时不得晋级为增量回报。",
+            "跟踪张掖巨龙、酒钢宏达并表桥以及西藏、肃南、天水、玉门项目状态；新增亏损、减值、资金承诺或边界不可比将提高永久损失压力。"
+          ],
+          "strongest_rival": "2017 年恢复主要是低基数、区域性供给扰动和阶段性错峰造成的暂时利润，而未退出的过剩产能会在盈利改善后复产；公司区域改善因此未必能维持为正常盈利和 owner cash。",
+          "valuation_treatment": "只让成熟核心跨周期正常盈利进入主要 EPV 路线，让 owner cash 在经济维护资本得到约束后条件性进入；具名增长 cohort、未完工项目、终止项目、非经常处置和并表变化分别进入未决、情景、压力或排除路线，禁止重复计值。"
+        },
+        "summary": "2017 年上半年全国水泥量近乎横盘而价格、收入和利润池显著恢复，新增产能约束、错峰与重组政策构成有效供给纪律的候选机制；但官方同时确认过剩产能未根本解决。祁连山 2015 至 2017 年单位收入、单位毛利和各区域毛利率普遍恢复，销量/名义产能代理仍约四分之三，说明利润池已向公司传导但未证明结构性竞争优势。"
+      },
+      "strongest_rival": "2017 年恢复主要是低基数、区域性供给扰动和阶段性错峰造成的暂时利润，而未退出的过剩产能会在盈利改善后复产；公司区域改善因此未必能维持为正常盈利和 owner cash。",
+      "survival_case": "FY2013 至 FY2017 OCF 每年为正、约 6.42 至 10.18 亿元；有息债务合计由约 44.26 亿元降至 24.43 亿元，货币资金由 4.67 亿元升至 7.93 亿元。FY2017 短借和一年内到期债务仍约 17.15 亿元，且 0.80 亿元现金受限，五年经营性营运资本变化合计项均吸收现金，所以近期生存明显改善但仍依赖现金转换与再融资纪律。",
+      "underwriting_thesis_id": "UWTHESIS:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "value_route": {
+        "excluded_routes": [
+          "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+          "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH",
+          "ROUTE:CN600720:NONRECURRING_CAPITALIZATION",
+          "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE"
+        ],
+        "primary_routes": [
+          "ROUTE:CN600720:MATURE_CORE_EPV",
+          "ROUTE:CN600720:OWNER_CASH_RANGE"
+        ],
+        "route_component_requirements": [
+          {
+            "optional_component_ids": [
+              "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+              "COMPONENT:UNFINISHED_PROJECTS",
+              "COMPONENT:YUMEN_TERMINATED_PROJECT"
+            ],
+            "required_component_ids": [
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+            ],
+            "route_id": "ROUTE:CN600720:FINANCING_STRESS"
+          },
+          {
+            "optional_component_ids": [
+              "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+              "COMPONENT:UNFINISHED_PROJECTS"
+            ],
+            "required_component_ids": [
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+            ],
+            "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+            ],
+            "route_id": "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH"
+          },
+          {
+            "optional_component_ids": [
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+              "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+              "COMPONENT:NONRECURRING_DISPOSALS"
+            ],
+            "required_component_ids": [
+              "COMPONENT:MATURE_CORE_NETWORK"
+            ],
+            "route_id": "ROUTE:CN600720:MATURE_CORE_EPV"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "COMPONENT:NONRECURRING_DISPOSALS"
+            ],
+            "route_id": "ROUTE:CN600720:NONRECURRING_CAPITALIZATION"
+          },
+          {
+            "optional_component_ids": [
+              "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+              "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+            ],
+            "required_component_ids": [
+              "COMPONENT:MATURE_CORE_NETWORK",
+              "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND"
+            ],
+            "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE"
+          },
+          {
+            "optional_component_ids": [
+              "COMPONENT:YUMEN_TERMINATED_PROJECT"
+            ],
+            "required_component_ids": [
+              "COMPONENT:UNFINISHED_PROJECTS"
+            ],
+            "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE"
+          }
+        ],
+        "route_reasoning": "成熟核心 EPV 只使用跨周期经营能力；owner-cash 路线要求把经济维护资本与全部长期资产现金支出分开并保留条件范围。融资与搁浅资产只作压力路线。具名增长资本没有项目级 OCF、维护资本和完整投入资本，未完工项目没有运营证据，酒钢宏达是并表边界变化，非经常处置不可资本化，故不得进入基础路线。",
+        "valuation_model_roles": {
+          "primary": [
+            "ROUTE:CN600720:MATURE_CORE_EPV",
+            "ROUTE:CN600720:OWNER_CASH_RANGE"
+          ],
+          "stress": [
+            "ROUTE:CN600720:FINANCING_STRESS"
+          ]
+        }
+      }
+    },
+    "valuation_route_request": {
+      "authority": "ROUTE_REQUEST_ONLY",
+      "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
+      "company_id": "CN:600720",
+      "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
+      "component_decisions": [
+        {
+          "component_id": "COMPONENT:MATURE_CORE_NETWORK",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "REDUCES",
+          "invalidation_test": "供给纪律减弱后销量承载、单位毛利和多数区域毛利率持续同步恶化，撤销成熟核心基础范围。",
+          "normal_earnings_use": "BASE_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "区域量价成本桥继续支持稳定销量承载和跨周期正单位经济，可缩窄基础正常盈利范围。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "PRIMARY_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "维护缺口、环保强制资本或在建承诺显著高于当前支出时，撤销 owner-cash 条件范围并提高融资压力。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "维护、技改和扩产拆分证明维护需求可持续且无重大递延，才允许形成更窄 owner-cash 范围。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "利润改善而 OCF、可用现金或短债覆盖持续恶化，则提高永久损失压力并撤销现金交叉验证。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "经营现金持续覆盖营运资本吸收和到期债务，且可用现金/短债覆盖改善，则降低融资压力。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "CORROBORATIVE_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "CORROBORATIVE_INPUT"
+            },
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            }
+          ],
+          "valuation_use": "CORROBORATIVE_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "责任单元利润转亏、客户吸收不足或资本责任桥无法闭合时，撤销条件处理并转入压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "具名 cohort 的项目级销量、OCF、维护资本和完整投入资本同时建立后，才可晋级增长资本回报。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "EXCLUDED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE",
+              "use": "UNRESOLVED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+          "economic_scope": "OTHER_MATERIAL_COMPONENT",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "责任单元亏损持续或公司资金支持义务扩大时，提高融资和永久损失压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "STRESS_ONLY",
+          "promotion_test": "控制安排、普通股现金归属、资本责任和持续盈利均有同边界证据时才重新分类。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            }
+          ],
+          "valuation_use": "STRESS_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+          "economic_scope": "OTHER_MATERIAL_COMPONENT",
+          "financing_pressure_effect": "NOT_APPLICABLE",
+          "invalidation_test": "若口径变化继续主导同比或新增资本责任无法识别，维持未决并禁止作为增长。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "并表前后同责任边界的经营、现金和投入资本桥闭合后，才可用于连续正常化。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "UNRESOLVED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:UNFINISHED_PROJECTS",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "持续延误、成本上升、需求不足或新增减值时撤销情景并提高融资压力。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "SCENARIO_ONLY",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "投产、客户吸收、利用率、项目 OCF、维护资本和完整投入资本均可见后才从情景晋级。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+              "use": "SCENARIO_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE",
+              "use": "SCENARIO_ONLY"
+            }
+          ],
+          "valuation_use": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:YUMEN_TERMINATED_PROJECT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "NEUTRAL",
+          "invalidation_test": "新增减值、清理现金流或关联义务扩大时，提高已实现永久损失。",
+          "normal_earnings_use": "EXCLUDED",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "BASE_PATH",
+          "promotion_test": "原项目不晋级；任何新方案必须作为独立组件重新证明客户、现金和资本回报。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:FINANCING_STRESS",
+              "use": "STRESS_ONLY"
+            },
+            {
+              "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "STRESS_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:NONRECURRING_DISPOSALS",
+          "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+          "financing_pressure_effect": "NOT_APPLICABLE",
+          "invalidation_test": "任何新的处置收益或现金均继续逐项排除，不因连续两年出现而自动视为经营。",
+          "normal_earnings_use": "EXCLUDED",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "NOT_APPLICABLE",
+          "promotion_test": "只有来源于核心责任边界且可重复的现金才可另行进入正常化。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CN600720:MATURE_CORE_EPV",
+              "use": "EXCLUDED"
+            },
+            {
+              "route_id": "ROUTE:CN600720:NONRECURRING_CAPITALIZATION",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "EXCLUDED"
+        }
+      ],
+      "cutoff_at": "2018-04-30T23:59:59+08:00",
+      "episode_id": "UWEP:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "excluded_routes": [
+        "ROUTE:CN600720:GROWTH_CAPITAL_RETURN",
+        "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH",
+        "ROUTE:CN600720:NONRECURRING_CAPITALIZATION",
+        "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE"
+      ],
+      "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
+      "inputs_excluded_from_base": [
+        "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+        "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+        "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+        "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+        "COMPONENT:UNFINISHED_PROJECTS",
+        "COMPONENT:YUMEN_TERMINATED_PROJECT",
+        "COMPONENT:NONRECURRING_DISPOSALS"
+      ],
+      "normal_earnings_input_treatment": "以稳定销量承载和 2013 至 2017 年单位毛利周期区间形成成熟核心基础范围，排除股票、土地处置及项目单独加项；不将 2017 年恢复或 2015 年低谷单点永久化，并对酒钢宏达并表保留连续性条件。",
+      "owner_cash_input_treatment": "正常 owner cash 是 OCF 减经济维护资本；OCF 减全部长期资产现金支出只回答当期资本配置和融资压力，增长资本后续回报另行判断。FY2013 至 FY2017 的 OCF 与全部长期资产支出可作上下文锚，但维护/技改/扩产未拆分且修理费已费用化，因此不发明点估计，只形成依赖维护拆分、营运资本和普通股现金归属的条件范围。",
+      "permanent_loss_input_treatment": "基础路径纳入区域单位毛利反转、营运资本与再融资、玉门终止减值；条件或压力路径纳入维护缺口、具名 cohort 回报不足、张掖巨龙亏损和未完工项目继续吸资。连续正 OCF 与降债降低但不消除永久损失。",
+      "primary_routes": [
+        "ROUTE:CN600720:MATURE_CORE_EPV",
+        "ROUTE:CN600720:OWNER_CASH_RANGE"
+      ],
+      "request_id": "UW-VR:UWEP:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "route_component_requirements": [
+        {
+          "optional_component_ids": [
+            "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+            "COMPONENT:UNFINISHED_PROJECTS",
+            "COMPONENT:YUMEN_TERMINATED_PROJECT"
+          ],
+          "required_component_ids": [
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+          ],
+          "route_id": "ROUTE:CN600720:FINANCING_STRESS"
+        },
+        {
+          "optional_component_ids": [
+            "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+            "COMPONENT:UNFINISHED_PROJECTS"
+          ],
+          "required_component_ids": [
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+          ],
+          "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+          ],
+          "route_id": "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH"
+        },
+        {
+          "optional_component_ids": [
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+            "COMPONENT:JIUQUAN_HONGDA_PERIMETER",
+            "COMPONENT:NONRECURRING_DISPOSALS"
+          ],
+          "required_component_ids": [
+            "COMPONENT:MATURE_CORE_NETWORK"
+          ],
+          "route_id": "ROUTE:CN600720:MATURE_CORE_EPV"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "COMPONENT:NONRECURRING_DISPOSALS"
+          ],
+          "route_id": "ROUTE:CN600720:NONRECURRING_CAPITALIZATION"
+        },
+        {
+          "optional_component_ids": [
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+          ],
+          "required_component_ids": [
+            "COMPONENT:MATURE_CORE_NETWORK",
+            "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND"
+          ],
+          "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE"
+        },
+        {
+          "optional_component_ids": [
+            "COMPONENT:YUMEN_TERMINATED_PROJECT"
+          ],
+          "required_component_ids": [
+            "COMPONENT:UNFINISHED_PROJECTS"
+          ],
+          "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE"
+        }
+      ],
+      "route_reasoning": "成熟核心 EPV 只使用跨周期经营能力；owner-cash 路线要求把经济维护资本与全部长期资产现金支出分开并保留条件范围。融资与搁浅资产只作压力路线。具名增长资本没有项目级 OCF、维护资本和完整投入资本，未完工项目没有运营证据，酒钢宏达是并表边界变化，非经常处置不可资本化，故不得进入基础路线。",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-valuation-route-request.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "截止前可观察到区域毛利恢复、持续正经营现金、现金增加和有息债务下降；这些结果支持经营与融资韧性改善，但缺少管理选择、区域量价成本桥和项目级现金，不能据此单独归因于管理能力或形成新增资本回报结论。",
+          "company_exposure": "公司依赖甘肃、青海及邻近西北 delivered markets，水泥/熟料销量代理在 2013 至 2017 年约 1,898 至 2,162 万吨，2014 至 2017 年名义水泥产能维持 2,800 万吨；稳定承载使单位经济而非扩量成为当前正常化的关键。",
+          "horizon": "以 2018 年后一个至四个年度观察钟检验从早期量价信号、区域适应、正常化现金到长期永久损失。",
+          "most_likely_regime": "最可能是需求平淡背景下由阶段性有效供给纪律和价格修复驱动的周期恢复，而非已经确立的永久高利润制度；名义过剩产能仍会限制利润池持续性。",
+          "normal_economics": "成熟核心以跨周期销量承载和单位毛利区间正常化，排除 2015 年股票出售和 2017 年土地处置；2017 年恢复值不能直接永久化，2015 年低谷也不单独代表常态。",
+          "permanent_loss": "主要路径是有效供给纪律失效或区域竞争加剧令单位毛利回落，持续营运资本吸收和到期债务再融资放大现金压力，随后未完工或终止项目形成沉没资本；持续正 OCF、降债与较低近年长期资产现金支出是缓冲，但不消除维护资本未知。",
+          "profit_pool_transmission": "全国价格和利润池恢复是候选上游机制；公司侧混合单位收入由 2015 年 219.13 元/吨升至 2017 年 253.73 元/吨、单位毛利由 47.30 升至 78.41 元/吨，且 2015 至 2017 年披露的七个区域毛利率普遍改善，支持传导已经发生。区域销量、实现售价与单位成本未拆分，因此不能把传导归因为公司提价权或成本优势。",
+          "reversal_observations": [
+            "FY2018 观察全国水泥产量、均价和利润率是否同向延续，或需求平淡与过剩产能重新压低利润池。",
+            "FY2018 至 FY2019 观察公司销量承载、混合单位收入/毛利及七个区域收入和毛利率是否普遍延续，还是仅少数区域或低基数反弹。",
+            "FY2018 至 FY2020 观察经营现金、营运资本吸收、可用现金与短期到期债务是否继续改善，或出现利润恢复但现金和债务背离。",
+            "取得维护、技改、扩产及在建项目承诺的可复核拆分；若显示维护需求显著高于当前长期资产现金支出，则撤销条件性 owner-cash 范围。",
+            "对陇南收购及漳县、古浪、成县已投产 cohort 取得项目级销量、OCF、维护资本和独立投入资本；只有责任单元利润继续存在时不得晋级为增量回报。",
+            "跟踪张掖巨龙、酒钢宏达并表桥以及西藏、肃南、天水、玉门项目状态；新增亏损、减值、资金承诺或边界不可比将提高永久损失压力。"
+          ],
+          "strongest_rival": "2017 年恢复主要是低基数、区域性供给扰动和阶段性错峰造成的暂时利润，而未退出的过剩产能会在盈利改善后复产；公司区域改善因此未必能维持为正常盈利和 owner cash。",
+          "valuation_treatment": "只让成熟核心跨周期正常盈利进入主要 EPV 路线，让 owner cash 在经济维护资本得到约束后条件性进入；具名增长 cohort、未完工项目、终止项目、非经常处置和并表变化分别进入未决、情景、压力或排除路线，禁止重复计值。"
+        },
+        "summary": "2017 年上半年全国水泥量近乎横盘而价格、收入和利润池显著恢复，新增产能约束、错峰与重组政策构成有效供给纪律的候选机制；但官方同时确认过剩产能未根本解决。祁连山 2015 至 2017 年单位收入、单位毛利和各区域毛利率普遍恢复，销量/名义产能代理仍约四分之三，说明利润池已向公司传导但未证明结构性竞争优势。"
+      },
+      "underwriting_thesis_id": "UWTHESIS:CN600720:20180430:COURSE2C:ENHANCED:V1",
+      "valuation_component_route": {
+        "components_by_use": {
+          "CONDITIONAL_PRIMARY_INPUT": [
+            "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND"
+          ],
+          "CORROBORATIVE_INPUT": [
+            "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+          ],
+          "EXCLUDED": [
+            "COMPONENT:NONRECURRING_DISPOSALS"
+          ],
+          "NOT_APPLICABLE": [],
+          "PRIMARY_INPUT": [
+            "COMPONENT:MATURE_CORE_NETWORK"
+          ],
+          "SCENARIO_ONLY": [
+            "COMPONENT:UNFINISHED_PROJECTS"
+          ],
+          "STRESS_ONLY": [
+            "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+            "COMPONENT:YUMEN_TERMINATED_PROJECT"
+          ],
+          "UNRESOLVED": [
+            "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+            "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+          ]
+        },
+        "route_authority": "PRIMARY_INPUT",
+        "route_component_bindings": [
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [
+                "COMPONENT:FINANCING_AND_WORKING_CAPITAL",
+                "COMPONENT:ZHANGYE_JULONG_BOUNDARY",
+                "COMPONENT:UNFINISHED_PROJECTS",
+                "COMPONENT:YUMEN_TERMINATED_PROJECT"
+              ],
+              "UNRESOLVED": []
+            },
+            "route_id": "ROUTE:CN600720:FINANCING_STRESS"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [
+                "COMPONENT:UNFINISHED_PROJECTS"
+              ],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": [
+                "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND",
+                "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+              ]
+            },
+            "route_id": "ROUTE:CN600720:GROWTH_CAPITAL_RETURN"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [
+                "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+              ],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "ROUTE:CN600720:JIUQUAN_PERIMETER_AS_GROWTH"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [
+                "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+              ],
+              "EXCLUDED": [
+                "COMPONENT:COMMISSIONED_CAPITAL_COHORT",
+                "COMPONENT:NONRECURRING_DISPOSALS"
+              ],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [
+                "COMPONENT:MATURE_CORE_NETWORK"
+              ],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": [
+                "COMPONENT:JIUQUAN_HONGDA_PERIMETER"
+              ]
+            },
+            "route_id": "ROUTE:CN600720:MATURE_CORE_EPV"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [
+                "COMPONENT:NONRECURRING_DISPOSALS"
+              ],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "ROUTE:CN600720:NONRECURRING_CAPITALIZATION"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [
+                "COMPONENT:MATURE_CORE_NETWORK",
+                "COMPONENT:MAINTENANCE_AND_TOTAL_CAPITAL_SPEND"
+              ],
+              "CORROBORATIVE_INPUT": [
+                "COMPONENT:FINANCING_AND_WORKING_CAPITAL"
+              ],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": [
+                "COMPONENT:COMMISSIONED_CAPITAL_COHORT"
+              ]
+            },
+            "route_id": "ROUTE:CN600720:OWNER_CASH_RANGE"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [
+                "COMPONENT:YUMEN_TERMINATED_PROJECT"
+              ],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [
+                "COMPONENT:UNFINISHED_PROJECTS"
+              ],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "ROUTE:CN600720:UNFINISHED_PROJECT_VALUE"
+          }
+        ]
+      },
+      "valuation_model_roles": {
+        "primary": [
+          "ROUTE:CN600720:MATURE_CORE_EPV",
+          "ROUTE:CN600720:OWNER_CASH_RANGE"
+        ],
+        "stress": [
+          "ROUTE:CN600720:FINANCING_STRESS"
+        ]
+      }
+    }
+  },
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-training-downstream-bundle.v1"
+}

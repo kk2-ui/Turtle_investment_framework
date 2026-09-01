@@ -1,0 +1,696 @@
+{
+  "schema_version": "historical-outcome-cell-settlement.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN601598:20240501:FY2024",
+  "company_id": "CN:601598",
+  "custodian_id": "/root/cn601598_outcome_custodian",
+  "outcome_period": "FY2024",
+  "settlement_status": "COMPLETE_WITH_LOCAL_UNKNOWNS",
+  "source": {
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "issuer": "中国外运股份有限公司",
+    "document_title": "2024年度报告",
+    "period": "FY2024",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-03-26/1222895896.PDF",
+    "document_count": 1,
+    "access_method": "ego-browser task space 73; authorized PDF opened and downloaded from the authorized URL",
+    "accessed_at": "2026-08-28T00:00:00+08:00",
+    "source_scope_notice": "Only this authorized issuer-official full annual report was used. Printed-page references are the page numbers printed inside the annual report, not inferred PDF viewer indices."
+  },
+  "cells": [
+    {
+      "cell_id": "FY2024_CORE_OPERATING_RESILIENCE",
+      "cell_status": "SETTLED_WITH_LOCAL_ATTRIBUTION_UNKNOWN",
+      "raw_reported_values": [
+        {
+          "fact_id": "segment_profit_definition",
+          "label": "分部利润定义",
+          "period": "FY2024/FY2023 comparative presentation",
+          "value": "分部营业利润剔除对合营、联营企业投资收益的影响",
+          "unit": "definition",
+          "responsibility_boundary": "three operating segments; management discussion presentation",
+          "printed_page": 20,
+          "source_locator": "authorized annual report, section 4, 分部经营及分部利润情况"
+        },
+        {
+          "fact_id": "professional_logistics_revenue",
+          "label": "专业物流对外营业额",
+          "value_by_period": {
+            "FY2024": 27.951,
+            "FY2023_comparable": 27.522
+          },
+          "unit": "CNY_billion",
+          "responsibility_boundary": "professional logistics operating segment; external turnover",
+          "printed_page": 20,
+          "source_locator": "authorized annual report, section 4, segment narrative and chart"
+        },
+        {
+          "fact_id": "professional_logistics_segment_profit_ex_investment_income",
+          "label": "专业物流分部利润",
+          "value_by_period": {
+            "FY2024": 0.724,
+            "FY2023_comparable": 1.061
+          },
+          "unit": "CNY_billion",
+          "responsibility_boundary": "professional logistics operating segment; segment operating profit excluding joint-venture and associate investment income",
+          "printed_page": 20,
+          "source_locator": "authorized annual report, section 4, segment narrative and chart"
+        },
+        {
+          "fact_id": "forwarding_related_revenue",
+          "label": "代理及相关业务对外营业额",
+          "value_by_period": {
+            "FY2024": 67.17,
+            "FY2023_comparable": 61.98
+          },
+          "unit": "CNY_billion",
+          "responsibility_boundary": "forwarding and related operating segment; external turnover",
+          "printed_page": 20,
+          "source_locator": "authorized annual report, section 4, segment narrative and chart"
+        },
+        {
+          "fact_id": "forwarding_related_segment_profit_ex_investment_income",
+          "label": "代理及相关业务分部利润",
+          "value_by_period": {
+            "FY2024": 2.249,
+            "FY2023_comparable": 2.298
+          },
+          "unit": "CNY_billion",
+          "responsibility_boundary": "forwarding and related operating segment; segment operating profit excluding joint-venture and associate investment income",
+          "printed_page": 20,
+          "source_locator": "authorized annual report, section 4, segment narrative and chart"
+        },
+        {
+          "fact_id": "ecommerce_revenue",
+          "label": "电商业务对外营业额",
+          "value_by_period": {
+            "FY2024": 10.5,
+            "FY2023_comparable": 12.263
+          },
+          "unit": "CNY_billion",
+          "responsibility_boundary": "e-commerce operating segment; external turnover",
+          "printed_page": 20,
+          "source_locator": "authorized annual report, section 4, segment narrative and chart"
+        },
+        {
+          "fact_id": "ecommerce_segment_profit_ex_investment_income",
+          "label": "电商业务分部利润",
+          "value_by_period": {
+            "FY2024": 0.159,
+            "FY2023_comparable": 0.199
+          },
+          "unit": "CNY_billion",
+          "responsibility_boundary": "e-commerce operating segment; segment operating profit excluding joint-venture and associate investment income",
+          "printed_page": 20,
+          "source_locator": "authorized annual report, section 4, segment narrative and chart"
+        },
+        {
+          "fact_id": "adjusted_parent_profit",
+          "label": "归属于上市公司股东的扣除非经常性损益的净利润",
+          "value_by_period": {
+            "FY2024": 3.16340532507,
+            "FY2023_adjusted": 3.45664008647
+          },
+          "unit": "CNY_billion",
+          "responsibility_boundary": "consolidated group; attributable to listed-company shareholders; after excluding nonrecurring items",
+          "printed_page": 11,
+          "source_locator": "authorized annual report, section 2, main accounting data"
+        },
+        {
+          "fact_id": "major_business_volumes",
+          "label": "主要业务运营数据",
+          "value_by_axis": [
+            {"axis": "合同物流", "FY2024": 4989.7, "FY2023": 4779.9, "unit": "10k_tonnes"},
+            {"axis": "项目物流", "FY2024": 655.5, "FY2023": 627.5, "unit": "10k_tonnes"},
+            {"axis": "化工物流", "FY2024": 422.3, "FY2023": 382.9, "unit": "10k_tonnes"},
+            {"axis": "海运代理", "FY2024": 1515.6, "FY2023": 1337.3, "unit": "10k_TEU"},
+            {"axis": "空运通道", "FY2024": 102.8, "FY2023": 90.2, "unit": "10k_tonnes"},
+            {"axis": "铁路代理", "FY2024": 57.3, "FY2023": 50.4, "unit": "10k_TEU"},
+            {"axis": "船舶代理", "FY2024": 66845, "FY2023": 62300, "unit": "vessel_calls"},
+            {"axis": "库场站服务", "FY2024": 2845.2, "FY2023": 2622.5, "unit": "10k_tonnes"},
+            {"axis": "跨境电商物流", "FY2024": 17906.9, "FY2023": 36339.5, "unit": "10k_parcels"},
+            {"axis": "物流电商平台", "FY2024": 269.9, "FY2023": 247.4, "unit": "10k_TEU"},
+            {"axis": "物流装备共享平台", "FY2024": 8.5, "FY2023": 8.4, "unit": "10k_TEU_per_day"}
+          ],
+          "responsibility_boundary": "consolidated operating businesses; operational volumes",
+          "printed_pages": [22, 23],
+          "source_locator": "authorized annual report, section 4, 主要业务运营数据"
+        },
+        {
+          "fact_id": "expense_and_revenue_inputs",
+          "label": "营业收入及持续费用负担输入",
+          "value_by_period": {
+            "FY2024": {
+              "revenue": 105620773355.43,
+              "sales_expense": 1000310718.12,
+              "administrative_expense": 3328915531.87,
+              "expensed_R_and_D": 120658190.73
+            },
+            "FY2023_comparable": {
+              "revenue": 101764652538.8,
+              "sales_expense": 1075970269.71,
+              "administrative_expense": 3383414426.41,
+              "expensed_R_and_D": 233188701.16
+            }
+          },
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group income statement",
+          "printed_page": 34,
+          "source_locator": "authorized annual report, section 4, profit-statement and cash-flow subject analysis"
+        },
+        {
+          "fact_id": "recognized_logistics_fiscal_subsidy",
+          "label": "计入其他收益的物流业财政补贴",
+          "value_by_period": {
+            "FY2024": 1902256168.06,
+            "FY2023": 2129751100.95
+          },
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group; other income; logistics-industry fiscal subsidy",
+          "printed_page": 383,
+          "source_locator": "authorized annual report, note 9.55, 其他收益"
+        },
+        {
+          "fact_id": "recognized_other_named_government_subsidies",
+          "label": "计入其他收益的其他具名政府补助",
+          "value_by_category": [
+            {"category": "网络货运智慧平台及总部经济项目税收补贴", "FY2024": 266210858.21, "FY2023": 59193525.23, "unit": "CNY"},
+            {"category": "山西转型综合改革示范区税收补贴", "FY2024": 0, "FY2023": 152991931.37, "unit": "CNY"}
+          ],
+          "responsibility_boundary": "consolidated group; other income",
+          "printed_page": 383,
+          "source_locator": "authorized annual report, note 9.55, 其他收益"
+        },
+        {
+          "fact_id": "recognized_total_government_subsidies",
+          "label": "计入当期损益的政府补助",
+          "value_by_period": {
+            "FY2024": 2182716770.13,
+            "FY2023": 2385754972.31
+          },
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group; government subsidies recognized in current-period profit or loss",
+          "printed_page": 386,
+          "source_locator": "authorized annual report, note 9.62(3), 政府补助明细表"
+        },
+        {
+          "fact_id": "segment_other_income_not_subsidy_specific",
+          "label": "分部其他收益（非纯补贴口径）",
+          "value_by_period_and_segment": {
+            "FY2024": {"forwarding_related": 1639007166.86, "professional_logistics": 43253632.01, "ecommerce": 502277628.17},
+            "FY2023": {"forwarding_related": 1970936965.14, "professional_logistics": 77717094.96, "ecommerce": 405919707.25}
+          },
+          "unit": "CNY",
+          "responsibility_boundary": "operating segments; aggregate other income, not an exclusively government-subsidy line",
+          "printed_pages": [410, 411],
+          "source_locator": "authorized annual report, note 9.72, segment report"
+        },
+        {
+          "fact_id": "segment_definition_change",
+          "label": "分部内部定义调整",
+          "period": "FY2024 presentation",
+          "value": "根据公司内部调整，冷链物流并入合同物流；该调整发生在专业物流内部。",
+          "unit": "disclosure",
+          "responsibility_boundary": "professional logistics sub-business presentation",
+          "printed_page": 22,
+          "source_locator": "authorized annual report, section 4, sub-business financial-performance footnote"
+        },
+        {
+          "fact_id": "comparative_restated_data_disclosure",
+          "label": "2023比较数调整",
+          "period": "FY2023 comparative",
+          "value": "主要会计数据同时列示2023年调整后与调整前数据；本结算采用FY2024年报中的调整后比较数。",
+          "unit": "accounting/perimeter disclosure",
+          "responsibility_boundary": "consolidated group comparative presentation",
+          "printed_page": 11,
+          "source_locator": "authorized annual report, section 2, main accounting data"
+        }
+      ],
+      "derived_values": [
+        {
+          "metric_id": "three_segment_profit_ex_investment_income",
+          "formula": "professional logistics segment profit + forwarding and related segment profit + e-commerce segment profit",
+          "value_by_period": {"FY2024": 3.132, "FY2023_comparable": 3.559},
+          "unit": "CNY_billion",
+          "derivation_boundary": "three operating segments; direct sum of the rounded segment profits presented on printed p.20"
+        },
+        {
+          "metric_id": "three_segment_profit_yoy",
+          "formula": "FY2024 / FY2023_comparable - 1",
+          "value": -0.1199775218,
+          "unit": "ratio",
+          "display_percent": -11.99775218
+        },
+        {
+          "metric_id": "adjusted_parent_profit_yoy",
+          "formula": "FY2024 / FY2023_adjusted - 1",
+          "value": -0.0848323094,
+          "unit": "ratio",
+          "display_percent": -8.48323094
+        },
+        {
+          "metric_id": "major_volume_axes_non_declining",
+          "formula": "count of disclosed axes where FY2024 >= FY2023",
+          "value": 10,
+          "total_disclosed_axes": 11,
+          "declining_axes": ["跨境电商物流（票数）"],
+          "unit": "axes"
+        },
+        {
+          "metric_id": "persistent_expense_burden",
+          "formula": "(sales expense + administrative expense + expensed R&D) / revenue",
+          "value_by_period": {"FY2024": 0.04213076935, "FY2023_comparable": 0.04611201709},
+          "unit": "ratio",
+          "direction": "decreased"
+        },
+        {
+          "metric_id": "recognized_logistics_fiscal_subsidy_intensity_to_consolidated_revenue",
+          "formula": "recognized logistics-industry fiscal subsidy in other income / consolidated revenue",
+          "value_by_period": {"FY2024": 0.01801024654, "FY2023_comparable": 0.02092820098},
+          "unit": "ratio",
+          "direction": "decreased",
+          "boundary_warning": "Group-level intensity only; the report does not identify the subsidy amount attributable to each of the three segment-profit boundaries."
+        },
+        {
+          "metric_id": "group_level_profit_less_recognized_logistics_subsidy_arithmetic",
+          "formula": "three-segment reported profit - group recognized logistics fiscal subsidy",
+          "value_by_period": {"FY2024": 1.22974383194, "FY2023_comparable": 1.42924889905},
+          "unit": "CNY_billion",
+          "use_restriction": "Mechanical group-level subtraction only. It is not accepted as segment-level subsidy-before commercial profit because the segment/route subsidy attribution is not disclosed."
+        }
+      ],
+      "first_match": {
+        "matched_index": 6,
+        "matched_outcome": "MIXED_COMPLETE_RESIDUAL",
+        "matched_condition": "remaining complete comparable case",
+        "ordered_evaluation": [
+          {"index": 1, "outcome": "LOCAL_UNKNOWN", "matched": false, "reason": "Comparable three-segment profit and adjusted parent profit are both available."},
+          {"index": 2, "outcome": "MEASUREMENT_MISMATCH", "matched": false, "reason": "The FY2024 annual report provides the FY2023 comparative presentation; no unbridgeable segment, period, perimeter, or accounting mismatch was identified for the required reported measures."},
+          {"index": 3, "outcome": "ADVERSE_STRUCTURAL_CORE_EROSION", "matched": false, "reason": "FY2024 three-segment profit is CNY 3.132bn, above CNY 3.0bn, and adjusted parent profit is CNY 3.163bn, above CNY 2.8bn."},
+          {"index": 4, "outcome": "FAVORABLE_SELF_FUNDED_IMPROVEMENT", "matched": false, "reason": "FY2024 three-segment profit is CNY 3.132bn, below CNY 3.7bn; adjusted parent profit is also below CNY 3.4bn."},
+          {"index": 5, "outcome": "MIXED_REPORTED_RESILIENCE_ATTRIBUTION_UNPROVEN", "matched": false, "reason": "The segment-level subsidy attribution is unproven, but FY2024 three-segment profit is CNY 3.132bn, below the condition's CNY 3.2bn lower bound."},
+          {"index": 6, "outcome": "MIXED_COMPLETE_RESIDUAL", "matched": true, "reason": "The comparable required profit measures are complete and all preceding conditions fail."}
+        ]
+      },
+      "local_unknowns": [
+        {
+          "unknown_id": "segment_subsidy_attribution",
+          "field": "subsidy-before commercial attribution on the same three-segment boundary",
+          "status": "LOCAL_UNKNOWN",
+          "reason": "The report discloses group-level named government subsidies and segment-level aggregate other income, but not the amount of government subsidy attributable to each segment or route. Aggregate segment other income is not a pure subsidy line.",
+          "effect": "The mechanical group-level subtraction is retained only as arithmetic and is not promoted to segment-level commercial profit. Other reported profitability and volume facts remain settled."
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_KEY_JV_EARNINGS_DURABILITY",
+      "cell_status": "SETTLED_WITH_LOCAL_CARRIER_UNKNOWN",
+      "raw_reported_values": [
+        {
+          "fact_id": "sinotrans_dhl_holding_control_accounting",
+          "label": "中外运－敦豪持股、表决权及会计处理",
+          "period": "2024-12-31",
+          "value": {"direct_holding_percent": 50.0, "voting_right_percent": 50.0, "classification": "joint_venture", "accounting_method": "equity_method"},
+          "unit": "mixed",
+          "responsibility_boundary": "group investment in Sinotrans-DHL",
+          "printed_page": 319,
+          "source_locator": "authorized annual report, note 9.11(4), important joint ventures and associates"
+        },
+        {
+          "fact_id": "sinotrans_dhl_revenue",
+          "label": "中外运－敦豪营业收入",
+          "value_by_period": {"FY2024": 21044658061.73, "FY2023_comparable": 23031228150.21},
+          "unit": "CNY",
+          "responsibility_boundary": "Sinotrans-DHL standalone joint venture, 100% investee amount",
+          "printed_page": 320,
+          "source_locator": "authorized annual report, note 9.11(5), key financial information of important joint venture"
+        },
+        {
+          "fact_id": "sinotrans_dhl_net_profit",
+          "label": "中外运－敦豪净利润",
+          "value_by_period": {"FY2024": 2770273105.15, "FY2023_comparable": 3501433970.82},
+          "unit": "CNY",
+          "responsibility_boundary": "Sinotrans-DHL standalone joint venture, 100% investee amount; equal to profit attributable to its parent owners in the table",
+          "printed_page": 320,
+          "source_locator": "authorized annual report, note 9.11(5), key financial information of important joint venture"
+        },
+        {
+          "fact_id": "sinotrans_dhl_dividends_received",
+          "label": "本年收到来自中外运－敦豪的股利",
+          "value_by_period": {"FY2024": 1565377052.6, "FY2023": 1896126019.17},
+          "unit": "CNY",
+          "responsibility_boundary": "cash dividend received by the consolidated group from Sinotrans-DHL",
+          "printed_page": 320,
+          "source_locator": "authorized annual report, note 9.11(5), key financial information of important joint venture"
+        },
+        {
+          "fact_id": "group_equity_method_income",
+          "label": "权益法核算的长期股权投资收益",
+          "value_by_period": {"FY2024": 1878846814.41, "FY2023_comparable": 2269632479.77},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group; all equity-method joint ventures and associates",
+          "printed_page": 383,
+          "source_locator": "authorized annual report, note 9.56, investment income"
+        },
+        {
+          "fact_id": "sinotrans_dhl_equity_method_income_contribution",
+          "label": "权益法下确认的中外运－敦豪投资损益",
+          "period": "FY2024",
+          "value": 1385136552.58,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group; Sinotrans-DHL contribution to equity-method investment income",
+          "printed_page": 314,
+          "source_locator": "authorized annual report, note 9.11(2), long-term equity investment details"
+        },
+        {
+          "fact_id": "jv_transfer_restriction",
+          "label": "合联营企业向集团转移资金的重大限制",
+          "period": "2024-12-31",
+          "value": "本集团不存在合营企业或联营企业向本集团转移资金的能力受到重大限制的情况。",
+          "unit": "disclosure",
+          "responsibility_boundary": "consolidated group relationship with joint ventures and associates",
+          "printed_page": 322,
+          "source_locator": "authorized annual report, note 9.11(8)"
+        },
+        {
+          "fact_id": "jv_investment_impairment_review",
+          "label": "主要合联营投资减值复核",
+          "period": "FY2024",
+          "value": "集团回顾主要合营、联营企业经营、资产及行业环境，未发现明显减值迹象，本年未对长期股权投资计提减值准备。",
+          "unit": "disclosure",
+          "responsibility_boundary": "consolidated group long-term equity investments",
+          "printed_page": 319,
+          "source_locator": "authorized annual report, note 9.11(3)"
+        }
+      ],
+      "derived_values": [
+        {
+          "metric_id": "sinotrans_dhl_revenue_yoy",
+          "formula": "FY2024 / FY2023_comparable - 1",
+          "value": -0.08625549951,
+          "unit": "ratio",
+          "display_percent": -8.625549951
+        },
+        {
+          "metric_id": "sinotrans_dhl_net_profit_yoy",
+          "formula": "FY2024 / FY2023_comparable - 1",
+          "value": -0.2088175507,
+          "unit": "ratio",
+          "display_percent": -20.88175507
+        },
+        {
+          "metric_id": "sinotrans_dhl_net_margin",
+          "formula": "Sinotrans-DHL net profit / Sinotrans-DHL revenue",
+          "value_by_period": {"FY2024": 0.1316378293, "FY2023_comparable": 0.1520298417},
+          "unit": "ratio"
+        },
+        {
+          "metric_id": "group_equity_method_income_yoy",
+          "formula": "FY2024 / FY2023_comparable - 1",
+          "value": -0.172180152,
+          "unit": "ratio",
+          "display_percent": -17.2180152
+        }
+      ],
+      "first_match": {
+        "matched_index": 6,
+        "matched_outcome": "MIXED_COMPLETE_RESIDUAL",
+        "matched_condition": "remaining complete comparable case",
+        "ordered_evaluation": [
+          {"index": 1, "outcome": "LOCAL_UNKNOWN", "matched": false, "reason": "Comparable Sinotrans-DHL net profit and group equity-method income are both available."},
+          {"index": 2, "outcome": "MEASUREMENT_MISMATCH", "matched": false, "reason": "The report presents Sinotrans-DHL on the same 50% joint-venture/equity-method basis and supplies prior-year comparative investee results; no unbridgeable holding, control, accounting, period, or perimeter mismatch was identified."},
+          {"index": 3, "outcome": "ADVERSE_JV_ECONOMIC_DECLINE", "matched": false, "reason": "Sinotrans-DHL net profit of CNY 2.770bn is at or below CNY 2.8bn, but group equity-method income of CNY 1.879bn is above CNY 1.8bn; the conjunction fails. No qualifying JV-specific carrier is disclosed."},
+          {"index": 4, "outcome": "FAVORABLE_JV_DURABILITY", "matched": false, "reason": "Sinotrans-DHL net profit is below CNY 3.7bn and group equity-method income is below CNY 2.35bn."},
+          {"index": 5, "outcome": "NEUTRAL_JV_RANGE", "matched": false, "reason": "Sinotrans-DHL net profit of CNY 2.770bn is below the CNY 3.15bn lower bound."},
+          {"index": 6, "outcome": "MIXED_COMPLETE_RESIDUAL", "matched": true, "reason": "The required comparable measures are complete and all preceding conditions fail."}
+        ]
+      },
+      "local_unknowns": [
+        {
+          "unknown_id": "sinotrans_dhl_structural_carrier",
+          "field": "Sinotrans-DHL demand, share, pricing, persistent-cost, impairment, or major-customer carrier",
+          "status": "LOCAL_UNKNOWN",
+          "reason": "The authorized report supplies investee revenue, profit, margin inputs, dividends, holding and accounting data, but no Sinotrans-DHL-specific demand/share/pricing/persistent-cost/major-customer attribution. The report says no obvious impairment indicator was found for major joint ventures and associates, which does not supply an operating carrier.",
+          "effect": "Carrier attribution remains unknown without erasing the observed revenue, profit, margin and equity-income movements."
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_PARENT_OWNER_CASH_AND_SEVERE_BRANCH",
+      "cell_status": "SETTLED_WITH_OWNER_SCOPE_OPEN",
+      "raw_reported_values": [
+        {
+          "fact_id": "consolidated_operating_cash_flow",
+          "label": "经营活动产生的现金流量净额",
+          "value_by_period": {"FY2024": 4111259814.7, "FY2023_comparable": 3832937488.82},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group cash-flow statement",
+          "printed_page": 192,
+          "source_locator": "authorized annual report, consolidated cash-flow statement"
+        },
+        {
+          "fact_id": "consolidated_purchase_long_lived_assets_cash",
+          "label": "购建固定资产、无形资产和其他长期资产支付的现金",
+          "value_by_period": {"FY2024": 1554692154.69, "FY2023_comparable": 1611999258.05},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group cash-flow statement; purchase-of-long-lived-assets cash definition",
+          "printed_page": 192,
+          "source_locator": "authorized annual report, consolidated cash-flow statement"
+        },
+        {
+          "fact_id": "reported_segment_capex",
+          "label": "分部报告资本性支出合计",
+          "value_by_period": {"FY2024": 2515803797.82, "FY2023_comparable": 2655659192.97},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated segment report; segment-report capital expenditure definition",
+          "printed_pages": [410, 411],
+          "source_locator": "authorized annual report, note 9.72, segment report"
+        },
+        {
+          "fact_id": "nci_dividends_paid",
+          "label": "子公司支付给少数股东的股利、利润",
+          "value_by_period": {"FY2024": 323830187.89, "FY2023": 231473846.97},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group cash paid to non-controlling interests",
+          "printed_pages": [193, 399],
+          "source_locator": "authorized annual report, consolidated cash-flow statement and note 9.67(9)"
+        },
+        {
+          "fact_id": "parent_investment_income_cash_received",
+          "label": "母公司取得投资收益收到的现金",
+          "value_by_period": {"FY2024": 3358514468.65, "FY2023": 3705803728.94},
+          "unit": "CNY",
+          "responsibility_boundary": "listed parent-company standalone cash-flow statement; not split among subsidiaries, joint ventures and associates",
+          "printed_page": 194,
+          "source_locator": "authorized annual report, parent-company cash-flow statement"
+        },
+        {
+          "fact_id": "parent_investment_income_remittance_restriction",
+          "label": "母公司投资收益汇回限制",
+          "period": "FY2024",
+          "value": "本公司不存在投资收益汇回有重大限制的情形。",
+          "unit": "disclosure",
+          "responsibility_boundary": "listed parent company",
+          "printed_page": 488,
+          "source_locator": "authorized annual report, note 17.13, parent-company investment income"
+        },
+        {
+          "fact_id": "credit_loss_charge",
+          "label": "信用减值损失",
+          "value_by_period": {"FY2024": 85141884.39, "FY2023_comparable": 24460688.67},
+          "unit": "CNY_loss_charge",
+          "responsibility_boundary": "consolidated group; positive amount shown in cash-flow reconciliation, corresponding to income-statement loss",
+          "printed_pages": [385, 397],
+          "source_locator": "authorized annual report, note 9.58 and note 9.67(7)"
+        },
+        {
+          "fact_id": "specific_government_subsidy_receivable_credit_loss_carrier",
+          "label": "跨境电商子公司包机补贴应收款信用损失载体",
+          "period": "FY2024",
+          "value": {"opening_receivable": 72892063.0, "expected_credit_loss_recognized": 36446031.5, "disclosure": "因县级财政资金紧张，预计收取进一步延期且可能部分无法收回。"},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated subsidiary: 中外运跨境电商供应链（湖南）有限公司; county-level charter-flight subsidy receivable",
+          "printed_page": 385,
+          "source_locator": "authorized annual report, note 9.62(1), government grants"
+        },
+        {
+          "fact_id": "cash_and_cash_equivalents",
+          "label": "年末现金及现金等价物",
+          "value_by_period": {"FY2024_year_end": 13440376824.37, "FY2023_year_end": 13826301140.45},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group cash and cash equivalents",
+          "printed_page": 399,
+          "source_locator": "authorized annual report, note 9.68"
+        },
+        {
+          "fact_id": "restricted_cash_statement",
+          "label": "现金及现金等价物中的受限现金",
+          "period": "2024-12-31",
+          "value": "集团年末不存在将重要的使用范围受限的货币资金或其他资产作为现金及现金等价物列示的情况。",
+          "unit": "disclosure",
+          "responsibility_boundary": "consolidated group cash and cash equivalents",
+          "printed_page": 399,
+          "source_locator": "authorized annual report, note 9.68"
+        },
+        {
+          "fact_id": "issuer_defined_net_debt_bridge",
+          "label": "发行人定义的净负债桥",
+          "value_by_period": {
+            "FY2024_year_end": {
+              "short_term_borrowings": 3294191564.22,
+              "current_portion_noncurrent_liabilities": 941267381.93,
+              "long_term_borrowings": 3268291437.12,
+              "bonds_payable": 2018912428.8,
+              "long_term_payables": 20000000.0,
+              "lease_liabilities": 2084448674.98,
+              "less_cash_and_cash_equivalents": 13440376824.37,
+              "net_debt": -1813265337.32
+            },
+            "FY2023_year_end": {
+              "short_term_borrowings": 610217777.09,
+              "current_portion_noncurrent_liabilities": 5211189002.62,
+              "long_term_borrowings": 2355004648.7,
+              "bonds_payable": 1999383890.41,
+              "long_term_payables": 23525000.0,
+              "lease_liabilities": 2497732805.59,
+              "less_cash_and_cash_equivalents": 13826301140.45,
+              "net_debt": -1129248016.04
+            }
+          },
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group; issuer-defined capital-management net-debt bridge",
+          "printed_page": 460,
+          "source_locator": "authorized annual report, note 11.4, capital management"
+        },
+        {
+          "fact_id": "consolidated_interest_bearing_debt",
+          "label": "公司合并口径有息债务余额",
+          "value_by_period": {"FY2024_year_end": 11.43, "FY2023_year_end": 12.778},
+          "unit": "CNY_billion",
+          "responsibility_boundary": "consolidated group; bond-section interest-bearing-debt definition, separate from the issuer net-debt bridge definition",
+          "printed_page": 170,
+          "source_locator": "authorized annual report, section 10, consolidated interest-bearing debt structure"
+        },
+        {
+          "fact_id": "parent_standalone_cash_access_inputs",
+          "label": "母公司现金流边界输入",
+          "value_by_period": {
+            "FY2024": {"operating_cash_flow": -154694903.8, "purchase_long_lived_assets_cash": 142260495.64},
+            "FY2023": {"operating_cash_flow": 44327465.2, "purchase_long_lived_assets_cash": 136551302.15}
+          },
+          "unit": "CNY",
+          "responsibility_boundary": "listed parent-company standalone cash-flow statement; not a parent-distributable owner-cash measure",
+          "printed_pages": [194, 195],
+          "source_locator": "authorized annual report, parent-company cash-flow statement"
+        },
+        {
+          "fact_id": "cash_flow_perimeter_change",
+          "label": "取得及处置子公司的现金净额",
+          "period": "FY2024",
+          "value": {"cash_paid_net_to_acquire_subsidiaries": -117950326.19, "cash_received_net_from_disposal_of_subsidiaries": 29388630.63},
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group; enterprise-combination and disposal cash-flow note",
+          "printed_page": 398,
+          "source_locator": "authorized annual report, note 9.67(8)"
+        },
+        {
+          "fact_id": "comparative_perimeter_disclosure",
+          "label": "比较期间及合并范围披露",
+          "period": "FY2024/FY2023 comparative",
+          "value": "FY2024发生同一控制下企业合并并追溯列示比较数；主要会计数据列示2023年调整后数。报告另披露FY2024取得、处置子公司现金净额。",
+          "unit": "accounting/perimeter disclosure",
+          "responsibility_boundary": "consolidated group",
+          "printed_pages": [11, 189, 274, 281, 398],
+          "source_locator": "authorized annual report, main accounting data, consolidated income statement, note 8 and note 9.67(8)"
+        }
+      ],
+      "derived_values": [
+        {
+          "metric_id": "cash_flow_statement_purchase_proxy",
+          "formula": "consolidated OCF minus cash paid to acquire fixed assets, intangible assets and other long-term assets",
+          "value_by_period": {"FY2024": 2.55656766001, "FY2023_comparable": 2.22093823077},
+          "unit": "CNY_billion",
+          "definition_boundary": "consolidated cash-flow-statement purchase proxy; same definition kept across periods",
+          "sign_by_period": {"FY2024": "positive", "FY2023_comparable": "positive"}
+        },
+        {
+          "metric_id": "segment_capex_proxy",
+          "formula": "consolidated OCF minus disclosed segment capital expenditure",
+          "value_by_period": {"FY2024": 1.59545601688, "FY2023_comparable": 1.17727829585},
+          "unit": "CNY_billion",
+          "definition_boundary": "consolidated group using segment-report capital-expenditure definition; same definition kept across periods",
+          "sign_by_period": {"FY2024": "positive", "FY2023_comparable": "positive"}
+        },
+        {
+          "metric_id": "cash_and_cash_equivalents_change",
+          "formula": "FY2024 year-end cash and cash equivalents - FY2023 year-end cash and cash equivalents",
+          "value": -0.38592431608,
+          "unit": "CNY_billion"
+        },
+        {
+          "metric_id": "issuer_defined_net_cash",
+          "formula": "negative of issuer-defined net debt",
+          "value_by_period": {"FY2024_year_end": 1.81326533732, "FY2023_year_end": 1.12924801604},
+          "change_FY2024_minus_FY2023": 0.68401732128,
+          "unit": "CNY_billion",
+          "direction": "increased"
+        }
+      ],
+      "first_match": {
+        "matched_index": 4,
+        "matched_outcome": "POSITIVE_GROUP_PROXY_OWNER_SCOPE_OPEN",
+        "matched_condition": "same-definition group cash is positive with no established persistent adverse carrier, while NCI, parent access, or maintenance-versus-growth scope remains open",
+        "ordered_evaluation": [
+          {"index": 1, "outcome": "MEASUREMENT_MISMATCH", "matched": false, "reason": "Each group proxy is calculated on its own disclosed definition across the annual report's FY2024/FY2023 comparative periods. No unbridgeable group cash, period, perimeter, or capex-definition mismatch prevents the two same-definition comparisons."},
+          {"index": 2, "outcome": "SEVERE_STRUCTURAL_CASH_LOSS", "matched": false, "reason": "Both group proxies are positive in FY2024 and FY2023; the required negative-for-two-periods condition fails. The report does not establish an irreversible carrier lasting or expected to last at least 12 months."},
+          {"index": 3, "outcome": "ADVERSE_CASH_ONLY", "matched": false, "reason": "Both group proxies are positive in FY2024 and FY2023, so the required negative-for-two-periods condition fails. Issuer-defined net cash increased rather than contracted."},
+          {"index": 4, "outcome": "POSITIVE_GROUP_PROXY_OWNER_SCOPE_OPEN", "matched": true, "reason": "The cash-flow-statement purchase proxy and segment-capex proxy are positive in both comparable periods. A specific FY2024 credit-loss item is disclosed, but persistence is not established. Maintenance-versus-expansion capex and parent-distributable owner cash remain open; NCI cash distributions are nonzero."},
+          {"index": 5, "outcome": "FAVORABLE_PARENT_CASH_CLOSED", "matched": false, "reason": "Not evaluated as matched because first-match stopped at index 4; independently, the report does not disclose or permit derivation of FY2024 and cumulative FY2022-FY2024 parent-distributable owner cash on the required closed scope."},
+          {"index": 6, "outcome": "NEUTRAL_POSITIVE_GROUP_PROXY", "matched": false, "reason": "Not evaluated as matched because first-match stopped at index 4 and owner scope is not closed."},
+          {"index": 7, "outcome": "MIXED_COMPLETE_RESIDUAL", "matched": false, "reason": "Not reached because index 4 matched."}
+        ]
+      },
+      "local_unknowns": [
+        {
+          "unknown_id": "maintenance_vs_expansion_capex",
+          "field": "maintenance versus expansion capital expenditure",
+          "status": "LOCAL_UNKNOWN",
+          "reason": "The authorized annual report discloses cash paid for long-lived assets and segment capital expenditure, but no explicit attributable maintenance-versus-expansion split for the same periods.",
+          "effect": "Both group proxies remain valid on their own definitions; parent-owner scope is not closed."
+        },
+        {
+          "unknown_id": "parent_distributable_owner_cash",
+          "field": "FY2024 and cumulative FY2022-FY2024 parent-distributable owner cash",
+          "status": "LOCAL_UNKNOWN",
+          "reason": "The report provides parent standalone cash flows and aggregate cash received from investment income, but does not disclose a parent-distributable owner-cash measure or split parent cash receipts among subsidiaries, joint ventures and associates sufficiently to derive the contract measure.",
+          "effect": "FAVORABLE_PARENT_CASH_CLOSED and NEUTRAL_POSITIVE_GROUP_PROXY cannot be reached; group cash facts remain observed."
+        },
+        {
+          "unknown_id": "credit_loss_persistence",
+          "field": "persistence duration of the observed credit-loss carrier",
+          "status": "LOCAL_UNKNOWN",
+          "reason": "The report identifies a delayed charter-flight subsidy receivable and a FY2024 expected-credit-loss charge, but does not establish a carrier lasting or expected to last at least 12 months across the cell horizon.",
+          "effect": "The observed carrier is retained, but severe irreversibility and persistent-adverse-carrier conditions are not asserted."
+        }
+      ]
+    }
+  ],
+  "non_inference_notice": {
+    "statement": "This artifact is a mechanical FY2024 outcome-fact extraction and first-match cell settlement only.",
+    "prohibited_conclusions_not_formed": [
+      "management quality",
+      "enterprise conclusion",
+      "valuation",
+      "training utility",
+      "investment utility",
+      "price or return",
+      "buy/sell/hold or other investment action"
+    ],
+    "boundary_rules_applied": [
+      "Reported three-segment profitability was kept separate from subsidy-before commercial attribution.",
+      "Each group cash proxy was kept on its own definition across periods and the two proxies were not substituted or mixed.",
+      "UNKNOWN and mismatch were localized and did not erase settled facts in other fields or cells.",
+      "No input other than the authorization contract and the single authorized FY2024 official full annual report was used."
+    ]
+  }
+}

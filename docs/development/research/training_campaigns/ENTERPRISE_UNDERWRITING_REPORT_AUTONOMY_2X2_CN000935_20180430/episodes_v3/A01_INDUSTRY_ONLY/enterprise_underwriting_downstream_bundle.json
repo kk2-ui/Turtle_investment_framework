@@ -1,0 +1,1828 @@
+{
+  "authority": "PRICE_FREE_RESEARCH_CANDIDATES_ONLY",
+  "boundary": {
+    "contains_outcome_results": false,
+    "contains_price_or_valuation_results": false,
+    "grants_investment_authority": false
+  },
+  "company_id": "CN:000935",
+  "contract_id": "UWTRAIN:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "primary_training_product": {
+    "episode_id": "EPISODE:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+    "object_type": "EnterpriseUnderwritingEpisode",
+    "underwriting_thesis_id": "THESIS:CN000935:20180430:RETAINED_CEMENT_CONDITIONAL"
+  },
+  "projections": {
+    "cjo_candidate_projection": {
+      "authority": "TEACHING_CANDIDATE_ONLY",
+      "boundary": "A projection for the existing CJO compiler; it is not a Frozen CJO and cannot authorize value, price, BuyBand, report publication, or investment action.",
+      "central_path": "行业最可能处于供给纪律驱动的利润池恢复，但公司在出售边界后只保留可识别的水泥责任单元；该核心能否保留行业改善和转化为普通股现金尚未由可用证据闭合。",
+      "company_id": "CN:000935",
+      "component_decisions": [
+        {
+          "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "区域指标未随行业利润池改善，或保留水泥单位的利润和现金在出售后无法连续，均取消条件性路线。",
+          "normal_earnings_use": "CONDITIONAL_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "同一保留边界的区域价格、销量、成本、利用率、经营现金和资本开支连续披露证明FY2017参考盈利可持续并可转化为现金。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "出售资产仍被混入保留核心，或出售款被重复计入经营现金、基金价值或普通股现金时，该未决处理继续且禁止提升。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "出售后责任边界、出售款用途、债务安排和普通股可得现金由同口径披露闭合。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "INCREASES",
+          "invalidation_test": "只有投资支付或账面长期股权投资而没有持续回报和现金实现证据时，不得提升为正常盈利或所有者现金输入。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "基金和投资管理业务在同一责任边界披露投入资本、现金分配、持续收益和回报，并与融资来源及普通股现金对账。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:SPORTS_TRAINING",
+          "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "若年中并表效应、一次性收入或持续资本承诺解释其有限的已披露贡献，则其保持情景或压力用途。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "SCENARIO_ONLY",
+          "permanent_loss_use": "STRESS_ONLY",
+          "promotion_test": "完整年度同口径盈利、现金转换和资本承诺显示该业务具有持续且实质性的普通股经济贡献。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:SPORTS_TRAINING_SCENARIO_ONLY",
+              "use": "SCENARIO_ONLY"
+            }
+          ],
+          "valuation_use": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "UNRESOLVED",
+          "invalidation_test": "若仍只有合并经营现金流和总长期资产支出，或缺少维护资本与增长资本回报分离，则该路线保持排除。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "在保留业务、维护与增长资本、营运资本、债务及普通股分配限制之间建立可复核现金桥。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "EXCLUDED"
+        }
+      ],
+      "component_treatments": [
+        {
+          "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+          "evidence_ids": [
+            "E:INDUSTRY_2017_PRICE_PROFIT_POOL",
+            "E:RETAINED_CEMENT_SUBSIDIARIES"
+          ],
+          "investment_consequence": "该组件只可作为保留水泥正常盈利的条件性输入，不能授权集团持续经营或普通股现金结论。",
+          "promotion_or_resolution_condition": "后续披露须在同一保留边界提供区域销量、实现价格、单位成本、利用率、经营现金和资本开支的连续桥，并显示行业恢复可传导。",
+          "reason": "宜宾水泥和遵义三岔在FY2017主要子公司表中作为保留水泥单元列示，合计营业利润为103.120百万元；但全国行业观察不能替代区域实现价格、成本、利用率或完整保留合并桥。",
+          "treatment": "CONDITIONALLY_UNDERWRITE"
+        },
+        {
+          "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+          "evidence_ids": [
+            "E:SALE_PERIMETER_AND_PROCEEDS",
+            "E:DEBT_AND_CONSOLIDATED_CASH"
+          ],
+          "investment_consequence": "出售资产的持续盈利退出和出售收款的资本配置均保持未决，不能与保留核心或经营现金重复计算。",
+          "promotion_or_resolution_condition": "需要出售边界后的保留业务利润桥、出售款用途、债务偿还、受限现金及普通股层面现金流的同口径披露。",
+          "reason": "都江堰拉法基和江油拉豪已在截止日前出售，且FY2017水泥分部仍包含其经营；1,065.000百万元出售款解付并不披露其普通股可得性、偿债分配或持续收益替代。",
+          "treatment": "CANNOT_BOUND"
+        },
+        {
+          "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+          "evidence_ids": [
+            "E:FUNDS_AND_NEW_SUBSIDIARIES",
+            "E:DEBT_AND_CONSOLIDATED_CASH"
+          ],
+          "investment_consequence": "该组件既不进入基础正常盈利，也不进入所有者现金或主要路线，只作为未决资本配置和永久损失观察对象。",
+          "promotion_or_resolution_condition": "需要按基金或投资管理责任单元披露的投入、分配、费用、持续收益、回报和融资来源，并与普通股现金桥闭合。",
+          "reason": "FY2017新增子公司、两个基金长期股权投资及802.100百万元投资支付可见，但本包没有持续现金贡献、项目投入资本、回报或与普通股可得现金的桥。",
+          "treatment": "CANNOT_BOUND"
+        },
+        {
+          "component_id": "COMPONENT:SPORTS_TRAINING",
+          "evidence_ids": [
+            "E:SPORTS_TRAINING_PARTIAL_PERIOD"
+          ],
+          "investment_consequence": "该非水泥组件只保留为情景观察，不影响基础或条件性保留水泥路线。",
+          "promotion_or_resolution_condition": "需要完整年度的同边界收入、成本、资本承诺和现金转换资料，且证明其对普通股现金具有实质性贡献。",
+          "reason": "体育培训业务FY2017收入6.445百万元、成本4.046百万元，且控制权于2017-06-20取得，仅覆盖年中至年末，缺乏完整年度和现金可比口径。",
+          "treatment": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE",
+          "evidence_ids": [
+            "E:DEBT_AND_CONSOLIDATED_CASH",
+            "E:OWNER_CASH_DATA_GAPS"
+          ],
+          "investment_consequence": "不以低资本开支或合并经营现金流推断现金轻资产，也不形成普通股所有者现金基础范围。",
+          "promotion_or_resolution_condition": "需要保留责任单元的经营现金、经济维护资本、增长资本及其回报、营运资本和普通股分配限制的连续桥。",
+          "reason": "可见经营现金流和长期资产现金支出均为合并口径；维护资本与增长资本未拆分，保留水泥单元经营现金和资本开支、营运资本、少数股东及普通股可得现金桥均未提供。",
+          "treatment": "EXCLUDE_FROM_BASE"
+        }
+      ],
+      "cutoff_at": "2018-04-30T23:59:59+08:00",
+      "episode_id": "EPISODE:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+      "existing_cjo_adapter": "scripts/enterprise_judgment_core.py:compile_cjo_candidate",
+      "financing_pressure_component_route": {
+        "active_effects": [
+          "INCREASES",
+          "CONDITIONAL",
+          "UNRESOLVED"
+        ],
+        "components_by_effect": {
+          "CONDITIONAL": [
+            "COMPONENT:RETAINED_CEMENT_CORE",
+            "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+            "COMPONENT:SPORTS_TRAINING"
+          ],
+          "INCREASES": [
+            "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+          ],
+          "NEUTRAL": [],
+          "NOT_APPLICABLE": [],
+          "REDUCES": [],
+          "UNRESOLVED": [
+            "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+          ]
+        }
+      },
+      "monitoring": "以FY2018至FY2022后续钟点分别检验出售边界、保留水泥经营与现金、维护及增长资本、基金与出售收款实现；任何反转观察发生均降级或取消相应路线。",
+      "normal_earnings_component_route": {
+        "components_by_use": {
+          "BASE_RANGE": [],
+          "CONDITIONAL_RANGE": [
+            "COMPONENT:RETAINED_CEMENT_CORE"
+          ],
+          "EXCLUDED": [],
+          "NOT_APPLICABLE": [
+            "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+          ],
+          "SCENARIO_ONLY": [
+            "COMPONENT:SPORTS_TRAINING"
+          ],
+          "UNRESOLVED": [
+            "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+            "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+          ]
+        },
+        "range_authority": "CONDITIONAL_RANGE"
+      },
+      "normal_earnings_treatment": "以两家列示保留水泥子公司FY2017营业利润103.120百万元作为条件性税前参考，并以未知正常化、出售边界和非核心回报调整约束；不形成基础正常盈利范围。",
+      "owner_cash_component_route": {
+        "components_by_use": {
+          "BASE_RANGE": [],
+          "CONDITIONAL_RANGE": [
+            "COMPONENT:RETAINED_CEMENT_CORE"
+          ],
+          "EXCLUDED": [
+            "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+          ],
+          "NOT_APPLICABLE": [],
+          "SCENARIO_ONLY": [
+            "COMPONENT:SPORTS_TRAINING"
+          ],
+          "UNRESOLVED": [
+            "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+            "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+          ]
+        },
+        "range_authority": "CONDITIONAL_RANGE"
+      },
+      "owner_cash_treatment": "经营现金、长期资产现金支出、出售收款和基金投资均是不同或合并责任边界，维护资本、增长资本回报、营运资本和普通股桥缺失；普通股所有者现金不作基础输入。",
+      "permanent_loss_component_route": {
+        "components_by_use": {
+          "BASE_PATH": [],
+          "CONDITIONAL_PATH": [
+            "COMPONENT:RETAINED_CEMENT_CORE"
+          ],
+          "EXCLUDED": [],
+          "NOT_APPLICABLE": [],
+          "STRESS_ONLY": [
+            "COMPONENT:SPORTS_TRAINING"
+          ],
+          "UNRESOLVED": [
+            "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+            "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+            "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+          ]
+        },
+        "path_authority": "CONDITIONAL_PATH"
+      },
+      "permanent_loss_treatment": "将价格纪律失效、区域传导缺失、出售后责任边界断裂、基金回报不明和融资压力作为待后续披露检验的条件性或未决路径。",
+      "projection_id": "UW-CJO:EPISODE:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-cjo-candidate-projection.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "把宜宾水泥和遵义三岔的保留水泥责任单元与出售资产、出售收款、基金投资和年中并表的体育培训业务分开；后续以同边界的经营和现金披露检验适应。",
+          "company_exposure": "FY2017水泥业务收入占营业收入97.16%，但该水泥分部总额仍包含截止日前已出售的都江堰拉法基和江油拉豪，故全国利润池不能直接映射为保留核心的持续盈利。",
+          "horizon": "2018-04-30后至早期经营验证期",
+          "most_likely_regime": "需求并非繁荣、而有效供给约束和价格纪律驱动的行业利润池恢复，仍受未根本解决的产能过剩制约。",
+          "normal_economics": "水泥分部FY2015至FY2017毛利率由10.54%升至19.56%，销量仅温和增加；该组合支持恢复假设，但没有区域实现价格、单位成本、利用率或保留单元完整利润桥，不能授权结构性正常盈利点估计。",
+          "permanent_loss": "若价格恢复为短期供给扰动、未退出产能复产，或出售后保留核心与新投资不能形成可观察的同边界现金，利润池恢复可能不能保护普通股的长期经济。",
+          "profit_pool_transmission": "近乎横盘的全国需求配合新增熟料约束、错峰和重组，可先改善行业价格和利润率；传至公司须经其区域实现价格、销量、单位成本、利用率及责任边界验证。",
+          "reversal_observations": [
+            "后续官方行业量价资料显示价格与利润恢复主要由需求繁荣而非有效供给收缩解释。",
+            "错峰结束、违规新增或闲置产能复产后，行业价格和利润率迅速回落。",
+            "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。",
+            "出售、并购、基金或会计责任边界变化使保留业务的量、利润和现金无法形成连续同口径序列。"
+          ],
+          "strongest_rival": "最强竞争解释是2017年的价格和利润恢复主要来自低基数、区域性供给扰动和阶段性错峰，而非可持续的供给纪律；未退出的过剩产能可在价格改善后复产并压低利润率。",
+          "valuation_treatment": "保留水泥核心仅进入条件性正常盈利路线；没有同边界经营现金、维护资本、增长资本回报及普通股可得现金桥的合并所有者现金路线排除在基础之外。"
+        },
+        "summary": "全国水泥需求近乎横盘而价格和利润池在2017年显著恢复，供给约束、错峰和重组提供了候选传导机制；公司可见的水泥改善却与出售边界重叠，不能直接写成持续的集团经济。"
+      },
+      "strongest_rival": "最强竞争解释是2017年的价格和利润恢复主要来自低基数、区域性供给扰动和阶段性错峰，而非可持续的供给纪律；未退出的过剩产能可在价格改善后复产并压低利润率。",
+      "underwriting_thesis_id": "THESIS:CN000935:20180430:RETAINED_CEMENT_CONDITIONAL"
+    },
+    "golden_report_underwriting_handoff": {
+      "adaptation_case": "出售都江堰拉法基和江油拉豪后，宜宾水泥与遵义三岔是可识别的保留水泥责任单元；基金、私募股权投资管理及体育培训是不可与成熟核心混写的独立组件。",
+      "authority": "UNDERWRITING_HANDOFF_ONLY",
+      "boundary": "The Golden Report writer consumes this thesis and may not replace it with a different company story. This is a teaching handoff, not report-publication authority.",
+      "business_position": "公司披露的经销加直销和渠道管理说明其销售组织存在，但没有客户级价格、留存率、渠道毛利或区域送达市场数据。可见的FY2017水泥分部增长不能在出售边界后证明保留业务具有定价权或竞争优势。",
+      "central_path": "行业最可能处于供给纪律驱动的利润池恢复，但公司在出售边界后只保留可识别的水泥责任单元；该核心能否保留行业改善和转化为普通股现金尚未由可用证据闭合。",
+      "company_id": "CN:000935",
+      "component_decisions": [
+        {
+          "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "区域指标未随行业利润池改善，或保留水泥单位的利润和现金在出售后无法连续，均取消条件性路线。",
+          "normal_earnings_use": "CONDITIONAL_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "同一保留边界的区域价格、销量、成本、利用率、经营现金和资本开支连续披露证明FY2017参考盈利可持续并可转化为现金。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "出售资产仍被混入保留核心，或出售款被重复计入经营现金、基金价值或普通股现金时，该未决处理继续且禁止提升。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "出售后责任边界、出售款用途、债务安排和普通股可得现金由同口径披露闭合。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "INCREASES",
+          "invalidation_test": "只有投资支付或账面长期股权投资而没有持续回报和现金实现证据时，不得提升为正常盈利或所有者现金输入。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "基金和投资管理业务在同一责任边界披露投入资本、现金分配、持续收益和回报，并与融资来源及普通股现金对账。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:SPORTS_TRAINING",
+          "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "若年中并表效应、一次性收入或持续资本承诺解释其有限的已披露贡献，则其保持情景或压力用途。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "SCENARIO_ONLY",
+          "permanent_loss_use": "STRESS_ONLY",
+          "promotion_test": "完整年度同口径盈利、现金转换和资本承诺显示该业务具有持续且实质性的普通股经济贡献。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:SPORTS_TRAINING_SCENARIO_ONLY",
+              "use": "SCENARIO_ONLY"
+            }
+          ],
+          "valuation_use": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "UNRESOLVED",
+          "invalidation_test": "若仍只有合并经营现金流和总长期资产支出，或缺少维护资本与增长资本回报分离，则该路线保持排除。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "在保留业务、维护与增长资本、营运资本、债务及普通股分配限制之间建立可复核现金桥。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "EXCLUDED"
+        }
+      ],
+      "component_economic_routes": {
+        "financing_pressure": {
+          "active_effects": [
+            "INCREASES",
+            "CONDITIONAL",
+            "UNRESOLVED"
+          ],
+          "components_by_effect": {
+            "CONDITIONAL": [
+              "COMPONENT:RETAINED_CEMENT_CORE",
+              "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "COMPONENT:SPORTS_TRAINING"
+            ],
+            "INCREASES": [
+              "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+            ],
+            "NEUTRAL": [],
+            "NOT_APPLICABLE": [],
+            "REDUCES": [],
+            "UNRESOLVED": [
+              "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+            ]
+          }
+        },
+        "normal_earnings": {
+          "components_by_use": {
+            "BASE_RANGE": [],
+            "CONDITIONAL_RANGE": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [
+              "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+            ],
+            "SCENARIO_ONLY": [
+              "COMPONENT:SPORTS_TRAINING"
+            ],
+            "UNRESOLVED": [
+              "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+            ]
+          },
+          "range_authority": "CONDITIONAL_RANGE"
+        },
+        "owner_cash": {
+          "components_by_use": {
+            "BASE_RANGE": [],
+            "CONDITIONAL_RANGE": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "EXCLUDED": [
+              "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+            ],
+            "NOT_APPLICABLE": [],
+            "SCENARIO_ONLY": [
+              "COMPONENT:SPORTS_TRAINING"
+            ],
+            "UNRESOLVED": [
+              "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+            ]
+          },
+          "range_authority": "CONDITIONAL_RANGE"
+        },
+        "permanent_loss": {
+          "components_by_use": {
+            "BASE_PATH": [],
+            "CONDITIONAL_PATH": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "STRESS_ONLY": [
+              "COMPONENT:SPORTS_TRAINING"
+            ],
+            "UNRESOLVED": [
+              "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+              "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+            ]
+          },
+          "path_authority": "CONDITIONAL_PATH"
+        },
+        "schema_version": "enterprise-underwriting-component-decision-summary.v1",
+        "valuation": {
+          "components_by_use": {
+            "CONDITIONAL_PRIMARY_INPUT": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "CORROBORATIVE_INPUT": [],
+            "EXCLUDED": [
+              "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+            ],
+            "NOT_APPLICABLE": [],
+            "PRIMARY_INPUT": [],
+            "SCENARIO_ONLY": [
+              "COMPONENT:SPORTS_TRAINING"
+            ],
+            "STRESS_ONLY": [],
+            "UNRESOLVED": [
+              "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+            ]
+          },
+          "route_authority": "CONDITIONAL_PRIMARY_INPUT",
+          "route_component_bindings": [
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": [
+                  "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+                  "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+                ]
+              },
+              "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [
+                  "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+                ],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [
+                  "COMPONENT:RETAINED_CEMENT_CORE"
+                ],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+            },
+            {
+              "components_by_use": {
+                "CONDITIONAL_PRIMARY_INPUT": [],
+                "CORROBORATIVE_INPUT": [],
+                "EXCLUDED": [],
+                "NOT_APPLICABLE": [],
+                "PRIMARY_INPUT": [],
+                "SCENARIO_ONLY": [
+                  "COMPONENT:SPORTS_TRAINING"
+                ],
+                "STRESS_ONLY": [],
+                "UNRESOLVED": []
+              },
+              "route_id": "ROUTE:SPORTS_TRAINING_SCENARIO_ONLY"
+            }
+          ]
+        }
+      },
+      "cutoff_at": "2018-04-30T23:59:59+08:00",
+      "economic_derivation": {
+        "driver_sensitivity_specs": [
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "截至2018-04-30后的早期经营验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "保守敏感性从无全国价格改善到官方披露的2017年6月同比上涨25.5%；它不是公司区域实现价格假设。",
+                "evidence_ids": [
+                  "E:INDUSTRY_2017_PRICE_PROFIT_POOL"
+                ],
+                "value_or_range": {
+                  "range_high": 25.5,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "2017年6月全国水泥出厂均价同比变动",
+            "reversal_observation_refs": [
+              "#/reversal_observations/0",
+              "#/reversal_observations/1",
+              "#/reversal_observations/2"
+            ],
+            "sensitivity_id": "SENSITIVITY:INDUSTRY_PRICE_DISCIPLINE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "缺少公司所在区域的实现价格、销量、单位成本和利用率，国家价格方向不能量化传导至保留核心。",
+                "delta": {
+                  "conservative_treatment": "不为条件性保留水泥正常盈利范围加入行业价格传导点估计。",
+                  "reason": "全国均价与行业利润池不能结算为保留水泥责任单元的金额变化。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "没有保留水泥经营现金、维护资本、营运资本或普通股现金桥。",
+                "delta": {
+                  "conservative_treatment": "不从行业价格观察推断所有者现金。",
+                  "reason": "利润池方向不能替代现金转换及资本承诺资料。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "percent"
+          },
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "FY2017参考至出售后同边界验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "从不保留FY2017观察利润的保守下限到两家列示保留水泥子公司营业利润之和的条件性参考上限；并非持续盈利预测。",
+                "evidence_ids": [
+                  "E:RETAINED_CEMENT_SUBSIDIARIES"
+                ],
+                "value_or_range": {
+                  "range_high": 103.12,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "FY2017列示保留水泥子公司营业利润参考",
+            "reversal_observation_refs": [
+              "#/reversal_observations/2",
+              "#/reversal_observations/3"
+            ],
+            "sensitivity_id": "SENSITIVITY:RETAINED_CEMENT_OPERATING_REFERENCE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "该指标是条件性保留水泥正常盈利路线的唯一责任单元参考，正常化调整仍为未知。",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": -103.12,
+                  "status": "BOUNDED",
+                  "unit": "CNY million pretax"
+                },
+                "status": "DIRECT"
+              },
+              "owner_cash": {
+                "basis": "保留单位经营现金、维护资本和营运资本未披露。",
+                "delta": {
+                  "conservative_treatment": "保留所有者现金路线排除，不将利润敏感性映射为现金敏感性。",
+                  "reason": "税前营业利润参考无法转化为普通股所有者现金。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "CNY million pretax"
+          }
+        ],
+        "normal_earnings_bridge": {
+          "basis": {
+            "as_of": "2017-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ENTERPRISE_OPERATING",
+            "metric": "FY2017 retained-cement subsidiary operating-profit reference",
+            "operating_perimeter": "FY2017列示的保留水泥子公司四川双马宜宾水泥和遵义三岔，未包含未披露的内部交易、少数股东或普通股现金桥。",
+            "tax_basis": "PRETAX",
+            "unit": "CNY million"
+          },
+          "rows": [
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "ADD",
+              "economic_reason": "宜宾水泥营业利润10.350百万元与遵义三岔营业利润92.770百万元之和仅作为保留水泥已列示责任单元的FY2017税前参考。",
+              "evidence_ids": [
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "quantification": {
+                "range_high": 103.12,
+                "range_low": 103.12,
+                "status": "BOUNDED"
+              },
+              "row_id": "BRIDGE:REFERENCE_RETAINED_CEMENT_2017",
+              "row_role": "REFERENCE_EARNINGS"
+            },
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "SUBTRACT",
+              "economic_reason": "行业利润池改善可能通过区域价格和成本传导，也可能是阶段性恢复，因此需要从参考盈利中分离不可验证的正常化影响。",
+              "evidence_ids": [
+                "E:INDUSTRY_2017_PRICE_PROFIT_POOL",
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "quantification": {
+                "conservative_treatment": "保留参考仅作条件性范围锚点；不把FY2017观察值转为正常盈利点估计。",
+                "reason": "全国价格和利润恢复不能证明保留单位的区域实现价格、成本、利用率或持续利润，且不存在完整保留合并利润桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:NORMALIZE_RETAINED_CEMENT",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            },
+            {
+              "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "direction": "SUBTRACT",
+              "economic_reason": "持续经营边界已变，历史分部总额不能直接成为出售后企业的正常盈利。",
+              "evidence_ids": [
+                "E:SALE_PERIMETER_AND_PROCEEDS"
+              ],
+              "quantification": {
+                "conservative_treatment": "不将出售资产的历史水泥盈利、出售收款或其潜在替代回报计入保留业务正常盈利。",
+                "reason": "FY2017水泥分部包含已出售资产，而披露没有保留核心、出售资产与合并抵销之间的完整盈利桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:REMOVE_SOLD_PERIMETER",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            },
+            {
+              "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+              "direction": "ADD",
+              "economic_reason": "资本配置可能创造或消耗后续收益，但缺乏同责任边界的回报与现金证据。",
+              "evidence_ids": [
+                "E:FUNDS_AND_NEW_SUBSIDIARIES"
+              ],
+              "quantification": {
+                "conservative_treatment": "不把投资支付、长期股权投资或投资管理分部名称当作正常盈利贡献，也不以零替代未知回报。",
+                "reason": "基金投资和新增子公司的持续收益、现金分配、投入资本与回报均未在本包闭合。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:FUND_RETURN_UNRESOLVED",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            },
+            {
+              "component_id": "COMPONENT:SPORTS_TRAINING",
+              "direction": "ADD",
+              "economic_reason": "有限期间的非水泥组件不能与成熟水泥核心的年度经营经济混合。",
+              "evidence_ids": [
+                "E:SPORTS_TRAINING_PARTIAL_PERIOD"
+              ],
+              "quantification": {
+                "conservative_treatment": "保留为情景组件；不将半年度收入和成本外推为基础或条件性正常盈利。",
+                "reason": "体育培训仅自2017-06-20起纳入合并范围，未提供完整年度可比盈利和现金资料。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:SPORTS_SCENARIO_ONLY",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            }
+          ]
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation.v1"
+      },
+      "economic_derivation_summary": {
+        "driver_sensitivities": [
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "截至2018-04-30后的早期经营验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "保守敏感性从无全国价格改善到官方披露的2017年6月同比上涨25.5%；它不是公司区域实现价格假设。",
+                "evidence_ids": [
+                  "E:INDUSTRY_2017_PRICE_PROFIT_POOL"
+                ],
+                "value_or_range": {
+                  "range_high": 25.5,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "2017年6月全国水泥出厂均价同比变动",
+            "normal_earnings_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "owner_cash_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "后续官方行业量价资料显示价格与利润恢复主要由需求繁荣而非有效供给收缩解释。",
+              "错峰结束、违规新增或闲置产能复产后，行业价格和利润率迅速回落。",
+              "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。"
+            ],
+            "sensitivity_id": "SENSITIVITY:INDUSTRY_PRICE_DISCIPLINE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "缺少公司所在区域的实现价格、销量、单位成本和利用率，国家价格方向不能量化传导至保留核心。",
+                "delta": {
+                  "conservative_treatment": "不为条件性保留水泥正常盈利范围加入行业价格传导点估计。",
+                  "reason": "全国均价与行业利润池不能结算为保留水泥责任单元的金额变化。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "没有保留水泥经营现金、维护资本、营运资本或普通股现金桥。",
+                "delta": {
+                  "conservative_treatment": "不从行业价格观察推断所有者现金。",
+                  "reason": "利润池方向不能替代现金转换及资本承诺资料。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "percent",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS",
+                "route_role": "PRIMARY"
+              }
+            ]
+          },
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "FY2017参考至出售后同边界验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "从不保留FY2017观察利润的保守下限到两家列示保留水泥子公司营业利润之和的条件性参考上限；并非持续盈利预测。",
+                "evidence_ids": [
+                  "E:RETAINED_CEMENT_SUBSIDIARIES"
+                ],
+                "value_or_range": {
+                  "range_high": 103.12,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "FY2017列示保留水泥子公司营业利润参考",
+            "normal_earnings_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "owner_cash_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。",
+              "出售、并购、基金或会计责任边界变化使保留业务的量、利润和现金无法形成连续同口径序列。"
+            ],
+            "sensitivity_id": "SENSITIVITY:RETAINED_CEMENT_OPERATING_REFERENCE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "该指标是条件性保留水泥正常盈利路线的唯一责任单元参考，正常化调整仍为未知。",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": -103.12,
+                  "status": "BOUNDED",
+                  "unit": "CNY million pretax"
+                },
+                "status": "DIRECT"
+              },
+              "owner_cash": {
+                "basis": "保留单位经营现金、维护资本和营运资本未披露。",
+                "delta": {
+                  "conservative_treatment": "保留所有者现金路线排除，不将利润敏感性映射为现金敏感性。",
+                  "reason": "税前营业利润参考无法转化为普通股所有者现金。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "CNY million pretax",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS",
+                "route_role": "PRIMARY"
+              }
+            ]
+          }
+        ],
+        "normal_earnings_bridge": {
+          "base_range": null,
+          "basis": {
+            "as_of": "2017-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ENTERPRISE_OPERATING",
+            "metric": "FY2017 retained-cement subsidiary operating-profit reference",
+            "operating_perimeter": "FY2017列示的保留水泥子公司四川双马宜宾水泥和遵义三岔，未包含未披露的内部交易、少数股东或普通股现金桥。",
+            "tax_basis": "PRETAX",
+            "unit": "CNY million"
+          },
+          "conditional_range": {
+            "status": "UNKNOWN",
+            "unknown_row_ids": [
+              "BRIDGE:NORMALIZE_RETAINED_CEMENT"
+            ]
+          },
+          "rows": [
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "ADD",
+              "economic_reason": "宜宾水泥营业利润10.350百万元与遵义三岔营业利润92.770百万元之和仅作为保留水泥已列示责任单元的FY2017税前参考。",
+              "evidence_ids": [
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "normal_earnings_use": "CONDITIONAL_RANGE",
+              "quantification": {
+                "range_high": 103.12,
+                "range_low": 103.12,
+                "status": "BOUNDED"
+              },
+              "row_id": "BRIDGE:REFERENCE_RETAINED_CEMENT_2017",
+              "row_role": "REFERENCE_EARNINGS",
+              "signed_range": {
+                "range_high": 103.12,
+                "range_low": 103.12
+              }
+            },
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "SUBTRACT",
+              "economic_reason": "行业利润池改善可能通过区域价格和成本传导，也可能是阶段性恢复，因此需要从参考盈利中分离不可验证的正常化影响。",
+              "evidence_ids": [
+                "E:INDUSTRY_2017_PRICE_PROFIT_POOL",
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "normal_earnings_use": "CONDITIONAL_RANGE",
+              "quantification": {
+                "conservative_treatment": "保留参考仅作条件性范围锚点；不把FY2017观察值转为正常盈利点估计。",
+                "reason": "全国价格和利润恢复不能证明保留单位的区域实现价格、成本、利用率或持续利润，且不存在完整保留合并利润桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:NORMALIZE_RETAINED_CEMENT",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            },
+            {
+              "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "direction": "SUBTRACT",
+              "economic_reason": "持续经营边界已变，历史分部总额不能直接成为出售后企业的正常盈利。",
+              "evidence_ids": [
+                "E:SALE_PERIMETER_AND_PROCEEDS"
+              ],
+              "normal_earnings_use": "UNRESOLVED",
+              "quantification": {
+                "conservative_treatment": "不将出售资产的历史水泥盈利、出售收款或其潜在替代回报计入保留业务正常盈利。",
+                "reason": "FY2017水泥分部包含已出售资产，而披露没有保留核心、出售资产与合并抵销之间的完整盈利桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:REMOVE_SOLD_PERIMETER",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            },
+            {
+              "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+              "direction": "ADD",
+              "economic_reason": "资本配置可能创造或消耗后续收益，但缺乏同责任边界的回报与现金证据。",
+              "evidence_ids": [
+                "E:FUNDS_AND_NEW_SUBSIDIARIES"
+              ],
+              "normal_earnings_use": "UNRESOLVED",
+              "quantification": {
+                "conservative_treatment": "不把投资支付、长期股权投资或投资管理分部名称当作正常盈利贡献，也不以零替代未知回报。",
+                "reason": "基金投资和新增子公司的持续收益、现金分配、投入资本与回报均未在本包闭合。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:FUND_RETURN_UNRESOLVED",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            },
+            {
+              "component_id": "COMPONENT:SPORTS_TRAINING",
+              "direction": "ADD",
+              "economic_reason": "有限期间的非水泥组件不能与成熟水泥核心的年度经营经济混合。",
+              "evidence_ids": [
+                "E:SPORTS_TRAINING_PARTIAL_PERIOD"
+              ],
+              "normal_earnings_use": "SCENARIO_ONLY",
+              "quantification": {
+                "conservative_treatment": "保留为情景组件；不将半年度收入和成本外推为基础或条件性正常盈利。",
+                "reason": "体育培训仅自2017-06-20起纳入合并范围，未提供完整年度可比盈利和现金资料。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:SPORTS_SCENARIO_ONLY",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            }
+          ],
+          "totals_by_use": {
+            "BASE_RANGE": null,
+            "CONDITIONAL_RANGE": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "BRIDGE:NORMALIZE_RETAINED_CEMENT"
+              ]
+            },
+            "EXCLUDED": null,
+            "NOT_APPLICABLE": null,
+            "SCENARIO_ONLY": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "BRIDGE:SPORTS_SCENARIO_ONLY"
+              ]
+            },
+            "UNRESOLVED": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "BRIDGE:REMOVE_SOLD_PERIMETER",
+                "BRIDGE:FUND_RETURN_UNRESOLVED"
+              ]
+            }
+          }
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation-summary.v1"
+      },
+      "episode_id": "EPISODE:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+      "existing_report_adapter": "scripts/judgment_generation_handoff.py:build_judgment_generation_handoff",
+      "handoff_id": "UW-GR:EPISODE:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+      "normal_earnings_treatment": "以两家列示保留水泥子公司FY2017营业利润103.120百万元作为条件性税前参考，并以未知正常化、出售边界和非核心回报调整约束；不形成基础正常盈利范围。",
+      "normalization_case": "将FY2017两家列示保留水泥子公司的营业利润合计103.120百万元仅作为税前、未提供抵销桥的条件性参考；行业恢复是否可持续及保留单位完整盈利均未闭合，因此不形成基础正常盈利范围。",
+      "owner_cash_treatment": "经营现金、长期资产现金支出、出售收款和基金投资均是不同或合并责任边界，维护资本、增长资本回报、营运资本和普通股桥缺失；普通股所有者现金不作基础输入。",
+      "permanent_loss_map": "永久损失路径包括行业价格恢复被证伪、保留水泥单位无法承接行业利润池、出售收款或基金投入未形成可观察回报、以及短期债务和资本承诺限制普通股现金。每一路径均需在后续同责任边界披露中结算。",
+      "permanent_loss_treatment": "将价格纪律失效、区域传导缺失、出售后责任边界断裂、基金回报不明和融资压力作为待后续披露检验的条件性或未决路径。",
+      "reader_order": [
+        "central_path",
+        "industry_future_transmission",
+        "situation_and_route",
+        "survival_and_adaptation",
+        "normalization_and_owner_cash",
+        "permanent_loss_and_rival",
+        "value_route_and_research_treatment",
+        "reversal_observations"
+      ],
+      "reversal_observations": [
+        "后续官方行业量价资料显示价格与利润恢复主要由需求繁荣而非有效供给收缩解释。",
+        "错峰结束、违规新增或闲置产能复产后，行业价格和利润率迅速回落。",
+        "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。",
+        "出售、并购、基金或会计责任边界变化使保留业务的量、利润和现金无法形成连续同口径序列。"
+      ],
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-golden-report-handoff.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "把宜宾水泥和遵义三岔的保留水泥责任单元与出售资产、出售收款、基金投资和年中并表的体育培训业务分开；后续以同边界的经营和现金披露检验适应。",
+          "company_exposure": "FY2017水泥业务收入占营业收入97.16%，但该水泥分部总额仍包含截止日前已出售的都江堰拉法基和江油拉豪，故全国利润池不能直接映射为保留核心的持续盈利。",
+          "horizon": "2018-04-30后至早期经营验证期",
+          "most_likely_regime": "需求并非繁荣、而有效供给约束和价格纪律驱动的行业利润池恢复，仍受未根本解决的产能过剩制约。",
+          "normal_economics": "水泥分部FY2015至FY2017毛利率由10.54%升至19.56%，销量仅温和增加；该组合支持恢复假设，但没有区域实现价格、单位成本、利用率或保留单元完整利润桥，不能授权结构性正常盈利点估计。",
+          "permanent_loss": "若价格恢复为短期供给扰动、未退出产能复产，或出售后保留核心与新投资不能形成可观察的同边界现金，利润池恢复可能不能保护普通股的长期经济。",
+          "profit_pool_transmission": "近乎横盘的全国需求配合新增熟料约束、错峰和重组，可先改善行业价格和利润率；传至公司须经其区域实现价格、销量、单位成本、利用率及责任边界验证。",
+          "reversal_observations": [
+            "后续官方行业量价资料显示价格与利润恢复主要由需求繁荣而非有效供给收缩解释。",
+            "错峰结束、违规新增或闲置产能复产后，行业价格和利润率迅速回落。",
+            "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。",
+            "出售、并购、基金或会计责任边界变化使保留业务的量、利润和现金无法形成连续同口径序列。"
+          ],
+          "strongest_rival": "最强竞争解释是2017年的价格和利润恢复主要来自低基数、区域性供给扰动和阶段性错峰，而非可持续的供给纪律；未退出的过剩产能可在价格改善后复产并压低利润率。",
+          "valuation_treatment": "保留水泥核心仅进入条件性正常盈利路线；没有同边界经营现金、维护资本、增长资本回报及普通股可得现金桥的合并所有者现金路线排除在基础之外。"
+        },
+        "summary": "全国水泥需求近乎横盘而价格和利润池在2017年显著恢复，供给约束、错峰和重组提供了候选传导机制；公司可见的水泥改善却与出售边界重叠，不能直接写成持续的集团经济。"
+      },
+      "strongest_rival": "最强竞争解释是2017年的价格和利润恢复主要来自低基数、区域性供给扰动和阶段性错峰，而非可持续的供给纪律；未退出的过剩产能可在价格改善后复产并压低利润率。",
+      "survival_case": "FY2017期末短期借款为1,212.634百万元、货币资金为141.962百万元；截止日前虽有1,065.000百万元出售款解付，但其与偿债、受限用途、基金投入和普通股可得现金之间没有披露的勾稽，融资压力只能条件性处理。",
+      "underwriting_thesis_id": "THESIS:CN000935:20180430:RETAINED_CEMENT_CONDITIONAL",
+      "value_route": {
+        "excluded_routes": [
+          "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED"
+        ],
+        "primary_routes": [
+          "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+        ],
+        "route_component_requirements": [
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+            ],
+            "route_id": "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+            ],
+            "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED"
+          },
+          {
+            "optional_component_ids": [],
+            "required_component_ids": [
+              "COMPONENT:SPORTS_TRAINING"
+            ],
+            "route_id": "ROUTE:SPORTS_TRAINING_SCENARIO_ONLY"
+          }
+        ],
+        "route_reasoning": "该路线不提供金额、价值或回报结论。唯一的条件性主要路线只使用保留水泥核心；缺失的普通股现金桥排除合并所有者现金路线，出售收款与基金资本配置保留为未决，体育培训仅为情景组件。",
+        "valuation_model_roles": {
+          "corroborative": [],
+          "primary": [
+            "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+          ],
+          "stress": []
+        }
+      }
+    },
+    "valuation_route_request": {
+      "authority": "ROUTE_REQUEST_ONLY",
+      "boundary": "No current value, price, expected return, BuyBand, or investment action is generated.",
+      "company_id": "CN:000935",
+      "compatibility_resolution": "Current-company underwriting may enter CJO and valuation routing through a source-bound, independently reviewed complete Episode; SELECTION_ADMITTED remains local to claims that actually depend on comparative selection or causal authority.",
+      "component_decisions": [
+        {
+          "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+          "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "区域指标未随行业利润池改善，或保留水泥单位的利润和现金在出售后无法连续，均取消条件性路线。",
+          "normal_earnings_use": "CONDITIONAL_RANGE",
+          "owner_cash_use": "CONDITIONAL_RANGE",
+          "permanent_loss_use": "CONDITIONAL_PATH",
+          "promotion_test": "同一保留边界的区域价格、销量、成本、利用率、经营现金和资本开支连续披露证明FY2017参考盈利可持续并可转化为现金。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS",
+              "use": "CONDITIONAL_PRIMARY_INPUT"
+            }
+          ],
+          "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+          "economic_scope": "SURVIVAL_FINANCING",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "出售资产仍被混入保留核心，或出售款被重复计入经营现金、基金价值或普通股现金时，该未决处理继续且禁止提升。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "出售后责任边界、出售款用途、债务安排和普通股可得现金由同口径披露闭合。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+          "economic_scope": "GROWTH_CAPITAL_RETURN",
+          "financing_pressure_effect": "INCREASES",
+          "invalidation_test": "只有投资支付或账面长期股权投资而没有持续回报和现金实现证据时，不得提升为正常盈利或所有者现金输入。",
+          "normal_earnings_use": "UNRESOLVED",
+          "owner_cash_use": "UNRESOLVED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "基金和投资管理业务在同一责任边界披露投入资本、现金分配、持续收益和回报，并与融资来源及普通股现金对账。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED",
+              "use": "UNRESOLVED"
+            }
+          ],
+          "valuation_use": "UNRESOLVED"
+        },
+        {
+          "component_id": "COMPONENT:SPORTS_TRAINING",
+          "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+          "financing_pressure_effect": "CONDITIONAL",
+          "invalidation_test": "若年中并表效应、一次性收入或持续资本承诺解释其有限的已披露贡献，则其保持情景或压力用途。",
+          "normal_earnings_use": "SCENARIO_ONLY",
+          "owner_cash_use": "SCENARIO_ONLY",
+          "permanent_loss_use": "STRESS_ONLY",
+          "promotion_test": "完整年度同口径盈利、现金转换和资本承诺显示该业务具有持续且实质性的普通股经济贡献。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:SPORTS_TRAINING_SCENARIO_ONLY",
+              "use": "SCENARIO_ONLY"
+            }
+          ],
+          "valuation_use": "SCENARIO_ONLY"
+        },
+        {
+          "component_id": "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE",
+          "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+          "financing_pressure_effect": "UNRESOLVED",
+          "invalidation_test": "若仍只有合并经营现金流和总长期资产支出，或缺少维护资本与增长资本回报分离，则该路线保持排除。",
+          "normal_earnings_use": "NOT_APPLICABLE",
+          "owner_cash_use": "EXCLUDED",
+          "permanent_loss_use": "UNRESOLVED",
+          "promotion_test": "在保留业务、维护与增长资本、营运资本、债务及普通股分配限制之间建立可复核现金桥。",
+          "valuation_route_bindings": [
+            {
+              "route_id": "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED",
+              "use": "EXCLUDED"
+            }
+          ],
+          "valuation_use": "EXCLUDED"
+        }
+      ],
+      "cutoff_at": "2018-04-30T23:59:59+08:00",
+      "economic_derivation": {
+        "driver_sensitivity_specs": [
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "截至2018-04-30后的早期经营验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "保守敏感性从无全国价格改善到官方披露的2017年6月同比上涨25.5%；它不是公司区域实现价格假设。",
+                "evidence_ids": [
+                  "E:INDUSTRY_2017_PRICE_PROFIT_POOL"
+                ],
+                "value_or_range": {
+                  "range_high": 25.5,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "2017年6月全国水泥出厂均价同比变动",
+            "reversal_observation_refs": [
+              "#/reversal_observations/0",
+              "#/reversal_observations/1",
+              "#/reversal_observations/2"
+            ],
+            "sensitivity_id": "SENSITIVITY:INDUSTRY_PRICE_DISCIPLINE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "缺少公司所在区域的实现价格、销量、单位成本和利用率，国家价格方向不能量化传导至保留核心。",
+                "delta": {
+                  "conservative_treatment": "不为条件性保留水泥正常盈利范围加入行业价格传导点估计。",
+                  "reason": "全国均价与行业利润池不能结算为保留水泥责任单元的金额变化。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "没有保留水泥经营现金、维护资本、营运资本或普通股现金桥。",
+                "delta": {
+                  "conservative_treatment": "不从行业价格观察推断所有者现金。",
+                  "reason": "利润池方向不能替代现金转换及资本承诺资料。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "percent"
+          },
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "FY2017参考至出售后同边界验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "从不保留FY2017观察利润的保守下限到两家列示保留水泥子公司营业利润之和的条件性参考上限；并非持续盈利预测。",
+                "evidence_ids": [
+                  "E:RETAINED_CEMENT_SUBSIDIARIES"
+                ],
+                "value_or_range": {
+                  "range_high": 103.12,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "FY2017列示保留水泥子公司营业利润参考",
+            "reversal_observation_refs": [
+              "#/reversal_observations/2",
+              "#/reversal_observations/3"
+            ],
+            "sensitivity_id": "SENSITIVITY:RETAINED_CEMENT_OPERATING_REFERENCE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "该指标是条件性保留水泥正常盈利路线的唯一责任单元参考，正常化调整仍为未知。",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": -103.12,
+                  "status": "BOUNDED",
+                  "unit": "CNY million pretax"
+                },
+                "status": "DIRECT"
+              },
+              "owner_cash": {
+                "basis": "保留单位经营现金、维护资本和营运资本未披露。",
+                "delta": {
+                  "conservative_treatment": "保留所有者现金路线排除，不将利润敏感性映射为现金敏感性。",
+                  "reason": "税前营业利润参考无法转化为普通股所有者现金。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "CNY million pretax"
+          }
+        ],
+        "normal_earnings_bridge": {
+          "basis": {
+            "as_of": "2017-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ENTERPRISE_OPERATING",
+            "metric": "FY2017 retained-cement subsidiary operating-profit reference",
+            "operating_perimeter": "FY2017列示的保留水泥子公司四川双马宜宾水泥和遵义三岔，未包含未披露的内部交易、少数股东或普通股现金桥。",
+            "tax_basis": "PRETAX",
+            "unit": "CNY million"
+          },
+          "rows": [
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "ADD",
+              "economic_reason": "宜宾水泥营业利润10.350百万元与遵义三岔营业利润92.770百万元之和仅作为保留水泥已列示责任单元的FY2017税前参考。",
+              "evidence_ids": [
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "quantification": {
+                "range_high": 103.12,
+                "range_low": 103.12,
+                "status": "BOUNDED"
+              },
+              "row_id": "BRIDGE:REFERENCE_RETAINED_CEMENT_2017",
+              "row_role": "REFERENCE_EARNINGS"
+            },
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "SUBTRACT",
+              "economic_reason": "行业利润池改善可能通过区域价格和成本传导，也可能是阶段性恢复，因此需要从参考盈利中分离不可验证的正常化影响。",
+              "evidence_ids": [
+                "E:INDUSTRY_2017_PRICE_PROFIT_POOL",
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "quantification": {
+                "conservative_treatment": "保留参考仅作条件性范围锚点；不把FY2017观察值转为正常盈利点估计。",
+                "reason": "全国价格和利润恢复不能证明保留单位的区域实现价格、成本、利用率或持续利润，且不存在完整保留合并利润桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:NORMALIZE_RETAINED_CEMENT",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            },
+            {
+              "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "direction": "SUBTRACT",
+              "economic_reason": "持续经营边界已变，历史分部总额不能直接成为出售后企业的正常盈利。",
+              "evidence_ids": [
+                "E:SALE_PERIMETER_AND_PROCEEDS"
+              ],
+              "quantification": {
+                "conservative_treatment": "不将出售资产的历史水泥盈利、出售收款或其潜在替代回报计入保留业务正常盈利。",
+                "reason": "FY2017水泥分部包含已出售资产，而披露没有保留核心、出售资产与合并抵销之间的完整盈利桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:REMOVE_SOLD_PERIMETER",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            },
+            {
+              "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+              "direction": "ADD",
+              "economic_reason": "资本配置可能创造或消耗后续收益，但缺乏同责任边界的回报与现金证据。",
+              "evidence_ids": [
+                "E:FUNDS_AND_NEW_SUBSIDIARIES"
+              ],
+              "quantification": {
+                "conservative_treatment": "不把投资支付、长期股权投资或投资管理分部名称当作正常盈利贡献，也不以零替代未知回报。",
+                "reason": "基金投资和新增子公司的持续收益、现金分配、投入资本与回报均未在本包闭合。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:FUND_RETURN_UNRESOLVED",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            },
+            {
+              "component_id": "COMPONENT:SPORTS_TRAINING",
+              "direction": "ADD",
+              "economic_reason": "有限期间的非水泥组件不能与成熟水泥核心的年度经营经济混合。",
+              "evidence_ids": [
+                "E:SPORTS_TRAINING_PARTIAL_PERIOD"
+              ],
+              "quantification": {
+                "conservative_treatment": "保留为情景组件；不将半年度收入和成本外推为基础或条件性正常盈利。",
+                "reason": "体育培训仅自2017-06-20起纳入合并范围，未提供完整年度可比盈利和现金资料。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:SPORTS_SCENARIO_ONLY",
+              "row_role": "NORMALIZATION_ADJUSTMENT"
+            }
+          ]
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation.v1"
+      },
+      "economic_derivation_summary": {
+        "driver_sensitivities": [
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "截至2018-04-30后的早期经营验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "保守敏感性从无全国价格改善到官方披露的2017年6月同比上涨25.5%；它不是公司区域实现价格假设。",
+                "evidence_ids": [
+                  "E:INDUSTRY_2017_PRICE_PROFIT_POOL"
+                ],
+                "value_or_range": {
+                  "range_high": 25.5,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "2017年6月全国水泥出厂均价同比变动",
+            "normal_earnings_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "owner_cash_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "后续官方行业量价资料显示价格与利润恢复主要由需求繁荣而非有效供给收缩解释。",
+              "错峰结束、违规新增或闲置产能复产后，行业价格和利润率迅速回落。",
+              "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。"
+            ],
+            "sensitivity_id": "SENSITIVITY:INDUSTRY_PRICE_DISCIPLINE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "缺少公司所在区域的实现价格、销量、单位成本和利用率，国家价格方向不能量化传导至保留核心。",
+                "delta": {
+                  "conservative_treatment": "不为条件性保留水泥正常盈利范围加入行业价格传导点估计。",
+                  "reason": "全国均价与行业利润池不能结算为保留水泥责任单元的金额变化。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "owner_cash": {
+                "basis": "没有保留水泥经营现金、维护资本、营运资本或普通股现金桥。",
+                "delta": {
+                  "conservative_treatment": "不从行业价格观察推断所有者现金。",
+                  "reason": "利润池方向不能替代现金转换及资本承诺资料。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "percent",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS",
+                "route_role": "PRIMARY"
+              }
+            ]
+          },
+          {
+            "component_ids": [
+              "COMPONENT:RETAINED_CEMENT_CORE"
+            ],
+            "horizon": "FY2017参考至出售后同边界验证期",
+            "input_cases": {
+              "mode": "BOUNDED_RANGE",
+              "range": {
+                "basis": "从不保留FY2017观察利润的保守下限到两家列示保留水泥子公司营业利润之和的条件性参考上限；并非持续盈利预测。",
+                "evidence_ids": [
+                  "E:RETAINED_CEMENT_SUBSIDIARIES"
+                ],
+                "value_or_range": {
+                  "range_high": 103.12,
+                  "range_low": 0
+                }
+              }
+            },
+            "metric": "FY2017列示保留水泥子公司营业利润参考",
+            "normal_earnings_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "owner_cash_uses": {
+              "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_RANGE"
+            },
+            "reversal_observations": [
+              "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。",
+              "出售、并购、基金或会计责任边界变化使保留业务的量、利润和现金无法形成连续同口径序列。"
+            ],
+            "sensitivity_id": "SENSITIVITY:RETAINED_CEMENT_OPERATING_REFERENCE",
+            "transmission": {
+              "normal_earnings": {
+                "basis": "该指标是条件性保留水泥正常盈利路线的唯一责任单元参考，正常化调整仍为未知。",
+                "delta": {
+                  "range_high": 0,
+                  "range_low": -103.12,
+                  "status": "BOUNDED",
+                  "unit": "CNY million pretax"
+                },
+                "status": "DIRECT"
+              },
+              "owner_cash": {
+                "basis": "保留单位经营现金、维护资本和营运资本未披露。",
+                "delta": {
+                  "conservative_treatment": "保留所有者现金路线排除，不将利润敏感性映射为现金敏感性。",
+                  "reason": "税前营业利润参考无法转化为普通股所有者现金。",
+                  "status": "UNKNOWN"
+                },
+                "status": "UNKNOWN"
+              },
+              "valuation_route_ids": [
+                "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+              ]
+            },
+            "unit": "CNY million pretax",
+            "valuation_route_attributions": [
+              {
+                "component_valuation_uses": {
+                  "COMPONENT:RETAINED_CEMENT_CORE": "CONDITIONAL_PRIMARY_INPUT"
+                },
+                "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS",
+                "route_role": "PRIMARY"
+              }
+            ]
+          }
+        ],
+        "normal_earnings_bridge": {
+          "base_range": null,
+          "basis": {
+            "as_of": "2017-12-31",
+            "currency": "CNY",
+            "earnings_claim_scope": "ENTERPRISE_OPERATING",
+            "metric": "FY2017 retained-cement subsidiary operating-profit reference",
+            "operating_perimeter": "FY2017列示的保留水泥子公司四川双马宜宾水泥和遵义三岔，未包含未披露的内部交易、少数股东或普通股现金桥。",
+            "tax_basis": "PRETAX",
+            "unit": "CNY million"
+          },
+          "conditional_range": {
+            "status": "UNKNOWN",
+            "unknown_row_ids": [
+              "BRIDGE:NORMALIZE_RETAINED_CEMENT"
+            ]
+          },
+          "rows": [
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "ADD",
+              "economic_reason": "宜宾水泥营业利润10.350百万元与遵义三岔营业利润92.770百万元之和仅作为保留水泥已列示责任单元的FY2017税前参考。",
+              "evidence_ids": [
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "normal_earnings_use": "CONDITIONAL_RANGE",
+              "quantification": {
+                "range_high": 103.12,
+                "range_low": 103.12,
+                "status": "BOUNDED"
+              },
+              "row_id": "BRIDGE:REFERENCE_RETAINED_CEMENT_2017",
+              "row_role": "REFERENCE_EARNINGS",
+              "signed_range": {
+                "range_high": 103.12,
+                "range_low": 103.12
+              }
+            },
+            {
+              "component_id": "COMPONENT:RETAINED_CEMENT_CORE",
+              "direction": "SUBTRACT",
+              "economic_reason": "行业利润池改善可能通过区域价格和成本传导，也可能是阶段性恢复，因此需要从参考盈利中分离不可验证的正常化影响。",
+              "evidence_ids": [
+                "E:INDUSTRY_2017_PRICE_PROFIT_POOL",
+                "E:RETAINED_CEMENT_SUBSIDIARIES"
+              ],
+              "normal_earnings_use": "CONDITIONAL_RANGE",
+              "quantification": {
+                "conservative_treatment": "保留参考仅作条件性范围锚点；不把FY2017观察值转为正常盈利点估计。",
+                "reason": "全国价格和利润恢复不能证明保留单位的区域实现价格、成本、利用率或持续利润，且不存在完整保留合并利润桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:NORMALIZE_RETAINED_CEMENT",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            },
+            {
+              "component_id": "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+              "direction": "SUBTRACT",
+              "economic_reason": "持续经营边界已变，历史分部总额不能直接成为出售后企业的正常盈利。",
+              "evidence_ids": [
+                "E:SALE_PERIMETER_AND_PROCEEDS"
+              ],
+              "normal_earnings_use": "UNRESOLVED",
+              "quantification": {
+                "conservative_treatment": "不将出售资产的历史水泥盈利、出售收款或其潜在替代回报计入保留业务正常盈利。",
+                "reason": "FY2017水泥分部包含已出售资产，而披露没有保留核心、出售资产与合并抵销之间的完整盈利桥。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:REMOVE_SOLD_PERIMETER",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            },
+            {
+              "component_id": "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+              "direction": "ADD",
+              "economic_reason": "资本配置可能创造或消耗后续收益，但缺乏同责任边界的回报与现金证据。",
+              "evidence_ids": [
+                "E:FUNDS_AND_NEW_SUBSIDIARIES"
+              ],
+              "normal_earnings_use": "UNRESOLVED",
+              "quantification": {
+                "conservative_treatment": "不把投资支付、长期股权投资或投资管理分部名称当作正常盈利贡献，也不以零替代未知回报。",
+                "reason": "基金投资和新增子公司的持续收益、现金分配、投入资本与回报均未在本包闭合。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:FUND_RETURN_UNRESOLVED",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            },
+            {
+              "component_id": "COMPONENT:SPORTS_TRAINING",
+              "direction": "ADD",
+              "economic_reason": "有限期间的非水泥组件不能与成熟水泥核心的年度经营经济混合。",
+              "evidence_ids": [
+                "E:SPORTS_TRAINING_PARTIAL_PERIOD"
+              ],
+              "normal_earnings_use": "SCENARIO_ONLY",
+              "quantification": {
+                "conservative_treatment": "保留为情景组件；不将半年度收入和成本外推为基础或条件性正常盈利。",
+                "reason": "体育培训仅自2017-06-20起纳入合并范围，未提供完整年度可比盈利和现金资料。",
+                "status": "UNKNOWN"
+              },
+              "row_id": "BRIDGE:SPORTS_SCENARIO_ONLY",
+              "row_role": "NORMALIZATION_ADJUSTMENT",
+              "signed_range": null
+            }
+          ],
+          "totals_by_use": {
+            "BASE_RANGE": null,
+            "CONDITIONAL_RANGE": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "BRIDGE:NORMALIZE_RETAINED_CEMENT"
+              ]
+            },
+            "EXCLUDED": null,
+            "NOT_APPLICABLE": null,
+            "SCENARIO_ONLY": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "BRIDGE:SPORTS_SCENARIO_ONLY"
+              ]
+            },
+            "UNRESOLVED": {
+              "status": "UNKNOWN",
+              "unknown_row_ids": [
+                "BRIDGE:REMOVE_SOLD_PERIMETER",
+                "BRIDGE:FUND_RETURN_UNRESOLVED"
+              ]
+            }
+          }
+        },
+        "schema_version": "enterprise-underwriting-economic-derivation-summary.v1"
+      },
+      "episode_id": "EPISODE:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+      "excluded_routes": [
+        "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED"
+      ],
+      "existing_valuation_adapter": "scripts/valuation_routing.py:build_valuation_route",
+      "inputs_excluded_from_base": [
+        "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+        "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT",
+        "COMPONENT:SPORTS_TRAINING",
+        "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+      ],
+      "normal_earnings_input_treatment": "以两家列示保留水泥子公司FY2017营业利润103.120百万元作为条件性税前参考，并以未知正常化、出售边界和非核心回报调整约束；不形成基础正常盈利范围。",
+      "owner_cash_input_treatment": "经营现金、长期资产现金支出、出售收款和基金投资均是不同或合并责任边界，维护资本、增长资本回报、营运资本和普通股桥缺失；普通股所有者现金不作基础输入。",
+      "permanent_loss_input_treatment": "将价格纪律失效、区域传导缺失、出售后责任边界断裂、基金回报不明和融资压力作为待后续披露检验的条件性或未决路径。",
+      "primary_routes": [
+        "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+      ],
+      "request_id": "UW-VR:EPISODE:CN000935:20180430:REPORT_AUTONOMY_2X2:A01:V3",
+      "route_component_requirements": [
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "COMPONENT:RETAINED_CEMENT_CORE"
+          ],
+          "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+          ],
+          "route_id": "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+            "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+          ],
+          "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED"
+        },
+        {
+          "optional_component_ids": [],
+          "required_component_ids": [
+            "COMPONENT:SPORTS_TRAINING"
+          ],
+          "route_id": "ROUTE:SPORTS_TRAINING_SCENARIO_ONLY"
+        }
+      ],
+      "route_reasoning": "该路线不提供金额、价值或回报结论。唯一的条件性主要路线只使用保留水泥核心；缺失的普通股现金桥排除合并所有者现金路线，出售收款与基金资本配置保留为未决，体育培训仅为情景组件。",
+      "sample_identity": "BLIND_REPLAY",
+      "schema_version": "enterprise-underwriting-valuation-route-request.v2",
+      "situation_model": {
+        "industry_future_thesis": {
+          "adaptation": "把宜宾水泥和遵义三岔的保留水泥责任单元与出售资产、出售收款、基金投资和年中并表的体育培训业务分开；后续以同边界的经营和现金披露检验适应。",
+          "company_exposure": "FY2017水泥业务收入占营业收入97.16%，但该水泥分部总额仍包含截止日前已出售的都江堰拉法基和江油拉豪，故全国利润池不能直接映射为保留核心的持续盈利。",
+          "horizon": "2018-04-30后至早期经营验证期",
+          "most_likely_regime": "需求并非繁荣、而有效供给约束和价格纪律驱动的行业利润池恢复，仍受未根本解决的产能过剩制约。",
+          "normal_economics": "水泥分部FY2015至FY2017毛利率由10.54%升至19.56%，销量仅温和增加；该组合支持恢复假设，但没有区域实现价格、单位成本、利用率或保留单元完整利润桥，不能授权结构性正常盈利点估计。",
+          "permanent_loss": "若价格恢复为短期供给扰动、未退出产能复产，或出售后保留核心与新投资不能形成可观察的同边界现金，利润池恢复可能不能保护普通股的长期经济。",
+          "profit_pool_transmission": "近乎横盘的全国需求配合新增熟料约束、错峰和重组，可先改善行业价格和利润率；传至公司须经其区域实现价格、销量、单位成本、利用率及责任边界验证。",
+          "reversal_observations": [
+            "后续官方行业量价资料显示价格与利润恢复主要由需求繁荣而非有效供给收缩解释。",
+            "错峰结束、违规新增或闲置产能复产后，行业价格和利润率迅速回落。",
+            "公司所在区域的实现价格、利用率或单位成本长期与全国方向背离。",
+            "出售、并购、基金或会计责任边界变化使保留业务的量、利润和现金无法形成连续同口径序列。"
+          ],
+          "strongest_rival": "最强竞争解释是2017年的价格和利润恢复主要来自低基数、区域性供给扰动和阶段性错峰，而非可持续的供给纪律；未退出的过剩产能可在价格改善后复产并压低利润率。",
+          "valuation_treatment": "保留水泥核心仅进入条件性正常盈利路线；没有同边界经营现金、维护资本、增长资本回报及普通股可得现金桥的合并所有者现金路线排除在基础之外。"
+        },
+        "summary": "全国水泥需求近乎横盘而价格和利润池在2017年显著恢复，供给约束、错峰和重组提供了候选传导机制；公司可见的水泥改善却与出售边界重叠，不能直接写成持续的集团经济。"
+      },
+      "underwriting_thesis_id": "THESIS:CN000935:20180430:RETAINED_CEMENT_CONDITIONAL",
+      "valuation_component_route": {
+        "components_by_use": {
+          "CONDITIONAL_PRIMARY_INPUT": [
+            "COMPONENT:RETAINED_CEMENT_CORE"
+          ],
+          "CORROBORATIVE_INPUT": [],
+          "EXCLUDED": [
+            "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+          ],
+          "NOT_APPLICABLE": [],
+          "PRIMARY_INPUT": [],
+          "SCENARIO_ONLY": [
+            "COMPONENT:SPORTS_TRAINING"
+          ],
+          "STRESS_ONLY": [],
+          "UNRESOLVED": [
+            "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+            "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+          ]
+        },
+        "route_authority": "CONDITIONAL_PRIMARY_INPUT",
+        "route_component_bindings": [
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": [
+                "COMPONENT:SOLD_CEMENT_ASSETS_AND_PROCEEDS",
+                "COMPONENT:FUND_AND_INVESTMENT_MANAGEMENT"
+              ]
+            },
+            "route_id": "ROUTE:CAPITAL_ALLOCATION_UNRESOLVED"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [
+                "COMPONENT:ORDINARY_SHARE_OWNER_CASH_BRIDGE"
+              ],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "ROUTE:CONSOLIDATED_OWNER_CASH_EXCLUDED"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [
+                "COMPONENT:RETAINED_CEMENT_CORE"
+              ],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+          },
+          {
+            "components_by_use": {
+              "CONDITIONAL_PRIMARY_INPUT": [],
+              "CORROBORATIVE_INPUT": [],
+              "EXCLUDED": [],
+              "NOT_APPLICABLE": [],
+              "PRIMARY_INPUT": [],
+              "SCENARIO_ONLY": [
+                "COMPONENT:SPORTS_TRAINING"
+              ],
+              "STRESS_ONLY": [],
+              "UNRESOLVED": []
+            },
+            "route_id": "ROUTE:SPORTS_TRAINING_SCENARIO_ONLY"
+          }
+        ]
+      },
+      "valuation_model_roles": {
+        "corroborative": [],
+        "primary": [
+          "ROUTE:RETAINED_CEMENT_CONDITIONAL_NORMAL_EARNINGS"
+        ],
+        "stress": []
+      }
+    }
+  },
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-training-downstream-bundle.v1"
+}

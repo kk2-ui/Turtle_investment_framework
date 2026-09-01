@@ -1,0 +1,39 @@
+{
+  "schema_version": "judgment-experience-target-admission.v1",
+  "application_id": "JERAPP:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "company_id": "CN:601865",
+  "company_cluster_id": "COMPANY:CN601865",
+  "issuer_name": "福莱特玻璃集团股份有限公司",
+  "cutoff_at": "2024-04-01T00:00:00+08:00",
+  "selection_order": {
+    "rule": "First newly identified different-company cluster with the selected capital-intensive capacity, customer-absorption and cash-capex mechanism after the Longi source record became reviewable; selection may not use outcome direction, price, valuation, return or ease of settlement.",
+    "selected_for_outcome_attractiveness": false,
+    "existing_training_cluster_exclusion": "COMPANY:CN601865 is distinct from the source record's COMPANY:CN601012 and is not the retired CN002475 non-evaluable Holdout pair."
+  },
+  "preoutcome_structural_premise": "The target is an upstream solar-glass manufacturer with disclosed historical expansion and a group reporting perimeter. This is sufficient to make responsibility-matched product economics and cash-capex absorption a material question; it is not a conclusion about the target's FY2024 result.",
+  "outcome_firewall": {
+    "outcome_period": "FY2024",
+    "outcome_access_state": "SEALED",
+    "not_read": [
+      "FY2024 or later annual-report metadata or bodies",
+      "market price, return, valuation, analyst or portfolio material",
+      "other campaign outcome material"
+    ],
+    "allowed_preoutcome_inputs": [
+      "the frozen Longi source-side record without its outcome values",
+      "official FY2021-FY2023 annual-report identifiers published before the cutoff",
+      "the target's cutoff-before source packet and frozen research-treatment artifact"
+    ]
+  },
+  "rights": {
+    "transfer_candidate": "NOT_CREATED",
+    "transfer_validated": "NOT_AUTHORIZED",
+    "method_validated": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

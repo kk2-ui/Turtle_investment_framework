@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_generation_handoff.schema.json",
+  "title": "Turtle Judgment Generation Handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "view",
+    "identity",
+    "source_refs",
+    "projection",
+    "usage_contract",
+    "readiness"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-generation-handoff.v1"},
+    "view": {
+      "enum": ["RESEARCH_AGENDA", "JUDGMENT_SYNTHESIS", "INVESTMENT_ENRICHMENT"]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report_id", "company_id", "analysis_purpose", "information_cutoff"],
+      "properties": {
+        "report_id": {"type": "string", "minLength": 1},
+        "company_id": {"type": "string", "minLength": 1},
+        "analysis_purpose": {"enum": ["COMPANY_JUDGMENT_ONLY", "INVESTMENT_DECISION"]},
+        "information_cutoff": {"type": "string", "minLength": 4}
+      }
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "artifact_ref", "pointer", "allowed_use"],
+        "properties": {
+          "role": {
+            "enum": [
+              "REPORT_IDENTITY",
+              "OFFICIAL_EVIDENCE",
+              "DECISIVE_QUESTIONS",
+              "INDUSTRY_PRIOR",
+              "INDUSTRY_UNDERWRITING_CONTEXT",
+              "INDUSTRY_EVIDENCE_ACQUISITION",
+              "METHOD_PROMPT",
+              "CLAIM_EVIDENCE",
+              "FINANCIAL_DRIVER_BRIDGE",
+              "THESIS_TEST",
+              "INSIGHT_LEDGER",
+              "FROZEN_CJO",
+              "CURRENT_COMPANY_CJO_ADMISSION",
+              "CJO_QUANTITATIVE_OVERLAY",
+              "CJO_PREDECESSOR",
+              "VALUATION_ROUTE"
+            ]
+          },
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "pointer": {"type": "string"},
+          "allowed_use": {"type": "string", "minLength": 1},
+          "validation_ref": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "projection": {"type": "object"},
+    "usage_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "derived_read_model_only",
+        "canonical_artifacts_remain_authoritative",
+        "must_return_to_source_before_citation_or_mutation",
+        "pre_cutoff_outcomes_prices_and_actions_forbidden"
+      ],
+      "properties": {
+        "derived_read_model_only": {"const": true},
+        "canonical_artifacts_remain_authoritative": {"const": true},
+        "must_return_to_source_before_citation_or_mutation": {"const": true},
+        "pre_cutoff_outcomes_prices_and_actions_forbidden": {"const": true}
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "invalid_findings",
+        "incomplete_findings",
+        "warnings",
+        "empty_states"
+      ],
+      "properties": {
+        "state": {"enum": ["READY", "READY_WITH_NO_PRIOR", "INCOMPLETE", "BLOCKED"]},
+        "invalid_findings": {"type": "array", "items": {"type": "string"}},
+        "incomplete_findings": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}},
+        "empty_states": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "AVAILABLE", "PIT_EVIDENCE_ONLY", "NO_DECISIVE_PLAN_EVIDENCE_ONLY",
+              "NO_MATCHING_MECHANISM_READY", "NO_EXPLICIT_LEARNING_REFS", "NOT_APPLICABLE_TO_VIEW",
+              "NOT_COMPILED", "EXCLUDED_INVALID", "EXCLUDED_IDENTITY_MISMATCH",
+              "EXCLUDED_CUTOFF_MISMATCH", "EXCLUDED_CONTEXT_MISMATCH", "BOUNDED",
+              "READY",
+              "PLAN_READY_NO_RECEIPT", "PLAN_READY_RECEIPT_EXCLUDED",
+              "RECEIPT_PARTIAL", "RECEIPT_REVIEWABLE"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"view": {"const": "RESEARCH_AGENDA"}}, "required": ["view"]},
+      "then": {
+        "properties": {
+          "projection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "agenda_mode", "official_evidence", "decisive_questions", "industry_priors",
+              "learning_prompts", "industry_snapshot", "industry_underwriting_context",
+              "industry_evidence_acquisition"
+            ],
+            "properties": {
+              "agenda_mode": {"enum": ["DECISIVE_PLAN", "INDUSTRY_UNDERWRITING", "INDUSTRY_PRIOR_ONLY", "EVIDENCE_ONLY"]},
+              "official_evidence": {"type": "object"},
+              "decisive_questions": {"type": "array", "maxItems": 3, "items": {"type": "object"}},
+              "industry_priors": {"type": "array", "items": {"type": "object"}},
+              "learning_prompts": {"type": "array", "items": {"type": "object"}},
+              "industry_snapshot": {"type": "object"},
+              "industry_underwriting_context": {"type": "object"},
+              "industry_evidence_acquisition": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"view": {"const": "JUDGMENT_SYNTHESIS"}}, "required": ["view"]},
+      "then": {
+        "properties": {
+          "projection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ledger_states", "claims", "financial_drivers", "allocation_events", "thesis", "insights", "adversarial_review"],
+            "properties": {
+              "ledger_states": {"type": "object"},
+              "claims": {"type": "array", "items": {"type": "object"}},
+              "financial_drivers": {"type": "array", "items": {"type": "object"}},
+              "allocation_events": {"type": "array", "items": {"type": "object"}},
+              "thesis": {"type": "object"},
+              "insights": {"type": "array", "items": {"type": "object"}},
+              "adversarial_review": {"type": "object"},
+              "frozen_cjo": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"view": {"const": "INVESTMENT_ENRICHMENT"}}, "required": ["view"]},
+      "then": {
+        "properties": {
+          "projection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["company_judgment_predecessor", "valuation_route"],
+            "properties": {
+              "company_judgment_predecessor": {"type": "object"},
+              "valuation_route": {"type": "object"},
+              "quantitative_overlay": {"type": "object"}
+            }
+          }
+        }
+      }
+    }
+  ]
+}

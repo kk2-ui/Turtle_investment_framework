@@ -1,0 +1,31 @@
+{
+  "schema_version": "turtle-minimal-historical-episode-static-evidence.v1",
+  "evidence_receipt_id": "MHE:EVIDENCE:CN000651:FY2016:C1:V2",
+  "evidence_receipt_version": 1,
+  "measurement_contract_ref": {
+    "measurement_contract_id": "MHE:CONTRACT:CN000651:FY2017:V2",
+    "measurement_contract_version": 2
+  },
+  "company_id": "CN:000651",
+  "issuer_id": "ISSUER:CN:000651",
+  "cutoff_at": "2017-04-30T23:59:59+08:00",
+  "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+  "window_id": "ONE_YEAR",
+  "curator_id": "CURATOR:CN000651:REVENUE:C1:20260827",
+  "source": {
+    "source_id": "CNINFO:000651:ANN:20170427:1203403930",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2017-04-27/1203403930.PDF",
+    "source_type": "OFFICIAL_STATIC_FILING",
+    "published_at": "2017-04-27",
+    "issuer_id": "ISSUER:CN:000651",
+    "metric_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE_RMB",
+    "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER",
+    "unit": "RMB",
+    "field_ref": "FY2016 Gree Electric Appliances annual report, consolidated income statement, PDF p. 62, 营业收入.",
+    "numeric_value": 108302565293.70
+  },
+  "object_class": "MINIMAL_HISTORICAL_STATIC_EVIDENCE",
+  "claim_class": "CUTOFF_VISIBLE_OFFICIAL_FIELD",
+  "allowed_outputs": ["MECHANICAL_SETTLEMENT_ONLY"],
+  "method_transfer_rights": "NO_METHOD_TRANSFER_RIGHTS"
+}

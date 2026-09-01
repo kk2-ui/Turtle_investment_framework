@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research_monitoring.schema.json",
+  "title": "Turtle V3 monitoring event ledger",
+  "type": "object",
+  "required": ["schema_version", "report_id", "events"],
+  "properties": {
+    "schema_version": {"const": "monitoring-ledger.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["event_id", "event_type", "observed_at", "source_ids"],
+        "properties": {
+          "event_id": {"type": "string", "minLength": 1},
+          "event_type": {
+            "enum": ["prediction_resolution", "trigger_event", "return_observation", "process_observation", "thesis_action"]
+          },
+          "observed_at": {"type": "string", "minLength": 1},
+          "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "prediction_id": {"type": "string"},
+          "outcome": {"enum": [0, 1]},
+          "threshold_id": {"type": "string"},
+          "actual_total_return_pct": {"type": "number"},
+          "max_drawdown_pct": {"type": "number"},
+          "facts_checked": {"type": "number", "minimum": 0},
+          "data_errors": {"type": "number", "minimum": 0},
+          "parameters_checked": {"type": "number", "minimum": 0},
+          "parameter_conflicts": {"type": "number", "minimum": 0},
+          "hours_after_trigger": {"type": "number", "minimum": 0}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

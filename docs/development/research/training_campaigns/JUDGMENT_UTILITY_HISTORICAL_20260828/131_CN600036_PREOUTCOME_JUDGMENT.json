@@ -1,0 +1,291 @@
+{
+  "artifact_type": "BLIND10_PREOUTCOME_ENTERPRISE_JUDGMENT",
+  "status": "PRE_OUTCOME_ONLY",
+  "security": {
+    "security_id": "CN:600036",
+    "legal_name": "招商银行股份有限公司",
+    "sector_structure": "commercial bank"
+  },
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "scope_and_firewall": {
+    "derived_only_from": [
+      "招商银行股份有限公司2021年度报告",
+      "招商银行股份有限公司2022年度报告",
+      "招商银行股份有限公司2023年度报告"
+    ],
+    "pre_outcome_statement": "This is a fresh, one-shot judgment as of the cutoff. It contains no FY2024-or-later result, market price, return, valuation, analyst, web, or external-source information.",
+    "not_an_authorized_action": "This artifact contains no formal valuation, price target, CJO, BuyBand, report conclusion, or investment instruction.",
+    "interpretation_rule": "Reported figures are evidence of the stated period, not proof of persistence. No probability or comparative-causality claim is made."
+  },
+  "business_mechanism": {
+    "description": "The bank gathers deposits and other funding, deploys loans and financial assets within risk, liquidity and capital constraints, earns net interest and fee/non-interest income, absorbs credit losses, and retains or distributes only capital that remains usable after regulatory and loss-absorption needs.",
+    "bank_specific_guardrails": [
+      "Operating cash flow/CFO is affected by deposits, loans, interbank balances and other banking working-capital movements; it is not owner cash.",
+      "A capital-adequacy ratio is a regulatory capacity measure, not a direct measure of distributable owner cash or total enterprise quality.",
+      "A single NPL ratio or a single provision-coverage ratio does not settle portfolio quality, loss recognition, or permanent-loss exposure."
+    ]
+  },
+  "evidence_ledger": {
+    "FY2021": {
+      "source": "2021 annual report, Chapter 2 and Chapter 3",
+      "reported_observations": [
+        "Revenue was RMB331.253bn; profit attributable to shareholders was RMB119.922bn; ROAE was 16.96%.",
+        "Net interest margin was 2.48%; customer deposits were RMB6,347.078bn and loans and advances were RMB5,570.034bn.",
+        "Group NPL ratio was 0.91%; provision coverage was 483.87%; advanced-approach CET1 ratio was 12.66%.",
+        "Retail customers exceeded 170m and retail AUM exceeded RMB10tn."
+      ]
+    },
+    "FY2022": {
+      "source": "2022 annual report, Chapter 2 and Chapter 3",
+      "reported_observations": [
+        "Revenue was RMB344.783bn; profit attributable to shareholders was RMB138.012bn; ROAE was 17.06%.",
+        "Net interest margin was 2.40%; customer deposits were RMB7,535.742bn and loans and advances were RMB6,051.459bn.",
+        "Group NPL ratio was 0.96%; provision coverage was 450.79%; advanced-approach CET1 ratio was 13.68%.",
+        "Retail customers were 184m and retail AUM was RMB12.1tn."
+      ]
+    },
+    "FY2023": {
+      "source": "2023 annual report, Chapter 2, Chapter 3.1, 3.2, 3.4, 3.5 and 3.9",
+      "reported_observations": [
+        "Revenue was RMB339.123bn; profit attributable to shareholders was RMB146.602bn; ROAE was 16.22%.",
+        "Net interest margin was 2.15%; net interest income was RMB214.669bn; net fee and commission income was RMB84.108bn; credit impairment losses were RMB41.278bn.",
+        "Customer deposits were RMB8,155.438bn, 82.02% of total liabilities; loans and advances were RMB6,508.865bn.",
+        "Group NPL ratio was 0.95%; provision coverage was 437.70%; loan provision ratio was 4.14%; advanced-approach CET1 ratio was 13.73%.",
+        "Retail customers were 197m, retail AUM exceeded RMB13tn, and retail wealth-product holders exceeded 50m.",
+        "The annual report presents sustained pressure points in deposit terming, loan pricing, real-estate customers and credit-card risk."
+      ]
+    }
+  },
+  "enterprise_judgments": [
+    {
+      "id": "J1_RETAIL_WEALTH_FRANCHISE",
+      "material_enterprise_judgment": "The retail and wealth-management franchise is a real customer-distribution asset and remains the bank's strategic center. The FY2023 evidence supports scale and ongoing execution, but does not yet establish that client/AUM growth converts reliably into resilient fee earnings across a difficult market setting.",
+      "current_status": "CONDITIONALLY_SUPPORTED",
+      "state_to_management_to_customer_to_economics_risk_capital_chain": {
+        "state": "FY2023 reported 197m retail customers, retail AUM above RMB13tn, and more than 50m retail wealth-product holders. Retail financial services contributed more than 55% of revenue and pre-tax profit according to management.",
+        "management_choice_and_execution": "Management retained retail finance as the strategic mainstay, continued the wealth-management/asset-management/transaction ecosystem, expanded client segmentation and digital service, and reported App users above 200m. These are choices and reported execution steps, not proof that all benefits will persist.",
+        "customer_and_operating_readthrough": "The customer base, AUM and wealth-product-holder measures show reach and engagement. FY2023 fee evidence separates engagement from monetisation: wealth-management fees were RMB28.466bn, asset-management fees RMB11.474bn, and net fee and commission income RMB84.108bn; each of those named fee streams was lower than its FY2022 reported amount except that this judgment does not attribute a single cause.",
+        "profit_and_risk_capital_readthrough": "A scaled distribution system can support fee income and reduce dependence on balance-sheet growth when fee conversion is retained. It does not itself create distributable cash, nor does it eliminate suitability, product, market, conduct or reputation risk. The capital benefit of a lighter activity must be observed through capital and risk disclosures rather than assumed from AUM."
+      },
+      "support": [
+        "FY2021, FY2022 and FY2023 reports show retail-client and retail-AUM expansion from more than 170m/RMB10tn to 184m/RMB12.1tn to 197m/above RMB13tn.",
+        "FY2023 reports more than 50m wealth-product holders and management's continued retail/wealth/digital execution.",
+        "FY2023 fee disclosures preserve separately auditable measures for wealth management, asset management, card fees and net fee and commission income."
+      ],
+      "strongest_counterargument": "The same FY2023 report records lower wealth-management, asset-management, card and total net fee income. Customer-scale metrics can therefore coexist with weaker immediate revenue conversion; customer reach alone is insufficient to establish a durable light-capital earnings engine.",
+      "revision_trigger": "Reconsider the judgment if a subsequent annual report shows both a loss of retail/AUM scale and a continued failure of wealth-management income conversion, or if disclosed conduct/product losses materially impair the franchise."
+    },
+    {
+      "id": "J2_FUNDING_AND_MARGIN_ENGINE",
+      "material_enterprise_judgment": "The customer-deposit franchise and active balance-sheet management provide a substantial operating base, but FY2023 shows a material earnings-pressure channel through lower asset yields and a more expensive, term-heavy funding mix. The bank's earnings quality at the cutoff is therefore resilient in scale but unproven in margin stability.",
+      "current_status": "MIXED_WATCH",
+      "state_to_management_to_customer_to_economics_risk_capital_chain": {
+        "state": "FY2023 customer deposits were RMB8,155.438bn, or 82.02% of liabilities. The group reported a 2.15% net interest margin, 2.03% net spread and RMB214.669bn net interest income.",
+        "management_choice_and_execution": "Management reported tighter asset-liability combination management: loan deployment and bond allocation on the asset side, and low-cost core-deposit growth plus limits on high-cost deposits on the liability side. The report also describes capital, asset-liability, pricing and budget management as linked control systems.",
+        "customer_and_operating_readthrough": "The reported funding mix shifted toward term deposits: retail term deposits were RMB1,665.304bn and corporate term deposits RMB2,015.837bn; retail and corporate demand deposits were lower at year end. The report describes customer preference for term deposits and lower activity in corporate settlement funds. Average customer-deposit cost was 1.62%, while average loan yield was 4.26%.",
+        "profit_and_risk_capital_readthrough": "Net interest income remained the largest revenue component, so margin changes have direct relevance to earnings capacity. FY2023 profit growth occurred with lower revenue and lower net interest income; that fact does not establish a repeatable earnings route. Expansion of risk-weighted assets must remain consistent with usable capital; it cannot be inferred solely from deposit or loan growth."
+      },
+      "support": [
+        "Deposits rose in each reported year and remained the dominant FY2023 liability category.",
+        "The FY2023 report gives a transparent margin bridge: average earning-asset yield was 3.76%, average interest-bearing-liability cost was 1.73%, net spread was 2.03%, and NIM was 2.15%.",
+        "FY2023 advanced-approach CET1 was 13.73%; advanced-approach RWA was RMB6,608.021bn and CET1 capital was RMB907.308bn."
+      ],
+      "strongest_counterargument": "Management reported that domestic RMB customer-deposit average cost at the bank declined by 4bp in FY2023, while it was acting on core deposits and asset allocation. That is evidence of execution capacity and means the FY2023 group-margin pressure should not be treated as an irreversible conclusion.",
+      "revision_trigger": "Strengthen the judgment if a later annual report shows NIM preservation together with stable funding quality and risk-capital capacity; weaken it if NIM continues to fall while deposit terming/cost and capital absorption do not stabilise."
+    },
+    {
+      "id": "J3_CREDIT_RECOGNITION_AND_CAPITAL_ABSORPTION",
+      "material_enterprise_judgment": "The reported risk-control framework, high aggregate provisions and capital ratios provide loss-absorption evidence, but portfolio pressure is concentrated enough that the headline NPL ratio cannot settle enterprise quality. Real estate and credit-card exposures require separate recognition and capital-absorption monitoring.",
+      "current_status": "CONDITIONALLY_SUPPORTED_WITH_COMPONENT_RISK",
+      "state_to_management_to_customer_to_economics_risk_capital_chain": {
+        "state": "FY2023 group NPL ratio was 0.95%, provision coverage 437.70%, loan provision ratio 4.14%, and credit cost 0.74%. The reported NPL balance was RMB61.579bn. These are useful loss-absorption indicators, not an owner-cash proxy and not a complete portfolio conclusion.",
+        "management_choice_and_execution": "Management described a six-all risk framework, stricter classification under new asset-risk rules, targeted real-estate and credit-card risk work, project cash-flow review, post-loan management and multiple NPL disposal channels. The bank reported RMB58.113bn of NPL disposals at the bank level in FY2023.",
+        "customer_and_operating_readthrough": "FY2023 group retail loans were RMB3,437.883bn with a 0.89% retail NPL ratio. Credit-card loans were RMB935.910bn with a 1.75% NPL ratio. Group real-estate loans were RMB326.667bn with a 5.26% NPL ratio; at the bank level, real-estate NPL ratio was 5.01%. These fields identify different customer/asset pools rather than a single homogeneous credit book.",
+        "profit_and_risk_capital_readthrough": "Credit impairment losses were RMB41.278bn in FY2023. Risk recognition and recovery determine future earnings absorption; retained earnings and regulatory capital determine the capacity to continue operating after those losses. Neither the reported provision coverage, a single NPL ratio, nor the capital ratio alone establishes distributable owner cash or total enterprise quality."
+      },
+      "support": [
+        "FY2021-FY2023 aggregate NPL ratios stayed below 1%, while the reports disclose provisions, credit cost, NPL migration and capital measures separately.",
+        "FY2023 provides product and industry splits that expose the real-estate and credit-card components rather than concealing them in the aggregate ratio.",
+        "FY2023 advanced-approach CET1 ratio was 13.73% and total capital ratio was 17.88%, with both ratios separately reported from asset-quality data."
+      ],
+      "strongest_counterargument": "Aggregate indicators remained strong and management reported risk controls, disposal and provision buffers. It is possible that the named component risks remain contained; the available three reports cannot convert that possibility into a completed loss-recognition conclusion.",
+      "revision_trigger": "Reconsider the judgment if subsequent disclosure shows simultaneous deterioration in the real-estate and credit-card indicators, higher credit absorption without matching capital capacity, or evidence that classification/provision assumptions no longer absorb realized loss."
+    }
+  ],
+  "management_decision_and_execution_scope_match": {
+    "assessment": "PARTIALLY_MATCHED_AND_TESTABLE",
+    "matched": [
+      "The retail/wealth/digital strategy addresses the bank's disclosed need for customer acquisition, engagement and non-interest income sources; FY2023 customer, AUM and product-holder disclosures show execution at a meaningful scale.",
+      "Core-deposit, pricing, asset-allocation and capital-management actions are within the operating levers relevant to the disclosed NIM and funding-mix pressure.",
+      "Real-estate and credit-card controls, stricter classification, post-loan management and disposal actions match the specifically disclosed credit-pressure pools."
+    ],
+    "scope_boundary": [
+      "Management choices do not control market-sensitive wealth fee conversion, customer term-deposit preference, or every borrower outcome.",
+      "The FY2023 result set is not sufficient to determine whether margins have stabilised or whether component credit losses are fully recognised through a cycle.",
+      "Reported technology deployment and risk processes are execution evidence; no unsupported competitive or causal advantage is inferred."
+    ],
+    "conclusion": "The response is directionally aligned with the disclosed operating states, but the strength of the enterprise case remains conditional on measurable customer-income, margin/funding, and component-risk/capital outcomes."
+  },
+  "scenario_frame": {
+    "rule": "These are mutually distinct conditional operating states, not probabilities, forecasts, valuation cases, or investment instructions.",
+    "optimistic": {
+      "conditions": [
+        "Retail AUM and wealth-management income retain or exceed the FY2023 disclosed thresholds.",
+        "NIM does not fall below its FY2023 annual level while core funding remains usable.",
+        "Real-estate and credit-card NPL ratios do not exceed FY2023 levels, and capital absorbs RWA growth without reducing the disclosed CET1 ratio."
+      ],
+      "enterprise_readthrough": "J1, J2 and J3 would be jointly reinforced: customer reach converts better, the funding engine is more stable, and risk-control/capital capacity is supported by the requested metrics."
+    },
+    "base": {
+      "conditions": [
+        "Customer/AUM and fee indicators produce a mixed result.",
+        "NIM sits below FY2023 annual NIM but not below the FY2023 fourth-quarter level.",
+        "One of real-estate or credit-card NPL indicators is higher and the other is not higher, or the capital test is mixed."
+      ],
+      "enterprise_readthrough": "The case remains a mixed bank-quality assessment: preserve J1 and J3 as conditional, retain J2 as a watch item, and focus the next cutoff on the disclosed drivers rather than on a general narrative rewrite."
+    },
+    "adverse": {
+      "conditions": [
+        "Retail AUM falls to or below RMB13tn and wealth-management income is below FY2023.",
+        "NIM is below the FY2023 fourth-quarter level.",
+        "Both real-estate and credit-card NPL ratios exceed FY2023 levels, or the risk-capital test fails."
+      ],
+      "enterprise_readthrough": "The bank would face a combined customer-income, margin/funding and loss/capital challenge. J1 and J2 would be weakened and J3 would be escalated to a potential permanent-loss investigation."
+    }
+  },
+  "normal_earnings_owner_cash_and_permanent_loss": {
+    "normal_earnings": {
+      "view": "FY2021-FY2023 establish a profitable banking engine, but they are not enough to mechanically set normal earnings. FY2023 combines lower revenue, lower NIM and fee income with higher attributable profit and lower credit impairment than FY2022; the available record does not isolate a cycle-normal margin, fee conversion, or credit-loss level.",
+      "handling": "Use the reported income statement as a starting record only. Do not smooth it into a number until FY2024 resolves the frozen margin, customer-income and component-credit cells."
+    },
+    "owner_cash": {
+      "view": "No owner-cash amount is asserted. FY2021, FY2022 and FY2023 group operating cash flow was RMB182.048bn, RMB570.143bn and RMB357.753bn, respectively, but these banking cash-flow movements are not distributable owner cash.",
+      "handling": "Any later owner-cash assessment must first account for credit loss absorption, regulatory capital, RWA, liquidity and funding needs, as well as actual distributions. This artifact does not calculate them."
+    },
+    "permanent_loss": {
+      "view": "At the cutoff, permanent-loss risk is not resolved by aggregate NPL, provision or capital figures. The specific routes requiring attention are a durable loss of funding/margin economics, incomplete loss recognition in real estate or credit cards, and capital absorption that limits the ability to operate or distribute.",
+      "handling": "Treat each route as separately testable through the frozen cells. A single UNKNOWN does not erase the customer franchise, funding base, or aggregate loss-absorption evidence; nor do strong aggregate metrics erase component-risk investigation."
+    }
+  },
+  "directional_valuation_implication_without_valuation": {
+    "positive_direction_only": "Durable retail/wealth fee conversion, stable margin/funding quality, and component-risk control with adequate capital would support a more durable earnings and loss-absorption interpretation.",
+    "negative_direction_only": "Weak fee conversion, further margin compression, or simultaneous component credit deterioration with capital strain would reduce that interpretation and increase permanent-loss concern.",
+    "prohibited_outputs": [
+      "No valuation number, multiple, target price, intrinsic-value range, expected return, rating, CJO, BuyBand or investment action is provided."
+    ]
+  },
+  "local_unknowns_and_true_flip_conditions": [
+    {
+      "unknown": "Whether reported retail reach and AUM will convert into durable fee income after the FY2023 fee decline.",
+      "why_local_not_case_consuming": "The scale, customer and fee fields are separately disclosed; the uncertainty is about conversion, not whether the franchise exists.",
+      "true_flip_condition": "FY2024 AUM at or below RMB13tn together with FY2024 big-wealth-management income below RMB45.268bn changes J1 from conditionally supported to weakened."
+    },
+    {
+      "unknown": "Whether management's deposit and asset-allocation actions offset the FY2023 margin and terming pressure.",
+      "why_local_not_case_consuming": "The bank has a disclosed deposit base, balance-sheet controls and a direct NIM metric. The unknown is the stability of the spread, not the existence of the funding franchise.",
+      "true_flip_condition": "FY2024 group NIM below 2.04% changes J2 from mixed watch to weakened; NIM at or above 2.15% strengthens it."
+    },
+    {
+      "unknown": "Whether real-estate and credit-card risk is being absorbed through classification, provision, recovery and capital over the next reported period.",
+      "why_local_not_case_consuming": "The report discloses those pools and aggregate buffers separately. The unknown is portfolio completion, not a reason to discard all reported risk evidence.",
+      "true_flip_condition": "FY2024 real-estate NPL ratio above 5.01% and credit-card NPL ratio above 1.75%, together with a failed risk-capital cell, changes J3 to a permanent-loss investigation."
+    }
+  ],
+  "frozen_FY2024_annual_report_cells": [
+    {
+      "cell_id": "CMB24_01_RETAIL_AUM_AND_WEALTH_INCOME",
+      "mechanical_definition": "From the FY2024 original annual report, record (a) group retail AUM at year end and (b) big-wealth-management income, defined by the report as wealth-management, asset-management and custody fee and commission income.",
+      "FY2023_comparable_baseline_or_threshold": {
+        "retail_AUM": "above RMB13tn",
+        "big_wealth_management_income": "RMB45.268bn"
+      },
+      "exhaustive_resolution": {
+        "pass": "Retail AUM is above RMB13tn AND big-wealth-management income is at least RMB45.268bn.",
+        "fail": "Retail AUM is at or below RMB13tn AND big-wealth-management income is below RMB45.268bn.",
+        "mixed": "Every remaining combination: one condition passes and the other does not."
+      },
+      "directly_impacts": [
+        "J1_RETAIL_WEALTH_FRANCHISE"
+      ],
+      "mechanical_post_reveal_action": {
+        "pass": "Retain J1 and advance the next-cutoff agenda to fee durability and conduct/product economics.",
+        "fail": "Weaken J1 and set the next-cutoff agenda to diagnose client/AUM retention, product mix and fee conversion before treating wealth as a durable earnings support.",
+        "mixed": "Keep J1 conditional and use the next cutoff to isolate whether the break is client/AUM retention or monetisation."
+      }
+    },
+    {
+      "cell_id": "CMB24_02_GROUP_NIM_STABILITY",
+      "mechanical_definition": "Record group FY2024 annual net interest margin using the annual report's disclosed NIM definition: net interest income divided by average interest-earning assets.",
+      "FY2023_comparable_baseline_or_threshold": {
+        "annual_NIM": "2.15%",
+        "fourth_quarter_NIM": "2.04%"
+      },
+      "exhaustive_resolution": {
+        "pass": "FY2024 annual group NIM is at least 2.15%.",
+        "fail": "FY2024 annual group NIM is below 2.04%.",
+        "mixed": "FY2024 annual group NIM is at least 2.04% and below 2.15%."
+      },
+      "directly_impacts": [
+        "J2_FUNDING_AND_MARGIN_ENGINE"
+      ],
+      "mechanical_post_reveal_action": {
+        "pass": "Strengthen J2 and move the next-cutoff agenda to the durability of funding mix and asset repricing rather than margin repair.",
+        "fail": "Weaken J2 and move the next-cutoff agenda to deposit pricing, terming, loan yields and asset-allocation limits before relying on the earnings engine.",
+        "mixed": "Keep J2 as mixed watch and identify the margin bridge components at the next cutoff."
+      }
+    },
+    {
+      "cell_id": "CMB24_03_COMPONENT_CREDIT_RECOGNITION",
+      "mechanical_definition": "Record (a) the bank-level real-estate-industry NPL ratio and (b) the group credit-card-loan NPL ratio from the FY2024 annual report, retaining each report's stated scope rather than substituting an aggregate NPL ratio.",
+      "FY2023_comparable_baseline_or_threshold": {
+        "bank_real_estate_NPL_ratio": "5.01%",
+        "group_credit_card_NPL_ratio": "1.75%"
+      },
+      "exhaustive_resolution": {
+        "pass": "Both FY2024 component NPL ratios are at or below their FY2023 thresholds.",
+        "fail": "Both FY2024 component NPL ratios are above their FY2023 thresholds.",
+        "mixed": "Exactly one component NPL ratio is above its FY2023 threshold."
+      },
+      "directly_impacts": [
+        "J3_CREDIT_RECOGNITION_AND_CAPITAL_ABSORPTION"
+      ],
+      "mechanical_post_reveal_action": {
+        "pass": "Retain J3 as conditionally supported and focus the next-cutoff agenda on loss-recognition coverage and recoveries by component.",
+        "fail": "Escalate J3 to a permanent-loss investigation and obtain the next-cutoff evidence on classification, provisioning, recoveries and sector/customer concentration.",
+        "mixed": "Keep J3 component-risk conditional and focus the next cutoff on the deteriorating component only."
+      },
+      "anti_equivalence": "This cell does not equate either component NPL ratio with total enterprise quality, provisioning adequacy, owner cash or capital adequacy."
+    },
+    {
+      "cell_id": "CMB24_04_RISK_CAPITAL_TRACTION",
+      "mechanical_definition": "From the FY2024 annual report, record group advanced-approach CET1 ratio, CET1 capital amount and RWA (including the report's parallel-floor treatment where presented). Calculate year-on-year CET1-capital growth and RWA growth from FY2023 and FY2024 reported amounts.",
+      "FY2023_comparable_baseline_or_threshold": {
+        "advanced_approach_CET1_ratio": "13.73%",
+        "CET1_capital": "RMB907.308bn",
+        "RWA_including_parallel_floor": "RMB6,608.021bn",
+        "FY2023_reported_growth_reference": "CET1 capital 13.51%; RWA 13.12%"
+      },
+      "exhaustive_resolution": {
+        "pass": "FY2024 advanced-approach CET1 ratio is at least 13.73% AND FY2024 year-on-year CET1-capital growth is at least FY2024 year-on-year RWA growth.",
+        "fail": "FY2024 advanced-approach CET1 ratio is below 13.73% AND FY2024 year-on-year CET1-capital growth is below FY2024 year-on-year RWA growth.",
+        "mixed": "Every remaining combination: one condition passes and the other does not."
+      },
+      "directly_impacts": [
+        "J2_FUNDING_AND_MARGIN_ENGINE",
+        "J3_CREDIT_RECOGNITION_AND_CAPITAL_ABSORPTION"
+      ],
+      "mechanical_post_reveal_action": {
+        "pass": "Retain risk-capital capacity as support for J2/J3 and focus the next cutoff on quality of RWA and loss absorption, not on a claim of owner-cash availability.",
+        "fail": "Weaken J2/J3 and set the next-cutoff agenda to capital generation, RWA composition, loss absorption and distribution constraints.",
+        "mixed": "Keep J2/J3 conditional and diagnose which of ratio preservation or capital-to-RWA traction is incomplete."
+      },
+      "anti_equivalence": "This cell is a regulatory-capacity test only. It is not a direct measure of total credit quality, distributable owner cash or overall enterprise quality."
+    }
+  ],
+  "frozen_cell_use_protocol": {
+    "maximum_cell_count": 4,
+    "mechanical_only": true,
+    "after_result_reveal": "Apply each cell's stated pass/fail/mixed action directly. The result must alter the named enterprise judgment and the next-cutoff research agenda without outcome-aware rewriting of this pre-outcome artifact.",
+    "no_substitution_rule": "Do not replace a cell with CFO, a single aggregate NPL ratio, a single provision ratio, a market-price observation or a later non-annual-report source."
+  }
+}

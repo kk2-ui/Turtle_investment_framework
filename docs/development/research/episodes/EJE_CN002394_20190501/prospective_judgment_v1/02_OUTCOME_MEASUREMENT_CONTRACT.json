@@ -1,0 +1,81 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-contract.v1",
+  "contract_id": "PEJOC:CN002394:20190501:FY2019:V1",
+  "company_id": "CN:002394",
+  "issuer_id": "ISSUER:CN:002394",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002394",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "observation_window": {
+    "period_start": "2019-01-01",
+    "period_end": "2019-12-31",
+    "due_at": "2020-05-01T00:00:00+08:00"
+  },
+  "source_rule": {
+    "issuer_code": "002394",
+    "report_period": "FY2019",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "required_host": "static.cninfo.com.cn",
+    "required_form": "FULL_ANNUAL_REPORT_PDF",
+    "version_policy": "ORIGINAL_FULL_REPORT_IF_UNIQUELY_IDENTIFIED",
+    "mismatch_if_unresolved": "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"
+  },
+  "cells": [
+    {
+      "cell_id": "CELL:CN002394:FY2019:CUSTOMER_MARKET_MIX",
+      "dimension": "CUSTOMER_COMPETITION_RESPONSE",
+      "fields": [
+        {"field_id": "DOMESTIC_REVENUE_RMB", "unit": "RMB", "definition": "FY2019 domestic regional revenue."},
+        {"field_id": "EUROPE_REVENUE_RMB", "unit": "RMB", "definition": "FY2019 Europe regional revenue."},
+        {"field_id": "US_REVENUE_RMB", "unit": "RMB", "definition": "FY2019 United States regional revenue."},
+        {"field_id": "OTHER_REGION_REVENUE_RMB", "unit": "RMB", "definition": "FY2019 other-region revenue on the annual-report row."},
+        {"field_id": "TOP5_CUSTOMER_SALES_SHARE_PCT", "unit": "PERCENT", "definition": "Top-five customers' share of FY2019 annual sales."},
+        {"field_id": "COLOR_WOVEN_SALES_VOLUME_10K_METERS", "unit": "TEN_THOUSAND_METERS", "definition": "FY2019 physical sales volume for color-woven fabric."},
+        {"field_id": "DYED_FABRIC_SALES_VOLUME_10K_METERS", "unit": "TEN_THOUSAND_METERS", "definition": "FY2019 physical sales volume for dyed fabric."}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002394:FY2019:UNIT_ECONOMICS",
+      "dimension": "UNIT_ECONOMICS",
+      "fields": [
+        {"field_id": "TEXTILE_APPAREL_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 textile-apparel industry gross margin."},
+        {"field_id": "COLOR_WOVEN_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 color-woven fabric gross margin."},
+        {"field_id": "DYED_FABRIC_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 dyed-fabric gross margin."},
+        {"field_id": "DOMESTIC_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 domestic regional gross margin."},
+        {"field_id": "EUROPE_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 Europe regional gross margin."},
+        {"field_id": "US_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 United States regional gross margin."}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002394:FY2019:IMPLEMENTATION",
+      "dimension": "EXECUTION",
+      "fields": [
+        {"field_id": "XINJIANG_HOME_TEXTILE_PROJECT_STATUS_EVENT", "unit": "EVENT", "definition": "FY2019 disclosed actual completion, commissioning or operating milestone for the Xinjiang high-end home-textile greige-fabric and yarn project; repeated plan language is not completion."}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002394:FY2019:CASH_CAPITAL_LOSS",
+      "dimension": "WORKING_CAPITAL_CASH_CAPITAL",
+      "fields": [
+        {"field_id": "NET_OPERATING_CASH_RMB", "unit": "RMB", "definition": "FY2019 consolidated net cash from operating activities."},
+        {"field_id": "CASH_CAPEX_RMB", "unit": "RMB", "definition": "FY2019 consolidated cash paid for fixed, intangible and other long-term assets."},
+        {"field_id": "ACCOUNTS_RECEIVABLE_RMB", "unit": "RMB", "definition": "Listed-consolidated accounts receivable at 2019-12-31."},
+        {"field_id": "INVENTORY_RMB", "unit": "RMB", "definition": "Listed-consolidated inventory at 2019-12-31."},
+        {"field_id": "SHORT_TERM_BORROWINGS_RMB", "unit": "RMB", "definition": "Listed-consolidated short-term borrowings at 2019-12-31."},
+        {"field_id": "LONG_TERM_BORROWINGS_RMB", "unit": "RMB", "definition": "Listed-consolidated long-term borrowings at 2019-12-31."}
+      ]
+    }
+  ],
+  "field_resolution_states": ["OBSERVED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "MEASUREMENT_MISMATCH", "NOT_APPLICABLE"],
+  "custodian_rules": [
+    "Do not receive the pre-outcome judgments, hypotheses, scenarios, valuation or investment treatment.",
+    "Extract only exact contract-matched FY2019 fields from one eligible official full annual report.",
+    "Record page or section locator and a short exact quote for every observed field.",
+    "Treat repeated project plans as UNKNOWN for the implementation event unless an actual milestone is disclosed.",
+    "A missing field remains UNKNOWN; a definition or responsibility-boundary mismatch remains local.",
+    "Do not infer customer loyalty, management-action effect, owner cash, permanent loss or investment usefulness."
+  ],
+  "outcome_access": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+  "price_access": "PROHIBITED",
+  "comparative_access": "PROHIBITED",
+  "allowed_custodian_output": ["ATOMIC_FIELD_RECORDS", "LOCAL_MEASUREMENT_STATUS"]
+}

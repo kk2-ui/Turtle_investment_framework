@@ -1,0 +1,84 @@
+{
+  "receipt_id": "CN601012_CUTOFF_BEFORE_PACKET_RECEIPT",
+  "receipt_version": "1.0",
+  "receipt_date": "2026-08-29",
+  "case_identity": "BLIND:CN601012:20240501:FY2024",
+  "issuer_name_at_cutoff": "隆基绿能",
+  "security_code": "601012",
+  "selection_register": "158_BLIND11_FEEDBACK_LINKED_SELECTION_REGISTER.json",
+  "packet_location": "/tmp/cn601012_cutoff_before_packet.gQ0JIj",
+  "packet_contents": [
+    {
+      "fiscal_year": 2021,
+      "announcement_id": "1213161635",
+      "announcement_title": "隆基股份2021年年度报告",
+      "announcement_date": "2022-04-28",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2022-04-28/1213161635.PDF",
+      "original_full_annual_report": true,
+      "published_before_cutoff": true,
+      "local_pdf_path": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2021_1213161635.pdf",
+      "local_extracted_text_path": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2021_1213161635.txt"
+    },
+    {
+      "fiscal_year": 2022,
+      "announcement_id": "1216664294",
+      "announcement_title": "2022年年度报告",
+      "announcement_date": "2023-04-28",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2023-04-28/1216664294.PDF",
+      "original_full_annual_report": true,
+      "published_before_cutoff": true,
+      "local_pdf_path": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2022_1216664294.pdf",
+      "local_extracted_text_path": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2022_1216664294.txt"
+    },
+    {
+      "fiscal_year": 2023,
+      "announcement_id": "1219925312",
+      "announcement_title": "2023年年度报告",
+      "announcement_date": "2024-04-30",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2024-04-30/1219925312.PDF",
+      "original_full_annual_report": true,
+      "published_before_cutoff": true,
+      "local_pdf_path": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2023_1219925312.pdf",
+      "local_extracted_text_path": "/tmp/cn601012_cutoff_before_packet.gQ0JIj/FY2023_1219925312.txt"
+    }
+  ],
+  "acquisition_and_handling": {
+    "acquisition_method": "Direct download of the three exact CNINFO static original annual-report PDF URLs registered in 158.",
+    "text_extraction": "pdftotext completed locally for each downloaded PDF.",
+    "custodian_content_treatment": "No annual-report body or extracted text was opened, read, or interpreted by this custodian.",
+    "temporary_packet_retention": "The packet directory is intentionally retained intact for the next authorized role."
+  },
+  "cutoff_before_release_rule": {
+    "cutoff_exclusive": "2024-05-01",
+    "eligible_packet": "Only the FY2021, FY2022, and FY2023 original full annual-report PDFs listed in packet_contents, each published before the cutoff.",
+    "excluded_from_packet": [
+      "annual-report summaries",
+      "the FY2022 revised annual report",
+      "FY2024 and later metadata, document bodies, and outcomes",
+      "price, return, and analyst data"
+    ],
+    "release_condition": "Release this packet only to the subsequent blind-investigator role for ex-ante reasoning; freeze that judgment before any outcome acquisition."
+  },
+  "firewall_and_role_separation": {
+    "custodian_role": "Acquire and preserve only the registered pre-cutoff packet; do not interpret source contents or perform investment reasoning.",
+    "blind_investigator_role": "May use the released FY2021-FY2023 packet and separately authorized pre-cutoff evidence to form and freeze an ex-ante judgment.",
+    "outcome_role": "May acquire and assess post-cutoff evidence only after the blind judgment is frozen and may not influence candidate selection or pre-outcome reasoning.",
+    "feedback_role": "May compare the frozen judgment with outcome evidence only after outcome acquisition, focused on mechanism calibration rather than score-seeking.",
+    "custodian_prohibitions": [
+      "campaign artifacts and reports beyond the registered selection file",
+      "annual-report or other source bodies",
+      "external or browser sources beyond the three registered CNINFO PDF downloads",
+      "price, return, or analyst data",
+      "FY2024 outcome metadata or body"
+    ]
+  },
+  "negative_attestations": {
+    "annual_report_or_other_source_body_read": false,
+    "annual_report_content_interpreted": false,
+    "external_or_browser_source_read": false,
+    "price_return_or_analyst_data_read": false,
+    "FY2024_outcome_metadata_identified_or_read": false,
+    "FY2024_outcome_body_read": false,
+    "repository_commit_created": false
+  }
+}

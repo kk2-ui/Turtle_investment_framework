@@ -1,0 +1,9 @@
+{
+  "artifact_type": "contract-limited-custody-execution-receipt.v1",
+  "case_id": "BLIND:CN600519:20240501:FY2024",
+  "files_read": ["AGENTS.md", "86_CN600519_PREOUTCOME_JUDGMENT.json", "89_CN600519_OUTCOME_ACCESS_AUTHORIZATION.json", "issuer official FY2024 annual report"],
+  "annual_report_pages_used": [{"pdf_page": 9, "use": "operating-cash comparability explanation"}, {"pdf_page": 15, "use": "two product-bucket volumes"}, {"pdf_page": 16, "use": "direct, wholesale and iMaotai channel sales"}, {"pdf_page": 66, "use": "goods-and-services cash receipts"}, {"pdf_page": 67, "use": "operating cash flow"}],
+  "browser_or_network_access": false,
+  "prohibited_output_confirmation": {"no_company_synthesis": true, "no_management_assessment": true, "no_method_effectiveness_conclusion": true, "no_valuation": true, "no_investment_conclusion": true, "no_unpermitted_proxy_used": true, "no_selection_curriculum_teaching_case_prior_outcome_or_method_pack_read": true, "no_price_return_or_valuation_material_read": true},
+  "local_mismatch_or_unknown_present": false
+}

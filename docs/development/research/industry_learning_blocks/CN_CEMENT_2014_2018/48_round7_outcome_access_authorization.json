@@ -1,0 +1,13 @@
+{
+  "schema_version": "enterprise-outcome-access-authorization.v1",
+  "authorization_receipt_id": "OAA:CN600585:20140416:FY2014:R7:V1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN600585:20140416:MULTIDIMENSIONAL:V3",
+    "measurement_contract_version": 3
+  },
+  "company_id": "CN:600585",
+  "custodian_id": "ROLE:CEMENT:ROUND7:OUTCOME_CUSTODIAN",
+  "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+  "authorized": true,
+  "content_read": true
+}

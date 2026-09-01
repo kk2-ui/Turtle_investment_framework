@@ -1,0 +1,40 @@
+{
+  "schema_version": "judgment-experience-target-source-packet.v1",
+  "packet_id": "JERPACK:CN601865:20240401:V1",
+  "case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "company_id": "CN:601865",
+  "company_cluster_id": "COMPANY:CN601865",
+  "cutoff_at": "2024-04-01T00:00:00+08:00",
+  "outcome_access_state": "SEALED",
+  "source_authority": "CNINFO official disclosure metadata",
+  "issuer_org_id": "9900031502",
+  "admitted_full_annual_reports": [
+    {
+      "fiscal_year": "FY2021",
+      "announcement_id": "1212633451",
+      "announcement_title": "福莱特玻璃集团股份有限公司2021年年度报告",
+      "publication_date": "2022-03-22",
+      "static_url": "https://static.cninfo.com.cn/finalpage/2022-03-22/1212633451.PDF"
+    },
+    {
+      "fiscal_year": "FY2022",
+      "announcement_id": "1216236267",
+      "announcement_title": "福莱特玻璃集团股份有限公司2022年年度报告",
+      "publication_date": "2023-03-28",
+      "static_url": "https://static.cninfo.com.cn/finalpage/2023-03-28/1216236267.PDF"
+    },
+    {
+      "fiscal_year": "FY2023",
+      "announcement_id": "1219409572",
+      "announcement_title": "福莱特玻璃集团股份有限公司2023年年度报告",
+      "publication_date": "2024-03-27",
+      "static_url": "https://static.cninfo.com.cn/finalpage/2024-03-27/1219409572.PDF"
+    }
+  ],
+  "excluded_documents": [
+    "FY2021 annual-report summary 1212633447",
+    "FY2022 annual-report summary 1216236270",
+    "FY2023 annual-report summary 1219409584"
+  ],
+  "packet_boundary": "This packet identifies only official annual reports published before the cutoff. It neither identifies nor accesses FY2024-or-later metadata, report bodies, prices, returns, valuations, analyst material or realized outcome facts."
+}

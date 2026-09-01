@@ -1,0 +1,58 @@
+{
+  "schema_version": "official-industry-context-catalog.v1",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "sources": [
+    {
+      "source_id": "INDDOC:MIIT:CEMENT:2017H1:RUNNING",
+      "source_version": "2017-08-04-original-html",
+      "source_type": "OFFICIAL_INDUSTRY_CONTEXT",
+      "official": true,
+      "title": "2017年上半年建材工业经济运行简况",
+      "source_url": "https://wap.miit.gov.cn/gxsj/tjfx/yclgy/jc/art/2020/art_4939eb19cd2d4d87bed313807e59438b.html",
+      "official_host": "wap.miit.gov.cn",
+      "published_at": "2017-08-04T15:25:00+08:00",
+      "data_as_of": "2017-06-30T23:59:59+08:00",
+      "content_representation": "ORIGINAL_HTML",
+      "package_path": "official_context_raw/miit/2017h1_building_materials_running.html",
+      "use_policy": "CONTEXT_ONLY",
+      "coverage_ids": [
+        "INDOBS:CN:CEMENT:2017H1:OUTPUT",
+        "INDOBS:CN:CEMENT:2017H1:PRICE",
+        "INDOBS:CN:CEMENT:2017H1:PROFIT_POOL",
+        "INDOBS:CN:CEMENT:2017H1:OVERCAPACITY"
+      ],
+      "permitted_inference": "截至 2017 年上半年，全国水泥产量、出厂价格、行业收入、利润和销售利润率的官方行业背景，以及工信部对过剩产能状态的同期表述。",
+      "prohibited_inference": [
+        "任一上市公司的销量、价格、成本、利润或现金",
+        "全国数据自动代表任一区域 delivered market",
+        "2017 年上半年改善已经证明长期结构性高利润"
+      ]
+    },
+    {
+      "source_id": "INDDOC:GOVCN:CEMENT:SUPPLY_POLICY:20160518",
+      "source_version": "2016-05-18-original-html",
+      "source_type": "OFFICIAL_INDUSTRY_CONTEXT",
+      "official": true,
+      "title": "国务院办公厅关于促进建材工业稳增长调结构增效益的指导意见",
+      "source_url": "https://www.gov.cn/zhengce/zhengceku/2016-05/18/content_5074416.htm",
+      "official_host": "www.gov.cn",
+      "published_at": "2016-05-18T00:00:00+08:00",
+      "data_as_of": "2016-05-18T00:00:00+08:00",
+      "content_representation": "ORIGINAL_HTML",
+      "package_path": "official_context_raw/govcn/2016_cement_supply_policy.html",
+      "use_policy": "CONTEXT_ONLY",
+      "coverage_ids": [
+        "INDOBS:CN:CEMENT:2016:NEW_CAPACITY_RESTRAINT",
+        "INDOBS:CN:CEMENT:2016:PEAK_SHIFTING",
+        "INDOBS:CN:CEMENT:2016:CONSOLIDATION_TARGET"
+      ],
+      "permitted_inference": "截至 cutoff 前已经公开的全国水泥熟料新增产能约束、落后产能退出、联合重组、集中度目标和错峰生产政策机制。",
+      "prohibited_inference": [
+        "政策目标已经按计划全部兑现",
+        "政策在所有区域产生相同强度的有效供给收缩",
+        "政策直接建立任一上市公司的竞争优势或正常盈利"
+      ]
+    }
+  ]
+}

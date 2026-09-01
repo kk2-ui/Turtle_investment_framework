@@ -1,0 +1,163 @@
+{
+  "schema_version": "turtle-cn-appliance-industry-learning-block-sources.v1",
+  "block_id": "ILB:CN:APPLIANCE:NATIONAL:V1",
+  "status": "E0_E1_RESEARCH_ONLY",
+  "purpose": "Cutoff-before statutory-PDF evidence registry for a national Chinese appliance industry learning block.",
+  "allowed_outputs": [
+    "INDUSTRY_LEARNING_BLOCK_ONLY",
+    "RESEARCH_AGENDA_ONLY"
+  ],
+  "prohibited_outputs": [
+    "FORECAST",
+    "OUTCOME_SETTLEMENT",
+    "METHOD_TRANSFER",
+    "CJO",
+    "VALUATION",
+    "REPORT",
+    "INVESTMENT"
+  ],
+  "cutoffs": [
+    {
+      "cutoff_id": "CN_APPLIANCE_C1_20170430",
+      "cutoff_at": "2017-04-30T23:59:59+08:00",
+      "purpose": "Common FY2016 statutory-report snapshot."
+    },
+    {
+      "cutoff_id": "CN_APPLIANCE_C2_20180930",
+      "cutoff_at": "2018-09-30T23:59:59+08:00",
+      "purpose": "Later operating-system update; it is not a common-period profitability ranking."
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "CNINFO:000651:ANN:20170427:1203403930",
+      "company_id": "CN:000651",
+      "company_name": "珠海格力电器股份有限公司",
+      "reporting_period_end": "2016-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2017-04-27",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2017-04-27/1203403930.PDF",
+      "physical_pages_used": [8, 9, 10, 11, 12, 20, 21, 22, 23],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C1_20170430", "CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:000333:ANN:20170330:1203240657",
+      "company_id": "CN:000333",
+      "company_name": "美的集团股份有限公司",
+      "reporting_period_end": "2016-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2017-03-30",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2017-03-31/1203240657.PDF",
+      "physical_pages_used": [11, 12, 13, 14, 18, 19, 21, 22, 23, 24, 25],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C1_20170430", "CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:600690:ANN:20170429:1203428901",
+      "company_id": "CN:600690",
+      "company_name": "青岛海尔股份有限公司",
+      "reporting_period_end": "2016-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2017-04-29",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2017-04-29/1203428901.PDF",
+      "physical_pages_used": [10, 11, 12, 13, 16, 18, 25, 26, 27, 28, 33, 34],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C1_20170430", "CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:000651:H1:20180830:1205362961",
+      "company_id": "CN:000651",
+      "company_name": "珠海格力电器股份有限公司",
+      "reporting_period_end": "2018-06-30",
+      "report_type": "HALF_YEAR_REPORT",
+      "announced_on": "2018-08-30",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-08-31/1205362961.PDF",
+      "physical_pages_used": [8, 10, 11, 12, 15, 16, 17],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:000333:ANN:20180330:1204557296",
+      "company_id": "CN:000333",
+      "company_name": "美的集团股份有限公司",
+      "reporting_period_end": "2017-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2018-03-30",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-03-31/1204557296.PDF",
+      "physical_pages_used": [12, 14, 18, 19, 21, 22, 23],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:600690:ANN:20180426:1204797433",
+      "company_id": "CN:600690",
+      "company_name": "青岛海尔股份有限公司",
+      "reporting_period_end": "2017-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2018-04-26",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-04-26/1204797433.PDF",
+      "physical_pages_used": [10, 11, 13, 16, 20, 21, 24, 25, 29, 30],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20170330:1203223381",
+      "company_id": "CN:000921",
+      "company_name": "海信科龙电器股份有限公司",
+      "reporting_period_end": "2016-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2017-03-30",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2017-03-30/1203223381.PDF",
+      "physical_pages_used": [9, 11, 12, 15, 18],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C1_20170430", "CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:000921:ANN:20180330:1204544098",
+      "company_id": "CN:000921",
+      "company_name": "海信科龙电器股份有限公司",
+      "reporting_period_end": "2017-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2018-03-30",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-03-30/1204544098.PDF",
+      "physical_pages_used": [9, 11, 12, 13, 18],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:600839:ANN:20170428:1203418558",
+      "company_id": "CN:600839",
+      "company_name": "四川长虹电器股份有限公司",
+      "reporting_period_end": "2016-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2017-04-28",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2017-04-28/1203418558.PDF",
+      "physical_pages_used": [9, 10, 11, 12, 16],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C1_20170430", "CN_APPLIANCE_C2_20180930"]
+    },
+    {
+      "source_id": "CNINFO:600839:ANN:20180418:1204647552",
+      "company_id": "CN:600839",
+      "company_name": "四川长虹电器股份有限公司",
+      "reporting_period_end": "2017-12-31",
+      "report_type": "ANNUAL_REPORT",
+      "announced_on": "2018-04-18",
+      "availability_precision": "DATE_ONLY",
+      "provenance": "OFFICIAL_STATUTORY_STATIC_PDF",
+      "static_pdf_url": "https://static.cninfo.com.cn/finalpage/2018-04-18/1204647552.PDF",
+      "physical_pages_used": [10, 12, 13, 14, 18],
+      "eligible_for_cutoff_ids": ["CN_APPLIANCE_C2_20180930"]
+    }
+  ]
+}

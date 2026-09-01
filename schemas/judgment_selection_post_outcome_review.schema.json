@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_selection_post_outcome_review.schema.json",
+  "title": "Turtle Judgment Selection Post-Outcome Independent Review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "review_id",
+    "case_id",
+    "freeze_id",
+    "settlement_id",
+    "outcome_ref",
+    "feedback_ref",
+    "reviewer_id",
+    "reviewed_at",
+    "recorded_at",
+    "review_status",
+    "joint_selection_verdict",
+    "review_verdict",
+    "learning_authorization",
+    "root_cause_classes",
+    "economic_impact",
+    "missing_facts",
+    "prohibited_assumptions",
+    "executable_remediation",
+    "acceptance_criteria",
+    "independence_attestation",
+    "prohibited_outputs"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-selection-post-outcome-review.v1"},
+    "review_id": {"type": "string", "pattern": "^JSELPOSTREVIEW:[A-Za-z0-9._:-]+$"},
+    "case_id": {"type": "string", "minLength": 1},
+    "freeze_id": {"type": "string", "minLength": 1},
+    "settlement_id": {"type": "string", "minLength": 1},
+    "outcome_ref": {"type": "string", "minLength": 1},
+    "feedback_ref": {"type": "string", "minLength": 1},
+    "reviewer_id": {"type": "string", "minLength": 1},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "review_status": {
+      "enum": ["INDEPENDENTLY_ACCEPTED_POST_OUTCOME", "REVISION_REQUIRED"]
+    },
+    "joint_selection_verdict": {
+      "enum": ["A_ONLY", "B_ONLY", "MIXED", "NOT_DIAGNOSTIC"]
+    },
+    "review_verdict": {
+      "enum": [
+        "MIXED_MECHANISM_BOUNDARY",
+        "NOT_DIAGNOSTIC_MEASUREMENT_BOUNDARY",
+        "COMPARISON_RECORDED_PENDING_SEPARATE_LEARNING_REVIEW",
+        "OUTCOME_REVIEW_REJECTED"
+      ]
+    },
+    "learning_authorization": {"const": "NONE"},
+    "root_cause_classes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"]
+      }
+    },
+    "economic_impact": {"type": "string", "minLength": 1},
+    "missing_facts": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "prohibited_assumptions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "executable_remediation": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "independence_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["independent", "excluded_role_ids"],
+      "properties": {
+        "independent": {"const": true},
+        "excluded_role_ids": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "prohibited_outputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

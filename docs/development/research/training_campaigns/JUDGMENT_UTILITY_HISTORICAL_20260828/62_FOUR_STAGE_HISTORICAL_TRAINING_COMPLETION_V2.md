@@ -1,0 +1,188 @@
+# Judgment-first 四阶段历史训练完成报告 V2
+
+日期：2026-08-28  
+状态：`FOUR_STAGE_ITERATION_COMPLETE / CURRICULUM_BUILDING`  
+能力结论：`REAL_JUDGMENT_PROGRESS / METHOD_NOT_VALIDATED / TRANSFER_VALIDATED=0`
+
+## 先说结论
+
+这轮训练对“形成企业判断”已经有真实成效，但对“Method Pack 比公平普通研究更好”仍没有可评价的正面证据。
+
+真实成效不是多了多少字段或工件，而是：
+
+- 结果前第一稿能够明确判断企业怎么赚钱、哪里只是部署、哪里已经经济吸收，以及利润能否转成普通股现金；
+- 结果后能够上调或下调企业判断，而不是用 `UNKNOWN`、`MIXED` 或机械 residual 拒绝综合；
+- 浙江鼎力暴露并纠正了“用局部信用风险覆盖已经验证的产品与现金执行”这一过度保守错误；
+- 瀚蓝环境结果前暴露并纠正了另一种过度防御：为了避免整体负面而过度保护核心正面判断，忽略已经观察到的集团应收、现金和债务载体；
+- 瀚蓝 FY2024 作为企业反馈显示，机械 `LOCAL_UNKNOWN` 只限制能源归因和 parent cash 归属，不能阻止对正常盈利和内在价值作小幅上修；但其双臂在结果前曾接受跨臂纠正，不能作为严格 Method-only Holdout。
+
+瀚蓝环境 workflow pair 中 Baseline 与 Enhanced 在结果揭示前最终冻结了相同的五轴投资处理和同一个经济 rank-1 研究行动；但 Enhanced 曾接受跨臂纠正，因此该 pair 不能作为严格方法-only Holdout，方法效用记为不可诊断。Enhanced 的责任传播写得更细，不等于它改变了投资处理，更不能倒算为方法胜利。
+
+## 四个阶段完成到哪里
+
+| 阶段 | 本轮完成 | 投资含义 |
+|---|---:|---|
+| Teaching | 20 个独立公司 cluster | 已建立覆盖项目投产、零售扩张、软件研发、品牌消费、制造、资源加工、物流、酒店、平台与现金归属等机制的教学底座 |
+| Historical Blind Judgment | 4 个独立公司，全部完成结果反馈 | 第一稿和结果后判断都可形成明确投资处理；样本仍低于课程下限 8 |
+| Method Pack | V2 已冻结 | 只保留同责任边界经常经济、转换三联征局部收窄和管理层分轴三项行为；均是候选，不是已验证规则 |
+| Fair Historical Holdout | 0 个可评价；2 个尝试均归档 | 瀚蓝环境双臂在结果前发生跨臂纠正，属于企业反馈/workflow archive；天坛生物 strict pair 因责任边界和口径不匹配被 RETURN，见 `64_CN600161_STRICT_PAIRED_HOLDOUT_NOT_EVALUABLE.json` |
+| Prospective | 2 个冻结对象 | 不计本轮历史训练效用，不阻断下一轮历史训练 |
+
+课程机械状态仍是 `BUILDING`：
+
+- Teaching：20 / lower 20；
+- Blind：4 / lower 8；
+- 可评价 Holdout：0 / lower 4；
+- `capability_claim=NOT_DEMONSTRATED_BY_CURRICULUM_COUNTS`；
+- 下一动作：`REGISTER_NEXT_BLIND_CASE`。
+
+这些数量只说明课程容量，不证明能力。真正的能力证据仍要来自后续未见历史公司是否少犯材料错误、是否更早识别经济机制，以及是否改变正常盈利、owner cash、永久损失、价值方向或研究行动。
+
+## 浙江鼎力：本轮最清楚的反防御反馈
+
+结果前判断已经识别：
+
+- 臂式产品和海外渠道是最可信的经济吸收主线；
+- 母公司现金转换为正；
+- 高空作业平台、CMEC、融资租赁和信用损失需要独立观察。
+
+FY2024 结果支持臂式毛利、销量、库存和集团经常利润改善，也支持母公司资本开支后现金约 11.23 亿元。信用减值与融资租赁风险仍是局部条件项。
+
+机械 settlement 最初把“两个正面轴 + 一个局部条件轴”合并为整体 `CONDITIONAL_CREDIT`。独立 reviewer 将其退回，因为没有负面经济载体足以擦除产品、渠道和经营现金的已验证信用。最终处理是：
+
+- 产品/渠道执行：正面；
+- 经营现金执行：正面；
+- 信用与融资执行：条件；
+- 高空平台和 CMEC 增量资本配置：暂缓信用；
+- 企业管理层综合：正面，但带清楚的局部约束。
+
+这次纠正直接回答了防御性写作问题：不能让最弱局部轴成为整家公司分数，也不能把 `MIXED` 当作 `NEGATIVE`。
+
+## 瀚蓝环境：企业反馈（非严格 Holdout）
+
+### 结果前
+
+两臂在 workflow 修复后都判断：
+
+- 核心垃圾焚烧运营是最可靠的正常盈利底座；
+- 单年燃气价差修复不能完整正常化；
+- 集团现金只能条件计入 parent owner cash；
+- 应收、资本开支和债务要求永久损失约束保持收紧；
+- 内在价值相对 FY2023 暂不改变；
+- 第一研究行动是集团现金到母公司普通股现金的归属桥。
+
+Enhanced 第一稿一度把 FY2023 能源高点完整纳入正常盈利，并用核心运营强度抵消集团风险。独立 pre-outcome reviewer 在结果揭示前退回，要求：
+
+- 能源高点按同责任边界排除未经验证部分；
+- 已观察的应收、负现金代理和债务上升进入永久损失约束；
+- 外生气价与政府延付影响经济，但不能自动归责管理层；
+- 固废运营正面也不能为融资和新增资本配置背书。
+
+修复后两臂材料处理完全相同；但修复本身是跨臂审阅，破坏了方法-only 隔离。因此该结果保留为企业经营反馈和流程审计，不计入可评价 Holdout，也不能为 Method Pack 产生效用信用。
+
+### FY2024 结果
+
+投资者最重要的更新是：
+
+1. 垃圾焚烧经营质量进一步得到验证。扣非归母利润增长 15.52%，固废剔除工程与装备后的运营净利润增长 9.64%，垃圾焚烧净利润增长 21.63%；但往期电费、国补和处理量仅增长 1.78%限制完整外推。
+2. 集团现金循环明显改善。集团 OCF 减披露资本开支约为正 15.65 亿元，同口径净有息债务下降；但应收加合同资产仍增长 8.26%，总有息债务仍增长 7.10%。
+3. 母公司确有约 11.73 亿元投资收益现金收入，但重要子公司 post-capex cash、NCI、必要留存和母公司上划未闭合，所以 parent owner cash 继续条件计入。
+
+结果后 best-current treatment 为：
+
+- 企业管理层：`CONDITIONAL_CREDIT`，其中垃圾焚烧运营分轴为正面；
+- normal earnings：相对 FY2023 小幅 `RAISE`，不承保完整 FY2024 报表利润；
+- owner cash：`COUNT_CONDITIONALLY`；
+- permanent loss：`TIGHTEN_CONSTRAINT`，但不是 thesis blocking；
+- valuation direction：不使用价格、正式估值或 BuyBand，相对 FY2023 小幅 `UP`；
+- 下一行动：重要子公司至上市公司母公司的逐家现金归属桥。
+
+机械 threshold 将 9.64% 因低于 10% 归入 residual，Enhanced 又因能源精确桥缺失将整项 recurring economics 置为 local unknown。最终综合没有被这些状态绑架，而是消费连续经营事实并作小幅上修。这是第一稿和结果后反防御能力的直接表现。
+
+### 方法效用（不可诊断）
+
+`NOT_DIAGNOSTIC`：该 pair 不是严格方法-only Holdout。
+
+原因是 Enhanced 在结果前接受了跨臂纠正，无法知道最终相同处理来自 Method Pack 还是审阅修复。以下都不能把它改写成方法胜利：
+
+- Enhanced 的 cell 更细；
+- Enhanced 的责任传播更合理；
+- reviewer 更喜欢 Enhanced 的解释；
+- 某一 arm 的机械分类更贴近结果；
+- 结果后能提出更好的研究问题。
+
+Method Pack V2 保留为 `RETAIN_CANDIDATE_NOT_VALIDATED`。它没有被证明有害，也没有获得可诊断的公平效用证据。
+
+## 天坛生物：严格 paired Holdout 结果前退回
+
+天坛生物 CN600161 的新 strict pair 在结果仍 sealed 时由独立 reviewer RETURN，未进入 FY2024 settlement，也不登记为可评价 Holdout。退回原因是三项可改变投资结论的设计缺陷：Baseline 将母公司 NCI/上划条件错误地耦合到经营 cell；Baseline 将商业化与质量监管合并；两臂 normal-earnings perimeter 不可比。根因属于 `REASONING + DATA_COVERAGE`，不是企业经营判断“失败”。完整裁决见 [`63_CN600161_STRICT_PAIRED_HOLDOUT_PREOUTCOME_REVIEW_RETURN.md`](./63_CN600161_STRICT_PAIRED_HOLDOUT_PREOUTCOME_REVIEW_RETURN.md)，不可评价记录见 [`64_CN600161_STRICT_PAIRED_HOLDOUT_NOT_EVALUABLE.json`](./64_CN600161_STRICT_PAIRED_HOLDOUT_NOT_EVALUABLE.json)。
+
+该 pair 的两份结果前判断仍保留为流程诊断材料，但不能将其 outcome 结果当作训练反馈；在下一轮先登记第五个 Blind，再按新的共同边界冻结条件设计下一次 Holdout。
+
+## 防御性写作：解决了什么，仍剩什么
+
+### 已实质改善
+
+- `UNKNOWN`、`LOCAL_UNKNOWN`、`MEASUREMENT_MISMATCH` 不再吞掉整家公司；
+- 第一稿必须先给当前判断、机制、最强反方、投资后果与翻转事实；
+- 已观察的负方向不会因为存在未知金额而被擦除；
+- 部署、规模、销量或收入不会自动升级资本回报；
+- 局部信用、现金、融资或资本配置必须按责任边界分开；
+- 结果后 residual 和阈值未命中不会禁止连续事实进入投资综合。
+
+### 尚未稳定
+
+- 第一稿仍会把“避免过度悲观”误写成对正面主线的过度保护；
+- 一个 outcome cell 仍容易把多个责任轴捆绑，局部缺口导致整 cell 无更新；
+- 离散阈值会把 9.64% 与 10% 当成完全不同的经济状态；
+- Method Pack 被正确复述，不代表 Agent 会正确应用；
+- 当前还没有公平 Holdout 证明方法包真正改变并改善了材料投资处理。
+
+这些问题优先通过案例反馈、reviewer 的经济裁决和下一案行为修改解决，不新增全局 gate、不增加字段配额，也不以更多审阅层代替判断。
+
+## 下一轮历史训练计划
+
+### 1. 先登记第五个 Blind，而不是再改框架
+
+使用未见结果的异质公司，继续测试三项行为：
+
+- 规模与收入必须穿过同责任边界经常利润或单位经济；
+- 转换三联征只限制匹配的增量项目或资本负担，不能擦除已验证核心；
+- 管理层按产品/客户、运营现金、信用融资和资本配置分轴后再合并。
+
+第一稿验收只看是否形成有方向、可反驳的企业判断，以及局部未知是否得到当前投资处理。它不按字段、页数、cell 数或 gate 数验收。
+
+### 2. Blind 反馈继续改变下一案行为
+
+下一 Blind 应特别检验：
+
+- 是否把外生价格、监管或政府付款变化错误归责管理层；
+- 是否用一个强核心抵消集团现金、债务或新增资本风险；
+- 是否用一个弱局部轴覆盖整家公司；
+- 是否在机械阈值附近仍能消费连续经济事实。
+
+只有观察到材料错误，才修改 Method Pack。正确但未改变投资处理的结构改进不进入方法信用。
+
+### 3. 再做 paired Holdout 前设置结果前停止条件
+
+两臂完成后先机械比较五轴处理与经济 rank-1 行动：
+
+- 若没有真实材料差异，该 pair 在方法效用上直接记 `NO_MATERIAL_UTILITY`，不为证明训练有效而改 contract；
+- 仍可把它作为企业 Blind feedback 揭示结果，但不能算正向 Holdout；
+- 只有结果前存在真实材料处理差异，结果才有资格区分 Baseline 与 Enhanced；
+- 单个材料轴即可形成候选，但即使胜出也只允许 `CANDIDATE_ONLY`，不等于方法验证或 transfer validation。
+
+### 4. 课程扩容顺序
+
+当前下一步先补第五个 Blind；随后补 3–4 个 Teaching cluster，优先覆盖管理层选择与适应、竞争与定价，以及资本投入后的单位经济；再执行第二个公平 paired Holdout。历史训练继续是主线，未来样本只保持冻结，不等待结果。
+
+## 权限与没有证明的事情
+
+本轮没有证明：
+
+- Agent 已形成稳定、跨公司的企业判断能力；
+- Method Pack 持续优于普通研究；
+- 行业认知已经迁移；
+- 最终报告、最高可接受价格或真实回报改善。
+
+`METHOD_NOT_VALIDATED`、`TRANSFER_VALIDATED=0`。不授予 Comparative、CJO、正式估值、BuyBand、报告或投资行动权限。四阶段完成指本次历史训练迭代闭环完成，不代表整个课程毕业。

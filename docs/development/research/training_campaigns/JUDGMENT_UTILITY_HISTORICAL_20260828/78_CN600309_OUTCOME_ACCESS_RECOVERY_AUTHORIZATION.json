@@ -1,0 +1,46 @@
+{
+  "schema_version": "blind-outcome-access-recovery-authorization.v1",
+  "supersedes_for_custody_execution_only": "76_CN600309_OUTCOME_ACCESS_AUTHORIZATION.json",
+  "case_id": "BLIND:CN600309:20240501:FY2024",
+  "reason": "The original custodian was discarded before reading outcome content after a strict input-boundary violation at official-list metadata level.",
+  "frozen_contracts_unchanged": [
+    "72_CN600309_BLIND_SELECTION_REGISTER.json",
+    "73_CN600309_FORECASTER_EXECUTION_RECEIPT.json",
+    "74_CN600309_PREOUTCOME_JUDGMENT.json",
+    "75_CN600309_INDEPENDENT_PREOUTCOME_REVIEW.md",
+    "76_CN600309_OUTCOME_ACCESS_AUTHORIZATION.json"
+  ],
+  "fresh_custodian_only_source": {
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "document": "万华化学2024年年度报告",
+    "official_direct_url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-03-18/600309_2024_n.pdf",
+    "direct_url_only": true,
+    "if_unavailable": "Stop with SOURCE_UNAVAILABLE; do not navigate announcement lists, search pages, or substitute sources."
+  },
+  "allowed_settlement": {
+    "contract": "74_CN600309_PREOUTCOME_JUDGMENT.json#fy2024_first_match_settlement",
+    "axes": [
+      "A_CORE_POLYURETHANE_CUSTOMER_ABSORPTION_AND_SPREAD",
+      "B_PETROCHEMICAL_AND_NEW_MATERIALS_UNIT_ECONOMICS",
+      "C_GROWTH_CAPEX_CASH_CONVERSION_AND_DEBT_LOAD"
+    ],
+    "output_path": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/79_CN600309_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+  },
+  "prohibited": [
+    "announcement-list or search-page navigation",
+    "price, return, news, analyst, other company or other result-period material",
+    "changing frozen judgment, thresholds, responsibility boundaries or scenarios",
+    "method, transfer, valuation, BuyBand or investment-action conclusions"
+  ],
+  "role_isolation": {
+    "fresh_agent_required": true,
+    "prior_custodian_must_not_receive_outcome_access_again": true,
+    "outcome_may_not_be_shared_with_preoutcome_forecaster": true,
+    "fresh_postoutcome_reviewer_required": true
+  },
+  "browser_cleanup_if_needed": {
+    "skill_must_be_read_before_use": "ego-browser",
+    "completion": "completeTaskSpace(..., { keep: false }) then listTaskSpaces(); when none remain, run /Users/xiami/.codexcc/scripts/quit_ego_lite.py"
+  },
+  "authorization_state": "RECOVERY_AUTHORIZED_DIRECT_SOURCE_ONLY"
+}

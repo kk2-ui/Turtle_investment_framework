@@ -1,0 +1,244 @@
+{
+  "schema_version": "industry-evidence-acquisition-plan.v1",
+  "plan_id": "IEAP:HK:02669:2026-08-13T23:59:59+08:00",
+  "company_identity": {
+    "company_id": "HK:02669",
+    "company_name": "China Overseas Property Holdings",
+    "cutoff_at": "2026-08-13T23:59:59+08:00",
+    "industry_ids": [
+      "INDUSTRY:CN:PROPERTY_SERVICES"
+    ]
+  },
+  "source_context_ref": "docs/development/research/pilots/INDUSTRY_EVIDENCE_ACQUISITION_PILOT_HK02669_20260813/industry_underwriting_context.json",
+  "context_id": "IUC:HK:02669:2026-08-13T23:59:59+08:00",
+  "plan_status": "READY",
+  "use_policy": {
+    "mode": "PRE_UNDERWRITING_EXTERNAL_EVIDENCE_AGENDA",
+    "non_blocking": true,
+    "can_support": [
+      "EXTERNAL_INDUSTRY_SOURCE_SELECTION",
+      "COMPANY_TRANSMISSION_TEST_SELECTION",
+      "INDUSTRY_FUTURE_THESIS_EVIDENCE_CANDIDATES"
+    ],
+    "cannot_establish": [
+      "COMPANY_FACT_WITHOUT_TARGET_COMPANY_EVIDENCE",
+      "OWNER_CASH_VALUE",
+      "VALUATION_PARAMETER",
+      "INVESTMENT_ACTION"
+    ],
+    "boundary": "The plan expresses questions and source roles only. It contains no teacher-company facts, values, prices, valuation, or action."
+  },
+  "tasks": [
+    {
+      "task_id": "IEAT:HK:02669:DEMAND:1",
+      "role": "DEMAND",
+      "decisive_question": "截至截止日，终端需求处于什么方向、强度和地区/产品边界？",
+      "company_transmission_to_verify": "检验该需求条件如何通过本公司的客户覆盖、销量、利用率或业务量进入经营结果。",
+      "measurement_boundary": "行业或终端市场；不得把行业总量直接当作公司销量。",
+      "required_source_roles": [
+        "OFFICIAL_STATISTICS",
+        "INDUSTRY_ASSOCIATION",
+        "SUPPLIER_OR_CUSTOMER_DISCLOSURE"
+      ],
+      "evidence_uses": [
+        "INDUSTRY_FUTURE_THESIS",
+        "COMPANY_TRANSMISSION_TEST"
+      ],
+      "stop_rule": "当已取得同口径需求序列与本公司暴露证据，或公开资料无法提供该口径时停止。",
+      "context_evidence_refs": [
+        "SRC:NBS:CN_REAL_ESTATE:FY2025",
+        "SRC:NBS:CN_REAL_ESTATE:2026M5",
+        "SRC:NBS:URBANIZATION:FY2025",
+        "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+        "SRC:NBS:SERVICE_WAGES:FY2025",
+        "SRC:MOF:CN_FISCAL:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:HKEX:02669:FY2025",
+        "SRC:SZSE:001914:FY2025",
+        "SRC:SZSE:300917:FY2025",
+        "SRC:HKEX:06049:FY2025",
+        "SRC:HKEX:00688:FY2025",
+        "SRC:HKEX:00688:2026M6_UPDATE",
+        "SRC:COLI:2026M7_UPDATE"
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:SUPPLY_COMPETITION:2",
+      "role": "SUPPLY_COMPETITION",
+      "decisive_question": "截至截止日，新增供给、产能约束、竞争结构或竞争者行为是否改变利润池？",
+      "company_transmission_to_verify": "检验本公司的地区、产品、竞争位置和执行边界是否真的暴露于该结构变化。",
+      "measurement_boundary": "行业/竞争 arena 与本公司实际经营边界必须分别记录。",
+      "required_source_roles": [
+        "REGULATORY_DISCLOSURE",
+        "INDUSTRY_ASSOCIATION",
+        "COMPETITOR_DISCLOSURE"
+      ],
+      "evidence_uses": [
+        "INDUSTRY_FUTURE_THESIS",
+        "COMPANY_TRANSMISSION_TEST"
+      ],
+      "stop_rule": "当供给或竞争观察与本公司边界证据能够相互检验，或边界无法公开取得时停止。",
+      "context_evidence_refs": [
+        "SRC:NBS:CN_REAL_ESTATE:FY2025",
+        "SRC:NBS:CN_REAL_ESTATE:2026M5",
+        "SRC:NBS:URBANIZATION:FY2025",
+        "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+        "SRC:NBS:SERVICE_WAGES:FY2025",
+        "SRC:MOF:CN_FISCAL:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:HKEX:02669:FY2025",
+        "SRC:SZSE:001914:FY2025",
+        "SRC:SZSE:300917:FY2025",
+        "SRC:HKEX:06049:FY2025",
+        "SRC:HKEX:00688:FY2025",
+        "SRC:HKEX:00688:2026M6_UPDATE",
+        "SRC:COLI:2026M7_UPDATE"
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:PRICE_COST:3",
+      "role": "PRICE_COST",
+      "decisive_question": "截至截止日，量价、关键投入成本或单位经济的变化是否足以改变行业利润池？",
+      "company_transmission_to_verify": "检验该变化是否进入本公司的实现价格、单位成本、毛利或现金转换，而非仅存在于行业平均数。",
+      "measurement_boundary": "同一产品、地区、期间和单位；不得用行业均值替代公司实现口径。",
+      "required_source_roles": [
+        "OFFICIAL_STATISTICS",
+        "INDUSTRY_ASSOCIATION",
+        "SUPPLIER_OR_CUSTOMER_DISCLOSURE",
+        "COMPETITOR_DISCLOSURE"
+      ],
+      "evidence_uses": [
+        "INDUSTRY_FUTURE_THESIS",
+        "COMPANY_TRANSMISSION_TEST"
+      ],
+      "stop_rule": "当量价/成本口径与公司传导证据一致，或公开资料不足以连接口径时停止。",
+      "context_evidence_refs": [
+        "SRC:NBS:CN_REAL_ESTATE:FY2025",
+        "SRC:NBS:CN_REAL_ESTATE:2026M5",
+        "SRC:NBS:URBANIZATION:FY2025",
+        "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+        "SRC:NBS:SERVICE_WAGES:FY2025",
+        "SRC:MOF:CN_FISCAL:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:HKEX:02669:FY2025",
+        "SRC:SZSE:001914:FY2025",
+        "SRC:SZSE:300917:FY2025",
+        "SRC:HKEX:06049:FY2025",
+        "SRC:HKEX:00688:FY2025",
+        "SRC:HKEX:00688:2026M6_UPDATE",
+        "SRC:COLI:2026M7_UPDATE"
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:CUSTOMER_CHANNEL:4",
+      "role": "CUSTOMER_CHANNEL",
+      "decisive_question": "截至截止日，客户需求、渠道结构或议价权是否改变收入质量和利润池分配？",
+      "company_transmission_to_verify": "检验本公司客户/渠道责任边界、份额或服务能力是否足以承接该变化。",
+      "measurement_boundary": "客户/渠道对象、服务内容与本公司责任边界；不得把行业渠道趋势升级为公司优势。",
+      "required_source_roles": [
+        "SUPPLIER_OR_CUSTOMER_DISCLOSURE",
+        "INDUSTRY_ASSOCIATION",
+        "COMPETITOR_DISCLOSURE"
+      ],
+      "evidence_uses": [
+        "INDUSTRY_FUTURE_THESIS",
+        "COMPANY_TRANSMISSION_TEST"
+      ],
+      "stop_rule": "当客户/渠道变化与本公司暴露证据可以区分，或公开资料无法识别传导时停止。",
+      "context_evidence_refs": [
+        "SRC:NBS:CN_REAL_ESTATE:FY2025",
+        "SRC:NBS:CN_REAL_ESTATE:2026M5",
+        "SRC:NBS:URBANIZATION:FY2025",
+        "SRC:CN:OLD_COMMUNITY_RENOVATION:14FYP",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:BEIJING:OLD_COMMUNITY_SERVICE:2025",
+        "SRC:NBS:SERVICE_WAGES:FY2025",
+        "SRC:MOF:CN_FISCAL:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:HKEX:02669:FY2025",
+        "SRC:SZSE:001914:FY2025",
+        "SRC:SZSE:300917:FY2025",
+        "SRC:HKEX:06049:FY2025",
+        "SRC:HKEX:00688:FY2025",
+        "SRC:HKEX:00688:2026M6_UPDATE",
+        "SRC:COLI:2026M7_UPDATE"
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:REGULATION:5",
+      "role": "REGULATION",
+      "decisive_question": "截至截止日，监管、准入、环保、标准或政策如何改变供给、成本或竞争规则？",
+      "company_transmission_to_verify": "检验该规则是否覆盖本公司所处地区、资产、产品或许可边界，而不是推定其自动受益。",
+      "measurement_boundary": "监管适用范围与本公司资产/经营范围必须分别核对。",
+      "required_source_roles": [
+        "REGULATORY_DISCLOSURE"
+      ],
+      "evidence_uses": [
+        "INDUSTRY_FUTURE_THESIS",
+        "COMPANY_TRANSMISSION_TEST"
+      ],
+      "stop_rule": "当规则文本、适用期和本公司适用边界均已核对，或公开资料无法确定适用性时停止。",
+      "context_evidence_refs": [
+        "SRC:MOF:CN_FISCAL:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:HKEX:02669:FY2025"
+      ]
+    },
+    {
+      "task_id": "IEAT:HK:02669:COMPANY_TRANSMISSION:6",
+      "role": "COMPANY_TRANSMISSION",
+      "decisive_question": "行业机制在本公司处的关键传导环节是什么，且哪一项公司披露可以证实或否定它？",
+      "company_transmission_to_verify": "只验证本公司的经营、资本或竞争暴露；行业经验不得替代该公司的一手披露。",
+      "measurement_boundary": "目标公司合并口径及其明确披露的地区、产品、客户或资产边界。",
+      "required_source_roles": [
+        "TARGET_COMPANY_DISCLOSURE"
+      ],
+      "evidence_uses": [
+        "INDUSTRY_FUTURE_THESIS",
+        "COMPANY_TRANSMISSION_TEST"
+      ],
+      "stop_rule": "当公司一手披露能够确认、反证或保留该传导为未知时停止。",
+      "context_evidence_refs": [
+        "SRC:HKEX:02669:FY2025",
+        "SRC:MOJ:PROPERTY_FEE_BOUNDARY:2023",
+        "SRC:NBS:SERVICE_WAGES:FY2025",
+        "SRC:PROCUREMENT:QINGDAO_CHENGYANG:2025",
+        "SRC:PROCUREMENT:CENTRAL_SOUTH_UNIVERSITY:2025",
+        "SRC:PROCUREMENT:PEKING_UNION_MEDICAL:2024",
+        "SRC:PROCUREMENT:CHENGDU_PANDA_BASE:2023",
+        "SRC:PROCUREMENT:SHENSHAN_HOSPITAL:2026",
+        "SRC:HKEX:00688:FY2025",
+        "SRC:HKEX:00688:2026M6_UPDATE",
+        "SRC:COLI:2026M7_UPDATE",
+        "SRC:HKEX:02669:ZHONGJIAN_PROPERTY_CAPITAL_INCREASE:2025"
+      ]
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "V5_MEMORY_RETRIEVAL_PACK",
+  "status": "FROZEN_ENHANCED_TRAINING_STATE",
+  "intervention_boundary": {
+    "treatment": "This pack is the sole Enhanced training-state intervention for the V5 holdout.",
+    "not_a_target_company_source_or_gate": "The cards are not an extra target-company source, evidence requirement, field checklist, or completion gate. The current holdout judgment remains required whether or not a card is decisive.",
+    "baseline_access": "Baseline will not see this pack.",
+    "enhanced_use": "Enhanced may use the cards only as bounded mechanism prompts and must test the current holdout evidence independently. Neither card answers the current holdout."
+  },
+  "curation_scope": {
+    "maximum_cards": 2,
+    "emitted_cards": 2,
+    "source_case_objects": [
+      "TEACH:CN603708:20180501:FY2018",
+      "TEACH:HK06862:20211101:FY2021H1_2022H1"
+    ],
+    "independent_review_used": "TC_HK06862_WOODPECKER_INDEPENDENT_REVIEW.md",
+    "excluded_content": [
+      "current-holdout facts or answer",
+      "case prices, returns, or valuations",
+      "direct outcome numeric results",
+      "a conclusion that the current holdout must follow either teaching case"
+    ]
+  },
+  "cards": [
+    {
+      "card_id": "V5-SAME-MECHANISM-CN603708-OWNER-CASH-CAPITAL",
+      "role": "SAME_MECHANISM",
+      "source_case_id": "TEACH:CN603708:20180501:FY2018",
+      "state_and_constraint": "A mature retail network had an operating base, while the independent economics of new regions, acquisitions, and logistics expansion were still unproven.",
+      "management_choice_or_no_action": "Management chose store openings, acquisitions, and logistics expansion, with external financing becoming part of the capital path. The relevant no-action comparison is retaining the established network without granting unproven expansion a base-case contribution.",
+      "customer_or_operating_response": "Network deployment occurred, but customer absorption and unit economics in the new domain remained mixed rather than established by rollout alone.",
+      "cash_or_capital_lesson": "When a capital endpoint contains an undisclosed amount with a known non-negative sign, preserve the feasible interval: if its most favorable endpoint remains negative, the known negative direction must remain in the treatment. Deployment or external funding does not itself settle cash recovery or capital return.",
+      "strongest_rival": "Near-term cash use can be the cost of building a mature network, so a single negative capital endpoint does not prove that an acquisition or expansion will fail.",
+      "non_transfer_boundary": "This card does not convert store count, network scale, financing capacity, or an observed negative direction into a conclusion about any other network. It applies only after separating the established base from the incremental cohort and testing responsibility-matched customer, unit-economic, cash, and capital evidence.",
+      "retrieval_question": "For the incremental network cohort, do customer absorption, responsibility-matched unit economics, cash recovery, and financing need improve together, and does the most favorable feasible capital bridge already retain a negative direction?"
+    },
+    {
+      "card_id": "V5-NEAR-MISS-HK06862-MANAGEMENT-CAPITAL",
+      "role": "NEAR_MISS",
+      "source_case_id": "TEACH:HK06862:20211101:FY2021H1_2022H1",
+      "state_and_constraint": "A rapidly expanded multi-unit service network faced low-traffic, slow-repair, and density pressures alongside an external demand disruption; the observable network was also changing through exits and suspensions.",
+      "management_choice_or_no_action": "Management stopped or slowed incremental deployment, closed or paused selected units, and incurred exit-related obligations. The choice demonstrates an ability to stop adding exposure, not by itself a repaired operating network.",
+      "customer_or_operating_response": "Adjacent aggregate same-store and utilization observations did not establish recovery. Demand disruption, operating-day variation, and survivorship after weak-unit exits remained live explanations for the observed aggregates.",
+      "cash_or_capital_lesson": "Exit, lease-termination, and impairment costs can be real capital consequences, while lower replacement investment and group operating cash can reflect a different capital path or working-capital movement. Owner cash, capital recovery, and a repaired retained network require a cohort-level customer, unit-economic, cash, exit-cost, and replacement-capital bridge.",
+      "strongest_rival": "Aggregate changes can be explained by the external environment and by the composition of surviving units, without attributing either improvement or deterioration to the management plan.",
+      "non_transfer_boundary": "A contraction case is a near miss for an expansion or redeployment question: fewer units, lower investment, positive group cash, or exit charges do not establish either selected-unit quality or incremental deployment economics. Do not use the card to infer that any current holdout should contract, recover, or reproduce this case's path.",
+      "retrieval_question": "Can the evidence distinguish retained, exited, paused, and reopened cohorts on customer response, unit economics, cash, exit cost, and replacement capital before treating a management action as network repair or capital recovery?"
+    }
+  ]
+}

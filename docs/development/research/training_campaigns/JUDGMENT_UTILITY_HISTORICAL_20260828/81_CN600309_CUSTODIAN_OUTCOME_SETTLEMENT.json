@@ -1,0 +1,88 @@
+{
+  "schema_version": "blind-outcome-custodian-settlement.v1",
+  "case_id": "BLIND:CN600309:20240501:FY2024",
+  "outcome_period": "FY2024",
+  "source": {
+    "issuer": "万华化学集团股份有限公司",
+    "document": "万华化学2024年年度报告",
+    "pdf_path": "/tmp/CN600309_OUTCOME_SOURCE/600309_2024_annual_report.pdf"
+  },
+  "axis_settlements": [
+    {
+      "axis_id": "A_CORE_POLYURETHANE_CUSTOMER_ABSORPTION_AND_SPREAD",
+      "raw_inputs": [
+        {
+          "metric": "聚氨酯项目产能利用率",
+          "value": "88%",
+          "pdf_page": "26 / 223"
+        }
+      ],
+      "direct_calculation": "88% < 90%。",
+      "first_matched_cell": {
+        "cell": "NEGATIVE",
+        "frozen_condition_matched": "聚氨酯利用率低于 90%。"
+      },
+      "settlement": "NEGATIVE",
+      "axis_limited_economic_meaning": "仅就核心聚氨酯客户吸收与该链价差的冻结轴，88% 利用率触发不利结算；不结算其他产品系列或资本融资。"
+    },
+    {
+      "axis_id": "B_PETROCHEMICAL_AND_NEW_MATERIALS_UNIT_ECONOMICS",
+      "raw_inputs": [
+        {
+          "metric": "精细化学品及新材料系列毛利率",
+          "value": "12.78%",
+          "pdf_page": "17 / 223"
+        }
+      ],
+      "direct_calculation": "12.78% < 15%。",
+      "first_matched_cell": {
+        "cell": "NEGATIVE",
+        "frozen_condition_matched": "精细化学品及新材料毛利率低于 15%。"
+      },
+      "settlement": "NEGATIVE",
+      "axis_limited_economic_meaning": "仅就石化及精细化学品与新材料各自单位经济的冻结轴，精细化学品及新材料的已披露毛利率触发不利结算；不结算核心聚氨酯或资本融资。"
+    },
+    {
+      "axis_id": "C_GROWTH_CAPEX_CASH_CONVERSION_AND_DEBT_LOAD",
+      "raw_inputs": [
+        {
+          "metric": "经营活动产生的现金流量净额",
+          "value": "人民币 30,053,435,178.33 元",
+          "pdf_page": "87 / 223"
+        },
+        {
+          "metric": "购建固定资产、无形资产和其他长期资产支付的现金",
+          "value": "人民币 35,830,124,773.82 元",
+          "pdf_page": "87 / 223"
+        },
+        {
+          "metric": "短期借款",
+          "value": "人民币 35,557,147,552.13 元",
+          "pdf_page": "80 / 223"
+        },
+        {
+          "metric": "一年内到期的非流动负债",
+          "value": "人民币 11,181,705,458.41 元",
+          "pdf_page": "80 / 223"
+        },
+        {
+          "metric": "长期借款",
+          "value": "人民币 48,176,160,956.05 元",
+          "pdf_page": "80 / 223"
+        }
+      ],
+      "direct_calculations": {
+        "operating_cash_to_long_lived_asset_spend": "30,053,435,178.33 / 35,830,124,773.82 = 0.838776（83.8776%）。",
+        "FY2024_frozen_debt_total": "35,557,147,552.13 + 11,181,705,458.41 + 48,176,160,956.05 = 人民币 94,915,013,966.59 元。",
+        "frozen_debt_change_vs_FY2023_baseline": "(94,915,013,966.59 / 91,870,657,091.19) - 1 = 3.3137%。",
+        "cell_order_application": "现金覆盖率不低于 0.75，故 NEGATIVE 未命中；现金覆盖率低于 1.00，故 POSITIVE 未命中；所需现金流与三项冻结借款余额均已披露。"
+      },
+      "first_matched_cell": {
+        "cell": "MIXED",
+        "frozen_condition_matched": "经营现金流、购建长期资产现金支出和三项冻结借款余额均披露，且未命中 NEGATIVE 或 POSITIVE。"
+      },
+      "settlement": "MIXED",
+      "axis_limited_economic_meaning": "仅就增长资本的现金转换与冻结借款承载轴，现金未覆盖当年长期资产现金支出，而冻结借款较 FY2023 基线仅增加 3.3137%；该轴按冻结定义为混合结算，不结算客户吸收或产品毛利。"
+    }
+  ]
+}

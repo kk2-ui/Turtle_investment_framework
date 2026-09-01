@@ -1,0 +1,143 @@
+{
+  "schema_version": "enterprise-judgment-round7-multidimensional-review.v1",
+  "review_id": "R7REVIEW:CN600585:20140416:FY2014:V1",
+  "package_ref": "EJMD:CN:CEMENT:600585:20140416:V1",
+  "settlement_ref": "R7SETTLE:CN600585:20140416:FY2014:V1",
+  "reviewer_id": "ROLE:CEMENT:ROUND7:INDEPENDENT_MULTIDIMENSIONAL_REVIEWER",
+  "reviewed_at": "2026-08-27T09:00:00+00:00",
+  "dimension_findings": [
+    {
+      "dimension": "INITIAL_CONDITIONS",
+      "baseline_assessment": "The observed 7.49 percentage-point issuer-versus-industry volume spread is favorable descriptive evidence, but the baseline's PARTIAL_CANDIDATE causal credit does not isolate external conditions from acquisitions and newly commissioned capacity.",
+      "enhanced_assessment": "Enhanced explicitly removes industry demand and cheaper coal from management credit and assigns no causal credit to initial conditions. The positive spread therefore remains compatible with issuer capability but does not establish it.",
+      "utility_verdict": "ENHANCED_BETTER",
+      "economic_effect": "The separation reduces the risk of capitalizing an industry or perimeter tailwind as durable enterprise quality while retaining a potentially useful relative-volume research signal.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD"
+      ],
+      "prohibited_inference": "Do not infer superior management, organic growth, customer advantage, or durable economics from the issuer-versus-industry volume spread alone."
+    },
+    {
+      "dimension": "IMPLEMENTED_MANAGEMENT_ACTION",
+      "baseline_assessment": "Baseline identifies an implemented action set and the settlement observes an implemented-action event, but neither the boolean event nor the unavailable named-plan milestone establishes which action caused an outcome.",
+      "enhanced_assessment": "Enhanced more clearly separates completed actions from a forward plan, yet the settlement only confirms that an eligible action occurred and cannot validate the added decomposition or its effect.",
+      "utility_verdict": "NO_DIFFERENCE",
+      "economic_effect": "Both methods support the same narrow investor conclusion: implementation occurred, while action quality and economic effect remain unresolved.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:IMPLEMENTED_ACTION_EVENT",
+        "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED"
+      ],
+      "prohibited_inference": "Do not convert the existence of an implemented action into successful execution, management quality, or causal economic benefit."
+    },
+    {
+      "dimension": "EXECUTION",
+      "baseline_assessment": "Baseline infers positive aggregate execution from volume, profit, and commissioned capacity, but named milestone delivery, comparable sales volume, and plan delivery all settle as UNKNOWN.",
+      "enhanced_assessment": "Enhanced withholds organic-execution credit because acquisitions and new capacity contaminate aggregate volume. That boundary survives settlement: none of the three direct execution cells can validate organic delivery.",
+      "utility_verdict": "ENHANCED_BETTER",
+      "economic_effect": "Enhanced avoids overstating repeatable execution skill when expansion and acquisition can mechanically lift reported output, reducing the risk of a false management-quality thesis.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:NAMED_PLAN_MILESTONE_DELIVERED",
+        "CELL:600585:20140416:CEMENT_CLINKER_SALES_VOLUME",
+        "CELL:600585:20140416:SALES_VOLUME_PLAN_DELIVERY"
+      ],
+      "prohibited_inference": "Do not treat aggregate volume growth, commissioned capacity, or acquired output as proof of organic execution or delivery against a named plan."
+    },
+    {
+      "dimension": "CUSTOMER_COMPETITION_RESPONSE",
+      "baseline_assessment": "Baseline calls regional volume and higher-grade mix favorable signals while leaving direct customer response unknown; the settlement provides neither direct customer response nor a comparable realized-revenue-per-tonne result.",
+      "enhanced_assessment": "Enhanced assigns no customer causal credit and keeps retention, market share, and price acceptance UNKNOWN. This prevents capacity-led or acquired volume from becoming customer-advantage evidence.",
+      "utility_verdict": "ENHANCED_BETTER",
+      "economic_effect": "The stricter boundary prevents an unsupported moat or demand-quality conclusion and keeps customer economics as a live research question rather than a hidden growth assumption.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:DIRECT_CUSTOMER_RESPONSE",
+        "CELL:600585:20140416:REALIZED_REVENUE_PER_TONNE"
+      ],
+      "prohibited_inference": "Do not infer customer retention, pricing power, market-share gain, or moat from aggregate sales volume, regional growth, or product mix."
+    },
+    {
+      "dimension": "UNIT_ECONOMICS",
+      "baseline_assessment": "Baseline reads lower cutoff unit cost and higher gross margin as improved aggregate economics with partial causal candidacy. In settlement, combined unit cost is only OBSERVED_STABLE and combined gross margin is a MEASUREMENT_MISMATCH.",
+      "enhanced_assessment": "Enhanced withholds causal credit until coal-price, efficiency, mix, and perimeter effects are separated. Its caution is materially useful because the subsequent cost result is not an improvement classification and the margin comparison is not same-definition evidence.",
+      "utility_verdict": "ENHANCED_BETTER",
+      "economic_effect": "Enhanced reduces the risk of projecting externally aided or definition-dependent margin improvement as durable unit economics and therefore as persistent earning power.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:COMBINED_UNIT_COST",
+        "CELL:600585:20140416:COMBINED_GROSS_MARGIN"
+      ],
+      "prohibited_inference": "Do not treat stable unit cost or a scope-mismatched gross-margin measure as evidence of improved durable unit economics or management effect."
+    },
+    {
+      "dimension": "WORKING_CAPITAL_CASH_CAPITAL",
+      "baseline_assessment": "Baseline states that operating cash exceeded disclosed capex while owner cash was not measured and asks for receivable, inventory, cash, and capex diagnostics. Settlement is mixed: receivables decrease, inventory increases 18.5%, operating cash increases, cash capex decreases, and OCF-to-cash-capex increases.",
+      "enhanced_assessment": "Enhanced expressly retains working-capital timing and maintenance-versus-growth capex as barriers to owner-cash attribution. However, baseline already preserves the owner-cash boundary and includes the same settled diagnostics, so the observed mixture does not establish additional material utility.",
+      "utility_verdict": "NO_DIFFERENCE",
+      "economic_effect": "Both methods support improved aggregate funding capacity but not distributable owner cash; the inventory increase remains a material counterweight to the positive cash and capex directions.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:ACCOUNTS_RECEIVABLE",
+        "CELL:600585:20140416:INVENTORY",
+        "CELL:600585:20140416:OPERATING_CASH",
+        "CELL:600585:20140416:CASH_CAPEX",
+        "CELL:600585:20140416:OCF_TO_CASH_CAPEX"
+      ],
+      "prohibited_inference": "Do not equate higher operating cash, lower cash capex, or a higher OCF-to-cash-capex ratio with owner cash, especially while inventory rises and maintenance capital is unidentified."
+    },
+    {
+      "dimension": "ADAPTATION_PERMANENT_LOSS",
+      "baseline_assessment": "Baseline treats prior retrofit and geographic expansion as suggestive of adaptation while keeping permanent loss unknown. The settlement observes a lower net-debt ratio but cannot observe either a qualifying adaptation-action event or the contracted direct-loss event set.",
+      "enhanced_assessment": "Enhanced removes causal credit and preserves adaptation persistence and irreversible loss as UNKNOWN, but its statement that the issuer adapted is not independently validated for the observation window by the two direct event cells.",
+      "utility_verdict": "NOT_DIAGNOSTIC",
+      "economic_effect": "Lower leverage is a favorable resilience signal, but it cannot determine whether adaptation was effective or whether an irreversible capital-loss path was avoided.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:NET_DEBT_RATIO",
+        "CELL:600585:20140416:ADAPTATION_ACTION_EVENT",
+        "CELL:600585:20140416:DIRECT_LOSS_EVENT"
+      ],
+      "prohibited_inference": "Do not infer successful adaptation, durable resilience, or absence of permanent loss from a one-period decline in net debt when both direct event cells are UNKNOWN."
+    },
+    {
+      "dimension": "STRONGEST_ALTERNATIVE_EXPLANATION",
+      "baseline_assessment": "Baseline already identifies external demand, coal prices, acquisitions, and added capacity as a material rival explanation and assigns it no issuer causal credit.",
+      "enhanced_assessment": "Enhanced makes the same joint rival explanation a first-order test. The positive relative-volume spread, stable unit cost, and gross-margin measurement mismatch do not reject that rival, but they also do not show that Enhanced identified a materially different rival.",
+      "utility_verdict": "NO_DIFFERENCE",
+      "economic_effect": "Both methods prevent the observed operating directions from uniquely identifying superior management; the rival remains unresolved and continues to cap confidence in enterprise-quality attribution.",
+      "supporting_cell_ids": [
+        "CELL:600585:20140416:ISSUER_VS_INDUSTRY_VOLUME_SPREAD",
+        "CELL:600585:20140416:COMBINED_UNIT_COST",
+        "CELL:600585:20140416:COMBINED_GROSS_MARGIN"
+      ],
+      "prohibited_inference": "Do not claim the strongest rival is falsified by relative volume growth when acquisition, new-capacity, fuel-cost, and perimeter contributions remain unseparated."
+    }
+  ],
+  "overall_verdict": "ENHANCED_MATERIALLY_IMPROVED_ENTERPRISE_JUDGMENT",
+  "investor_effect": "Enhanced materially improves decision discipline by preventing industry and perimeter effects from becoming management, customer, or unit-economics credit. The settlement supports a narrower picture of relative volume and funding-capacity improvement, but it does not establish organic execution, customer advantage, durable unit economics, owner cash, adaptation success, or permanent-loss resilience.",
+  "unknowns_preserved": [
+    "External tailwind, acquisition, new-capacity, and organic capability contributions remain unseparated despite the positive issuer-versus-industry volume spread.",
+    "Named milestone delivery, comparable sales-volume change, and sales-plan delivery remain UNKNOWN.",
+    "Direct customer response and comparable realized revenue per tonne remain UNKNOWN.",
+    "Combined gross margin remains a MEASUREMENT_MISMATCH, so its direction is not available for same-definition inference.",
+    "The 18.5% inventory increase is retained alongside favorable receivable, operating-cash, capex, and funding-capacity directions; owner cash remains unknown.",
+    "Adaptation-action occurrence and direct permanent-loss events remain UNKNOWN."
+  ],
+  "limitations": [
+    "This is one company-cutoff transition under one frozen FY2013 evidence budget and cannot establish general method transfer.",
+    "Several decisive cells are UNKNOWN and the gross-margin cell has a measurement mismatch, limiting outcome discrimination between methods.",
+    "The implemented-action cell is a boolean event indicator and does not identify action quality, execution quality, or causal effect.",
+    "Observed accounting and leverage directions do not measure owner cash, customer loyalty, moat, management quality, or irreversible loss directly."
+  ],
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_MULTIDIMENSIONAL_REVIEW",
+  "claim_class": "PAIRED_MULTIDIMENSIONAL_DECISION_UTILITY_REVIEW",
+  "allowed_outputs": [
+    "MULTIDIMENSIONAL_DECISION_UTILITY_EVALUATION_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

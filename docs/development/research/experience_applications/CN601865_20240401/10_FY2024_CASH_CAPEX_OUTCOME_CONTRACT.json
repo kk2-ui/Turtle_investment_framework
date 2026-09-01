@@ -1,0 +1,77 @@
+{
+  "schema_version": "judgment-experience-outcome-contract.v1",
+  "contract_id": "JEROC:CN601865:20240401:FY2024:CASH_CAPEX:V1",
+  "case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "invocation_id": "EIR:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "record_id": "JER:CN601012:CAPACITY_PRICE_CASH:V1",
+  "record_version": 1,
+  "frozen_at": "2026-08-29T20:05:00+08:00",
+  "freeze_attestation": "This contract was written after the result-before treatment freeze but before the FY2024 annual-report body was opened. It uses only the already-frozen bridge's operating-cash and cash-capex leg; no FY2024 value, narrative, result direction, market datum, valuation, or later issuer material informed the contract.",
+  "outcome_window": "FY2024 official full annual report only",
+  "material_question": "Did the disclosed consolidated cash carrier support treating capacity-driven growth as current normal owner cash, or did cash capital absorption remain unresolved or adverse?",
+  "responsibility_boundary": {
+    "required": "consolidated Flat Glass Group cash-flow statement",
+    "why_this_is_the_permitted_local_carrier": "The frozen application did not assert that group cash proves product economics. It named same-boundary operating cash and cash capital expenditure as a required bridge leg. This contract settles only that company-level cash leg and leaves customer absorption, utilization, realized price or spread, funding/recoverability, and product-level economics outside its authority.",
+    "prohibited_substitutes": [
+      "profit or EBITDA",
+      "aggregate revenue or shipment",
+      "cash balance, financing inflow, or group liquidity",
+      "depreciation, accrual capex, disposal proceeds, acquisition spending, or a maintenance-versus-growth-capex estimate",
+      "a parent-company statement or an unaudited summary"
+    ]
+  },
+  "frozen_cell": {
+    "cell_id": "FY2024_CASH_CAPEX_COVERAGE",
+    "required_disclosures": [
+      {
+        "statement": "consolidated statement of cash flows",
+        "economic_label": "net cash generated from operating activities",
+        "accepted_report_labels": [
+          "Net cash generated from operating activities",
+          "Net cash from operating activities",
+          "经营活动产生的现金流量净额"
+        ]
+      },
+      {
+        "statement": "consolidated statement of cash flows",
+        "economic_label": "cash paid to purchase property, plant and equipment",
+        "accepted_report_labels": [
+          "Purchases of property, plant and equipment",
+          "Purchase of property, plant and equipment",
+          "购建固定资产、无形资产和其他长期资产支付的现金"
+        ]
+      }
+    ],
+    "formula": "cash_capex_coverage_RMB = consolidated_net_cash_generated_from_operating_activities_RMB - absolute_value_of_consolidated_cash_paid_to_purchase_property_plant_and_equipment_RMB",
+    "deterministic_resolution": [
+      {
+        "condition": "Both exact economic labels are disclosed on the FY2024 consolidated cash-flow statement and cash_capex_coverage_RMB >= 0.",
+        "local_result": "CASH_CAPEX_COVERED",
+        "feedback_constraint": "This outcome alone is NOT_DIAGNOSTIC for the experience: it cannot establish customer absorption, utilization, realized price or spread, or prove that capacity created normal owner cash. Do not upgrade the record or the company treatment from this cell alone."
+      },
+      {
+        "condition": "Both exact economic labels are disclosed on the FY2024 consolidated cash-flow statement and cash_capex_coverage_RMB < 0.",
+        "local_result": "CASH_CAPEX_NOT_COVERED",
+        "feedback_constraint": "This can support retaining the frozen exclusion of capacity-driven growth from base normal owner-cash treatment on the cash-absorption leg, subject to independent review. It is not a claim that the enterprise failed, that management was wrong, or that the source outcome repeats."
+      },
+      {
+        "condition": "Either exact economic label, the FY2024 period, or the consolidated scope is absent or non-comparable.",
+        "local_result": "UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE",
+        "feedback_constraint": "Classify the experience result as MEASUREMENT_BLOCKED. Preserve the invocation and company judgment; do not infer a zero, use another cash figure, or invent a whole-company conclusion."
+      }
+    ]
+  },
+  "permitted_feedback_scope": {
+    "can_update": [
+      "the cash-capex absorption leg of the CN601865 application",
+      "whether the JER:CN601012 experience record remains question-useful, subject to independent review"
+    ],
+    "cannot_update": [
+      "customer absorption or utilization",
+      "realized price, spread, product economics, or management quality",
+      "funding or recoverability",
+      "full owner cash, permanent loss, valuation, BuyBand, report authority, or investment action"
+    ]
+  },
+  "status_ceiling": "At most a first cross-company TRANSFER_CANDIDATE_CREATED receipt if the outcome is diagnostic and an independent reviewer accepts it. This contract cannot grant TRANSFER_VALIDATED, METHOD_VALIDATED, CJO, valuation, report, BuyBand, or investment authority."
+}

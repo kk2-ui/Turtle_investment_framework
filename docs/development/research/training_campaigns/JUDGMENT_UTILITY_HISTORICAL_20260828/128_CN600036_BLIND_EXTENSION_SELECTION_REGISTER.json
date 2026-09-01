@@ -1,0 +1,92 @@
+{
+  "receipt_type": "BLIND10_SELECTION_REGISTER",
+  "status": "ISSUED",
+  "candidate": {
+    "security_id": "CN:600036",
+    "legal_name": "招商银行股份有限公司",
+    "cninfo_resolution": {
+      "ticker": "600036",
+      "org_id": "gssh0600036",
+      "company_name": "招商银行",
+      "column": "sse",
+      "plate": "sh"
+    }
+  },
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "selection_scope": {
+    "selection_order": 10,
+    "fixed_extension_slot": "COMMERCIAL_BANKING_BALANCE_SHEET_RISK_CAPITAL_AND_CASH_FLOW",
+    "permitted_selection_inputs": [
+      "curriculum case identity, company cluster, industry classification, and track only",
+      "the fixed business-structure rotation in Blind selection registers 84, 95, and 108",
+      "metadata-only CNINFO code-to-orgId resolution and date-bounded original-annual-report identities"
+    ],
+    "reason_not_result_selected": "CN:600036 is fixed to add a commercial-banking structure in which deposit and other funding, credit deployment, risk recognition, capital and liquidity constraints, and cash-flow collection must be assessed together. This is a different company cluster from every current Teaching, Blind, and Holdout case and a different operating structure from the nine prior Blind registrations. No FY2024-or-later source, price, return, analyst material, valuation, or result comparison was accessed."
+  },
+  "metadata_acquisition": {
+    "method": "CninfoDownloader.resolve_company followed by the official CNINFO hisAnnouncement/query classification mechanism",
+    "classification": "category_ndbg_szsh;",
+    "announcement_date_window": {
+      "start": "2022-01-01",
+      "end": "2024-04-30"
+    },
+    "metadata_only": true,
+    "announcement_or_pdf_bodies_accessed": false
+  },
+  "selection_result": {
+    "clean_original_annual_report_set_complete": true,
+    "selected_source_count": 3,
+    "selected_sources": [
+      {
+        "source_key": "FY2021_ORIGINAL_ANNUAL_REPORT",
+        "original_report_title": "招商银行股份有限公司2021年度报告",
+        "disclosure_date": "2022-03-19",
+        "announcement_id": "1212626208",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2022-03-19/1212626208.PDF"
+      },
+      {
+        "source_key": "FY2022_ORIGINAL_ANNUAL_REPORT",
+        "original_report_title": "招商银行股份有限公司2022年度报告",
+        "disclosure_date": "2023-03-25",
+        "announcement_id": "1216221326",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2023-03-25/1216221326.PDF"
+      },
+      {
+        "source_key": "FY2023_ORIGINAL_ANNUAL_REPORT",
+        "original_report_title": "招商银行股份有限公司2023年度报告",
+        "disclosure_date": "2024-03-26",
+        "announcement_id": "1219403503",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2024-03-26/1219403503.PDF"
+      }
+    ]
+  },
+  "broad_candidate_mechanism_descriptor": {
+    "statement": "A commercial bank accepts deposits and other funding, deploys credit and other balance-sheet assets within risk, capital and liquidity constraints, earns interest and non-interest income, absorbs credit losses, collects contractual cash flows, and retains or distributes capital.",
+    "scope_limit": "This is a broad commercial-banking mechanism descriptor only; it contains no enterprise-quality, growth, valuation, return, or FY2024 outcome judgment."
+  },
+  "role_firewall": {
+    "custodian": {
+      "may_hold": "This selection register, the packet receipt, and the three enumerated official URLs.",
+      "may_do": "Release only the listed pre-cutoff source packet and check deterministic manifest consistency.",
+      "must_not_do": "Read or disclose FY2024-or-later metadata or any outcome material; form or transmit an enterprise judgment; add substitute sources."
+    },
+    "forecaster": {
+      "may_receive": "Only the three-source packet released by the custodian and this cutoff boundary.",
+      "must_not_receive": "FY2024 outcome information, FY2024-or-later metadata or bodies, market/return data, analyst material, curriculum/campaign material, or reviewer outcome-aware feedback."
+    },
+    "reviewer": {
+      "may_receive": "The same fixed packet and a blinded forecaster submission.",
+      "must_not_receive": "Any outcome material or any source outside the fixed packet."
+    },
+    "local_mismatch_only": {
+      "permitted_review_or_custody_return": "A return may identify only a local deterministic mismatch against this manifest: candidate identity, original-report title, disclosure date, announcement ID, official static-PDF URL, cutoff, or role-boundary violation.",
+      "prohibited_return": "No outcome comparison, hindsight scoring, enterprise re-judgment, source expansion, or use of later information may be sent to the forecaster."
+    }
+  },
+  "negative_attestation": {
+    "no_fy2024_or_later_fiscal_period_metadata_accessed": true,
+    "no_announcement_or_pdf_body_accessed": true,
+    "no_fallback_source_used": true,
+    "clarification": "The date-bounded query included disclosure metadata through 2024-04-30 solely to identify the FY2023 annual report. No metadata for fiscal year 2024 or later was accessed."
+  }
+}

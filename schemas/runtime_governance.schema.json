@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "runtime_governance.schema.json",
+  "type": "object",
+  "required": ["schema_version", "prompt_version", "model_tiers", "tier_rank", "task_profiles", "retry", "rate_limit", "timeout_seconds", "budget", "pricing_usd_per_million_tokens", "cache", "retention"],
+  "properties": {
+    "schema_version": {"const": "runtime-governance.v1"},
+    "prompt_version": {"type": "string", "minLength": 1},
+    "model_tiers": {"type": "object", "additionalProperties": {"enum": ["economy", "standard", "frontier"]}},
+    "tier_rank": {"type": "object", "required": ["economy", "standard", "frontier"], "additionalProperties": {"type": "integer", "minimum": 1}},
+    "task_profiles": {"type": "object", "additionalProperties": {"type": "object", "required": ["critical", "minimum_tier", "cache_ttl_seconds"], "properties": {"critical": {"type": "boolean"}, "minimum_tier": {"enum": ["economy", "standard", "frontier"]}, "cache_ttl_seconds": {"type": "integer", "minimum": 0}}, "additionalProperties": false}},
+    "retry": {"type": "object", "required": ["max_attempts", "base_delay_seconds", "max_delay_seconds", "retryable_categories"]},
+    "rate_limit": {"type": "object", "required": ["minimum_interval_seconds"], "properties": {"minimum_interval_seconds": {"type": "number", "minimum": 0}}},
+    "timeout_seconds": {"type": "integer", "minimum": 1},
+    "budget": {"type": "object", "required": ["max_calls", "max_input_tokens", "max_output_tokens", "warning_fraction"]},
+    "pricing_usd_per_million_tokens": {"type": "object", "additionalProperties": {"type": "object", "required": ["input", "output"], "properties": {"input": {"type": "number", "minimum": 0}, "output": {"type": "number", "minimum": 0}}}},
+    "cache": {"type": "object", "required": ["enabled", "directory_name", "max_entry_bytes"]},
+    "retention": {"type": "object", "required": ["cache_days", "diagnostic_days", "trash_directory_name"]}
+  },
+  "additionalProperties": false
+}

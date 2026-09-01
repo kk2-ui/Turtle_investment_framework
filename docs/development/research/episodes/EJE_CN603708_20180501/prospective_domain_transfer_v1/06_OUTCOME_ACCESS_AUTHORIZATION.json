@@ -1,0 +1,42 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-authorization.v1",
+  "authorization_id": "PEJOA:CN603708:20180501:FY2018:DOMAIN_TRANSFER:V1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_rank": 2,
+  "company_id": "CN:603708",
+  "issuer_id": "ISSUER:CN:603708",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "period": "FY2018",
+  "preoutcome_commit": "a710902",
+  "final_preoutcome_method_commit": "2b1123b",
+  "preoutcome_review_ref": "05_INDEPENDENT_PREOUTCOME_REVIEW.md",
+  "review_verdict": "ACCEPT",
+  "authorized_outcome_source": {
+    "publisher": "CNINFO",
+    "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+    "fiscal_year": 2018,
+    "published_no_later_than": "2019-05-01",
+    "selection_rule": "UNIQUE_QUALIFYING_FULL_REPORT; EXCLUDE_SUMMARY; IF_MULTIPLE_FULL_REPORTS_USE_THE_LATEST_CORRECTED_OR_REVISED_VERSION_PUBLISHED_WITHIN_THE_WINDOW"
+  },
+  "authorized_field_set": "UNION_OF_02_BASELINE_AND_03_ENHANCED_CONTRACT_FIELDS_ONLY",
+  "custodian_instructions": [
+    "FRESH_OUTCOME_ONLY_CONTEXT",
+    "DO_NOT_READ_PAIRED_UTILITY_OR_INVESTMENT_THESIS_BEYOND_THE_FIELD_CONTRACTS",
+    "SETTLE_DEPLOYMENT_EVENTS_BEFORE_LOCAL_ECONOMIC_FIELDS_WITHOUT_CLASSIFYING_INVESTMENT_UTILITY",
+    "KEEP_CORE_WEIKE_ORGANIC_NEW_DOMAIN_LOGISTICS_AND_GROUP_CASH_RESPONSIBILITY_BOUNDARIES_SEPARATE",
+    "DO_NOT_TREAT_STORE_COUNT_OPERATION_THROUGHPUT_OR_MISSING_DISCLOSURE_AS_POSITIVE_ECONOMICS",
+    "DO_NOT_TREAT_UNDISCLOSED_ACQUISITION_OR_NEW_DOMAIN_CASH_AS_ZERO",
+    "DO_NOT_READ_PRICE_RETURN_COMPARATIVE_FORMAL_VALUATION_OR_INVESTMENT_MATERIAL"
+  ],
+  "outcome_access": "AUTHORIZED_FOR_FRESH_CUSTODIAN_ONLY",
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}

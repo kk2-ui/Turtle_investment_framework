@@ -1,0 +1,220 @@
+{
+  "schema_version": "enterprise-judgment-round9-method-resolution-contract.v1",
+  "contract_id": "METHOD-RESOLUTION:R9:CN600839:FY2019:V1",
+  "package_ref": "R9:CN:APPLIANCE:CN600839:20180930:V1",
+  "frozen_at": "2026-08-27T18:00:00+08:00",
+  "baseline": {
+    "method_id": "METHOD:SIMPLE_WHITE_GOODS_TREND_WITH_GROUP_GUARD:V2",
+    "method_kind": "SIMPLE_PRODUCT_TREND_WITH_GROUP_BOUNDARY_GUARD",
+    "resolver_id": "resolve_method_outputs.v1",
+    "input_cell_ids": [
+      "CELL:600839:FY2019:GROUP_REVENUE_LEVEL",
+      "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+      "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN",
+      "CELL:600839:FY2019:GROUP_OCF_LEVEL",
+      "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO"
+    ],
+    "signal_rules": [
+      {
+        "signal_id": "PRODUCT_REVENUE_DIRECTION",
+        "cell_ids": [
+          "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL"
+        ],
+        "positive_labels": [
+          "OBSERVED_INCREASE"
+        ],
+        "negative_labels": [
+          "OBSERVED_DECREASE"
+        ],
+        "other_observed": "NEUTRAL"
+      },
+      {
+        "signal_id": "PRODUCT_MARGIN_DIRECTION",
+        "cell_ids": [
+          "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN"
+        ],
+        "positive_labels": [
+          "OBSERVED_INCREASE"
+        ],
+        "negative_labels": [
+          "OBSERVED_DECREASE"
+        ],
+        "other_observed": "NEUTRAL"
+      },
+      {
+        "signal_id": "GROUP_FINANCIAL_BACKDROP",
+        "cell_ids": [
+          "CELL:600839:FY2019:GROUP_OCF_LEVEL",
+          "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO"
+        ],
+        "positive_rule": "OCF_INCREASE_AND_LEVERAGE_NOT_INCREASE",
+        "negative_rule": "OCF_DECREASE_OR_LEVERAGE_INCREASE",
+        "other_observed": "NEUTRAL"
+      }
+    ],
+    "boundary_guard": {
+      "input_cell_ids": [
+        "CELL:600839:FY2019:GROUP_REVENUE_LEVEL",
+        "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL"
+      ],
+      "divergence_pairs": [
+        [
+          "OBSERVED_INCREASE",
+          "OBSERVED_DECREASE"
+        ],
+        [
+          "OBSERVED_DECREASE",
+          "OBSERVED_INCREASE"
+        ]
+      ],
+      "divergence_output": "WHITE_GOODS_UNKNOWN"
+    },
+    "output_rule": {
+      "WHITE_GOODS_POSITIVE": "product revenue and margin are positive, group/product guard passes, and backdrop is not negative",
+      "WHITE_GOODS_NEGATIVE": "product revenue and margin are negative and group/product guard passes",
+      "WHITE_GOODS_UNKNOWN": "fully observed signals do not meet a directional rule or group/product directions diverge",
+      "NOT_DIAGNOSTIC": "one or more signals UNKNOWN or MEASUREMENT_MISMATCH"
+    },
+    "primary_question_projection": "Answer only a simple white-goods operating trend; never promote a group trend across the product boundary.",
+    "prohibited_post_outcome_revision": "No customer, action-causality, owner-cash, portfolio or new threshold condition may be added after freeze."
+  },
+  "enhanced": {
+    "method_id": "METHOD:EIGHT_DIMENSION_ENTERPRISE_JUDGMENT:V1",
+    "method_kind": "EIGHT_DIMENSION_NO_SCORE_QUESTION_SKELETON",
+    "resolver_id": "resolve_method_outputs.v1",
+    "dimension_rules": [
+      {
+        "dimension_id": "INITIAL_CONDITIONS",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:INDUSTRY_CONTEXT_EVENT",
+          "CELL:600839:FY2019:PORTFOLIO_SCOPE_EVENT"
+        ],
+        "resolution_rule": "DESCRIPTIVE_CONTEXT_ONLY; never causal credit."
+      },
+      {
+        "dimension_id": "IMPLEMENTED_MANAGEMENT_ACTION",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:WHITE_GOODS_ACTION_EVENT"
+        ],
+        "resolution_rule": "Observed only for an explicit FY2019 implemented product/channel/organization action; effect remains unproved."
+      },
+      {
+        "dimension_id": "EXECUTION",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:WHITE_GOODS_ACTION_EVENT",
+          "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+          "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN"
+        ],
+        "resolution_rule": "SUPPORTED_TREND only when action is OBSERVED_YES and both product revenue and margin are OBSERVED_INCREASE; WEAKENED_TREND when both product signals decrease; MIXED otherwise; any unavailable input is NOT_DIAGNOSTIC."
+      },
+      {
+        "dimension_id": "CUSTOMER_COMPETITION_RESPONSE",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+          "CELL:600839:FY2019:WHITE_GOODS_REVENUE_SHARE"
+        ],
+        "resolution_rule": "Revenue and portfolio share are descriptive absorption only; without frozen volume, price or customer-share cells the conclusion is always NOT_DIAGNOSTIC for customer preference."
+      },
+      {
+        "dimension_id": "UNIT_ECONOMICS",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN"
+        ],
+        "resolution_rule": "Use the product-arena gross-margin label only; do not attribute cause."
+      },
+      {
+        "dimension_id": "WORKING_CAPITAL_CASH_CAPITAL",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:GROUP_OCF_LEVEL",
+          "CELL:600839:FY2019:GROUP_OCF_TO_CAPEX",
+          "CELL:600839:FY2019:OWNER_CASH_BRIDGE_EVENT"
+        ],
+        "resolution_rule": "Issuer funding may be described from OCF and coverage; owner cash is supported only by OBSERVED_YES owner-cash bridge."
+      },
+      {
+        "dimension_id": "ADAPTATION_PERMANENT_LOSS",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO",
+          "CELL:600839:FY2019:PORTFOLIO_SCOPE_EVENT",
+          "CELL:600839:FY2019:OWNER_CASH_BRIDGE_EVENT"
+        ],
+        "resolution_rule": "Adverse leverage or scope change is a risk signal; absence is not proof against permanent loss and owner-cash UNKNOWN remains local."
+      },
+      {
+        "dimension_id": "STRONGEST_ALTERNATIVE_EXPLANATION",
+        "input_cell_ids": [
+          "CELL:600839:FY2019:GROUP_REVENUE_LEVEL",
+          "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL",
+          "CELL:600839:FY2019:WHITE_GOODS_REVENUE_SHARE",
+          "CELL:600839:FY2019:PORTFOLIO_SCOPE_EVENT"
+        ],
+        "resolution_rule": "Portfolio rival is material when group and product directions diverge, product share decreases, or a scope event is observed."
+      }
+    ],
+    "causal_credit_rule": "NONE_FOR_ALL_FY2019_ANNUAL_REPORT_CELLS",
+    "ordinary_share_rule": "No group OCF, capex or dividend may substitute for the contracted owner-cash bridge.",
+    "prohibited_post_outcome_revision": "No threshold, dimension rule, rival or boundary may be added after freeze."
+  },
+  "paired_utility_rules": {
+    "resolver_id": "resolve_method_outputs.v1",
+    "common_decision_treatments": {
+      "baseline": {
+        "WHITE_GOODS_POSITIVE": "CONTINUE_OPERATING_UNDERWRITING",
+        "WHITE_GOODS_NEGATIVE": "ESCALATE_PERMANENT_LOSS_REVIEW",
+        "WHITE_GOODS_UNKNOWN": "RESEARCH_REQUIRED",
+        "NOT_DIAGNOSTIC": "RESEARCH_REQUIRED"
+      },
+      "enhanced": {
+        "SUPPORTED_WITHOUT_MATERIAL_RIVAL_OR_RISK": "CONTINUE_OPERATING_UNDERWRITING",
+        "WEAKENED_WITHOUT_MATERIAL_RIVAL_OR_RISK": "ESCALATE_PERMANENT_LOSS_REVIEW",
+        "ALL_OTHER_CASES": "RESEARCH_REQUIRED"
+      },
+      "owner_cash": {
+        "baseline": "OWNER_CASH_UNKNOWN",
+        "enhanced_bridge_observed": "OWNER_CASH_EVIDENCED",
+        "enhanced_other": "OWNER_CASH_UNKNOWN"
+      }
+    },
+    "AVOIDED_ERROR": {
+      "allowed_pairs": [
+        [
+          "WHITE_GOODS_POSITIVE",
+          "WEAKENED_TREND"
+        ],
+        [
+          "WHITE_GOODS_NEGATIVE",
+          "SUPPORTED_TREND"
+        ]
+      ],
+      "portfolio_rival_alone_is_insufficient": true,
+      "baseline_unknown_or_not_diagnostic_is_ineligible": true
+    },
+    "MATERIAL_IMPROVEMENT": {
+      "allowed_cases": [
+        "OWNER_CASH_DECISION_TREATMENT_CHANGES_FROM_UNKNOWN_TO_EVIDENCED",
+        "MATERIAL_RIVAL_OR_SCOPE_RISK_CHANGES_COMMON_DECISION_TREATMENT"
+      ],
+      "coverage_alone_is_insufficient": true
+    },
+    "NO_DIFFERENCE": "Both methods reach the same decision-relevant treatment from frozen rules.",
+    "NOT_DIAGNOSTIC": "A required field is unavailable or neither method-specific material condition is met.",
+    "method_release": "CANDIDATE_ONLY_REGARDLESS_OF_ONE_SAMPLE_RESULT"
+  },
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "METHOD_SPECIFIC_OUTCOME_RESOLUTION_CONTRACT",
+  "claim_class": "PRE_OUTCOME_MECHANICAL_METHOD_COMPARISON_RULES",
+  "allowed_outputs": [
+    "METHOD_RESOLUTION_RECEIPT",
+    "DECISION_UTILITY_EVALUATION_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

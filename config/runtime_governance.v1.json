@@ -1,0 +1,55 @@
+{
+  "schema_version": "runtime-governance.v1",
+  "prompt_version": "turtle-v13-phase07.1",
+  "model_tiers": {
+    "deepseek-v4-pro": "frontier",
+    "claude-sonnet-4-20250514": "frontier",
+    "deepseek-chat": "standard",
+    "gpt-4o": "standard"
+  },
+  "tier_rank": {"economy": 1, "standard": 2, "frontier": 3},
+  "task_profiles": {
+    "deterministic": {"critical": false, "minimum_tier": "economy", "cache_ttl_seconds": 604800},
+    "qualitative_extraction": {"critical": true, "minimum_tier": "standard", "cache_ttl_seconds": 86400},
+    "deep_research": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
+    "challenger": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
+    "report_synthesis": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
+    "pit_production_freeze": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 86400},
+    "report_repair": {"critical": true, "minimum_tier": "frontier", "cache_ttl_seconds": 43200},
+    "expression_compression": {"critical": false, "minimum_tier": "standard", "cache_ttl_seconds": 43200}
+  },
+  "retry": {
+    "max_attempts": 3,
+    "base_delay_seconds": 1.0,
+    "max_delay_seconds": 8.0,
+    "retryable_categories": ["timeout", "connection", "rate_limit", "server_error"]
+  },
+  "rate_limit": {"minimum_interval_seconds": 0.1},
+  "timeout_seconds": 600,
+  "budget": {
+    "max_calls": 400,
+    "max_input_tokens": 100000000,
+    "max_uncached_input_tokens": 3000000,
+    "max_output_tokens": 10000000,
+    "warning_fraction": 0.8
+  },
+  "execution_guard": {
+    "max_wall_minutes": 60,
+    "max_no_progress_passes": 2,
+    "max_unapproved_real_runs_per_output": 1,
+    "preflight_approval_call_threshold": 120,
+    "preflight_approval_wall_minutes": 20,
+    "estimated_seconds_per_llm_call": 12
+  },
+  "pricing_usd_per_million_tokens": {},
+  "cache": {
+    "enabled": true,
+    "directory_name": ".runtime_cache",
+    "max_entry_bytes": 8388608
+  },
+  "retention": {
+    "cache_days": 14,
+    "diagnostic_days": 90,
+    "trash_directory_name": ".runtime_trash"
+  }
+}

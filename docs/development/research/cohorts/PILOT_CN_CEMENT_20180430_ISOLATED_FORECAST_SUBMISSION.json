@@ -1,0 +1,161 @@
+{
+  "schema_version": "turtle-pit-company-forecast-submission.v1",
+  "pilot_id": "PILOT:CN:CEMENT:20180430:ISOLATED_FORECAST",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "model_memory_mitigation": {
+    "status": "MODEL_MEMORY_MITIGATED",
+    "curator": "NEW_ISOLATED_FORECAST_CURATOR",
+    "network_access": "NONE",
+    "outcome_access": "NONE",
+    "results_access": "NONE",
+    "price_access": "NONE",
+    "prohibited_materials": [
+      "R-103",
+      "H2",
+      "V5",
+      "search engines",
+      "dynamic issuer pages",
+      "prior-agent conclusions",
+      "post-cutoff material"
+    ],
+    "allowed_evidence_rule": "Only the predeclared 2013-2017 static CNINFO annual-report PDFs named in source_packet_ref were used. Forecast probabilities are judgmental, horizon-specific fundamental forecasts, not price or return forecasts."
+  },
+  "source_packet_ref": {
+    "path": "docs/development/research/cohorts/COHORT_CN_CEMENT_LISTED_20180430_h1_static_package.json",
+    "cohort_id": "COHORT:CN:CEMENT_LISTED:20180430:H1_STATIC",
+    "use_limit": "Routing metadata, exact source IDs, publication dates and declared PDF page references only."
+  },
+  "companies": [
+    {
+      "company_id": "CN:600585",
+      "panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "verified_cutoff_state": [
+        {
+          "statement": "FY2017 group cement-and-clinker sales were 295.0 million tonnes, up 6.6%; the report states a 35.59% combined gross margin, up 2.74 percentage points.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "publication_date": "2018-03-23",
+              "pdf_page_ref": "PDF p22",
+              "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion."
+            }
+          ]
+        },
+        {
+          "statement": "FY2017 consolidated statements report RMB75.31bn revenue, RMB24.76bn cash and RMB17.36bn operating cash flow.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "publication_date": "2018-03-23",
+              "pdf_page_ref": "PDF p74; PDF p80; PDF p84",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        }
+      ],
+      "forecast_dimensions": {
+        "normal_earnings": {
+          "status": "MODEL_UNCERTAIN",
+          "event": "normalised consolidated earnings remain positive",
+          "horizons": [
+            { "years_forward": 1, "probability": 0.58 },
+            { "years_forward": 3, "probability": 0.54 },
+            { "years_forward": 5, "probability": 0.5 }
+          ],
+          "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p80", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." }]
+        },
+        "roic_or_operating_margin": {
+          "status": "MODEL_UNCERTAIN",
+          "event": "consolidated operating margin remains positive",
+          "horizons": [{ "years_forward": 1, "probability": 0.58 }, { "years_forward": 3, "probability": 0.54 }, { "years_forward": 5, "probability": 0.5 }],
+          "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p22", "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion." }]
+        },
+        "cash_conversion_and_capex_burden": {
+          "cash_conversion": { "status": "MODEL_UNCERTAIN", "event": "operating cash flow remains positive", "horizons": [{ "years_forward": 1, "probability": 0.58 }, { "years_forward": 3, "probability": 0.54 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p84", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." }] },
+          "capex_burden": { "status": "EVIDENCE_INELIGIBLE", "reason": "Declared pages do not provide a comparable maintenance-versus-growth capex series.", "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p84", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." }] }
+        },
+        "leverage_or_financial_resilience": { "status": "EVIDENCE_INELIGIBLE", "reason": "Cash is disclosed, but the declared pages do not supply a debt-maturity or covenant basis for a leverage forecast.", "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p74", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." }] },
+        "competitive_position": { "status": "MODEL_UNCERTAIN", "event": "cement-and-clinker sales remain at or above the FY2017 volume level", "horizons": [{ "years_forward": 1, "probability": 0.55 }, { "years_forward": 3, "probability": 0.52 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p22", "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker aggregate net sales volume." }] },
+        "permanent_loss_risk": { "status": "MODEL_UNCERTAIN", "event": "no enduring loss of earnings capacity relative to the FY2017 cycle-year state", "horizons": [{ "years_forward": 1, "probability": 0.55 }, { "years_forward": 3, "probability": 0.52 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p22; PDF p84", "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion." }, { "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p84", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." }] }
+      }
+    },
+    {
+      "company_id": "CN:600425",
+      "panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "verified_cutoff_state": [
+        { "statement": "FY2017 cement revenue was RMB1.912bn with a 16.78% gross margin, up 3.96 percentage points; cement sales were 6.875m tonnes, up 7.61%.", "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p12", "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table." }] },
+        { "statement": "FY2017 report describes regional cement overcapacity and delivered-market competition, while describing the company's regional scale and mineral-resource advantages.", "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p10", "field_ref": "FY2017 annual report business overview describes cement overcapacity and regional delivered-market competition, PDF p10." }] }
+      ],
+      "forecast_dimensions": {
+        "normal_earnings": { "status": "MODEL_UNCERTAIN", "event": "normalised consolidated earnings remain positive", "horizons": [{ "years_forward": 1, "probability": 0.52 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p12", "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table." }] },
+        "roic_or_operating_margin": { "status": "MODEL_UNCERTAIN", "event": "consolidated operating margin remains positive", "horizons": [{ "years_forward": 1, "probability": 0.52 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p12", "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, product sales-volume table identifies cement as the recurring product field." }] },
+        "cash_conversion_and_capex_burden": { "cash_conversion": { "status": "EVIDENCE_INELIGIBLE", "reason": "The selected declared pages do not disclose a directly usable operating-cash-flow observation.", "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p65", "field_ref": "FY2017 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p56, p61, p65." }] }, "capex_burden": { "status": "EVIDENCE_INELIGIBLE", "reason": "Declared pages do not provide comparable maintenance-versus-growth capex evidence.", "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p65", "field_ref": "FY2017 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p56, p61, p65." }] } },
+        "leverage_or_financial_resilience": { "status": "EVIDENCE_INELIGIBLE", "reason": "Declared pages do not establish debt maturity, covenant, or refinancing terms needed for a leverage forecast.", "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p56", "field_ref": "FY2017 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p56, p61, p65." }] },
+        "competitive_position": { "status": "MODEL_UNCERTAIN", "event": "regional cement sales volume remains at or above the FY2017 level", "horizons": [{ "years_forward": 1, "probability": 0.52 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p10; PDF p12", "field_ref": "FY2017 annual report business overview describes cement overcapacity and regional delivered-market competition, PDF p10." }, { "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p12", "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table." }] },
+        "permanent_loss_risk": { "status": "MODEL_UNCERTAIN", "event": "no enduring loss of earnings capacity relative to the FY2017 regional cement state", "horizons": [{ "years_forward": 1, "probability": 0.5 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p10", "field_ref": "FY2017 annual report business overview describes cement overcapacity and regional delivered-market competition, PDF p10." }] }
+      }
+    },
+    {
+      "company_id": "CN:600802",
+      "panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "verified_cutoff_state": [
+        { "statement": "FY2017 cement sales were 7.542m tonnes, up 16.55%, and revenue was RMB1.834bn, up 38.61%; the report also records an attributable net loss and declining operating cash flow after impairment-related losses at subsidiaries.", "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p11", "field_ref": "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion." }] },
+        { "statement": "The reported production base is limited to Fujian locations, with seven new-dry-process lines and stated clinker and cement capacity.", "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 annual report identifies production bases across Fujian locations and cement/clinker products, PDF p9." }] }
+      ],
+      "forecast_dimensions": {
+        "normal_earnings": { "status": "MODEL_UNCERTAIN", "event": "normalised consolidated earnings are positive", "horizons": [{ "years_forward": 1, "probability": 0.48 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p56", "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59." }] },
+        "roic_or_operating_margin": { "status": "MODEL_UNCERTAIN", "event": "consolidated operating margin is positive", "horizons": [{ "years_forward": 1, "probability": 0.48 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p56", "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59." }] },
+        "cash_conversion_and_capex_burden": { "cash_conversion": { "status": "MODEL_UNCERTAIN", "event": "operating cash flow is positive", "horizons": [{ "years_forward": 1, "probability": 0.5 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p59", "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59." }] }, "capex_burden": { "status": "EVIDENCE_INELIGIBLE", "reason": "Declared pages do not provide comparable maintenance-versus-growth capex evidence.", "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p59", "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59." }] } },
+        "leverage_or_financial_resilience": { "status": "EVIDENCE_INELIGIBLE", "reason": "Declared pages do not establish debt maturity, covenant, or refinancing terms needed for a leverage forecast.", "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p52", "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59." }] },
+        "competitive_position": { "status": "MODEL_UNCERTAIN", "event": "cement sales remain at or above the FY2017 level", "horizons": [{ "years_forward": 1, "probability": 0.48 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p9; PDF p11", "field_ref": "FY2017 annual report identifies production bases across Fujian locations and cement/clinker products, PDF p9." }, { "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p11", "field_ref": "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion." }] },
+        "permanent_loss_risk": { "status": "MODEL_UNCERTAIN", "event": "no enduring loss of earnings capacity relative to the FY2017 regional cement state", "horizons": [{ "years_forward": 1, "probability": 0.48 }, { "years_forward": 3, "probability": 0.5 }, { "years_forward": 5, "probability": 0.5 }], "evidence": [{ "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p11", "field_ref": "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion." }] }
+      }
+    },
+    {
+      "company_id": "CN:600801",
+      "panel_disposition": "LIFECYCLE_BOUNDARY_ONLY",
+      "verified_cutoff_state": [{ "statement": "The FY2016 report disclosed approval to acquire 15 LafargeHolcim cement plants, creating a material consolidation-perimeter break.", "evidence": [{ "source_id": "CNINFO:600801:ANN:20170324:1203190337", "publication_date": "2017-03-24", "pdf_page_ref": "PDF p9", "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants." }] }],
+      "forecast_dimensions": {
+        "normal_earnings": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer: the declared scope break prevents a continuous issuer-trajectory forecast.", "evidence": [{ "source_id": "CNINFO:600801:ANN:20170324:1203190337", "publication_date": "2017-03-24", "pdf_page_ref": "PDF p9", "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants." }] },
+        "roic_or_operating_margin": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:600801:ANN:20170324:1203190337", "publication_date": "2017-03-24", "pdf_page_ref": "PDF p9", "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants." }] },
+        "cash_conversion_and_capex_burden": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:600801:ANN:20170324:1203190337", "publication_date": "2017-03-24", "pdf_page_ref": "PDF p9", "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants." }] },
+        "leverage_or_financial_resilience": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:600801:ANN:20170324:1203190337", "publication_date": "2017-03-24", "pdf_page_ref": "PDF p9", "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants." }] },
+        "competitive_position": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:600801:ANN:20170324:1203190337", "publication_date": "2017-03-24", "pdf_page_ref": "PDF p9", "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants." }] },
+        "permanent_loss_risk": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:600801:ANN:20170324:1203190337", "publication_date": "2017-03-24", "pdf_page_ref": "PDF p9", "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants." }] }
+      }
+    },
+    {
+      "company_id": "CN:000401",
+      "panel_disposition": "LIFECYCLE_BOUNDARY_ONLY",
+      "verified_cutoff_state": [{ "statement": "The FY2017 report describes ongoing major asset restructuring and joint-venture formation with Jinyu Group, creating a material perimeter/lifecycle boundary.", "evidence": [{ "source_id": "CNINFO:000401:ANN:20180323:1204506085", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group." }] }],
+      "forecast_dimensions": {
+        "normal_earnings": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer: ongoing restructuring prevents a continuous issuer-trajectory forecast.", "evidence": [{ "source_id": "CNINFO:000401:ANN:20180323:1204506085", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group." }] },
+        "roic_or_operating_margin": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:000401:ANN:20180323:1204506085", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group." }] },
+        "cash_conversion_and_capex_burden": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:000401:ANN:20180323:1204506085", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group." }] },
+        "leverage_or_financial_resilience": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:000401:ANN:20180323:1204506085", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group." }] },
+        "competitive_position": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:000401:ANN:20180323:1204506085", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group." }] },
+        "permanent_loss_risk": { "status": "EVIDENCE_INELIGIBLE", "reason": "Lifecycle/boundary-only issuer; no continuous comparable basis.", "evidence": [{ "source_id": "CNINFO:000401:ANN:20180323:1204506085", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group." }] }
+      }
+    }
+  ],
+  "relative_tournament": {
+    "status": "MODEL_UNCERTAIN",
+    "eligible_company_ids": ["CN:600585", "CN:600425", "CN:600802"],
+    "excluded_lifecycle_boundary_company_ids": ["CN:600801", "CN:000401"],
+    "dimensions": {
+      "normal_earnings_persistence": {
+        "ranking": ["CN:600585", "CN:600425", "CN:600802"],
+        "evidence": [
+          { "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p80; PDF p84", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." },
+          { "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p12", "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table." },
+          { "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p11", "field_ref": "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion." }
+        ]
+      },
+      "operating_margin_trajectory": { "ranking": ["CN:600585", "CN:600425", "CN:600802"], "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p22", "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion." }, { "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p12", "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table." }, { "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p11", "field_ref": "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion." }] },
+      "cash_conversion_and_capex_burden": { "ranking": ["CN:600585", "CN:600802"], "unranked_company_ids": ["CN:600425"], "status_note": "CN:600425 is unranked because its cash-conversion evidence is EVIDENCE_INELIGIBLE; capex-burden ordering is EVIDENCE_INELIGIBLE. The remaining ordering reflects only reported cash-generation trajectory and is MODEL_UNCERTAIN.", "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p84", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." }, { "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p59", "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59." }] },
+      "financial_resilience": { "status": "EVIDENCE_INELIGIBLE", "ranking": null, "reason": "Declared pages do not supply a common debt-maturity/covenant basis, so no financial-resilience rank is asserted.", "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p74", "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84." }, { "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p56", "field_ref": "FY2017 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p56, p61, p65." }, { "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p52", "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59." }] },
+      "competitive_position": { "ranking": ["CN:600585", "CN:600425", "CN:600802"], "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p22", "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion." }, { "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p10", "field_ref": "FY2017 annual report business overview describes cement overcapacity and regional delivered-market competition, PDF p10." }, { "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p9", "field_ref": "FY2017 annual report identifies production bases across Fujian locations and cement/clinker products, PDF p9." }] },
+      "permanent_loss_risk": { "ranking": ["CN:600585", "CN:600425", "CN:600802"], "ranking_direction": "lower inferred risk first", "evidence": [{ "source_id": "CNINFO:600585:ANN:20180323:1204507132", "publication_date": "2018-03-23", "pdf_page_ref": "PDF p22; PDF p84", "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion." }, { "source_id": "CNINFO:600425:ANN:20180421:1204677754", "publication_date": "2018-04-21", "pdf_page_ref": "PDF p12", "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table." }, { "source_id": "CNINFO:600802:ANN:20180417:1204639756", "publication_date": "2018-04-17", "pdf_page_ref": "PDF p11", "field_ref": "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion." }] }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "enterprise-judgment-round9-method-resolution-receipt.v1",
+  "resolution_id": "METHOD-RESOLUTION-RECEIPT:R9:CN600839:FY2019:V1",
+  "resolution_contract_ref": "METHOD-RESOLUTION:R9:CN600839:FY2019:V1",
+  "settlement_ref": "R9SETTLE:CN600839:20180930:FY2019:V1",
+  "resolved_at": "2026-08-27T19:03:00+08:00",
+  "input_labels": {
+    "CELL:600839:FY2019:INDUSTRY_CONTEXT_EVENT": "OBSERVED_YES",
+    "CELL:600839:FY2019:GROUP_REVENUE_LEVEL": "OBSERVED_INCREASE",
+    "CELL:600839:FY2019:WHITE_GOODS_REVENUE_LEVEL": "OBSERVED_STABLE",
+    "CELL:600839:FY2019:WHITE_GOODS_GROSS_MARGIN": "OBSERVED_STABLE",
+    "CELL:600839:FY2019:WHITE_GOODS_REVENUE_SHARE": "OBSERVED_DECREASE",
+    "CELL:600839:FY2019:GROUP_OCF_LEVEL": "OBSERVED_STABLE",
+    "CELL:600839:FY2019:GROUP_OCF_TO_CAPEX": "OBSERVED_STABLE",
+    "CELL:600839:FY2019:GROUP_ASSET_LIABILITY_RATIO": "OBSERVED_STABLE",
+    "CELL:600839:FY2019:WHITE_GOODS_ACTION_EVENT": "OBSERVED_YES",
+    "CELL:600839:FY2019:PORTFOLIO_SCOPE_EVENT": "OBSERVED_YES",
+    "CELL:600839:FY2019:OWNER_CASH_BRIDGE_EVENT": "UNKNOWN"
+  },
+  "resolution_status": "MODEL_ERROR",
+  "model_errors": [
+    {
+      "error_id": "R9MODEL:NON_SCALAR_IMPLEMENTED_ACTION",
+      "field_path": "enhanced.dimension_outputs.IMPLEMENTED_MANAGEMENT_ACTION",
+      "expected_type": "str",
+      "actual_type": "tuple",
+      "root_cause": "MODEL",
+      "economic_impact": "The frozen post-settlement resolver cannot support a valid blind method comparison."
+    }
+  ],
+  "resolved_outputs": null,
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "METHOD_RESOLUTION_RECEIPT",
+  "claim_class": "FROZEN_RESOLVER_MODEL_ERROR",
+  "allowed_outputs": [
+    "METHOD_FEEDBACK_INVALIDATION",
+    "NEW_METHOD_EPOCH",
+    "RESEARCH_AGENDA"
+  ]
+}

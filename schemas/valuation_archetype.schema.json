@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/valuation_archetype.schema.json",
+  "title": "Turtle Valuation Archetype Card",
+  "description": "A versioned, non-parameterized industry implementation blueprint. It specifies what company evidence and model treatment are required, never company facts or valuation inputs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "card_id",
+    "archetype_id",
+    "version",
+    "status",
+    "valuation_family",
+    "applicability",
+    "components",
+    "completion_rule",
+    "limits",
+    "training_boundary"
+  ],
+  "properties": {
+    "schema_version": {"const": "valuation-archetype.v1"},
+    "card_id": {"type": "string", "pattern": "^VALUATION_ARCHETYPE:[a-z0-9_:-]+:v[0-9]+$"},
+    "archetype_id": {"type": "string", "pattern": "^[a-z0-9_:-]+$"},
+    "version": {"type": "string", "pattern": "^v[0-9]+$"},
+    "status": {"enum": ["ACTIVE", "RETIRED"]},
+    "valuation_family": {"const": "GOING_CONCERN_REPLACEMENT"},
+    "applicability": {"$ref": "#/$defs/applicability"},
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/component"}
+    },
+    "evidence_role_guidance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evidenceRoleGuidance"}
+    },
+    "completion_rule": {"$ref": "#/$defs/completionRule"},
+    "limits": {"$ref": "#/$defs/limits"},
+    "training_boundary": {"$ref": "#/$defs/trainingBoundary"}
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "textList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/text"}
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_operating_characteristics",
+        "required_company_conditions",
+        "non_applicability_conditions"
+      ],
+      "properties": {
+        "required_operating_characteristics": {"$ref": "#/$defs/textList"},
+        "required_company_conditions": {"$ref": "#/$defs/textList"},
+        "non_applicability_conditions": {"$ref": "#/$defs/textList"}
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_type",
+        "presence_requirement",
+        "requirement",
+        "allowed_calculation_methods",
+        "required_evidence_roles",
+        "allowed_exclusion_destinations",
+        "double_count_owner",
+        "unknown_semantics",
+        "recognition_semantics",
+        "completion_semantics"
+      ],
+      "properties": {
+        "component_type": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "presence_requirement": {"enum": ["REQUIRED", "OPTIONAL"]},
+        "requirement": {"$ref": "#/$defs/text"},
+        "allowed_calculation_methods": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "DIRECT_RANGE",
+              "SUM_OF_INPUT_RANGES",
+              "PRODUCT_OF_INPUT_RANGES",
+              "UNAVAILABLE"
+            ]
+          }
+        },
+        "required_evidence_roles": {"$ref": "#/$defs/textList"},
+        "allowed_exclusion_destinations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "OTHER_REPLACEMENT_COMPONENT",
+              "BALANCE_SHEET_WORKING_CAPITAL",
+              "EPV_MAINTENANCE_NEED"
+            ]
+          }
+        },
+        "double_count_owner": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "unknown_semantics": {"$ref": "#/$defs/text"},
+        "recognition_semantics": {"$ref": "#/$defs/text"},
+        "completion_semantics": {"$ref": "#/$defs/text"}
+      }
+    },
+    "evidenceRoleGuidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "likely_official_sources",
+        "likely_acquisition_modules",
+        "query_hints",
+        "bounded_stopping_rule"
+      ],
+      "properties": {
+        "role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "likely_official_sources": {"$ref": "#/$defs/textList"},
+        "likely_acquisition_modules": {"$ref": "#/$defs/textList"},
+        "query_hints": {"$ref": "#/$defs/textList"},
+        "bounded_stopping_rule": {"$ref": "#/$defs/text"}
+      }
+    },
+    "completionRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_level_range",
+        "incomplete_scope",
+        "epv_cross_check",
+        "joint_protection"
+      ],
+      "properties": {
+        "company_level_range": {"$ref": "#/$defs/text"},
+        "incomplete_scope": {"$ref": "#/$defs/text"},
+        "epv_cross_check": {"$ref": "#/$defs/text"},
+        "joint_protection": {"$ref": "#/$defs/text"}
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_fact_policy",
+        "valuation_parameter_policy",
+        "prohibited_content"
+      ],
+      "properties": {
+        "company_fact_policy": {"const": "NO_COMPANY_FACTS"},
+        "valuation_parameter_policy": {"const": "NO_DEFAULT_NUMERIC_PARAMETERS"},
+        "prohibited_content": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "CURRENCY_AMOUNT",
+              "PERCENTAGE_OR_MULTIPLE",
+              "COMPANY_FACT",
+              "DEFAULT_HAIRCUT_OR_COMPLETION_RATE",
+              "AUTOMATIC_MODEL_ROUTE"
+            ]
+          }
+        }
+      }
+    },
+    "trainingBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["may_update", "may_not_supply"],
+      "properties": {
+        "may_update": {"$ref": "#/$defs/textList"},
+        "may_not_supply": {"$ref": "#/$defs/textList"}
+      }
+    }
+  }
+}

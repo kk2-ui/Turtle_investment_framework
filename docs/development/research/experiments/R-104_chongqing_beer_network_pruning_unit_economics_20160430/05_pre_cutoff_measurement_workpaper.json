@@ -1,0 +1,162 @@
+{
+  "schema_version": "judgment-selection-pre-cutoff-workpaper.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "cutoff_at": "2016-04-30T23:59:59+08:00",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600132",
+  "currency": "RMB",
+  "probability_mode": "NO_PROBABILITY",
+  "source_ids": [
+    "CNINFO:600132:ANN:20140409:63807671",
+    "CNINFO:600132:ANN:20150410:1200803967",
+    "CNINFO:600132:ANN:20160409:1202154919"
+  ],
+  "formulae": {
+    "headline_sales_volume_kl": "annual_report_headline_beer_sales_volume_in_10k_kl * 10000",
+    "revenue_per_headline_sales_kl": "operating_revenue / headline_sales_volume_kl; D2 context only",
+    "operating_contribution_rmb": "operating_revenue - operating_cost - taxes_and_surcharges - selling_expense - administrative_expense",
+    "operating_contribution_margin_pct": "operating_contribution_rmb / operating_revenue * 100",
+    "conservative_owner_cash_rmb": "operating_cash_flow - cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets",
+    "cash_working_capital_rmb": "accounts_receivable + prepayments + inventory - accounts_payable - customer_advances",
+    "positive_cash_working_capital_release_rmb": "max(opening_cash_working_capital_rmb - ending_cash_working_capital_rmb, 0)",
+    "owner_cash_ex_working_capital_release_rmb": "operating_cash_flow - cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets - positive_cash_working_capital_release_rmb",
+    "cash_working_capital_to_revenue_pct": "cash_working_capital_rmb / operating_revenue * 100",
+    "ocf_margin_pct": "operating_cash_flow / operating_revenue * 100"
+  },
+  "central_metric_roles": {
+    "D2": "Annual headline beer sales volume and consolidated revenue per headline sales kl are customer/price-mix context.",
+    "D3": "Whole-issuer operating-contribution amount in RMB is the central same-scope unit-economics voter; no beer-volume denominator is used.",
+    "D4": "Owner cash excluding positive working-capital release is the central scalar voter. Opening and ending five-account working capital are formula inputs; a positive release is stripped from OCF less capex, while working-capital deterioration remains reflected in OCF.",
+    "optional_product_throughput": "UNKNOWN and non-voting because no recurring exact cutoff-before whole-issuer identity exists."
+  },
+  "observations": [
+    {
+      "fiscal_year": 2013,
+      "headline_beer_sales_volume_10k_kl": 120.2,
+      "headline_sales_volume_kl": 1202000,
+      "operating_revenue_rmb": 3386847381.09,
+      "revenue_per_headline_sales_kl_rmb": 2817.6767,
+      "operating_cost_rmb": 1854412860.14,
+      "taxes_and_surcharges_rmb": 316675134.21,
+      "selling_expense_rmb": 447966215.59,
+      "administrative_expense_rmb": 498670160.51,
+      "operating_contribution_rmb": 269123010.64,
+      "operating_contribution_margin_pct": 7.9461,
+      "operating_cash_flow_rmb": 557899829.6,
+      "cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_rmb": 86259093.25,
+      "conservative_owner_cash_rmb": 471640736.35,
+      "ocf_margin_pct": 16.4725,
+      "accounts_receivable_rmb": 48851514.9,
+      "prepayments_rmb": 26734613.44,
+      "inventory_rmb": 1244561904.92,
+      "accounts_payable_rmb": 165813788.82,
+      "customer_advances_rmb": 92460981.66,
+      "cash_working_capital_rmb": 1061873262.78,
+      "cash_working_capital_to_revenue_pct": 31.3529
+    },
+    {
+      "fiscal_year": 2014,
+      "headline_beer_sales_volume_10k_kl": 104.76,
+      "headline_sales_volume_kl": 1047600,
+      "operating_revenue_rmb": 3168605432.6,
+      "revenue_per_headline_sales_kl_rmb": 3024.6329,
+      "operating_cost_rmb": 1755498150.98,
+      "taxes_and_surcharges_rmb": 288209186.6,
+      "selling_expense_rmb": 420068157.45,
+      "administrative_expense_rmb": 460170189.21,
+      "operating_contribution_rmb": 244659748.36,
+      "operating_contribution_margin_pct": 7.7214,
+      "operating_cash_flow_rmb": 414174659.77,
+      "cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_rmb": 96706757.58,
+      "conservative_owner_cash_rmb": 317467902.19,
+      "opening_cash_working_capital_rmb": 1061873262.78,
+      "positive_cash_working_capital_release_rmb": 202301010.4,
+      "owner_cash_ex_working_capital_release_rmb": 115166891.79,
+      "ocf_margin_pct": 13.0712,
+      "accounts_receivable_rmb": 40471771.5,
+      "prepayments_rmb": 13048164.17,
+      "inventory_rmb": 1159129032.16,
+      "accounts_payable_rmb": 254071348.18,
+      "customer_advances_rmb": 99005367.27,
+      "cash_working_capital_rmb": 859572252.38,
+      "cash_working_capital_to_revenue_pct": 27.1278
+    },
+    {
+      "fiscal_year": 2015,
+      "headline_beer_sales_volume_10k_kl": 98.95,
+      "headline_sales_volume_kl": 989500,
+      "operating_revenue_rmb": 3323745277.75,
+      "revenue_per_headline_sales_kl_rmb": 3359.0149,
+      "operating_cost_rmb": 2096464876.31,
+      "taxes_and_surcharges_rmb": 273275182.23,
+      "selling_expense_rmb": 489868548.23,
+      "administrative_expense_rmb": 232657686.1,
+      "operating_contribution_rmb": 231478984.88,
+      "operating_contribution_margin_pct": 6.9644,
+      "operating_cash_flow_rmb": 448312450.68,
+      "cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_rmb": 128918019.25,
+      "conservative_owner_cash_rmb": 319394431.43,
+      "opening_cash_working_capital_rmb": 859572252.38,
+      "positive_cash_working_capital_release_rmb": 123067824.42,
+      "owner_cash_ex_working_capital_release_rmb": 196326607.01,
+      "ocf_margin_pct": 13.4882,
+      "accounts_receivable_rmb": 59946542.91,
+      "prepayments_rmb": 9957803.74,
+      "inventory_rmb": 1074501975.87,
+      "accounts_payable_rmb": 293533776.69,
+      "customer_advances_rmb": 114368117.87,
+      "cash_working_capital_rmb": 736504427.96,
+      "cash_working_capital_to_revenue_pct": 22.1589
+    }
+  ],
+  "cutoff_before_directional_facts": {
+    "resource_commitment": "By the FY2015 report, production operations at Qijiang, Liuzhou, Jiuhuashan, Yongchuan, Qianjiang and Liupanshui breweries had been closed. This is an implemented network change, not a future target.",
+    "price_mix_realization": "Headline beer volume fell from 1,202,000 kl in FY2013 to 1,047,600 kl in FY2014 and 989,500 kl in FY2015, while consolidated revenue per headline kl rose from RMB2,817.68 to RMB3,024.63 and RMB3,359.01.",
+    "cash_release": "Cash working capital fell from 31.35% of revenue in FY2013 to 27.13% in FY2014 and 22.16% in FY2015. FY2015 OCF less all long-term-asset acquisition cash was RMB319.39m; stripping the RMB123.07m positive working-capital release leaves RMB196.33m.",
+    "rival_evidence": "Operating-contribution margin after taxes and surcharges fell from 7.95% in FY2013 to 6.96% in FY2015, FY2015 selling expense rose 16.62%, beer volume kept contracting and the network action generated material asset impairment."
+  },
+  "frozen_threshold_derivation": {
+    "materiality_source_id": "CNINFO:600132:ANN:20160409:1202154919",
+    "six_closed_plants_fixed_asset_impairment_rmb": 204449973.25,
+    "five_year_recovery_fraction": 0.2,
+    "annual_pretax_recovery_step_rmb": 40889994.65,
+    "illustrative_tax_rate_pct": 25.0,
+    "illustrative_after_tax_normal_profit_step_rmb": 30667495.99,
+    "economic_rule": "One annual step equals 20% of the disclosed six-plant fixed-asset impairment. H-A must recover that amount through recurring operating contribution and owner cash; H-B must deteriorate by the same capital-at-risk amount. The impairment anchors materiality and is not deducted again as cash.",
+    "historical_non_voting_per_kl_change_fy2014_to_fy2015_pct": 0.1679,
+    "historical_non_voting_per_kl_change_note": "The prior rejected D3 per-headline-sales-kl comparison changed by about 0.1679%, not the previously stated 0.29%. It is retained only as an arithmetic correction and does not set D3 thresholds.",
+    "d3_baseline_operating_contribution_rmb": 231478984.88,
+    "d3_primary_threshold_rmb": 272368979.53,
+    "d3_rival_threshold_rmb": 190588990.23,
+    "d3_middle_rule": "Values strictly between RMB190,588,990.23 and RMB272,368,979.53 resolve D3 as MIXED.",
+    "d4_baseline_opening_cash_working_capital_rmb": 859572252.38,
+    "d4_baseline_ending_cash_working_capital_rmb": 736504427.96,
+    "d4_baseline_positive_cash_working_capital_release_rmb": 123067824.42,
+    "d4_baseline_owner_cash_ex_working_capital_release_rmb": 196326607.01,
+    "d4_primary_threshold_rmb": 237216601.66,
+    "d4_rival_threshold_rmb": 155436612.36,
+    "d4_comparison_shape": "SCALAR_OWNER_CASH_EX_POSITIVE_WORKING_CAPITAL_RELEASE",
+    "d4_middle_rule": "Values strictly between RMB155,436,612.36 and RMB237,216,601.66 resolve D4 as MIXED.",
+    "non_overlap_check": "The H-A and H-B regions do not overlap, and the FY2015 baseline cannot satisfy either directional region."
+  },
+  "measurement_breaks_and_resolution": [
+    {
+      "break": "FY2015 moved supply-chain expenses from administrative expense into manufacturing cost.",
+      "resolution": "D3 central subtracts operating cost, taxes and surcharges, selling expense and administrative expense from whole-issuer revenue. The resulting RMB amount is invariant to the transfer between cost and administrative expense; gross margin and beer-volume denominators cannot settle H-A or H-B."
+    },
+    {
+      "break": "The FY2015 product table reports 102.70 ten-thousand kl including 3.75 ten-thousand kl of separately identified commissioned processing, while the recurring annual headline reports 98.95 ten-thousand kl.",
+      "resolution": "Use recurring annual headline volume only for D2 customer/price-mix context. D3 uses the whole-issuer RMB amount and therefore has no mismatched beer-volume denominator."
+    },
+    {
+      "break": "FY2013-FY2014 do not disclose exact whole-issuer production throughput, and FY2015 first discloses one production amount with a rounded year-on-year change.",
+      "resolution": "D3_PRODUCT_VOLUME is optional under the current five-layer contract. Preserve it as UNKNOWN and non-voting; do not copy D2 sales volume or reconstruct an exact prior-year production value."
+    }
+  ],
+  "prohibited_inputs": [
+    "FY2016 management sales plan",
+    "post-cutoff disclosure existence or values",
+    "stock price, valuation or return",
+    "standalone reported gross margin across the FY2015 classification break"
+  ]
+}

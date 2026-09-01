@@ -1,0 +1,194 @@
+{
+  "authorization_id": "CN601012_BLIND11_OUTCOME_ACCESS_AUTHORIZATION",
+  "authorization_version": "1.0",
+  "authorization_date": "2026-08-29",
+  "authorization_status": "AUTHORIZED_METADATA_LOCATED__BODY_NOT_ACQUIRED",
+  "case_identity": "BLIND:CN601012:20240501:FY2024",
+  "issuer_name_at_cutoff": "隆基绿能",
+  "security_code": "601012",
+  "authorization_grant": {
+    "outcome_access_authorized": true,
+    "permitted_next_action": "A separately assigned outcome acquirer may retrieve exactly the identified FY2024 original annual-report PDF and apply only the four frozen V2 resolution cells.",
+    "not_authorized": [
+      "Selecting a report summary, a revision, or any different annual-report document as a substitute.",
+      "Changing a frozen field, arithmetic rule, threshold, comparison baseline, local-unknown treatment, or judgment treatment.",
+      "Using market-price, return, analyst, valuation-number, or investment-action material."
+    ]
+  },
+  "official_cninfo_metadata_source": {
+    "source_authority": "CNINFO official disclosure metadata",
+    "metadata_endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "metadata_query": {
+      "stock": "601012,9900022338",
+      "tabName": "fulltext",
+      "column": "sse",
+      "category": "category_ndbg_szsh;",
+      "plate": "sse",
+      "seDate": "2024-05-02~2025-12-31",
+      "pageNum": 1,
+      "pageSize": 30,
+      "metadata_only": true
+    },
+    "selected_original_annual_report": {
+      "fiscal_year": 2024,
+      "announcement_id": "1223421477",
+      "announcement_title": "2024年年度报告",
+      "announcement_date": "2025-04-30",
+      "static_url": "https://static.cninfo.com.cn/finalpage/2025-04-30/1223421477.PDF",
+      "original_full_annual_report": true
+    },
+    "excluded_metadata_records": [
+      {
+        "announcement_id": "1223421484",
+        "announcement_title": "2024年年度报告摘要",
+        "announcement_date": "2025-04-30",
+        "exclusion_reason": "Summary; not the original full annual report."
+      },
+      {
+        "announcement_id": "1223477802",
+        "announcement_title": "2024年年度报告（修订版）",
+        "announcement_date": "2025-05-07",
+        "exclusion_reason": "Revision; not the originally published FY2024 full annual report."
+      }
+    ],
+    "selection_rule": "The selected record is the sole FY2024 metadata record titled exactly 2024年年度报告. The same-day summary and subsequent revision are explicitly excluded."
+  },
+  "prerequisites": [
+    {
+      "requirement": "Frozen pre-outcome judgment preserved",
+      "evidence": "164_CN601012_PREOUTCOME_JUDGMENT_V2.json",
+      "required_state": "judgment_status = FROZEN_PRE_OUTCOME; its V2 resolution contract remains unchanged."
+    },
+    {
+      "requirement": "Independent pre-outcome review acceptance preserved",
+      "evidence": "165_CN601012_INDEPENDENT_PREOUTCOME_REVIEW_V2.md",
+      "required_state": "Verdict ACCEPT and Outcome access may be authorized YES."
+    },
+    {
+      "requirement": "Document identity checked before body access",
+      "required_state": "The acquirer must retrieve only announcement ID 1223421477, titled 2024年年度报告, dated 2025-04-30, at the stated static CNINFO URL."
+    },
+    {
+      "requirement": "Role separation retained",
+      "required_state": "The outcome acquirer must not influence candidate selection or alter the pre-outcome judgment; a later feedback role may compare the frozen judgment and mechanically resolved outcome only."
+    }
+  ],
+  "frozen_resolution_cells": [
+    {
+      "cell_id": "FY2024_CELL_1",
+      "judgment_id": "J1_CAPACITY_AND_VOLUME",
+      "frozen_source": "164_CN601012_PREOUTCOME_JUDGMENT_V2.json",
+      "required_fields": [
+        "FY2024 actual 电池对外销售 in GW",
+        "FY2024 actual total 组件出货 in GW"
+      ],
+      "arithmetic_and_threshold": "S1_GW = 电池对外销售_GW + 组件出货_GW; compare only with 90.00GW.",
+      "fixed_resolution": "S1_GW >= 90.00 is AT_LEAST_90GW and upward for only the volume-realization leg of J1; S1_GW < 90.00 is BELOW_90GW and downward; an absent, non-GW, non-actual, or external-sales-only module figure is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE and leaves J1 unchanged.",
+      "prohibited_substitutes": [
+        "self-used cells",
+        "wafers",
+        "nameplate capacity",
+        "production output",
+        "revenue-derived proxy",
+        "external-sales-only component figure"
+      ]
+    },
+    {
+      "cell_id": "FY2024_CELL_2",
+      "judgment_id": "J2_PRICE_AND_UNIT_ECONOMICS",
+      "frozen_source": "164_CN601012_PREOUTCOME_JUDGMENT_V2.json",
+      "required_fields": [
+        "Consolidated 主营业务分产品情况 row exactly named 组件及电池: 营业收入",
+        "Consolidated 主营业务分产品情况 row exactly named 组件及电池: 营业成本"
+      ],
+      "arithmetic_and_threshold": "R2 = revenue; C2 = cost; M2_pct = ((R2 - C2) / R2) * 100 when R2 > 0. Revenue expands only if R2 > RMB99,199,497,228.50; margin meets threshold only if M2_pct >= 18.38.",
+      "fixed_resolution": "Margin at or above 18.38 with expanded revenue is upward; margin at or above 18.38 with positive non-expanded revenue is unchanged; margin below 18.38 with expanded revenue is downward; margin below 18.38 or zero revenue with non-expanded revenue is downward. An absent or non-comparable exact consolidated row is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE and leaves J2 unchanged.",
+      "prohibited_substitutes": [
+        "parent-company table",
+        "industry total",
+        "differently named, broader, or narrower category",
+        "product volume",
+        "reconstructed categories"
+      ]
+    },
+    {
+      "cell_id": "FY2024_CELL_3",
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "frozen_source": "164_CN601012_PREOUTCOME_JUDGMENT_V2.json",
+      "required_fields": [
+        "Consolidated cash-flow statement: 经营活动产生的现金流量净额",
+        "Consolidated cash-flow statement: 购建固定资产、无形资产和其他长期资产支付的现金"
+      ],
+      "arithmetic_and_threshold": "S3_RMB = operating cash flow - cash paid for fixed, intangible, and other long-lived assets. S3_RMB >= 0 is CASH_CAPEX_COVERED; S3_RMB < 0 is CASH_CAPEX_NOT_COVERED.",
+      "fixed_resolution": "This is a reproducible owner-cash screen, not precise free cash flow. Its J3 treatment is determined only by the frozen joint map with CELL_4. If either specified consolidated line is unavailable, the cell is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE and J3 remains unchanged.",
+      "prohibited_substitutes": [
+        "parent-company cash-flow statement",
+        "depreciation",
+        "accrual capex",
+        "acquisition spending",
+        "financing flows",
+        "disposal proceeds",
+        "maintenance-versus-growth-capex allocation"
+      ]
+    },
+    {
+      "cell_id": "FY2024_CELL_4",
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "frozen_source": "164_CN601012_PREOUTCOME_JUDGMENT_V2.json",
+      "required_fields": [
+        "Consolidated balance-sheet 货币资金",
+        "短期借款",
+        "Note 43: 1年内到期的长期借款, 应付债券, and 租赁负债",
+        "Non-current balance-sheet 长期借款, 应付债券, and 租赁负债 net of those current portions",
+        "Note 72 current-period 存货跌价损失及合同履约成本减值损失",
+        "Note 72 current-period 固定资产减值损失"
+      ],
+      "arithmetic_and_threshold": "B4_RMB = 货币资金 - (the seven specified financing components). BUFFER_INTACT if B4_RMB >= RMB30,308,853,390.43; otherwise BUFFER_WEAKENED. I4_RMB = the two specified Note 72 losses. MATERIAL_IMPAIRMENT if I4_RMB >= RMB1,351,416,111.91; otherwise BELOW_MATERIAL.",
+      "fixed_resolution": "Together with CELL_3, apply the complete eight-row V2 J3 joint map only. If any listed financing component, a required Note 43 current portion, or either Note 72 loss is unavailable, the cell is UNKNOWN_UNAVAILABLE_OR_NONCOMPARABLE and J3 remains unchanged.",
+      "prohibited_substitutes": [
+        "aggregate 一年内到期的非流动负债",
+        "total liabilities",
+        "accounts payable",
+        "other payables",
+        "restricted-cash adjustment",
+        "total asset impairment",
+        "differently scoped balance-sheet or impairment measure"
+      ]
+    }
+  ],
+  "fresh_custodian_role": {
+    "role": "FRESH_OUTCOME_SOURCE_LOCATOR",
+    "authority": "Locate and freeze one official source identity through CNINFO metadata only.",
+    "handoff_recipient": "Separately assigned outcome acquirer and mechanical-cell resolver.",
+    "authority_boundary": "This custodian may authorize document acquisition but may not extract, summarize, interpret, or compare body facts."
+  },
+  "local_mismatch": {
+    "condition": "The preserved pre-outcome artifacts treat FY2024 only as a future outcome and do not supply the official FY2024 original-report identity.",
+    "resolution": "The fresh official CNINFO metadata identity above is the sole authorized source locator. No local FY2024 report, text extraction, cached copy, summary, or revision is treated as a substitute or consulted by this custodian.",
+    "next_role_control": "Before reading a body, the outcome acquirer must match the retrieved item to the title, date, announcement ID, and static URL in this authorization."
+  },
+  "firewall": {
+    "pre_outcome_artifacts_remain_immutable": true,
+    "metadata_role_may_read": [
+      "The designated pre-outcome authorization artifacts",
+      "Official CNINFO metadata necessary to identify the one original FY2024 annual report"
+    ],
+    "metadata_role_may_not_read": [
+      "FY2024 annual-report PDF or any other announcement/source body",
+      "market-price, return, analyst, valuation, or investment-action material",
+      "other campaign, curriculum, method, or feedback artifacts"
+    ],
+    "downstream_update_limit": "Only the four frozen cells may update J1, J2, and J3; every other pre-outcome judgment and treatment remains frozen."
+  },
+  "negative_attestations": {
+    "official_cninfo_metadata_query_used": true,
+    "FY2024_original_annual_report_identity_located": true,
+    "FY2024_annual_report_body_acquired": false,
+    "FY2024_annual_report_body_read": false,
+    "FY2024_body_facts_extracted_or_inferred": false,
+    "summary_or_revision_selected": false,
+    "market_price_return_analyst_or_investment_action_material_read": false,
+    "pre_outcome_judgment_modified": false,
+    "repository_commit_created": false
+  }
+}

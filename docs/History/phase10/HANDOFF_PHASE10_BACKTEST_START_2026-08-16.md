@@ -1,0 +1,289 @@
+# Phase 10 历史回测启动交接
+
+> **ARCHIVED / NON_CANONICAL：**本文的 `STARTED` 只代表当时工程快照。当前Phase 10全面运行仍被锁定；权限见 `GOALS.md`、`docs/CURRENT_DOCUMENTS.md` 和现行Phase 10契约。
+
+> 日期：2026-08-16（Asia/Shanghai）  
+> 状态：`STARTED / FIRST_CASE_ACQUISITION_PENDING`  
+> 交接范围：黄金候选的当前状态、已合入的回测基础设施，以及下一会话的执行顺序。
+
+当前执行路线以 [Phase 10 回测路线图与模型行为契约](PHASE10_BACKTEST_ROADMAP.md) 和
+[收益与选股评估契约](PHASE10_RETURN_SELECTION_EVALUATION.md) 为准；本交接只保留当时的启动状态。
+
+## 1. 当前结论
+
+可以开始历史回测的**资料采集、冻结案例和工程验收**，但不能把当前工作称为
+“已证明有效的回测”或“已校准的报告标准”。
+
+历史回测的三本账必须独立保存，不能合成总分：
+
+1. `REPORT_COVERAGE`：冻结时材料性事实是否由当时可见的官方来源支持，未知是否被保留。
+2. `MODEL_FORECAST_ERROR`：冻结的经营、现金、债务、阈值或价格前提与后续可观察事实的偏差。
+3. `INVESTMENT_RETURN_OUTCOME`：按预注册执行规则、公司行动、税费和币种处理后的可执行回报。
+
+当前九份黄金候选没有可验证的历史版本、逐源发布时间和当时市场数据，故全部仍为
+`INELIGIBLE_NO_HISTORICAL_VINTAGE`。不得把今天的候选报告倒灌成历史回测样本。
+
+## 2. 主线状态
+
+- G2 跨报告裁决已完成；G3 仍为 `NOT_READY`；正式 Golden 报告为 `0`。
+- `ACCEPT_WITH_DATA_LIMITED` 只表示特定范围的模型/内容审阅通过，绝不等于正式 Golden。
+- 行业知识库已合入 `main`，用于提出跨公司取证问题，不能提供公司事实、估值参数、概率、价格或动作。
+- 用户已明确授权开始回测基础设施与历史案例工作；这不解除黄金候选的 G3 门禁。
+
+## 3. 九份候选的现行边界
+
+详细真源：
+
+- `docs/development/golden_set_v1/REGISTRY.md`
+- `docs/development/golden_set_v1/CROSS_CASE_ADJUDICATION.md`
+
+概览：
+
+| 公司 | 当前状态 | 关键边界 |
+|---|---|---|
+| 汇贤 87001 | `ACCEPT_WITH_DATA_LIMITED` | `P_LEGAL=RMB0.1643`；BOP 台账、实体现金可达性、重庆签约租金和25%现金税/泄漏包络仍未闭合。 |
+| 鄂尔多斯B 900936 | `ACCEPT_WITH_DATA_LIMITED` | 长期约9.01%、五年约9.21%；普通股现金可达性、税惠、维护资本、q、永煤分派性质和汇率仍受限。 |
+| 格力 000651 | `ACCEPT_WITH_DATA_LIMITED` | `P_LONG=RMB33.47`；毛利/费用长期桥、资本开支、金融资产收益与留存用途仍要验证。 |
+| 京投 01522 | `OBSERVE / NOT_GOLDEN` | 无新市场确认五年约8.17%、行动价约HKD0.196；有限确认价不能成为主价格。 |
+| 中海物业 02669 | `ACCEPT_WITH_DATA_LIMITED`，非正式 Golden | 读者证据锚点独立通过；仍为 `PRIMARY_ROUTE_UNKNOWN`，行动价必须为 `UNKNOWN`。 |
+| 中国食品 00506 | `ACCEPT_WITH_DATA_LIMITED` | 长期所有者通道为主；产品成本/费用、维护资本、现金归属和q仍受限。 |
+| 天津发展 00882 | `ACCEPT_WITH_DATA_LIMITED` | 现金上游、NCI、维护投入和主路线未闭合；不得签发主要价格。 |
+| 海螺 600585 | `ACCEPT_WITH_DATA_LIMITED` | 周期正常化、维护资本、可达性和供需退出仍受限。 |
+| 紫金 601899 | `ACCEPT_WITH_DATA_LIMITED` | 逐矿成本/寿命、海外上游、联营现金、替代资本与长期主路线仍受限。 |
+
+关键共同规则：业务驱动必须生成正常盈利，并继续传播至普通股现金、主要回报和主要研究价格；固定市场终值反解只能是条件价格；`UNKNOWN` 不得被保守归零或叙事掩盖。
+
+## 4. 已合入的回测基础设施
+
+`main` 当前基线为 `74f2bfd`。以下三项已合入并通过完整项目门禁：
+
+1. `f59197e feat: add vintage-safe historical backtest pilot`
+   - 建立试点、路线/价格身份约束和三账本分离。
+2. `cb43849 feat: harden historical backtest vintage rules`
+   - 每个来源要求 `source_version`；预注册并保留退市、收购和失败样本。
+3. `74f2bfd feat: add frozen backtest calibration ledger`
+   - 冻结 case 必须登记材料性预测、阈值或 `UNKNOWN`；输入的 `source_ids` 必须可解析到冻结来源。
+   - 结算端必须引用独立、事后、官方来源；不得事后修改冻结预测值。
+
+主要文件：
+
+- `config/historical_backtest_pilot.v1.json`
+- `docs/development/HISTORICAL_BACKTEST_PILOT.md`
+- `schemas/historical_backtest_experiment.schema.json`
+- `schemas/historical_backtest_case.schema.json`
+- `schemas/historical_backtest_settlement.schema.json`
+- `scripts/historical_backtest.py`
+- `tests/test_stage36_historical_backtest_pilot.py`
+
+上一次完整验证：`593 passed`。不要为了本次启动重复做哈希、校验和、全文存储或向量库。
+
+## 5. 首个历史工程案例
+
+提案文件：`docs/development/HISTORICAL_BACKTEST_FIRST_CASE_PROPOSAL.md`
+
+| 项目 | 已预注册内容 |
+|---|---|
+| 公司 | 华夏幸福 `600340.SH` |
+| 冻结截止 | `2020-04-27 18:00 Asia/Shanghai` |
+| 执行规则 | 冻结报告后首个可交易日，原始未复权开盘价；具体交易日须由原始行情文件确认。 |
+| 性质 | `PURPOSEFUL_STRESS_CASE`，仅用于工程/质量门验证，不计入总体胜率或参数校准。 |
+| 路线 | `DUAL`；冻结前允许 `PRIMARY_ROUTE_UNKNOWN / UNKNOWN`。 |
+| 观察窗口 | 一年与三年；不得宣称法律终局或五年回报已结算。 |
+
+冻结日前的官方来源提案已经列明：2019 原始年报、2018 原始年报、2017 年报修订版、2017 年报问询与回复，以及2018-01-01至2020-04-27的上交所公告全集。2017 原始年报必须被截止日前已发布的修订版取代。2020 年一季报及之后的资料、2021 年债务事件、今天的重述数据库字段均不得进入冻结目录。
+
+## 6. 下一会话的执行顺序
+
+### A. 先完成首案的受控采集
+
+1. 新建一个独立 worktree，从**本地当前 `main`**起步。主工作区目前与 `origin/main` 有分叉，不要先 `pull`、`reset` 或覆盖本地集成提交。
+2. 用上交所一手链接/公告页面采集 600340 在 cutoff 前的文件；每份资料写入 `source_id`、`source_version`、`published_at`、`data_as_of`、`revision_policy` 与准入裁决。
+3. 采集器必须能拒绝 cutoff 之后的来源和已被截止日前修订版替代的原版本。不要只下载选定年报，公告清单必须按日期和标题全量枚举，再按规则筛选。
+4. 原始未复权行情、公司行动和沪深300基准各自建立来源账本；无法核对则让投资结果保持 `INCOMPLETE`，不阻断报告覆盖与模型误差结算。
+5. 在冻结报告提交独立审阅前，禁止打开任何 cutoff 后的公告、报告、债务事件或行情结局。
+
+### B. 冻结而不是事后补写
+
+case 的 `calibration_ledger.claims` 至少覆盖：项目销售/回款与资本占用、受限现金、债务期限、担保/关联方资金占用、普通股可得现金、融资阈值、最强反方、永久损失触发条件。每一项必须写明：
+
+- 支持来源和普通股经济影响；
+- 定量预测及失效阈值，或明确 `UNKNOWN`、经济影响和后续解决观察；
+- 反方论点、结论翻转条件和将来可观察口径。
+
+冻结 case 若内容不足，状态应为 `FROZEN_WITH_QUALITY_FAILURE`，保留失败版本，不允许看过后来资料后重写成通过版。
+
+### C. 再建立可校准样本集
+
+首批六个工程 case-vintages 只验证证据包、冻结、走步结算、公司行动与路线差异。完整标准校准至少需要24个 case-vintages：六类经济机制各四例、每类至少两家发行人和两个不同 cutoff。对任何通用定量默认值的变更，需要至少10个已结算观察、三家发行人和两个 cutoff，再用12个未参与设计的 case-vintages 复验。
+
+不得用单个好/坏投资结果修改 `q`、资本化率、10%目标回报或安全边际。
+
+## 7. 已暂停的工作区
+
+为交接而暂停，均无未提交改动：
+
+- `feat/phase10-600340-precutoff-acquisition`
+- `docs/phase10-sampling-protocol`
+- `docs/phase10-freeze-contract-review`
+
+可继续复用其中任一工作区；若新会话要独立推进，优先从当前 `main` 建立新 worktree，避免并行分支交叉污染。
+
+## 8. 持续约束
+
+- 一手公开披露是研究真源；用户个人假设不得作为证据、模型输入或正方催化剂。
+- 港股现金分派税默认10%；本首案为A股，不应机械套用港股税率。
+- 不增加哈希、校验和、向量库或全文存储，除非有明确用途并改变下一步决策。
+- 发现材料性缺口时，按 `DATA_COVERAGE`、`ACQUISITION_MODULE`、`REASONING`、`MODEL`、`WRITING` 归因；先修可复用采集器/schema/validator，再重写报告。
+- 每次写入使用隔离 worktree，提交后运行 `.venv/bin/python scripts/project_guard.py verify full` 和 `merge-check`；不要直接在 `main` 提交。
+
+## 9. 2026-08-16 continuation: contract branch update
+
+本交接第 4 节记录的是当时 `main=74f2bfd` 的启动快照，不因本分支的后续 contract 修补而改写。当前分支已将 `FROZEN` 收紧为可读取的 Markdown 报告、`variant_id -> freeze_id -> review_id` 生命周期、固定章节和 claim statement、不同 writer/reviewer context 的逐 claim 审阅和可回放的 `REPORT_COVERAGE`；生产路径预留统一 `turtle_agent`、Phase 08 acceptance/V3 gates、publication snapshot、run manifest 和 PIT runner attestation，测试夹具只留在测试命名空间。`scripts/phase10_pit_runner.py` 已实现 source-package allowlist、只读 source/framework 读取、cutoff 准入和 ALLOW/DENY read audit；framework root 固定为仓库内受控静态目录，attestation 记录其 root 与 `REPOSITORY_STATIC` provenance，普通 output 或结算目录不能作为 framework 输入。production origin 会核对 attestation、manifest、case source identity、package root 和实际读取。它不对来源文件新增 hash。`scripts/turtle_agent/run.py` 现在区分 PIT preflight 与独立 PIT writer：两者拒绝复用旧 output、跳过普通数据准备；writer 不加载普通 contract、旧 output、tracking、数据库、Web 或行情，只注册 source/framework 读取与无路径的单草案写工具。草案中的每个 source_id 必须已在同一 run 的 ALLOW audit 中实际读取，最终 attestation 回写 writer outcome。它仍不是完整生产冻结报告，尚未接入 Phase 08 acceptance/V3、完整 claim/calibration ledger 或独立 reviewer；故 validator 仍故意不允许生产 case 成为 `REVIEWABLE`。部署级模型记忆 attestation 也未实现，当前只能是 `UNCONTROLLED / EXPLORATORY / ENGINEERING_DIAGNOSTIC_ONLY`。报告 artifact SHA-256 只用于发现冻结后文本改写并强制重审。质量失败必须保留完整根因工件。该 assurance 是 `VERIFIED_ARTIFACT_AND_DECLARED_PROCESS`，不是密码学作者或模型记忆证明。
+
+这些 validators 本身不是实际回测：即使 P10-A 后来补齐 cutoff 前来源包，production report、行动、价格、公司行动和基准仍不能由契约文件凭空产生；因此不能产生黄金标准改进、个股收益、选股或买点结论。
+
+## 10. 2026-08-16 continuation: readable-source and acquisition boundary
+
+PIT reader 不再把官方 PDF 的二进制 base64 当作可供研究的年报内容。每份准入 PDF 必须保留原始
+`package_path`，并在同一 source package 中登记由
+`pdf_preprocessor.extract_all_pages` 生成的 `PDF_PAGE_MARKDOWN`：`reader_text_path`、提取器版本和
+页数均为必填；runner 只通过 `source_id` 读取这份页码文本，并在 audit 中保留原始 source identity 与
+`representation=PDF_PAGE_MARKDOWN`。普通文本来源仍可直接读取。原始 PDF 或页码文本任何一方缺失都会使
+PIT package 为 `INCOMPLETE`。
+
+PIT writer 的 registry 仍只有四个工具。模型请求 Web、普通 Turtle 输出读取、年糕上下文或其他未提供的
+入口时，不执行该调用，且以 `kind=TOOL`、`decision=DENY` 记入同一 runner read audit；这与未准入来源和
+非 allowlist framework 的 `DENY` 一样，都会保留在 writer attestation。
+
+本分支随后关闭了三项会阻断真实 PDF 来源包的契约缺口：派生页码 Markdown 不能与原始 PDF 同路径，
+也不能覆盖既有 reader 文件；runner 会验证 reader 为 UTF-8、带正页码标记、页数以及来源
+`source_id/source_version/content_representation` 元数据一致，否则保持 `INCOMPLETE`；production-origin
+回放按 `PDF_PAGE_MARKDOWN` 的 `reader_text_path` 而不是原 PDF 路径核对读取审计，并同时核对表示和来源身份。
+PIT 工具、writer 和 production-origin 正向回放均有定向测试。此修补没有新增来源 hash、校验和或指纹。
+
+一次上交所公告页采集尝试发现网页日期控件未接受自动填值，查询退回了默认“最新公告”列表。没有打开任何
+cutoff 后文件，也没有将页面标题、内容或结果用于来源包、报告或结论。该尝试归类为
+`ACQUISITION_MODULE`：后续只在确认官方查询响应的开始/结束日期已经生效后才读取或保存枚举结果；若日期过滤
+失效，采集必须失败而非退回最新列表。
+
+## 11. 2026-08-17 continuation: P10-A source package complete
+
+本次 continuation 已在独立分支 `feat/phase10-600340-precutoff-acquisition-v2` 完成首案 P10-A 受控采集：
+
+- 上交所官方公告查询在 `2018-01-01` 至 `2020-04-27` 范围内完成 880 条 inventory 枚举，保留 879 条准入来源和 1 条截止日前已被修订版替代的原始年报拒绝记录；没有打开 cutoff 后资料。
+- 静态 SSE PDF 的 gzip/反爬响应只有在解压后识别出官方 challenge 并成功重试、最终首字节为 `%PDF` 时才接受；普通拒绝 HTML、损坏 gzip 和非 PDF 响应均失败关闭。
+- 最终 source package manifest 为 `config/historical_backtest_600340_source_manifest.package-v5.json`，本地 package root 为 `data/phase10/600340/precutoff-v2`：879/879 原始 PDF 与 reader 表示完成，855 份由 `pdf_preprocessor.extract_all_pages` 读取，24 份扫描 PDF 由显式 `pdftoppm+tesseract` OCR fallback 读取。PIT acquisition manifest 和 `scripts/phase10_pit_runner.py` 均为 `REVIEWABLE`，无 `invalid_findings` 或 `incomplete_findings`。
+- 采集器现在支持断点恢复：已完成来源不会重复下载，已有失败 PDF 可只补做 reader 物化。`data/phase10/` 仅为本地证据包，已加入 `.gitignore`；git 提交不包含 552MB 原件或 Markdown。
+- 定向 PIT/acquisition 回归 23 项通过，项目完整门禁 `612 passed`，`merge-check READY`；提交 `b1fbbb2`。
+
+P10-B 已在本次 continuation 完成一次受限 direct writer 运行：不依赖 `DEEPSEEK_API_KEY`/`ANTHROPIC_API_KEY`，由当前 Codex agent 在同一 PIT source boundary 内读取静态 `framework/policy.md` 与四份关键 cutoff 内来源，并通过 `PITReportWriter` 唯一写入器生成冻结前工程草案。草案与 read attestation 位于 `output/phase10_pit_writer_600340_direct_20260817/`，runner `REVIEWABLE`、writer `PASS`，实际 ALLOW 读取为 1 份 framework + 4 份 source，未读取行情、公司行动、结算或 cutoff 后资料。
+
+该草案曾被独立 reviewer 发现一处材料性单位传播错误：2019 年经营现金流 `-31,819,098,425.06` 元误写为 `-31.82` 亿元，已修正为 `-318.19` 亿元并重新通过 PIT writer gate；同时补齐 2017/2018/2019 担保、关联方页码锚点，并收窄融资依赖、担保扣项和翻转条件的推断。复审结论为 `PASS_AFTER_REPAIR_FOR_DRAFT_ONLY`，根因归类为 `WRITING` + `MODEL`，不是数据采集缺口。
+
+独立 review 与仅含冻结前 UNKNOWN 的 ledger 草案位于 `output/phase10_pit_review_600340_20260817/`；四个 `HBTCLM` 已回写草案正文并重新通过 writer gate。它们仍不是完整生产冻结报告：尚未接入 Phase 08 acceptance/V3、生产 origin、模型记忆 attestation 或走步结算。故本案继续不得标为生产回测、收益、买点、选股或黄金标准校准样本；下一步是把 ledger 接入正式 freeze contract，注册隔离 reviewer 身份和冻结生命周期，再决定是否以 `FROZEN_WITH_QUALITY_FAILURE` 保留工程压力案例。
+
+## 12. 2026-08-17 continuation: engineering quality-failure freeze and metadata-only queue
+
+`config/historical_backtest_600340_pit_engineering_case.json` preserves the
+first writer output as `FROZEN_WITH_QUALITY_FAILURE`, not a passing production
+freeze. Its validator is deliberately `INCOMPLETE`: it contains
+`case_frozen_with_quality_failure` plus two explicit legacy-attestation rerun
+findings; any `INVALID` finding is a defect. The separate freeze-contract review is
+`output/phase10_pit_review_600340_20260817/engineering_freeze_contract_review.md`.
+
+The retained root causes are `ACQUISITION_MODULE` (the correctly acquired
+four-source PIT boundary is not integrated with the unified production writer
+and acceptance artifacts), `MODEL` (no ordinary-share cash, valuation, price,
+or action was frozen; the original observation definition conflates a reading
+window with an annual/interim report's economic period), and `WRITING` (the PIT
+draft is not a full production report). This is not a `DATA_COVERAGE` claim:
+the four sources actually read by the PIT writer remain correctly admitted.
+
+The official SSE metadata inventory for 2020-04-28 through 2021-04-27 contains
+228 records, with a claim-specific reading plan. It has not opened announcement
+bodies or acquired market prices, company actions, or CSI 300 data. The
+diagnostic settlement keeps `REPORT_COVERAGE=PASS` only as a replay of the
+frozen review; `MODEL_FORECAST_ERROR` and `INVESTMENT_RETURN_OUTCOME` are both
+`NOT_CALCULABLE`. Do not revise this diagnostic after opening later disclosures.
+
+The case itself uses a valid `HBT:` experiment identity, while its retained
+writer attestation remains explicitly identified as legacy `HBTEXP:` and must
+be rerun. A successor must isolate each observation's economic period from its
+post-freeze reading window and pass the production writer/report/reviewer gates
+before any targeted body read can be treated as a model outcome. With
+`PRIMARY_ROUTE_UNKNOWN`, no price identity, and no investment action, this
+diagnostic can never produce a legitimate return result.
+
+The successor contract is now versioned rather than retrofitted into v1:
+`historical-backtest-case.v2` and `historical-backtest-settlement.v2` use a
+`measurement_period` plus an `observation_window`, and require `BODY_READ`
+for any source supporting an actual operating observation. A reporting-period
+annual/interim source must match the frozen measurement-period end; an event
+window must also state an in-window `event_period`, without pretending that
+its `data_as_of` is a report period. No v2 600340 case or later disclosure body
+has been created or read yet.
+
+## 13. 2026-08-17 continuation: production-freeze adapter complete offline
+
+`scripts/turtle_agent/run.py --pit-production-freeze` is now the only PIT
+production entrypoint. It requires a fresh output directory, a complete
+source package, no normal data/price/Web/database/output-read mode, and one
+shared run identity across the PIT runner, writer attestation, snapshot and
+runtime manifest. Sources enter the report workspace only after an actual
+`ALLOW` read. Each chapter source anchor must be an exact source id that was
+read in that same run; the final attestation records both anchors and read
+source ids.
+
+The adapter seeds only normal V3 policies. It never fabricates report context,
+archetype, valuation route or decisive questions before a verified PIT fact
+exists; it refreshes these deterministic prerequisites from the projected
+document manifest and verified facts after fact verification and again before
+assembly. A report may be marked completed only after normal completion,
+V3-enforced publication snapshot, final-report/attestation run-id agreement
+and source-anchor replay all pass. It then writes a separate
+`phase10_acceptance/` root and reuses Phase 08 machine gates without mutating
+the default acceptance config. The resulting automatic ceiling is still
+`READY_FOR_BLIND_REVIEW`; independent review and formal case lifecycle remain
+separate requirements.
+
+Production origin replay accepts only `PIT_PRODUCTION_FREEZE`; it rejects the
+legacy four-tool `PIT_WRITER` as an incomplete engineering draft. Targeted
+offline coverage covers the runtime profile, CLI entrypoint, forbidden normal
+modes, V3 preparation timing, completion/snapshot/attestation consistency,
+isolated acceptance root and origin replay. This change has not run a real
+LLM report and has not opened any post-cutoff disclosure, price, corporate
+action or benchmark input. The retained 600340 v1 case remains
+`FROZEN_WITH_QUALITY_FAILURE / UNCONTROLLED / EXPLORATORY /
+ENGINEERING_DIAGNOSTIC_ONLY`; it still cannot support returns, buy points,
+stock selection or calibration. The next product step is a new v2 case with
+the corrected measurement-period/observation-window contract, followed by
+independent review before any post-cutoff body read.
+
+## 14. 2026-08-17 continuation: v2 case lifecycle adapter
+
+`scripts/phase10_backtest_case_adapter.py` is the sole derivation entrypoint
+for `historical-backtest-case.v2`. It reads only the completed PIT production
+output, its existing acceptance artifacts, the PIT attestation/source manifest
+and the report-local document projection; it does not read source bodies,
+post-cutoff disclosures, prices, corporate actions or benchmarks. The caller
+supplies a freeze-period case specification with forecast claims and the
+separated `measurement_period`/`observation_window`; an independent reviewer
+separately supplies a claim-level review artifact bound to the exact report
+variant and an exact copy of the full frozen case contract. These inputs are
+deliberately not inferred from report prose and cannot inherit the old 600340
+engineering case. The adapter compares the reviewed contract with the
+submitted spec, so a later prediction, threshold, observation-window, input or
+tax/fee rewrite must be reviewed again.
+
+Before a case is written, the adapter replays `PIT_PRODUCTION_FREEZE`, run,
+case, experiment, company and cutoff identities, V3 `MONITORING`, Phase 10
+acceptance, actual `ALLOW` reads and `DOC:*` to PIT-projection identity. A
+missing, unreadable or non-PASS independent review produces a named
+`INCOMPLETE` candidate and writes nothing. The current bridge accepts only
+`DUAL / PRIMARY_ROUTE_UNKNOWN / UNKNOWN`; it writes no investment decision,
+so settlement is prohibited from calculating a return. This prevents the
+writer or later reviewer from post hoc adding a price, buy point, stock
+selection decision, realized outcome or benchmark result. `PIT_WRITER`,
+unread sources, malformed V3 document mappings, mismatched identities and
+future-settlement fields all reject. No v2 600340 case or post-cutoff body read
+has been created.

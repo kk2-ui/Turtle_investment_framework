@@ -1,0 +1,30 @@
+{
+  "schema_version": "enterprise-judgment-mechanism-probe.v1",
+  "probe_id": "MP:CN:600801:20170412:PERIMETER_CONTINUITY",
+  "episode_id": "EJE:CN:600801:20170412",
+  "company_id": "CN:600801",
+  "issuer_id": "ISSUER:CN:600801",
+  "cutoff_at": "2017-04-12T00:00:00+08:00",
+  "thread_id": "THREAD:600801:PERIMETER",
+  "anchor_kind": "STATE_TRANSMISSION",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+  "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+  "claim_ids": ["CLAIM:600801:PERIMETER"],
+  "hypothesis_ids": ["H-A:600801:PERIMETER", "H-B:600801:PERIMETER"],
+  "diagnostic_matrix": [
+    {
+      "diagnostic_id": "DIAG:600801:PERIMETER:FY2017_DISCLOSURE",
+      "diagnostic_kind": "EARLY_DIAGNOSTIC",
+      "h_a_prediction": "The next authorized annual disclosure provides a field-level bridge that identifies a stable listed-consolidated operating perimeter.",
+      "h_b_prediction": "The next authorized annual disclosure leaves the acquisition-related operating perimeter unresolved or non-comparable."
+    }
+  ],
+  "direct_evidence_refs": ["CNINFO:600801:ANN:20170324:1203190337"],
+  "outcome_cell_ids": ["CELL:600801:20170412:OPERATIONS"],
+  "outcome_access": "NONE",
+  "action_effect_authority": "NONE",
+  "roles": {"judgment_owner_id": "ROLE:CEMENT:JUDGMENT_OWNER", "independent_challenger_id": "ROLE:CEMENT:INDEPENDENT_CHALLENGER", "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN"},
+  "object_class": "MECHANISM_PROBE",
+  "claim_class": "LOCAL_PRE_OUTCOME_MECHANISM_TEST",
+  "allowed_outputs": ["MECHANISM_VIEW", "TEACHING_ONLY", "RESEARCH_AGENDA"]
+}

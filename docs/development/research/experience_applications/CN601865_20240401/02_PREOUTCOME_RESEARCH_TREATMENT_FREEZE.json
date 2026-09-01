@@ -1,0 +1,62 @@
+{
+  "schema_version": "judgment-experience-target-freeze.v1",
+  "freeze_id": "JERFREEZE:CN601865:20240401:CAPACITY_PRICE_CASH:V1",
+  "state": "FROZEN_PREOUTCOME",
+  "case_id": "EXPERIENCE_TARGET:CN601865:20240401",
+  "company_id": "CN:601865",
+  "company_cluster_id": "COMPANY:CN601865",
+  "cutoff_at": "2024-04-01T00:00:00+08:00",
+  "outcome_access_state": "SEALED",
+  "frozen_at": "2026-08-29T16:00:00+08:00",
+  "material_operating_question": {
+    "state_and_constraint": "For a capital-intensive upstream solar-glass manufacturer, disclosed expansion or commissioning can precede proof that the product responsibility boundary has absorbed the added capacity economically and in cash.",
+    "management_choice_or_no_action": "Whether management continues capacity and technology deployment, slows it, or does not add a new commitment must be reconstructed from cutoff-visible issuer evidence rather than inferred from a later result.",
+    "customer_and_operating_path": "Customer absorption, utilization and realized price or spread must be distinguished from construction completion or aggregate volume.",
+    "cash_and_capital_path": "Operating cash, cash capital expenditure and funding or recoverability must be tested under a compatible responsibility boundary before incremental capacity enters normal owner-cash treatment."
+  },
+  "baseline_before_experience": {
+    "research_question": "Can historical capacity growth be carried into the target's base normal-cash discussion after reviewing broad operational growth and consolidated results?",
+    "evidence_order": [
+      "capacity and commissioning narrative",
+      "aggregate operating growth",
+      "consolidated cash and financing discussion"
+    ],
+    "rival": "A recovery in solar demand and cost or technology position could allow new capacity to earn normal returns.",
+    "treatment": "No frozen exclusion rule tied the capacity question to a product-boundary price, utilization and cash-capex bridge."
+  },
+  "enhanced_after_longi_experience": {
+    "source_record_id": "JER:CN601012:CAPACITY_PRICE_CASH:V1",
+    "source_record_version": 1,
+    "method_correction_not_enterprise_insight": "Apply the first-round perimeter-first rule as a measurement correction: do not substitute capacity, aggregate volume, group liquidity or a single cash number for responsibility-matched product economics and cash. This does not assert that the target will repeat the source company's outcome.",
+    "changed_question_refs": [
+      "JERQ:CN601865:SOLAR_GLASS_BOUNDARY_BRIDGE:V1"
+    ],
+    "changed_evidence_priority": [
+      "JEREV:CN601865:SOLAR_GLASS_CUSTOMER_ABSORPTION_AND_UTILIZATION:V1",
+      "JEREV:CN601865:SOLAR_GLASS_REALIZED_PRICE_OR_SPREAD:V1",
+      "JEREV:CN601865:SAME_BOUNDARY_OPERATING_CASH_AND_CASH_CAPEX:V1",
+      "JEREV:CN601865:FUNDING_OR_RECOVERABILITY_BRIDGE:V1"
+    ],
+    "changed_rival_or_discriminator_refs": [
+      "JERR:CN601865:RECOVERY_VS_CAPACITY_NOT_YET_DURABLE:V1"
+    ],
+    "accepted_transfer": [
+      "Research the solar-glass responsibility-boundary bridge in the order capacity or commissioning -> customer absorption or utilization -> realized price or spread -> operating cash -> cash capital expenditure and funding or recoverability.",
+      "Keep capacity-driven growth outside the base normal owner-cash treatment until the current company's bridge is supported."
+    ],
+    "rejected_transfer": [
+      "Do not import any Longi outcome, threshold, product mix, financing fact, probability or conclusion into the target.",
+      "Do not call the target's capacity destructive merely because a comparable bridge has not yet been constructed."
+    ],
+    "strongest_rival": "A solar-demand recovery and a cost or technology advantage could allow utilization and unit economics to absorb the new capacity despite industry price pressure; the bridge must therefore test recovery rather than presume impairment.",
+    "discriminator": "Cutoff-visible solar-glass responsibility-boundary evidence that jointly distinguishes customer absorption or utilization, realized price or spread, operating cash and cash-capex absorption from mere commissioning."
+  },
+  "rights": {
+    "current_company_fact_creation": "NOT_AUTHORIZED",
+    "cjo_value": "NOT_AUTHORIZED",
+    "valuation_input": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "report_authority": "NOT_AUTHORIZED",
+    "investment_action": "NOT_AUTHORIZED"
+  }
+}

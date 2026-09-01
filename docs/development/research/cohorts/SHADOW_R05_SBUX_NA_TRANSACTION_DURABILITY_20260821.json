@@ -1,0 +1,35 @@
+{
+  "schema_version": "turtle-prospective-shadow-episode.v1",
+  "shadow_episode_id": "SHADOW:R05:SBUX:NA_TRANSACTION_DURABILITY:20260821",
+  "source_freeze_ref": {
+    "freeze_id": "R-05:SBUX:NA_TRANSACTION_DURABILITY:20260821",
+    "freeze_path": "docs/development/research/experiments/R-05_prospective_operating_feedback/06_forward_freeze.md",
+    "cutoff_at": "2026-08-21T11:55:36+08:00",
+    "frozen_at": "2026-08-21T11:55:57+08:00",
+    "allowed_source_ids": [
+      "IR:SBUX.US:INVESTOR_DAY_20260129",
+      "IR:SBUX.US:FY2026Q3_RESULTS"
+    ]
+  },
+  "company_id": "COMPANY:SBUX:NA",
+  "cutoff_at": "2026-08-21T11:55:36+08:00",
+  "outcome_windows": [
+    {
+      "signal_id": "R05-S1",
+      "metric": "North America Change in Transactions year-over-year under the frozen company-operated, 13-month-store, FX/Siren-Retail-excluded definition",
+      "window_label": "FY2027 Q1",
+      "resolution_due_at": "2027-03-31T23:59:59-07:00"
+    },
+    {
+      "signal_id": "R05-S2",
+      "metric": "North America Change in Transactions year-over-year under the same frozen definition",
+      "window_label": "FY2027 Q3",
+      "resolution_due_at": "2027-09-15T23:59:59-07:00"
+    }
+  ],
+  "custodian_id": "CUSTODIAN:PREQUENTIAL:R05:INDEPENDENT",
+  "status": "WAITING_EXTERNAL_OUTCOME",
+  "object_class": "PROSPECTIVE_SHADOW_EPISODE",
+  "claim_class": "PREQUENTIAL_EVALUATION",
+  "allowed_outputs": ["FORECAST_EVALUATION_ONLY"]
+}

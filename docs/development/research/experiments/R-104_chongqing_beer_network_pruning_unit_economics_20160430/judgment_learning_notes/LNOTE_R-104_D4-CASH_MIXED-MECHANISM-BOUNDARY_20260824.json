@@ -1,0 +1,52 @@
+{
+  "schema_version": "judgment-learning-note.v2",
+  "note_id": "LNOTE:R-104:D4-CASH:MIXED-MECHANISM-BOUNDARY:20260824",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "freeze_id": "JFREEZE:R-104:20160430",
+  "settlement_id": "JSELOUTCOME:R-104:20260824:V1",
+  "claim_id": "R-104:D4-CASH",
+  "feedback_ref": "/Users/xiami/workspace/analy/worktrees/Turtle_investment_framework/feat-historical-training-primary-loop/docs/development/research/experiments/R-104_chongqing_beer_network_pruning_unit_economics_20160430/selection_feedback/JSELOUTCOME_R-104_20260824_V1/feedback.json",
+  "disposition": "INSUFFICIENT_EVIDENCE",
+  "applicability": {
+    "state_scope": "R-104 same-issuer production-network pruning mechanism, where whole-issuer operating contribution and owner cash must transmit coherently in the same period",
+    "measurement_scope": "FY2016 legal consolidated issuer; D3 whole-issuer operating contribution and D4 owner cash after removal of positive cash-working-capital release"
+  },
+  "learning_basis": "The independently reviewed R-104 feedback has a MIXED joint central-discriminator verdict: the same frozen mechanism did not establish a coherent operating-contribution-to-owner-cash transmission. This records a mechanism/cash-transmission boundary, not a directional selection result.",
+  "next_research_change": "Preserve this unresolved D3-versus-D4 transmission conflict when designing a separate future candidate; do not alter a selection method, select a winner, or infer a reusable direction from this episode.",
+  "experiment_id": "R-104",
+  "company_cluster_id": "COMPANY:chongqing-brewery",
+  "root_cause_classes": [
+    "REASONING",
+    "DATA_COVERAGE"
+  ],
+  "failure_loci": [
+    "MECHANISM",
+    "FINANCIAL_TRANSMISSION"
+  ],
+  "economic_failure_loci": [
+    "MECHANISM",
+    "TRANSMISSION"
+  ],
+  "feedback_context": {
+    "forward_judgment_id": "R104-D4-CASH-AND-WORKING-CAPITAL",
+    "settlement_status": "OBSERVED",
+    "judgment_outcome_status": "B_ONLY",
+    "increment_vs_baseline": "BASELINE_POINT_LOSS",
+    "rival_hypothesis_feedback": {
+      "state": "DERIVED_FROM_FROZEN_HYPOTHESIS_SIGNAL",
+      "signal_verdict": "B_ONLY",
+      "overall_verdict": "MIXED"
+    }
+  },
+  "diagnosis_scope": "MIXED_MECHANISM_BOUNDARY",
+  "permitted_change_targets": [],
+  "prohibited_rights": [
+    "DIRECTIONAL_SELECTION_LEARNING",
+    "METHOD_APPLICATION",
+    "METHOD_FREEZE",
+    "HOLDOUT_RELEASE",
+    "REPORT_USE"
+  ],
+  "recorded_at": "2026-08-24T11:26:13+08:00",
+  "policy_note": "Append-only learning action. It does not amend the frozen judgment, its evidence, threshold, mechanism, baseline, valuation, return or action."
+}

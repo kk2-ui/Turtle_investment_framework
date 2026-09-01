@@ -1,0 +1,67 @@
+{
+  "schema_version": "judgment-first-local-contingency-roster.v1",
+  "campaign_id": "JUDGMENT_FIRST_12H_20260828",
+  "roster_id": "JUDGMENT_FIRST_12H_20260828_LOCAL_CONTINGENCY_1",
+  "freeze_state": "FROZEN_BEFORE_ANY_TARGET_OUTCOME_CONTENT_ACCESS",
+  "relationship_to_existing_rosters": "PARALLEL_LOCAL_ONLY_CONTINGENCY_NOT_A_REORDER_OR_REPLACEMENT",
+  "activation_reason": "THE_NEXT_FROZEN_CN603444_AND_CN603039_BROWSER_OUTCOMES_REMAIN_BLOCKED_BY_USER_CONTROL_OF_THE_BROWSER_TASK_SPACE; CONTINUING WITH_A_PREOUTCOME_SELECTED_LOCAL_OFFICIAL_REPORT_DOES_NOT_USE_OUTCOME_QUALITY_TO_SELECT",
+  "selection_policy": "FIRST_PREOUTCOME_ELIGIBLE_COMPANY_WITH_TWO_CUTOFF_PREDECESSOR_OFFICIAL_ANNUAL_REPORTS_A_LOCALLY_AVAILABLE_SEALED_NEXT_ANNUAL_REPORT_NO_CAMPAIGN_OR_REPOSITORY_EPISODE_OUTCOME_EXPOSURE_AND_A_BUSINESS_MODEL_MATERIALLY_DIFFERENT_FROM_THE_FIVE_COMPLETED_LOOPS",
+  "forbidden_selection_basis": [
+    "OUTCOME_DIRECTION",
+    "PRICE_OR_RETURN",
+    "SUPPORT_FOR_AN_EXISTING_RULE",
+    "EXPECTED_SCORE_OR_UTILITY",
+    "EASE_OF_WRITING_OR_FIELD_COMPLETENESS"
+  ],
+  "candidate": {
+    "local_contingency_rank": 1,
+    "company_id": "HK:00184",
+    "company_name": "激成投资",
+    "cutoff_at": "2022-05-01T00:00:00+08:00",
+    "outcome_period": "FY2022",
+    "archetype": "CROSS_GEOGRAPHY_HOTEL_OWNERSHIP_AND_OPERATIONS_WITH_PROPERTY_INVESTMENT_DEVELOPMENT_AND_MANAGEMENT",
+    "central_operating_tension": "WHETHER_REOPENING_AND_OCCUPANCY_RECOVERY_TRANSMIT_THROUGH_ADR_REVPAR_AND_PROPERTY_LEVEL_PROFIT_TO_OWNER_CASH_OR_ARE_ABSORBED_BY_LOW_UTILIZATION_ASSET_INTENSITY_MAINTENANCE_CAPEX_MINORITY_INTEREST_AND_IMPAIRMENT_RISK",
+    "preoutcome_sources": [
+      {
+        "fiscal_year": 2020,
+        "source_class": "OFFICIAL_ANNUAL_REPORT",
+        "local_access": "PREOUTCOME_CURATOR_ALLOWED",
+        "local_path": "/Users/xiami/workspace/analy/Turtle_investment_framework/output/00184_激成投资/00184_2020_年报.pdf"
+      },
+      {
+        "fiscal_year": 2021,
+        "source_class": "OFFICIAL_ANNUAL_REPORT",
+        "local_access": "PREOUTCOME_CURATOR_ALLOWED",
+        "local_path": "/Users/xiami/workspace/analy/Turtle_investment_framework/output/00184_激成投资/00184_2021_年报.pdf"
+      }
+    ],
+    "sealed_outcome": {
+      "source_class": "OFFICIAL_ANNUAL_REPORT",
+      "period": "FY2022",
+      "local_existence_confirmed_by": "PATH_AND_PDF_METADATA_ONLY",
+      "content_access": "SEALED_UNTIL_PREOUTCOME_FREEZE_INDEPENDENT_REVIEW_AND_AUTHORIZATION"
+    },
+    "decision_carriers": [
+      "HOTEL_OCCUPANCY_ADR_REVPAR_AND_PROPERTY_LEVEL_OPERATING_RESULT",
+      "PROPERTY_RENTAL_REVALUATION_DISPOSAL_AND_IMPAIRMENT_SEPARATED_FROM_HOTEL_OPERATIONS",
+      "CONSOLIDATED_OCF_MAINTENANCE_CAPEX_DEBT_AND_MINORITY_INTEREST_OWNER_CASH_BRIDGE"
+    ],
+    "known_pollution_or_limit": "THE_ORIGINAL_OUTPUT_DIRECTORY_CONTAINS_LEGACY_DERIVED_REPORTS_AND_POSTCUTOFF_MATERIALS; THE_PREOUTCOME_ROLE MAY_CONSUME_ONLY_THE_TWO_WHITELISTED_PDFS_AND_MUST_NOT_LIST_READ_OR_SEARCH_THE_SEALED_FY2022_FILE_OR_LEGACY_DERIVATIVES",
+    "contamination_scan": {
+      "campaign_company_id_match": false,
+      "repository_episode_settlement_or_training_match": false,
+      "outcome_content_accessed": false,
+      "price_or_return_accessed": false
+    }
+  },
+  "permissions": {
+    "transfer_validated": "NOT_GRANTED",
+    "method_frozen": "NOT_GRANTED",
+    "comparative": "NOT_GRANTED",
+    "cjo": "NOT_GRANTED",
+    "formal_valuation": "NOT_GRANTED",
+    "buyband": "NOT_GRANTED",
+    "report": "NOT_GRANTED",
+    "investment_action": "NOT_GRANTED"
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "schema_version": "enterprise-judgment-appliance-four-stage.v1",
+  "plan_id": "APPLIANCE:FOUR-STAGE:20170430-20180930:V1",
+  "industry_block_ref": "ILB:CN:APPLIANCE:NATIONAL:V1",
+  "cutoffs": [
+    "2017-04-30T23:59:59+08:00",
+    "2018-09-30T23:59:59+08:00"
+  ],
+  "risk_set": [
+    {
+      "company_id": "CN:000333",
+      "context_source": "CN_APPLIANCE_INDUSTRY_J234_V1",
+      "role": "E0_E1_EXISTING_RISK_SET"
+    },
+    {
+      "company_id": "CN:000651",
+      "context_source": "CN_APPLIANCE_INDUSTRY_J234_V1",
+      "role": "E0_E1_EXISTING_RISK_SET"
+    },
+    {
+      "company_id": "CN:000921",
+      "context_source": "CN_APPLIANCE_INDUSTRY_J234_V1",
+      "role": "E0_E1_EXISTING_RISK_SET"
+    },
+    {
+      "company_id": "CN:600690",
+      "context_source": "CN_APPLIANCE_INDUSTRY_J234_V1",
+      "role": "E0_E1_EXISTING_RISK_SET"
+    },
+    {
+      "company_id": "CN:600839",
+      "context_source": "CN_APPLIANCE_INDUSTRY_J234_V1",
+      "role": "E0_E1_EXISTING_RISK_SET"
+    },
+    {
+      "company_id": "CN:002032",
+      "context_source": "APPLIANCE-R11:CN002032:20180930:V1",
+      "role": "E0_C2_EXTENSION_AND_E1_DEEP_RECONSTRUCTION"
+    }
+  ],
+  "stages": [
+    {
+      "stage": "E0_CONTEXT",
+      "status": "FROZEN",
+      "question": "What national appliance arenas, company systems and cutoff-visible boundaries exist?",
+      "inputs": [
+        "CN_APPLIANCE_INDUSTRY_LEARNING_BLOCK_V1_SOURCE_REGISTER.json",
+        "CN_APPLIANCE_INDUSTRY_J234_V1.json",
+        "APPLIANCE-R11:CN002032:20180930:V1"
+      ],
+      "evidence_ceiling": "CONTEXT_ONLY",
+      "permitted_outputs": [
+        "STATE_VIEW",
+        "RESEARCH_AGENDA"
+      ],
+      "prohibited_claim": "THE_RISK_SET_IS_A_CAUSAL_PEER_PANEL"
+    },
+    {
+      "stage": "E1_RECONSTRUCTION",
+      "status": "FROZEN",
+      "question": "How do product, channel, operating, cash and capital boundaries differ across the six systems?",
+      "inputs": [
+        "J2:CN:000651:C1",
+        "J2:CN:000333:C2",
+        "J2:CN:600690:C2",
+        "J2:CN:000921:C1",
+        "J2:CN:600839:C2",
+        "APPLIANCE-R11:CN002032:20180930:V1"
+      ],
+      "evidence_ceiling": "RECONSTRUCTION_ONLY",
+      "permitted_outputs": [
+        "STATE_VIEW",
+        "DECISION_VIEW",
+        "RESEARCH_AGENDA"
+      ],
+      "local_unknown_policy": "UNKNOWN_BLOCKS_ONLY_DEPENDENT_CLAIMS",
+      "prohibited_claim": "ISSUER_GROWTH_OR_CASH_PROVES_PRODUCT_QUALITY"
+    },
+    {
+      "stage": "E2_MECHANISM_PROBE",
+      "status": "PREOUTCOME_FROZEN_AWAITING_INDEPENDENT_SETTLEMENT",
+      "episode_ref": "APPLIANCE-R11:CN002032:20180930:V1",
+      "review_ref": "APPLIANCE-R11:CN002032:20180930:INDEPENDENT-PREOUTCOME-REVIEW:V1",
+      "question": "Do electric-pot product revenue, issuer revenue and issuer operating cash move in a pattern consistent with the prewritten product/channel mechanism?",
+      "h_a": "Cutoff-visible product and channel execution is followed by product-boundary revenue growth without material issuer-cash deterioration.",
+      "h_b": "Category demand, SEB order transfer, input costs or channel competition explain the movements without a company-specific action effect.",
+      "measurement_contract_refs": [
+        "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_REVENUE:V1",
+        "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ELECTRIC_POT_REVENUE:V1",
+        "MHE:CONTRACT:APPLIANCE-R11:CN002032:FY2018:ISSUER_OCF:V1"
+      ],
+      "evidence_ceiling": "NARROW_ASSOCIATION_AND_BOUNDARY_PROBE",
+      "permitted_outputs": [
+        "MECHANISM_VIEW",
+        "TEACHING_ONLY",
+        "RESEARCH_AGENDA"
+      ],
+      "prohibited_claim": "THE_MANAGEMENT_ACTION_CAUSED_COMPANY_WIDE_IMPROVEMENT",
+      "outcome_access": "CONTROLLER_AUTHORIZATION_REQUIRED"
+    },
+    {
+      "stage": "E3_COMPARATIVE_LAB",
+      "status": "NOT_ADMITTED_NOT_BLOCKING_E0_TO_E2",
+      "question": "Against a pre-outcome product-boundary alternative, is the selected mechanism directionally stronger?",
+      "missing_contracts": [
+        "ONE_EXPLICIT_PRODUCT_BOUNDARY_ESTIMAND",
+        "FROZEN_MECHANISM_COMPATIBLE_PANEL",
+        "FAIR_BASELINE_AND_COMMON_SHOCK_BOUNDARY",
+        "INDEPENDENT_COMPARATIVE_OUTCOME_CONTRACT"
+      ],
+      "evidence_ceiling": "NO_COMPARATIVE_AUTHORITY",
+      "permitted_outputs": [
+        "RESEARCH_AGENDA"
+      ],
+      "prohibited_claim": "THE_SIX_COMPANIES_ARE_UNTREATED_CONTROLS_OR_A_RANKING_PANEL"
+    }
+  ],
+  "next_atomic_action": "SETTLE_E2_SUPOR_FIELDS_WITH_CONTRACT_ONLY_INDEPENDENT_CUSTODIAN",
+  "object_class": "APPLIANCE_FOUR_STAGE_TRAINING_READ_MODEL",
+  "claim_class": "RESULT_UNSEEN_PROGRESSIVE_EVIDENCE_CEILINGS",
+  "allowed_outputs": [
+    "STATE_VIEW",
+    "DECISION_VIEW",
+    "MECHANISM_VIEW",
+    "TEACHING_ONLY",
+    "RESEARCH_AGENDA"
+  ],
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "buy_band": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  }
+}

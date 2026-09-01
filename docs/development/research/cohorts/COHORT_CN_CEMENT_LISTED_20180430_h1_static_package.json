@@ -1,0 +1,1325 @@
+{
+  "schema_version": "judgment-selection-stage0-static-package.v1",
+  "cohort_id": "COHORT:CN:CEMENT_LISTED:20180430:H1_STATIC",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "selection_as_of": "2018-04-30T23:59:59+08:00",
+  "current_admission_assessment": {
+    "status": "FEASIBLE_FOR_H1_STATIC_SOURCE_PACKAGE",
+    "reason": "Five pre-cutoff listed-consolidated cement issuers provide source-bearing business, control, recurring D2 and five-year D3/D4 disclosure histories. H1 establishes disclosure intake only; action-specific transport radius, delivered-price and customer-market overlap remain open for H2."
+  },
+  "universe": {
+    "universe_id": "COHORT-SAMPLE:CN:CEMENT_LISTED:20180430",
+    "membership_rule": "Five listed cement issuers were selected before any action search because their cutoff-before annual reports disclose recurring issuer-level product-volume fields, consolidated financial statements, and a source-bearing distinct ultimate-control record.",
+    "cohort_scope": "PRE_ACTION_DISCLOSURE_FEASIBILITY_SAMPLE",
+    "not_final_peer_universe": true,
+    "listed_company_ids": [
+      "CN:600585",
+      "CN:600801",
+      "CN:000401",
+      "CN:600425",
+      "CN:600802"
+    ]
+  },
+  "members": [
+    {
+      "company_id": "CN:600585",
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+      "control_group_id": "CONTROL:ANHUI_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "unit": "RMB",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion."
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "unit": "RMB",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Anhui Conch Cement annual report PDF p44: Anhui SASAC is the issuer's actual controller.",
+          "observed_control_group_id": "CONTROL:ANHUI_SASAC"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Source availability is established, but the later action/reference window must still test acquisition, consolidation and operating-perimeter continuity before this issuer can enter a frozen peer panel.",
+      "d2_field_availability": {
+        "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME",
+        "definition": "Annual group cement-and-clinker net sales volume. This is only a field-availability observation; a later action-specific discovery must still prove that it is a non-mechanical customer-absorption measure for the selected mechanism.",
+        "repetitions": [
+          {
+            "period_end": "2015-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600585:ANN:20160324:1202069257",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600585",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+                "unit": "RMB",
+                "published_at": "2016-03-24",
+                "field_ref": "FY2015 Anhui Conch Cement annual report PDF p21, group cement-and-clinker aggregate net sales volume."
+              }
+            ]
+          },
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600585:ANN:20170324:1203189438",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600585",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+                "unit": "RMB",
+                "published_at": "2017-03-24",
+                "field_ref": "FY2016 Anhui Conch Cement annual report PDF p21, group cement-and-clinker aggregate net sales volume."
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600585",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+                "unit": "RMB",
+                "published_at": "2018-03-23",
+                "field_ref": "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker aggregate net sales volume."
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2013-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20140325:63719331",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2014-03-25",
+              "field_ref": "FY2013 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p67, p75, p79."
+            }
+          ]
+        },
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2015-03-24",
+              "field_ref": "FY2014 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p68, p76, p80."
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20160324:1202069257",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2016-03-24",
+              "field_ref": "FY2015 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p67, p75, p79."
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20170324:1203189438",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2017-03-24",
+              "field_ref": "FY2016 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p64, p76, p80."
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "carrier_identity_source_ids": [
+        "CNINFO:600585:ANN:20180323:1204507132"
+      ]
+    },
+    {
+      "company_id": "CN:600801",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "control_group_id": "CONTROL:LAFARGEHOLCIM_LTD",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:600801:ANN:20180326:1204514309",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "unit": "RMB",
+          "published_at": "2018-03-26",
+          "field_ref": "FY2017 Huaxin Cement annual report PDF p11, cement-and-clinker sales and principal operating discussion."
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:600801:ANN:20180326:1204514309",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "unit": "RMB",
+          "published_at": "2018-03-26",
+          "field_ref": "FY2017 Huaxin Cement annual report PDF p33: LafargeHolcim Ltd is the first shareholder's actual controller.",
+          "observed_control_group_id": "CONTROL:LAFARGEHOLCIM_LTD"
+        }
+      ],
+      "final_peer_panel_disposition": "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK",
+      "final_peer_panel_rationale": "The FY2016 report discloses acquisition approval for 15 cement plants from LafargeHolcim in three provinces; this is a material consolidation-scope break for the preliminary window and requires exclusion unless a later action-window review selects a continuous perimeter.",
+      "comparability_break_evidence": [
+        {
+          "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600801",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+          "unit": "RMB",
+          "published_at": "2017-03-24",
+          "field_ref": "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants."
+        }
+      ],
+      "d2_field_availability": {
+        "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES_VOLUME",
+        "definition": "Annual issuer cement-and-clinker sales volume. Field availability only; no customer-absorption conclusion is made in Stage 0.",
+        "repetitions": [
+          {
+            "period_end": "2015-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600801:ANN:20160331:1202113147",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600801",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+                "unit": "RMB",
+                "published_at": "2016-03-31",
+                "field_ref": "FY2015 Huaxin Cement annual report PDF p11, cement-and-clinker sales total."
+              }
+            ]
+          },
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600801",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+                "unit": "RMB",
+                "published_at": "2017-03-24",
+                "field_ref": "FY2016 Huaxin Cement annual report PDF p9, cement-and-clinker sales total."
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600801:ANN:20180326:1204514309",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600801",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+                "unit": "RMB",
+                "published_at": "2018-03-26",
+                "field_ref": "FY2017 Huaxin Cement annual report PDF p11, cement-and-clinker sales total."
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2013-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600801:ANN:20140329:63752775",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600801",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+              "unit": "RMB",
+              "published_at": "2014-03-29",
+              "field_ref": "FY2013 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p51, p55, p57."
+            }
+          ]
+        },
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600801:ANN:20150327:1200750046",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600801",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+              "unit": "RMB",
+              "published_at": "2015-03-27",
+              "field_ref": "FY2014 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p49, p51, p53."
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600801:ANN:20160331:1202113147",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600801",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+              "unit": "RMB",
+              "published_at": "2016-03-31",
+              "field_ref": "FY2015 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p50, p52, p54."
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600801",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+              "unit": "RMB",
+              "published_at": "2017-03-24",
+              "field_ref": "FY2016 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p47, p49, p51."
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600801:ANN:20180326:1204514309",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600801",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+              "unit": "RMB",
+              "published_at": "2018-03-26",
+              "field_ref": "FY2017 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p55, p58, p60."
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "carrier_identity_source_ids": [
+        "CNINFO:600801:ANN:20180326:1204514309"
+      ]
+    },
+    {
+      "company_id": "CN:000401",
+      "issuer_id": "ISSUER:CN:000401",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+      "control_group_id": "CONTROL:BEIJING_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:000401",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+          "unit": "RMB",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, issuer business is production and sales of cement clinker and related building materials."
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:000401",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+          "unit": "RMB",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p52: Beijing SASAC is actual controller and did not change during the year.",
+          "observed_control_group_id": "CONTROL:BEIJING_SASAC"
+        }
+      ],
+      "final_peer_panel_disposition": "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK",
+      "final_peer_panel_rationale": "The FY2017 report describes the ongoing major restructuring and formation of a joint venture with the indirect controlling shareholder. This is a material operating and consolidation-perimeter break for the preliminary window and requires exclusion unless a later action-window review finds a continuous segment.",
+      "comparability_break_evidence": [
+        {
+          "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:000401",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+          "unit": "RMB",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group."
+        }
+      ],
+      "d2_field_availability": {
+        "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES_VOLUME",
+        "definition": "Annual issuer sales volume of cement and clinker. Field availability only; not an action-specific customer conclusion.",
+        "repetitions": [
+          {
+            "period_end": "2015-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:000401:ANN:20160412:1202162448",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:000401",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+                "unit": "RMB",
+                "published_at": "2016-04-12",
+                "field_ref": "FY2015 Tangshan Jidong Cement annual report PDF p11, cement and clinker sales volume."
+              }
+            ]
+          },
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:000401:ANN:20170323:1203186347",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:000401",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+                "unit": "RMB",
+                "published_at": "2017-03-23",
+                "field_ref": "FY2016 Tangshan Jidong Cement annual report PDF p12, issuer reports 5,796万吨 cement sales and 924万吨 clinker sales."
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:000401",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+                "unit": "RMB",
+                "published_at": "2018-03-23",
+                "field_ref": "FY2017 Tangshan Jidong Cement annual report PDF p12, cement and clinker sales volume."
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2013-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000401:ANN:20140415:63839496",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:000401",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+              "unit": "RMB",
+              "published_at": "2014-04-15",
+              "field_ref": "FY2013 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p57, p62, p64."
+            }
+          ]
+        },
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000401:ANN:20150414:1200826167",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:000401",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+              "unit": "RMB",
+              "published_at": "2015-04-14",
+              "field_ref": "FY2014 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p69, p74, p78."
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000401:ANN:20160412:1202162448",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:000401",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+              "unit": "RMB",
+              "published_at": "2016-04-12",
+              "field_ref": "FY2015 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p79, p83."
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000401:ANN:20170323:1203186347",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:000401",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+              "unit": "RMB",
+              "published_at": "2017-03-23",
+              "field_ref": "FY2016 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p79, p84, p88."
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:000401",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+              "unit": "RMB",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p79, p82."
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "carrier_identity_source_ids": [
+        "CNINFO:000401:ANN:20180323:1204506085"
+      ]
+    },
+    {
+      "company_id": "CN:600425",
+      "issuer_id": "ISSUER:CN:600425",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "control_group_id": "CONTROL:XPCC_FIRST_DIVISION_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600425",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+          "unit": "RMB",
+          "published_at": "2018-04-21",
+          "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, product sales-volume table identifies cement as the recurring product field."
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600425",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+          "unit": "RMB",
+          "published_at": "2018-04-21",
+          "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p4: XPCC First Division SASAC is the issuer's actual controller.",
+          "observed_control_group_id": "CONTROL:XPCC_FIRST_DIVISION_SASAC"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Source availability is established, but the selected action/reference window must still be checked for consolidation and operating-perimeter continuity before final peer inclusion.",
+      "d2_field_availability": {
+        "field_id": "ISSUER_CONSOLIDATED_CEMENT_SALES_VOLUME",
+        "definition": "Annual issuer cement sales volume from the recurring product production/sales/inventory table. Field availability only; not an action-specific customer conclusion.",
+        "repetitions": [
+          {
+            "period_end": "2015-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600425:ANN:20160409:1202157712",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600425",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+                "unit": "RMB",
+                "published_at": "2016-04-09",
+                "field_ref": "FY2015 Xinjiang Tianshan Cement annual report PDF p10, cement production/sales/inventory table."
+              }
+            ]
+          },
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600425:ANN:20170408:1203264291",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600425",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+                "unit": "RMB",
+                "published_at": "2017-04-08",
+                "field_ref": "FY2016 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table."
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600425",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+                "unit": "RMB",
+                "published_at": "2018-04-21",
+                "field_ref": "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table."
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2013-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600425:ANN:20140403:63781007",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600425",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+              "unit": "RMB",
+              "published_at": "2014-04-03",
+              "field_ref": "FY2013 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p48, p48, p48."
+            }
+          ]
+        },
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600425:ANN:20150411:1200812468",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600425",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+              "unit": "RMB",
+              "published_at": "2015-04-11",
+              "field_ref": "FY2014 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p47, p51, p53."
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600425:ANN:20160409:1202157712",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600425",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+              "unit": "RMB",
+              "published_at": "2016-04-09",
+              "field_ref": "FY2015 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p43, p48, p51."
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600425:ANN:20170408:1203264291",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600425",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+              "unit": "RMB",
+              "published_at": "2017-04-08",
+              "field_ref": "FY2016 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p57, p60."
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600425",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+              "unit": "RMB",
+              "published_at": "2018-04-21",
+              "field_ref": "FY2017 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p56, p61, p65."
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "carrier_identity_source_ids": [
+        "CNINFO:600425:ANN:20180421:1204677754"
+      ]
+    },
+    {
+      "company_id": "CN:600802",
+      "issuer_id": "ISSUER:CN:600802",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "control_group_id": "CONTROL:FUJIAN_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600802",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+          "unit": "RMB",
+          "published_at": "2018-04-17",
+          "field_ref": "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion."
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600802",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+          "unit": "RMB",
+          "published_at": "2018-04-17",
+          "field_ref": "FY2017 Fujian Cement annual report PDF p35: Fujian Energy Group is the actual controller and Fujian SASAC is the final controller.",
+          "observed_control_group_id": "CONTROL:FUJIAN_SASAC"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Source availability is established, but the selected action/reference window must still be checked for consolidation and operating-perimeter continuity before final peer inclusion.",
+      "d2_field_availability": {
+        "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES_VOLUME",
+        "definition": "Annual issuer cement and clinker sales volumes from the recurring product production/sales/inventory table. Field availability only; not an action-specific customer conclusion.",
+        "repetitions": [
+          {
+            "period_end": "2015-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600802",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+                "unit": "RMB",
+                "published_at": "2016-04-26",
+                "field_ref": "FY2015 Fujian Cement annual report PDF p11, cement and clinker production/sales/inventory table."
+              }
+            ]
+          },
+          {
+            "period_end": "2016-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600802:ANN:20170411:1203274263",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600802",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+                "unit": "RMB",
+                "published_at": "2017-04-11",
+                "field_ref": "FY2016 Fujian Cement annual report PDF p11, cement and clinker production/sales/inventory table."
+              }
+            ]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [
+              {
+                "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+                "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+                "issuer_id": "ISSUER:CN:600802",
+                "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+                "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+                "unit": "RMB",
+                "published_at": "2018-04-17",
+                "field_ref": "FY2017 Fujian Cement annual report PDF p11, product sales summary and cement operating discussion."
+              }
+            ]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {
+          "period_end": "2013-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600802:ANN:20140318:63687174",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600802",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+              "unit": "RMB",
+              "published_at": "2014-03-18",
+              "field_ref": "FY2013 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p50, p54, p55."
+            }
+          ]
+        },
+        {
+          "period_end": "2014-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600802:ANN:20150324:1200733162",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600802",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+              "unit": "RMB",
+              "published_at": "2015-03-24",
+              "field_ref": "FY2014 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p45, p49, p51."
+            }
+          ]
+        },
+        {
+          "period_end": "2015-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600802",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+              "unit": "RMB",
+              "published_at": "2016-04-26",
+              "field_ref": "FY2015 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p43, p48, p50."
+            }
+          ]
+        },
+        {
+          "period_end": "2016-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600802:ANN:20170411:1203274263",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600802",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+              "unit": "RMB",
+              "published_at": "2017-04-11",
+              "field_ref": "FY2016 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p48, p52, p54."
+            }
+          ]
+        },
+        {
+          "period_end": "2017-12-31",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600802",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+              "unit": "RMB",
+              "published_at": "2018-04-17",
+              "field_ref": "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59."
+            }
+          ]
+        }
+      ],
+      "competitive_arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+      "carrier_identity_source_ids": [
+        "CNINFO:600802:ANN:20180417:1204639756"
+      ]
+    }
+  ],
+  "entry_kind": "CURATOR_SUPPLIED_CUTOFF_BEFORE_STATIC_CNINFO_PDF_PACKAGE",
+  "cohort_eligibility_as_of": "2018-04-30T23:59:59+08:00",
+  "arena_family": "CEMENT_MULTI_REGION_DELIVERED_MARKET",
+  "mechanism_topology": "CUSTOMER_RESPONSE",
+  "curator_attestation": {
+    "curator_id": "CURATOR:INDEPENDENT:CEMENT-H1-20180430",
+    "issuer_code_or_name_submitted_to_cninfo_fulltext": false,
+    "cninfo_issuer_stock_or_detail_page_opened": false,
+    "post_identification_access": "PREDECLARED_CUTOFF_BEFORE_STATIC_CNINFO_PDF_PACKAGE_ONLY",
+    "post_cutoff_metadata_or_body_read": false
+  },
+  "competitive_arena": {
+    "competitive_arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+    "market_scope_type": "MULTI_REGION_PORTFOLIO",
+    "product_or_service_scope": "Cement and clinker supplied through issuer-consolidated production and distribution assets; product and customer response are evaluated within the relevant delivered market rather than by issuer province labels.",
+    "geographic_scope": "Multiple regional delivered markets linked to plant, terminal and customer locations; geographic equality is not an H1 gate.",
+    "customer_end_market_scope": "Construction, infrastructure and property customers served through regional cement/clinker channels; action-specific transport radius, delivered-price and customer overlap are reserved for H2.",
+    "evidence": [
+      {
+        "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600425",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+        "unit": "RMB",
+        "published_at": "2018-04-21",
+        "field_ref": "FY2017 annual report business overview describes cement overcapacity and regional delivered-market competition, PDF p10."
+      },
+      {
+        "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+        "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "issuer_id": "ISSUER:CN:600802",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+        "unit": "RMB",
+        "published_at": "2018-04-17",
+        "field_ref": "FY2017 annual report identifies production bases across Fujian locations and cement/clinker products, PDF p9."
+      }
+    ]
+  },
+  "static_pdf_sources": [
+    {
+      "source_id": "CNINFO:000401:ANN:20140415:63839496",
+      "url": "https://static.cninfo.com.cn/finalpage/2014-04-15/63839496.PDF",
+      "published_at": "2014-04-15",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2013-12-31",
+      "field_refs": [
+        "FY2013 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p57, p62, p64."
+      ],
+      "issuer_id": "ISSUER:CN:000401",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:000401:ANN:20150414:1200826167",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-04-14/1200826167.PDF",
+      "published_at": "2015-04-14",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "field_refs": [
+        "FY2014 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p69, p74, p78."
+      ],
+      "issuer_id": "ISSUER:CN:000401",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:000401:ANN:20160412:1202162448",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-04-12/1202162448.PDF",
+      "published_at": "2016-04-12",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "field_refs": [
+        "FY2015 Tangshan Jidong Cement annual report PDF p11, cement and clinker sales volume.",
+        "FY2015 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p79, p83."
+      ],
+      "issuer_id": "ISSUER:CN:000401",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:000401:ANN:20170323:1203186347",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-03-23/1203186347.PDF",
+      "published_at": "2017-03-23",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "field_refs": [
+        "FY2016 Tangshan Jidong Cement annual report PDF p12, issuer reports 5,796万吨 cement sales and 924万吨 clinker sales.",
+        "FY2016 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p79, p84, p88."
+      ],
+      "issuer_id": "ISSUER:CN:000401",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:000401:ANN:20180323:1204506085",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-03-23/1204506085.PDF",
+      "published_at": "2018-03-23",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "field_refs": [
+        "FY2017 Tangshan Jidong Cement annual report PDF p9, issuer business is production and sales of cement clinker and related building materials.",
+        "FY2017 Tangshan Jidong Cement annual report PDF p52: Beijing SASAC is actual controller and did not change during the year.",
+        "FY2017 Tangshan Jidong Cement annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group.",
+        "FY2017 Tangshan Jidong Cement annual report PDF p12, cement and clinker sales volume.",
+        "FY2017 Tangshan Jidong Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p79, p82."
+      ],
+      "issuer_id": "ISSUER:CN:000401",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600425:ANN:20140403:63781007",
+      "url": "https://static.cninfo.com.cn/finalpage/2014-04-03/63781007.PDF",
+      "published_at": "2014-04-03",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2013-12-31",
+      "field_refs": [
+        "FY2013 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p48, p48, p48."
+      ],
+      "issuer_id": "ISSUER:CN:600425",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600425:ANN:20150411:1200812468",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-04-11/1200812468.PDF",
+      "published_at": "2015-04-11",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "field_refs": [
+        "FY2014 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p47, p51, p53."
+      ],
+      "issuer_id": "ISSUER:CN:600425",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600425:ANN:20160409:1202157712",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-04-09/1202157712.PDF",
+      "published_at": "2016-04-09",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "field_refs": [
+        "FY2015 Xinjiang Tianshan Cement annual report PDF p10, cement production/sales/inventory table.",
+        "FY2015 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p43, p48, p51."
+      ],
+      "issuer_id": "ISSUER:CN:600425",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600425:ANN:20170408:1203264291",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-04-08/1203264291.PDF",
+      "published_at": "2017-04-08",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "field_refs": [
+        "FY2016 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table.",
+        "FY2016 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p57, p60."
+      ],
+      "issuer_id": "ISSUER:CN:600425",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600425:ANN:20180421:1204677754",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-21/1204677754.PDF",
+      "published_at": "2018-04-21",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "field_refs": [
+        "FY2017 annual report business overview describes cement overcapacity and regional delivered-market competition, PDF p10.",
+        "FY2017 Xinjiang Tianshan Cement annual report PDF p12, product sales-volume table identifies cement as the recurring product field.",
+        "FY2017 Xinjiang Tianshan Cement annual report PDF p4: XPCC First Division SASAC is the issuer's actual controller.",
+        "FY2017 Xinjiang Tianshan Cement annual report PDF p12, cement production/sales/inventory table.",
+        "FY2017 Xinjiang Tianshan Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p56, p61, p65."
+      ],
+      "issuer_id": "ISSUER:CN:600425",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600585:ANN:20140325:63719331",
+      "url": "https://static.cninfo.com.cn/finalpage/2014-03-25/63719331.PDF",
+      "published_at": "2014-03-25",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2013-12-31",
+      "field_refs": [
+        "FY2013 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p67, p75, p79."
+      ],
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600585:ANN:20150324:1200733224",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733224.PDF",
+      "published_at": "2015-03-24",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "field_refs": [
+        "FY2014 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p68, p76, p80."
+      ],
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600585:ANN:20160324:1202069257",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-03-24/1202069257.PDF",
+      "published_at": "2016-03-24",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "field_refs": [
+        "FY2015 Anhui Conch Cement annual report PDF p21, group cement-and-clinker aggregate net sales volume.",
+        "FY2015 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p67, p75, p79."
+      ],
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600585:ANN:20170324:1203189438",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203189438.PDF",
+      "published_at": "2017-03-24",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "field_refs": [
+        "FY2016 Anhui Conch Cement annual report PDF p21, group cement-and-clinker aggregate net sales volume.",
+        "FY2016 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p64, p76, p80."
+      ],
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-03-23/1204507132.PDF",
+      "published_at": "2018-03-23",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "field_refs": [
+        "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker sales and product/market discussion.",
+        "FY2017 Anhui Conch Cement annual report PDF p44: Anhui SASAC is the issuer's actual controller.",
+        "FY2017 Anhui Conch Cement annual report PDF p22, group cement-and-clinker aggregate net sales volume.",
+        "FY2017 Anhui Conch Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p74, p80, p84."
+      ],
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600801:ANN:20140329:63752775",
+      "url": "https://static.cninfo.com.cn/finalpage/2014-03-29/63752775.PDF",
+      "published_at": "2014-03-29",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2013-12-31",
+      "field_refs": [
+        "FY2013 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p51, p55, p57."
+      ],
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600801:ANN:20150327:1200750046",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-03-27/1200750046.PDF",
+      "published_at": "2015-03-27",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "field_refs": [
+        "FY2014 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p49, p51, p53."
+      ],
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600801:ANN:20160331:1202113147",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-03-31/1202113147.PDF",
+      "published_at": "2016-03-31",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "field_refs": [
+        "FY2015 Huaxin Cement annual report PDF p11, cement-and-clinker sales total.",
+        "FY2015 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p50, p52, p54."
+      ],
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600801:ANN:20170324:1203190337",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-03-24/1203190337.PDF",
+      "published_at": "2017-03-24",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "field_refs": [
+        "FY2016 Huaxin Cement annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants.",
+        "FY2016 Huaxin Cement annual report PDF p9, cement-and-clinker sales total.",
+        "FY2016 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p47, p49, p51."
+      ],
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600801:ANN:20180326:1204514309",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-03-26/1204514309.PDF",
+      "published_at": "2018-03-26",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "field_refs": [
+        "FY2017 Huaxin Cement annual report PDF p11, cement-and-clinker sales and principal operating discussion.",
+        "FY2017 Huaxin Cement annual report PDF p33: LafargeHolcim Ltd is the first shareholder's actual controller.",
+        "FY2017 Huaxin Cement annual report PDF p11, cement-and-clinker sales total.",
+        "FY2017 Huaxin Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p55, p58, p60."
+      ],
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600802:ANN:20140318:63687174",
+      "url": "https://static.cninfo.com.cn/finalpage/2014-03-18/63687174.PDF",
+      "published_at": "2014-03-18",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2013-12-31",
+      "field_refs": [
+        "FY2013 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p50, p54, p55."
+      ],
+      "issuer_id": "ISSUER:CN:600802",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600802:ANN:20150324:1200733162",
+      "url": "https://static.cninfo.com.cn/finalpage/2015-03-24/1200733162.PDF",
+      "published_at": "2015-03-24",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2014-12-31",
+      "field_refs": [
+        "FY2014 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p45, p49, p51."
+      ],
+      "issuer_id": "ISSUER:CN:600802",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600802:ANN:20160426:1202245558",
+      "url": "https://static.cninfo.com.cn/finalpage/2016-04-26/1202245558.PDF",
+      "published_at": "2016-04-26",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2015-12-31",
+      "field_refs": [
+        "FY2015 Fujian Cement annual report PDF p11, cement and clinker production/sales/inventory table.",
+        "FY2015 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p43, p48, p50."
+      ],
+      "issuer_id": "ISSUER:CN:600802",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600802:ANN:20170411:1203274263",
+      "url": "https://static.cninfo.com.cn/finalpage/2017-04-11/1203274263.PDF",
+      "published_at": "2017-04-11",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2016-12-31",
+      "field_refs": [
+        "FY2016 Fujian Cement annual report PDF p11, cement and clinker production/sales/inventory table.",
+        "FY2016 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p48, p52, p54."
+      ],
+      "issuer_id": "ISSUER:CN:600802",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    },
+    {
+      "source_id": "CNINFO:600802:ANN:20180417:1204639756",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-17/1204639756.PDF",
+      "published_at": "2018-04-17",
+      "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "period_end": "2017-12-31",
+      "field_refs": [
+        "FY2017 annual report identifies production bases across Fujian locations and cement/clinker products, PDF p9.",
+        "FY2017 Fujian Cement annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion.",
+        "FY2017 Fujian Cement annual report PDF p35: Fujian Energy Group is the actual controller and Fujian SASAC is the final controller.",
+        "FY2017 Fujian Cement annual report PDF p11, product sales summary and cement operating discussion.",
+        "FY2017 Fujian Cement consolidated D3/D4 identity: balance sheet, income statement and cash-flow statement, PDF p52, p56, p59."
+      ],
+      "issuer_id": "ISSUER:CN:600802",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+      "unit": "RMB"
+    }
+  ]
+}

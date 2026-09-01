@@ -1,0 +1,15 @@
+{
+  "schema_version": "enterprise-judgment-round2-completion-receipt.v1",
+  "completion_id": "R2COMP:CN:CEMENT:000401:20170412:V1",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "settlement_id": "CFS:000401:20170412:R2:001",
+  "review_id": "TRR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "feedback_turn_status": "REAL_FEEDBACK_TURN_2_COMPLETED",
+  "transfer_status": "TRANSFER_CANDIDATE_CREATED",
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND2_COMPLETION_RECEIPT",
+  "claim_class": "FEEDBACK_TURN_AND_TRANSFER_STATUS",
+  "allowed_outputs": [
+    "REAL_FEEDBACK_TURN_2_COMPLETED",
+    "TRANSFER_CANDIDATE_CREATED"
+  ]
+}

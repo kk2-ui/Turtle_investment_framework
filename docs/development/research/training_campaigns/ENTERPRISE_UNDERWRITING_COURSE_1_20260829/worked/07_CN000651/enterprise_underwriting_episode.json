@@ -1,0 +1,177 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWEP:C1:WORKED:CN000651:20200501",
+  "company_id": "CN:000651",
+  "company_name": "Gree Electric Appliances",
+  "cutoff_at": "2020-05-01T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "decision_frame": "At the 2020 cutoff, determine whether Gree's core appliance economics and cash franchise could absorb weakening air-conditioner demand, channel reform, and diversification without converting a mature consumer franchise into a capital-allocation loss. This result-known worked case uses later outcomes to distinguish customer absorption, margin discipline, cross-period cash, Dunan integration, and realized Gree Titan losses.",
+  "underwriting_route": "MATURE_BRANDED_APPLIANCE_FRANCHISE_WITH_CHANNEL_TRANSITION_AND_SEPARABLE_DIVERSIFICATION_RISK",
+  "situation_model": {
+    "summary": "Gree retained strong manufacturing, brand, gross-margin, and cash capacity, but headline revenue obscured a decline in core air-conditioner absorption in 2019 and 2020. Later consumer-appliance revenue weakened again while margins held, showing that pricing and cost discipline survived better than quantity absorption. Dunan created an adjacent, observable but lower-margin business, whereas Gree Titan produced a real project impairment and legacy-risk carrier after additional control investment.",
+    "industry_future_thesis": {
+      "horizon": "Five years after the 2020 cutoff, covering a durable-goods cycle, channel restructuring, and the first observable returns from major diversification decisions.",
+      "most_likely_regime": "China's mature appliance profit pool grows slowly and moves toward brands with cost scale, premium positioning, export reach, and efficient direct-to-customer channels. Housing and replacement demand constrain volume, while forced promotion, channel inventory, and capital-heavy diversification can transfer franchise cash away from ordinary shareholders.",
+      "profit_pool_transmission": "End demand first moves retail sell-through and dealer inventory; channel incentives and mix then affect core revenue and gross margin; collections and working capital determine cross-period operating cash. Diversification creates value only when external customers, after-expense profit, and cash cover the capital committed rather than merely adding consolidated revenue.",
+      "company_exposure": "Gree entered with a strong core brand, manufacturing and supply-chain position, but its dominant air-conditioner exposure and legacy dealer system made customer absorption and channel inventory decisive. Its cash franchise funded adjacent Dunan and non-core Gree Titan, so allocation quality became a separate determinant of long-term owner cash.",
+      "adaptation": "Later margin resilience and cash recovery show real pricing, cost, and operating capability, but repeated core-revenue decline means channel reform had not yet proven durable customer absorption. Dunan earns conditional integration credit from observable adjacent operations; Gree Titan earns negative allocation evidence from a material project impairment and legacy risks, while retaining unproven technology option value.",
+      "normal_economics": "Underwrite the core appliance franchise on conservative cross-cycle revenue, margin, and cash rather than headline group growth or one cash year. Treat Dunan separately at its lower observed economics and exclude Gree Titan growth from the base, preserving only a conditional option scenario.",
+      "permanent_loss": "Near-term survival risk is low because the core produces strong cash and margins. Long-term permanent loss is more plausibly caused by sustained channel or share erosion that eventually breaks margin discipline, or by repeated non-core capital commitments and impairments that consume the core franchise's cash.",
+      "valuation_treatment": "Use core appliance EPV as the primary route, separate adjacent industrial operations through corroborative SOTP, and stress the asset and allocation record. Do not capitalize Gree Titan growth or assume channel reform success without sell-through, inventory, collection, and margin evidence.",
+      "strongest_rival": "Core revenue weakness may mainly reflect housing and durable-goods cycles rather than lost competitive position, channel reform may release structurally trapped cash, and Gree Titan may retain technology option value after disciplined project closure; this rival preserves core and optional value but does not erase weak customer absorption or the already realized capital impairment.",
+      "reversal_observations": [
+        "A sustained improvement in comparable retail sell-through, channel inventory, dealer collections, consumer-appliance revenue, and gross margin would upgrade channel adaptation and core normal earnings.",
+        "Repeatable after-expense profit and cash from Dunan, together with external-customer cash from Gree Titan without further parent funding or material losses, would promote diversification components.",
+        "Continued consumer-appliance revenue decline that reaches gross margin and cash, simultaneous domestic and export share weakness, or new Gree Titan impairments, guarantee losses, or capital calls would deepen permanent-loss and base-earnings haircuts."
+      ]
+    }
+  },
+  "business_position": "Gree remained a powerful branded appliance manufacturer with strong cost and margin discipline. Its concentration in air conditioning and reliance on channel execution made the drop in core-product absorption more important than stable headline revenue; diversification had to be judged component by component rather than as a generic second-growth curve.",
+  "survival_case": "The core franchise generated very strong consolidated operating cash and required much less cash capital spending than that cash generation in 2023-2025. This lowers near-term financing and survival risk. The range still needs cross-period treatment because channel working capital can move cash materially, and capital committed to acquisitions or non-core projects is not available to ordinary owners.",
+  "adaptation_case": "Management preserved consumer-appliance gross margin near 35% in 2024-2025 despite declining segment revenue, evidence of brand, supply-chain, and pricing discipline but not restored demand. Channel reform receives conditional credit pending sell-through and inventory proof. Dunan is adjacent and observable; Gree Titan's roughly RMB 996 million project impairment and legacy guarantee and frozen-equity risks are realized negative allocation evidence.",
+  "normalization_case": "Normalize the core on conservative mature-industry revenue, durable gross-margin discipline, and multi-year cash conversion. Do not let other-business growth hide core contraction or let one working-capital cash rebound define owner cash. Dunan should contribute only its separately observable lower-margin economics; Gree Titan growth stays outside the base while its realized loss remains in the allocation record.",
+  "permanent_loss_map": "Core brand, manufacturing, and cash strength protect against near-term failure. The material long-term loss paths are customer and channel erosion forcing margin concessions, cash conversion supported by non-repeatable working-capital release, and repeated diversification into projects that need more parent capital or generate impairments and guarantee losses. Gree Titan is a realized warning, not evidence that every remaining technology asset is worthless.",
+  "value_route": {
+    "primary_routes": [
+      "CORE_CONSUMER_APPLIANCE_EPV"
+    ],
+    "excluded_routes": [
+      "GREE_TITAN_GROWTH_IN_BASE",
+      "HEADLINE_GROUP_REVENUE_AS_CORE_ABSORPTION",
+      "SINGLE_YEAR_OPERATING_CASH_AS_NORMAL_OWNER_CASH"
+    ],
+    "route_reasoning": "The core branded appliance franchise has durable observable margin and cash characteristics suitable for EPV, but mature demand and channel uncertainty argue against automatic growth capitalization. Dunan and Gree Titan have different economics and loss evidence and therefore require component separation rather than a blended group multiple.",
+    "valuation_model_roles": {
+      "primary": [
+        "EPV"
+      ],
+      "corroborative": [
+        "SOTP"
+      ],
+      "stress": [
+        "NAV"
+      ]
+    }
+  },
+  "strongest_rival": "Core revenue weakness may mainly reflect housing and durable-goods cycles rather than lost competitive position, channel reform may release structurally trapped cash, and Gree Titan may retain technology option value after disciplined project closure; this rival preserves core and optional value but does not erase weak customer absorption or the already realized capital impairment.",
+  "reversal_observations": [
+    "A sustained improvement in comparable retail sell-through, channel inventory, dealer collections, consumer-appliance revenue, and gross margin would upgrade channel adaptation and core normal earnings.",
+    "Repeatable after-expense profit and cash from Dunan, together with external-customer cash from Gree Titan without further parent funding or material losses, would promote diversification components.",
+    "Continued consumer-appliance revenue decline that reaches gross margin and cash, simultaneous domestic and export share weakness, or new Gree Titan impairments, guarantee losses, or capital calls would deepen permanent-loss and base-earnings haircuts."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CN000651:CORE_CONSUMER_APPLIANCES",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Core revenue absorption weakened, but gross margin, brand, supply-chain capability, and strong multi-year cash support a real mature franchise.",
+      "investment_consequence": "Underwrite conservative core earnings power without a growth premium and require revenue, margin, and cash to be read together.",
+      "promotion_or_resolution_condition": "Sustained comparable sell-through, consumer-appliance revenue, gross margin, and cross-period cash would justify a stronger franchise treatment; margin-led deterioration would lower it.",
+      "evidence_ids": [
+        "E-CN000651-CORE",
+        "E-CN000651-CASH"
+      ]
+    },
+    {
+      "component_id": "CN000651:CHANNEL_REFORM",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Cash recovery and margin resilience are compatible with channel improvement, but they do not independently establish retail absorption, lower inventory, or healthier dealer economics.",
+      "investment_consequence": "Use channel reform as a conditional mechanism in scenarios, not as a proven source of higher normalized earnings.",
+      "promotion_or_resolution_condition": "Require comparable terminal sell-through, channel inventory, dealer collections or prepayments, core revenue, and gross margin to improve together.",
+      "evidence_ids": [
+        "E-CN000651-CORE",
+        "E-CN000651-CASH",
+        "E-CN000651-REVERSALS"
+      ]
+    },
+    {
+      "component_id": "CN000651:DUNAN_ENVIRONMENT",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Dunan is adjacent to the refrigeration supply chain and has observable industrial and green-energy revenue, but at substantially lower margin than consumer appliances and without a complete return bridge.",
+      "investment_consequence": "Model it separately through corroborative SOTP with a lower-quality economics treatment; do not transfer the core appliance franchise quality automatically.",
+      "promotion_or_resolution_condition": "Require repeatable after-expense profit, cash, external-customer retention, and returns relative to acquisition capital.",
+      "evidence_ids": [
+        "E-CN000651-DUNAN"
+      ]
+    },
+    {
+      "component_id": "CN000651:GREE_TITAN_GROWTH",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "After control and additional ownership investment, Gree Titan produced a material project impairment and retained frozen-equity and legacy-guarantee risks.",
+      "investment_consequence": "Record the realized allocation loss, exclude growth from base normal earnings, and preserve only a conditional technology option rather than assigning zero to all remaining assets.",
+      "promotion_or_resolution_condition": "Require external-customer revenue, positive cash after necessary investment, no further material parent funding, and no new impairment or guarantee loss.",
+      "evidence_ids": [
+        "E-CN000651-TITAN"
+      ]
+    },
+    {
+      "component_id": "CN000651:GROUP_CASH_CAPACITY",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Operating cash greatly exceeded cash capital expenditure in the observed years, but channel working capital and diversification uses make a single-year proxy an incomplete owner-cash measure.",
+      "investment_consequence": "Use a multi-year conservative cash range and deduct maintenance, distributions, and allocation uses rather than writing cash as unknown or capitalizing the peak year.",
+      "promotion_or_resolution_condition": "A stable cash bridge through channel normalization, maintenance needs, distributions, and non-core investment would support firmer owner-cash treatment.",
+      "evidence_ids": [
+        "E-CN000651-CASH"
+      ]
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "E-CN000651-CORE",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md",
+      "locator": "Current judgment 1: margin resilience versus customer absorption",
+      "scope": "2019-2020 air-conditioner contraction and 2024-2025 consumer-appliance revenue and gross-margin path",
+      "used_for": "Industry exposure, core position, adaptation, and normal earnings"
+    },
+    {
+      "evidence_id": "E-CN000651-CASH",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md",
+      "locator": "Current judgment 2 and Owner cash and permanent loss",
+      "scope": "FY2023-FY2025 operating cash, cash capital expenditure, and channel working-capital interpretation",
+      "used_for": "Survival, owner-cash range, and channel-reform boundary"
+    },
+    {
+      "evidence_id": "E-CN000651-DUNAN",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md",
+      "locator": "Current judgment 3: Dunan versus Gree Titan",
+      "scope": "Dunan's adjacent industrial and green-energy revenue and lower observed gross margin",
+      "used_for": "Conditional integration credit and component-specific value route"
+    },
+    {
+      "evidence_id": "E-CN000651-TITAN",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md",
+      "locator": "Current judgment 3 and Management decision and execution",
+      "scope": "Gree Titan control investments, roughly RMB 996 million project impairment, frozen equity, and legacy guarantees",
+      "used_for": "Realized allocation loss, permanent-loss map, and exclusion from base"
+    },
+    {
+      "evidence_id": "E-CN000651-REVERSALS",
+      "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md",
+      "locator": "Operating scenarios and reversal facts",
+      "scope": "Customer, channel, margin, cash, Dunan, and Gree Titan discriminating observations",
+      "used_for": "Strongest rival calibration, monitoring, and reversal conditions"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "CONTRACT_ALLOWED_TEACHING_SOURCE",
+      "ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000651_CHANNEL_PRICING_AND_DIVERSIFICATION_V1.md",
+      "role": "Only result-known source used to compose this worked case"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "UWTHESIS:C1:CN000651:20200501",
+    "central_path": "Gree remains a cash-generative mature appliance franchise with durable price and cost discipline, but customer absorption and channel health are weaker than headline totals imply. Core value survives under conservative normalization; Dunan receives conditional adjacent-business credit, while Gree Titan's realized impairment raises allocation risk and its remaining option stays outside the base.",
+    "normal_earnings_treatment": "MIXED: retain conservative core appliance earnings power supported by margin resilience, but do not assume volume growth or blend lower-quality diversification into the core franchise.",
+    "owner_cash_treatment": "MIXED: use strong multi-year operating cash net of maintenance and allocation needs, while treating channel working-capital swings and non-core investment as real claims on ordinary-owner cash.",
+    "permanent_loss_treatment": "DETERIORATES: near-term survival remains strong, but the observed Gree Titan impairment makes allocation loss real and continued core channel erosion could eventually damage margin and cash.",
+    "value_route_treatment": "Primary core-appliance EPV, corroborative component SOTP for Dunan and other non-core operations, and asset stress for capital-allocation downside; no base growth value for Gree Titan.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "DETERIORATES"
+    },
+    "strongest_rival": "Core revenue weakness may mainly reflect housing and durable-goods cycles rather than lost competitive position, channel reform may release structurally trapped cash, and Gree Titan may retain technology option value after disciplined project closure; this rival preserves core and optional value but does not erase weak customer absorption or the already realized capital impairment.",
+    "monitoring": "Read terminal sell-through, channel inventory, dealer collections, core consumer-appliance revenue and gross margin, and multi-year operating cash as one chain. Separately settle Dunan after-expense cash and Gree Titan external-customer cash, parent funding, impairment, and guarantee outcomes."
+  },
+  "investment_treatment": "WORKED_CASE_PRICE_FREE: core-franchise, allocation-risk, and valuation-route treatment only; no security value, BuyBand, report publication, or investment authority."
+}

@@ -1,0 +1,168 @@
+{
+  "artifact_type": "ROUND10_PREOUTCOME_CURATOR_PACKET",
+  "artifact_version": "v1",
+  "artifact_id": "ROUND10-CN002508-PREOUTCOME-CURATOR-V1",
+  "role": "INDEPENDENT_PREOUTCOME_CURATOR",
+  "candidate_order": 2,
+  "company": {
+    "company_id": "CN:002508",
+    "issuer_code": "002508",
+    "issuer_org_id": "9900015938",
+    "issuer_legal_name": "杭州老板电器股份有限公司",
+    "issuer_short_name": "老板电器",
+    "exchange": "SZSE",
+    "responsibility_boundary": {
+      "boundary_id": "CN002508-CONSOLIDATED-LISTED-GROUP",
+      "label": "杭州老板电器股份有限公司合并主体",
+      "included": "2017 年度报告标注为合并财务报表的上市公司及其纳入合并范围的子公司",
+      "excluded": "母公司单体报表、品牌或单项渠道的独立 owner cash，以及未纳入合并范围的第三方",
+      "status": "DECLARED"
+    }
+  },
+  "cutoff": {
+    "timestamp": "2018-09-30T23:59:59+08:00",
+    "preoutcome_only": true,
+    "forbidden_material": [
+      "FY2019 annual-report title, identifier, PDF, contents, values, or outcome labels",
+      "prices, returns, and investment conclusions",
+      "H2, R-103, CJO, report, and comparative-result artifacts"
+    ]
+  },
+  "source_register": [
+    {
+      "source_id": "CNINFO-1204595205",
+      "source_kind": "OFFICIAL_STATIC_PDF",
+      "publisher": "巨潮资讯 / 杭州老板电器股份有限公司",
+      "document_title": "杭州老板电器股份有限公司 2017 年年度报告",
+      "announcement_id": "1204595205",
+      "publication_date": "2018-04-10",
+      "publication_timestamp_precision": "DAY",
+      "url": "https://static.cninfo.com.cn/finalpage/2018-04-10/1204595205.PDF",
+      "cutoff_eligibility": "ELIGIBLE",
+      "official_static_pdf": true
+    }
+  ],
+  "baseline_measurement_fields": [
+    {
+      "field_id": "CN002508-FY2017-CONSOLIDATED-OPERATING-REVENUE-RMB",
+      "metric": "operating_revenue",
+      "statement": "consolidated_income_statement",
+      "report_period": "FY2017",
+      "accounting_scope": "CONSOLIDATED",
+      "currency": "CNY",
+      "unit": "RMB",
+      "current_value": "7017397057.99",
+      "comparable_prior_value": "5794897867.13",
+      "source_locator": {
+        "source_id": "CNINFO-1204595205",
+        "physical_pdf_page": 63,
+        "statement_label": "3、合并利润表",
+        "field_label": "一、营业总收入；其中：营业收入",
+        "exact_quote": "一、营业总收入 7,017,397,057.99 5,794,897,867.13；其中：营业收入 7,017,397,057.99 5,794,897,867.13",
+        "unit_quote": "单位：元"
+      },
+      "consolidation_or_restatement_note": {
+        "status": "UNKNOWN",
+        "note": "引述页确认这是合并利润表并列出当期及上期发生额；本 curator 未将该并列比较数解释为不存在重述。"
+      }
+    },
+    {
+      "field_id": "CN002508-FY2017-CONSOLIDATED-OPERATING-CASH-FLOW-RMB",
+      "metric": "operating_cash_flow",
+      "statement": "consolidated_cash_flow_statement",
+      "report_period": "FY2017",
+      "accounting_scope": "CONSOLIDATED",
+      "currency": "CNY",
+      "unit": "RMB",
+      "current_value": "1256125454.23",
+      "comparable_prior_value": "1545448492.32",
+      "source_locator": {
+        "source_id": "CNINFO-1204595205",
+        "physical_pdf_page": 67,
+        "statement_label": "5、合并现金流量表",
+        "field_label": "经营活动产生的现金流量净额",
+        "exact_quote": "经营活动产生的现金流量净额 1,256,125,454.23 1,545,448,492.32",
+        "unit_quote": "单位：元"
+      },
+      "consolidation_or_restatement_note": {
+        "status": "UNKNOWN",
+        "note": "引述页确认这是合并现金流量表并列出当期及上期发生额；该列示本身不证明 owner cash，也不证明不存在重述。"
+      }
+    },
+    {
+      "field_id": "CN002508-FY2017-CONSOLIDATED-TOTAL-ASSETS-RMB",
+      "metric": "total_assets",
+      "statement": "consolidated_balance_sheet",
+      "report_period": "FY2017-12-31",
+      "accounting_scope": "CONSOLIDATED",
+      "currency": "CNY",
+      "unit": "RMB",
+      "current_value": "7926615151.63",
+      "comparable_prior_value": "6415202506.51",
+      "source_locator": {
+        "source_id": "CNINFO-1204595205",
+        "physical_pdf_page": 58,
+        "statement_label": "1、合并资产负债表",
+        "field_label": "资产总计",
+        "exact_quote": "资产总计 7,926,615,151.63 6,415,202,506.51",
+        "unit_quote": "单位：元"
+      },
+      "consolidation_or_restatement_note": {
+        "status": "UNKNOWN",
+        "note": "引述页确认这是合并资产负债表的期末与期初余额；该列示本身不证明不存在重述。"
+      }
+    }
+  ],
+  "implemented_management_action": {
+    "status": "IMPLEMENTED_EVIDENCE_PRESENT",
+    "action_id": "CN002508-2017-MARKETING-EMBEDDED-KITCHEN-CHANNEL",
+    "responsibility_boundary": "上市公司合并主体内营销部门及老板品牌零售渠道；不延伸至公司未单列核算的产品 owner cash。",
+    "action": "2017 年零售端启动侧吸机大风暴行动，并开展蒸烤微攻坚、推广嵌入式品类及扩展线下店网。",
+    "mechanism_hypothesis": "若新品类推广和门店覆盖被目标客户接受，可能改善嵌入式厨电覆盖与产品组合；该材料不是对 FY2019 或因果效果的结论。",
+    "source_locator": {
+      "source_id": "CNINFO-1204595205",
+      "physical_pdf_page": 12,
+      "exact_quote": "零售，启动侧吸机大风暴行动，侧吸式品类份额超越竞争对手；开展蒸烤微攻坚行动、强力推广嵌入式品类。……新建A类厨源店9家，截止2017年底，共有A类厨源店45家。……新增440家专卖店，截止2017年底，专卖店数量增至2998家。"
+    },
+    "customer_or_competition_signal": {
+      "status": "COMPANY_REPORTED_PRE_CUTOFF_SIGNAL",
+      "source_id": "CNINFO-1204595205",
+      "physical_pdf_page": 12,
+      "exact_quote": "嵌入式蒸汽炉、微波炉首次位列行业第一。",
+      "limitation": "这是公司在年报中报告的市场地位，不是本 curator 取得的外部竞争对手证据，也不是行动因果归因。"
+    },
+    "identified_rival_evidence": {
+      "status": "UNKNOWN",
+      "reason": "本轮只登记了发行人的 cutoff 前官方静态年报，未取得独立、可页码复核的特定竞争对手证据。不得将公司所称“竞争对手”自动转写为可比较 rival fact。"
+    },
+    "strongest_alternative_explanation": "既有高端品牌、既有渠道覆盖、厨电品类与地产周期，以及未观察到的竞争者行为都可能解释当期市场地位；本包不假设该营销行动单独造成任何经营结果。"
+  },
+  "outcome_route_identity": {
+    "status": "VALUE_FREE_METADATA_ROUTE_ONLY",
+    "provider": "CNINFO",
+    "issuer_code": "002508",
+    "issuer_org_id": "9900015938",
+    "market": {
+      "column": "szse",
+      "plate": "sz"
+    },
+    "fiscal_year": 2019,
+    "category": "category_ndbg_szsh;",
+    "purpose": "Independent custodian may later enumerate the issuer's FY2019 annual-report metadata under its separate outcome-access authorization.",
+    "not_included": [
+      "announcement title",
+      "announcement identifier",
+      "PDF URL or content",
+      "financial value",
+      "outcome label or direction"
+    ]
+  },
+  "handoff": {
+    "next_legal_command": "After the closed Round10 batch has a pre-outcome commit and outcome-access authorization, a separate custodian may use only the value-free route plus the frozen Measurement Contract to enumerate and select an eligible FY2019 official static annual-report version.",
+    "stop_conditions": [
+      "Do not use these FY2017 baseline values as FY2019 outcome observations.",
+      "Do not infer customer loyalty, execution success, owner cash, or action causality from the listed pre-cutoff facts.",
+      "A missing or mismatched FY2019 field must remain field-local UNKNOWN or MEASUREMENT_MISMATCH."
+    ]
+  }
+}

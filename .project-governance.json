@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "project_name": "Turtle Investment Framework",
+  "protected_branches": ["main", "master"],
+  "branch_prefixes": ["feat", "fix", "docs", "refactor", "test", "chore", "hotfix"],
+  "minimum_base_commit": "eadaae9dedbf4cf1c3ac621031bb18fd0f4d49f0",
+  "minimum_base_reason": "2026-08-29 integrated enterprise underwriting training kernel",
+  "worktree_root": "../worktrees",
+  "profile_order": ["docs", "fast", "full"],
+  "required_profile": "full",
+  "profiles": {
+    "docs": [
+      [".venv/bin/python", "scripts/project_guard.py", "self-test"]
+    ],
+    "fast": [
+      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_config.py", "tests/test_derived_metrics.py", "tests/test_tushare_client.py"]
+    ],
+    "full": [
+      [".venv/bin/python", "-m", "pytest", "-q", "tests/test_stage*.py", "tests/test_completion_contract_v13.py", "tests/test_auto_repair_pipeline.py", "tests/test_golden_report_feedback.py", "tests/test_reader_coverage.py", "tests/test_enterprise_underwriting_episode.py", "tests/test_industry_experience_pack.py", "tests/test_project_guard_baseline.py"]
+    ]
+  }
+}

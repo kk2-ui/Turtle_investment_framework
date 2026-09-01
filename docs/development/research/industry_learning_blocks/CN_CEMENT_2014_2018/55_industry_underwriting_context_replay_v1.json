@@ -1,0 +1,543 @@
+{
+  "schema_version": "industry-underwriting-context.v1",
+  "context_id": "IUC:CN:CEMENT_LISTED:CN600585:20180430:REPLAY:V1",
+  "company_identity": {
+    "company_id": "CN:600585",
+    "company_name": "Anhui Conch Cement",
+    "cutoff_at": "2018-04-30T23:59:59+08:00",
+    "industry_ids": [
+      "INDUSTRY:CN:CEMENT_LISTED",
+      "cement"
+    ]
+  },
+  "context_status": "BOUNDED",
+  "report_use": {
+    "mode": "REPORT_PREPARATION_READ_MODEL",
+    "non_blocking": true,
+    "can_support": [
+      "INDUSTRY_RESEARCH_AGENDA",
+      "CANDIDATE_INDUSTRY_FUTURE_THESIS",
+      "PEER_AND_NEAR_MISS_SELECTION"
+    ],
+    "cannot_establish": [
+      "COMPANY_FACT_WITHOUT_COMPANY_EVIDENCE",
+      "VALUATION_PARAMETER",
+      "INVESTMENT_ACTION"
+    ],
+    "boundary": "A BOUNDED context remains usable. The report must make and source its own best-current industry and company judgment."
+  },
+  "industry_value_chain": {
+    "stages": [
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "economic_scope": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "customer_job_or_choice": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "value_driver": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "failure_mode": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "A change in the reporting perimeter may alter the composition of a reported operating or cash series.",
+        "economic_scope": "A listed-consolidated cement issuer discloses an acquisition, restructuring or joint-venture perimeter condition.",
+        "customer_job_or_choice": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "value_driver": "A perimeter-continuity question attached to the affected issuer and cutoff.",
+        "failure_mode": "A cutoff-visible bridge establishes the same responsibility boundary and field definition.",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [
+          "CNINFO:600801:ANN:20170324:1203190337",
+          "CNINFO:000401:ANN:20180323:1204506085"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "The statements can support a bounded operating-to-cash reconstruction at the same issuer perimeter.",
+        "economic_scope": "Issuer-consolidated product, sales and audited cash fields are all cutoff-visible.",
+        "customer_job_or_choice": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "value_driver": "An accounting-boundary learning thread rather than owner-cash, competitive advantage or causal effect.",
+        "failure_mode": "A material perimeter, accounting or working-capital change makes the selected field non-diagnostic.",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20170324:1203189438",
+          "CNINFO:600425:ANN:20180421:1204677754"
+        ],
+        "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      },
+      {
+        "arena_id": "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET",
+        "mechanism": "Cement and clinker supplied through issuer-consolidated production and distribution assets; product and customer response are evaluated within the relevant delivered market rather than by issuer province labels. -> Construction, infrastructure and property customers served through regional cement/clinker channels; action-specific transport radius, delivered-price and customer overlap are reserved for H2.",
+        "economic_scope": "MULTI_REGION_PORTFOLIO",
+        "customer_job_or_choice": "Construction, infrastructure and property customers served through regional cement/clinker channels; action-specific transport radius, delivered-price and customer overlap are reserved for H2.",
+        "value_driver": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "failure_mode": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "profit_pool_direction": "UNRESOLVED",
+        "evidence_refs": [
+          "CNINFO:600425:ANN:20180421:1204677754",
+          "CNINFO:600802:ANN:20180417:1204639756"
+        ],
+        "source_object_ref": "INLINE:COMPANY_COMPETITIVE_ARENA"
+      }
+    ],
+    "customer_jobs": [
+      "Construction, infrastructure and property customers served through regional cement/clinker channels; action-specific transport radius, delivered-price and customer overlap are reserved for H2."
+    ]
+  },
+  "structural_epochs": [
+    {
+      "epoch_id": "EPOCH:CEMENT:2014",
+      "as_of": "2014-04-16T00:00:00+08:00",
+      "condition": "The H1 risk set contains five listed-consolidated cement issuers with date-only official annual-report material visible before the cutoff.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20140325:63719331"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2015",
+      "as_of": "2015-04-15T00:00:00+08:00",
+      "condition": "The same five issuer identifiers remain in the H1 static risk set; this is a source-coverage state rather than a survival conclusion.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20150324:1200733224"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2016",
+      "as_of": "2016-04-27T00:00:00+08:00",
+      "condition": "The H1 static risk set continues to preserve all five issuer-consolidated boundaries before any later outcome access.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20160324:1202069257"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2017",
+      "as_of": "2017-04-12T00:00:00+08:00",
+      "condition": "A disclosed 15-plant acquisition approval makes Huaxin perimeter continuity an explicit measurement question while retaining it in the risk set.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20170324:1203190337"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2018:ANNUAL",
+      "as_of": "2018-04-22T00:00:00+08:00",
+      "condition": "The five H1 issuers remain in the static risk set, with Jidong restructuring and Huaxin perimeter continuity retained as lifecycle boundaries rather than removed observations.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:000401:ANN:20180323:1204506085"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "epoch_id": "EPOCH:CEMENT:2018:SELECTION",
+      "as_of": "2018-04-30T23:59:59+08:00",
+      "condition": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "observations": [],
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20180421:1204677754"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    }
+  ],
+  "industry_drivers": {
+    "demand": [
+      {
+        "driver": "Cement and clinker supplied through issuer-consolidated production and distribution assets; product and customer response are evaluated within the relevant delivered market rather than by issuer province labels. -> Construction, infrastructure and property customers served through regional cement/clinker channels; action-specific transport radius, delivered-price and customer overlap are reserved for H2. UNRESOLVED_FROM_AVAILABLE_CONTEXT UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "profit_pool_effect": "UNRESOLVED",
+        "evidence_refs": [
+          "CNINFO:600425:ANN:20180421:1204677754",
+          "CNINFO:600802:ANN:20180417:1204639756"
+        ],
+        "source_object_ref": "INLINE:COMPANY_COMPETITIVE_ARENA"
+      }
+    ],
+    "supply": [],
+    "competition": [
+      {
+        "driver": "Cement and clinker supplied through issuer-consolidated production and distribution assets; product and customer response are evaluated within the relevant delivered market rather than by issuer province labels. -> Construction, infrastructure and property customers served through regional cement/clinker channels; action-specific transport radius, delivered-price and customer overlap are reserved for H2. UNRESOLVED_FROM_AVAILABLE_CONTEXT UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+        "profit_pool_effect": "UNRESOLVED",
+        "evidence_refs": [
+          "CNINFO:600425:ANN:20180421:1204677754",
+          "CNINFO:600802:ANN:20180417:1204639756"
+        ],
+        "source_object_ref": "INLINE:COMPANY_COMPETITIVE_ARENA"
+      }
+    ],
+    "regulation": []
+  },
+  "profit_pool_outlook": {
+    "direction": "UNRESOLVED",
+    "horizon": "NOT_SPECIFIED",
+    "thesis": "The available context identifies the relevant mechanisms but does not yet settle a directional profit-pool call.",
+    "confidence": "BOUNDED",
+    "evidence_refs": [
+      "CNINFO:600801:ANN:20170324:1203190337",
+      "CNINFO:000401:ANN:20180323:1204506085",
+      "CNINFO:600585:ANN:20170324:1203189438",
+      "CNINFO:600425:ANN:20180421:1204677754",
+      "CNINFO:600802:ANN:20180417:1204639756"
+    ]
+  },
+  "company_archetype_exposure": {
+    "archetype": "ARCHETYPE:CONSOLIDATED_OPERATING_AND_CASH_TRACK",
+    "responsibility_boundary": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.",
+    "arena_ids": [
+      "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+    ],
+    "exposures": [
+      {
+        "dimension": "ARENA_MEMBERSHIP",
+        "relation": "RECORDED_CONTEXT",
+        "rationale": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.",
+        "evidence_refs": [
+          "CNINFO:600585:ANN:20180323:1204507132"
+        ]
+      }
+    ],
+    "current_state": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.",
+    "adaptation_hypothesis": "Industry and regional conditions cannot be used as an individual counterfactual.",
+    "evidence_refs": [
+      "CNINFO:600585:ANN:20180323:1204507132"
+    ],
+    "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+  },
+  "representative_peers": [
+    {
+      "company_id": "CN:600425",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:REGIONAL_OVERCAPACITY_CONTEXT",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Regional capacity pressure may be shared but is not a treatment-control field.",
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20180421:1204677754"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "company_id": "CN:600802",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:REGIONAL_MANUFACTURING_CONTEXT",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Regional market context does not identify customer response or competitive causality.",
+      "evidence_refs": [
+        "CNINFO:600802:ANN:20180417:1204639756"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    }
+  ],
+  "near_misses": [
+    {
+      "company_id": "CN:600801",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:ACQUISITION_PERIMETER_CONTINUITY",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "A perimeter change can make later aggregate operating fields non-comparable.",
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20180326:1204514309"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "near_miss_reason": "Material scope, control, or measurement boundary differs."
+    },
+    {
+      "company_id": "CN:000401",
+      "company_name": "UNSPECIFIED",
+      "archetype": "ARCHETYPE:RESTRUCTURING_AND_JV_PERIMETER",
+      "common_arena_ids": [
+        "ARENA:CN:CEMENT:MULTI_REGION_DELIVERED_MARKET"
+      ],
+      "comparison_role": "MECHANISM_PEER_CANDIDATE",
+      "why_representative": "Perimeter continuity must precede any operating comparison.",
+      "evidence_refs": [
+        "CNINFO:000401:ANN:20180323:1204506085"
+      ],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "near_miss_reason": "Material scope, control, or measurement boundary differs."
+    }
+  ],
+  "candidate_main_paths": [
+    {
+      "path_id": "IUP:CN:600585:1",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+      "profit_pool_effect": "Requires a directional judgment from current industry evidence.",
+      "company_exposure": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.",
+      "adaptation_hypothesis": "Industry and regional conditions cannot be used as an individual counterfactual.",
+      "economics_implication": "Normalized earnings and owner-cash transmission require company-specific verification.",
+      "permanent_loss_implication": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?"
+      ],
+      "evidence_refs": []
+    },
+    {
+      "path_id": "IUP:CN:600585:2",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "A change in the reporting perimeter may alter the composition of a reported operating or cash series.",
+      "profit_pool_effect": "Requires a directional judgment from current industry evidence.",
+      "company_exposure": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.",
+      "adaptation_hypothesis": "Industry and regional conditions cannot be used as an individual counterfactual.",
+      "economics_implication": "Verify whether A perimeter-continuity question attached to the affected issuer and cutoff. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "A cutoff-visible bridge establishes the same responsibility boundary and field definition.",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?"
+      ],
+      "evidence_refs": [
+        "CNINFO:600801:ANN:20170324:1203190337",
+        "CNINFO:000401:ANN:20180323:1204506085"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:600585:3",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "The statements can support a bounded operating-to-cash reconstruction at the same issuer perimeter.",
+      "profit_pool_effect": "Requires a directional judgment from current industry evidence.",
+      "company_exposure": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.",
+      "adaptation_hypothesis": "Industry and regional conditions cannot be used as an individual counterfactual.",
+      "economics_implication": "Verify whether An accounting-boundary learning thread rather than owner-cash, competitive advantage or causal effect. changes normalized earnings, capital needs, and owner-cash conversion at the company's responsibility boundary.",
+      "permanent_loss_implication": "A material perimeter, accounting or working-capital change makes the selected field non-diagnostic.",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?"
+      ],
+      "evidence_refs": [
+        "CNINFO:600585:ANN:20170324:1203189438",
+        "CNINFO:600425:ANN:20180421:1204677754"
+      ]
+    },
+    {
+      "path_id": "IUP:CN:600585:4",
+      "status": "CANDIDATE_TO_VERIFY",
+      "industry_regime": "This is a selection refresh using the same H1 disclosure epoch; it is not a new operating outcome window.",
+      "industry_force": "Cement and clinker supplied through issuer-consolidated production and distribution assets; product and customer response are evaluated within the relevant delivered market rather than by issuer province labels. -> Construction, infrastructure and property customers served through regional cement/clinker channels; action-specific transport radius, delivered-price and customer overlap are reserved for H2.",
+      "profit_pool_effect": "Requires a directional judgment from current industry evidence.",
+      "company_exposure": "Listed-consolidated cement-and-clinker product, sales and cash fields are visible; management-action attribution remains unobserved.",
+      "adaptation_hypothesis": "Industry and regional conditions cannot be used as an individual counterfactual.",
+      "economics_implication": "Normalized earnings and owner-cash transmission require company-specific verification.",
+      "permanent_loss_implication": "UNRESOLVED_FROM_AVAILABLE_CONTEXT",
+      "reversal_observations": [
+        "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+        "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?"
+      ],
+      "evidence_refs": [
+        "CNINFO:600425:ANN:20180421:1204677754",
+        "CNINFO:600802:ANN:20180417:1204639756"
+      ]
+    }
+  ],
+  "strongest_counter_thesis": {
+    "statement": "A stable reported field alone is not evidence that the business state, management action or cash mechanism is comparable.",
+    "why_plausible": "This competing explanation is explicitly preserved by an input block, mechanism card, or arena failure mode; it is not dismissed by peer count.",
+    "discriminating_observations": [
+      "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+      "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?"
+    ],
+    "evidence_refs": [
+      "CNINFO:600801:ANN:20170324:1203190337",
+      "CNINFO:000401:ANN:20180323:1204506085"
+    ],
+    "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+  },
+  "company_verification_fields": [
+    {
+      "field": "Which cutoff-visible source, if any, establishes alternatives, commitment, execution and adaptation for a material management decision at a consistent responsibility boundary?",
+      "kind": "QUESTION",
+      "why_it_matters": "Without it, management quality, capital allocation and action-effect conclusions remain unsupported.",
+      "evidence_refs": [],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "field": "Can the next disclosure provide a field-level perimeter bridge for Huaxin and Jidong before operating comparisons are made?",
+      "kind": "QUESTION",
+      "why_it_matters": "A missing bridge can change the interpretation of operating cash and permanent-loss conditions.",
+      "evidence_refs": [],
+      "source_object_ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20140325:63719331",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20150324:1200733224",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20160324:1202069257",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600801:ANN:20170324:1203190337",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:000401:ANN:20180323:1204506085",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "COMPANY_ARCHETYPE_OR_PEER",
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600425:ANN:20180421:1204677754",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+        "INLINE:COMPANY_COMPETITIVE_ARENA"
+      ],
+      "supports": [
+        "STRUCTURAL_EPOCH",
+        "COMPANY_ARCHETYPE_OR_PEER",
+        "CONDITIONAL_MECHANISM",
+        "COMPANY_COMPETITIVE_ARENA"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20180323:1204507132",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600801:ANN:20180326:1204514309",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "COMPANY_ARCHETYPE_OR_PEER"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600802:ANN:20180417:1204639756",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+        "INLINE:COMPANY_COMPETITIVE_ARENA"
+      ],
+      "supports": [
+        "COMPANY_ARCHETYPE_OR_PEER",
+        "COMPANY_COMPETITIVE_ARENA"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    },
+    {
+      "evidence_ref": "CNINFO:600585:ANN:20170324:1203189438",
+      "source_object_refs": [
+        "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+      ],
+      "supports": [
+        "CONDITIONAL_MECHANISM"
+      ],
+      "knowledge_status": "SOURCE_POINTER"
+    }
+  ],
+  "knowledge_time": {
+    "cutoff_at": "2018-04-30T23:59:59+08:00",
+    "latest_included_at": "2018-04-30T15:59:59+00:00",
+    "excluded_future_source_refs": [],
+    "undated_source_refs": []
+  },
+  "source_objects": [
+    {
+      "kind": "INDUSTRY_LEARNING_BLOCK",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "schema_version": "industry-learning-block.v1",
+      "use_status": "INCLUDED",
+      "boundary": "Referenced source object remains canonical; this context is only a projection."
+    },
+    {
+      "kind": "COMPANY_COMPETITIVE_ARENA",
+      "ref": "INLINE:COMPANY_COMPETITIVE_ARENA",
+      "schema_version": "judgment-selection-stage0-static-package.v1",
+      "use_status": "INCLUDED",
+      "boundary": "Company arena supplies exposure and comparison scope; it is not an industry fact store."
+    },
+    {
+      "kind": "INDUSTRY_KNOWLEDGE_CONTEXT",
+      "ref": "scripts/industry_knowledge.py:read_industry_knowledge_context",
+      "schema_version": "industry-knowledge-context.v1",
+      "use_status": "EXCLUDED_BY_PIT_BOUNDARY",
+      "boundary": "Historical use requires an explicitly supplied object-level admitted context."
+    }
+  ],
+  "coverage": {
+    "available": [
+      "industry_value_chain",
+      "customer_jobs",
+      "structural_epochs",
+      "demand_drivers",
+      "competition_drivers",
+      "company_archetype_exposure",
+      "representative_peers",
+      "candidate_main_paths",
+      "strongest_counter_thesis",
+      "company_verification_fields",
+      "evidence_references"
+    ],
+    "bounded": [
+      "supply_drivers",
+      "regulation_drivers",
+      "profit_pool_direction"
+    ]
+  },
+  "warnings": [
+    "current_industry_knowledge_not_loaded_in_pit_mode",
+    "bounded_fields:supply_drivers,regulation_drivers,profit_pool_direction"
+  ]
+}

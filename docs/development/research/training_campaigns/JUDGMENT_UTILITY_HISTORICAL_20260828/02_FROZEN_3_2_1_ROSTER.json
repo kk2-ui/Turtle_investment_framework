@@ -1,0 +1,109 @@
+{
+  "schema_version": "historical-judgment-utility-roster.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "selection_receipt_ref": "01_SELECTOR_EXECUTION_RECEIPT.json",
+  "selection_policy": "BUSINESS_MODEL_HETEROGENEITY_THEN_CUTOFF_SOURCE_READINESS",
+  "roster_policy": "THREE_DISCOVERY_TWO_TRANSFER_ONE_UNTOUCHED_HOLDOUT",
+  "order_is_frozen": true,
+  "replacement_policy": "Only a documented source-access failure or role contamination for that exact company-cutoff may skip a row; result direction or expected utility may not change order.",
+  "episodes": [
+    {
+      "rank": 1,
+      "role": "DISCOVERY_1",
+      "company_id": "CN:603195",
+      "company_name": "公牛集团",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "CONSUMER_ELECTRICAL_CHANNEL_AND_NEW_ENERGY_OPTION",
+      "preoutcome_sources": [
+        {"period": "FY2021", "url": "https://static.cninfo.com.cn/finalpage/2022-04-12/1212886382.PDF"},
+        {"period": "FY2022", "url": "https://static.cninfo.com.cn/finalpage/2023-04-28/1216665553.PDF"},
+        {"period": "FY2023", "url": "https://static.cninfo.com.cn/finalpage/2024-04-26/1219840341.PDF"}
+      ],
+      "sealed_outcome": {"period": "FY2024", "custodian_only_url": "https://static.cninfo.com.cn/finalpage/2025-04-25/1223284030.PDF"}
+    },
+    {
+      "rank": 2,
+      "role": "DISCOVERY_2",
+      "company_id": "CN:601598",
+      "company_name": "中国外运",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "CONTRACT_LOGISTICS_AND_FORWARDING_NETWORK",
+      "preoutcome_sources": [
+        {"period": "FY2021", "url": "https://static.cninfo.com.cn/finalpage/2022-03-30/1212728794.PDF"},
+        {"period": "FY2022", "url": "https://static.cninfo.com.cn/finalpage/2023-03-28/1216234957.PDF"},
+        {"period": "FY2023", "url": "https://static.cninfo.com.cn/finalpage/2024-03-23/1219389524.PDF"}
+      ],
+      "sealed_outcome": {"period": "FY2024", "custodian_only_url": "https://static.cninfo.com.cn/finalpage/2025-03-26/1222895896.PDF"}
+    },
+    {
+      "rank": 3,
+      "role": "DISCOVERY_3",
+      "company_id": "CN:600549",
+      "company_name": "厦门钨业",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "RESOURCE_DEEP_PROCESSING_AND_NEW_MATERIALS_CAPEX",
+      "preoutcome_sources": [
+        {"period": "FY2021", "url": "https://static.cninfo.com.cn/finalpage/2022-03-31/1212754030.PDF"},
+        {"period": "FY2022", "url": "https://static.cninfo.com.cn/finalpage/2023-04-22/1216523566.PDF"},
+        {"period": "FY2023", "url": "https://static.cninfo.com.cn/finalpage/2024-04-19/1219672897.PDF"}
+      ],
+      "sealed_outcome": {"period": "FY2024", "custodian_only_url": "https://static.cninfo.com.cn/finalpage/2025-04-26/1223318066.PDF"}
+    },
+    {
+      "rank": 4,
+      "role": "TRANSFER_1",
+      "company_id": "CN:603338",
+      "company_name": "浙江鼎力",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "INDUSTRIAL_EQUIPMENT_CAPACITY_AND_EXPORT_ABSORPTION",
+      "preoutcome_sources": [
+        {"period": "FY2021", "url": "https://static.cninfo.com.cn/finalpage/2022-04-29/1213225533.PDF"},
+        {"period": "FY2022", "url": "https://static.cninfo.com.cn/finalpage/2023-04-27/1216627858.PDF"},
+        {"period": "FY2023", "url": "https://static.cninfo.com.cn/finalpage/2024-04-25/1219791369.PDF"}
+      ],
+      "sealed_outcome": {"period": "FY2024", "custodian_only_url": "https://static.cninfo.com.cn/finalpage/2025-04-18/1223122580.PDF"}
+    },
+    {
+      "rank": 5,
+      "role": "TRANSFER_2",
+      "company_id": "CN:600323",
+      "company_name": "瀚蓝环境",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "ENVIRONMENTAL_UTILITY_PROJECT_CASH_AND_RECEIVABLES",
+      "preoutcome_sources": [
+        {"period": "FY2021", "url": "https://static.cninfo.com.cn/finalpage/2022-03-31/1212748312.PDF"},
+        {"period": "FY2022", "url": "https://static.cninfo.com.cn/finalpage/2023-04-07/1216345867.PDF"},
+        {"period": "FY2023", "url": "https://static.cninfo.com.cn/finalpage/2024-04-12/1219580559.PDF"}
+      ],
+      "sealed_outcome": {"period": "FY2024", "custodian_only_url": "https://static.cninfo.com.cn/finalpage/2025-04-11/1223057340.PDF"}
+    },
+    {
+      "rank": 6,
+      "role": "UNTOUCHED_HOLDOUT",
+      "company_id": "CN:600161",
+      "company_name": "天坛生物",
+      "cutoff_at": "2024-05-01T00:00:00+08:00",
+      "business_model_archetype": "BIOLOGICS_COLLECTION_CAPACITY_AND_PRODUCT_YIELD",
+      "preoutcome_sources": [
+        {"period": "FY2021", "url": "https://static.cninfo.com.cn/finalpage/2022-04-26/1213101479.PDF"},
+        {"period": "FY2022", "url": "https://static.cninfo.com.cn/finalpage/2023-04-25/1216551454.PDF"},
+        {"period": "FY2023", "url": "https://static.cninfo.com.cn/finalpage/2024-03-29/1219446467.PDF"}
+      ],
+      "sealed_outcome": {"period": "FY2024", "custodian_only_url": "https://static.cninfo.com.cn/finalpage/2025-03-29/1222945087.PDF"}
+    }
+  ],
+  "transfer_rule": "TRANSFER rows may apply only a learning rule actually created by ranks 1-3. If none exists, record NOT_APPLICABLE rather than inventing a rule.",
+  "holdout_rule": "The untouched holdout receives the original judgment prompt and frozen treatment contract, without per-case prompt revision from ranks 1-5.",
+  "outcome_access": "SEALED_UNTIL_EACH_EPISODE_PREOUTCOME_FREEZE_AND_REVIEW",
+  "feedback_turns_completed": 0,
+  "transfer_validated": false,
+  "permissions": {
+    "method_freeze": false,
+    "comparative": false,
+    "cjo": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "report": false,
+    "investment_action": false
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "schema_version": "judgment-selection-cohort-feasibility.v1",
+  "cohort_id": "COHORT:CN:CEMENT_LISTED:20180430",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "selection_as_of": "2018-04-30T23:59:59+08:00",
+  "record_purpose": "Cutoff-only Stage-0 disclosure feasibility sample. It proves that a five-company, control-independent listed-issuer panel can be acquired before an action is selected; it does not select an action, freeze a final peer panel, access outcome material, or authorize an episode.",
+  "current_admission_assessment": {
+    "status": "INSUFFICIENT_FOR_V4_FINAL_PANEL",
+    "reason_codes": [
+      "FINAL_PEER_CAPACITY_BELOW_TARGET_PLUS_THREE_PEERS",
+      "ACTION_SPECIFIC_COMMON_COMPETITIVE_ARENA_NOT_YET_PROVEN"
+    ],
+    "reason": "Two of the five members are already marked KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK. The three remaining preliminary members cannot supply one target plus the required three independent peers. The record also has no source-bearing, action-specific competitive-arena proof that would connect its product, customer and relevant geographic exposures to one common exogenous shock. It does not conclude that a national cement arena is invalid; it remains field-availability evidence only until a concrete mechanism proves its competitive arena.",
+    "permitted_next_step": "Build a new cutoff-before, mechanism-defined competitive-arena issuer universe with one potential target and at least four control-independent continuous-perimeter members. The arena may be NATIONAL, REGIONAL, EXPORT, SEGMENT or MULTI_REGION_PORTFOLIO, but must be source-bearing and appropriate to the proposed action before any action-level discovery."
+  },
+  "prohibited_uses": [
+    "COMPLETE_INDUSTRY_UNIVERSE_CLAIM",
+    "FINAL_PEER_PANEL_OR_MEMBER_ORDER",
+    "V4_FINAL_PANEL_FROM_CURRENT_MEMBER_SET",
+    "OUTCOME_ACCESS",
+    "SELECTION_EPISODE_REGISTRATION",
+    "DIRECTIONAL_LEARNING",
+    "METHOD_FREEZE",
+    "REPORT_USE"
+  ],
+  "universe": {
+    "universe_id": "COHORT-SAMPLE:CN:CEMENT_LISTED:20180430",
+    "membership_rule": "Five listed cement issuers were selected before any action search because their cutoff-before annual reports disclose recurring issuer-level product-volume fields, consolidated financial statements, and a source-bearing distinct ultimate-control record.",
+    "cohort_scope": "PRE_ACTION_DISCLOSURE_FEASIBILITY_SAMPLE",
+    "not_final_peer_universe": true,
+    "listed_company_ids": [
+      "CN:600585",
+      "CN:600801",
+      "CN:000401",
+      "CN:600425",
+      "CN:600802"
+    ]
+  },
+  "members": [
+    {
+      "company_id": "CN:600585",
+      "issuer_id": "ISSUER:CN:600585",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+      "control_group_id": "CONTROL:ANHUI_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {
+        "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+        "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+        "unit": "RMB"
+      },
+      "industry_business_evidence": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "unit": "RMB",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 annual report PDF p22, group cement-and-clinker sales and product/market discussion."
+        }
+      ],
+      "control_group_evidence": [
+        {
+          "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+          "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+          "issuer_id": "ISSUER:CN:600585",
+          "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+          "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+          "unit": "RMB",
+          "published_at": "2018-03-23",
+          "field_ref": "FY2017 annual report PDF p44: Anhui SASAC is the issuer's actual controller.",
+          "observed_control_group_id": "CONTROL:ANHUI_SASAC"
+        }
+      ],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Source availability is established, but the later action/reference window must still test acquisition, consolidation and operating-perimeter continuity before this issuer can enter a frozen peer panel.",
+      "d2_field_availability": {
+        "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME",
+        "definition": "Annual group cement-and-clinker net sales volume. This is only a field-availability observation; a later action-specific discovery must still prove that it is a non-mechanical customer-absorption measure for the selected mechanism.",
+        "repetitions": [
+          {
+            "period_end": "2015-12-31",
+            "evidence": [{
+              "source_id": "CNINFO:600585:ANN:20160324:1202069257",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2016-03-24",
+              "field_ref": "FY2015 annual report PDF p21, group cement-and-clinker aggregate net sales volume."
+            }]
+          },
+          {
+            "period_end": "2016-12-31",
+            "evidence": [{
+              "source_id": "CNINFO:600585:ANN:20170324:1203189438",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2017-03-24",
+              "field_ref": "FY2016 annual report PDF p21, group cement-and-clinker aggregate net sales volume."
+            }]
+          },
+          {
+            "period_end": "2017-12-31",
+            "evidence": [{
+              "source_id": "CNINFO:600585:ANN:20180323:1204507132",
+              "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+              "issuer_id": "ISSUER:CN:600585",
+              "perimeter_id": "LISTED_CONSOLIDATED_ISSUER",
+              "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585",
+              "unit": "RMB",
+              "published_at": "2018-03-23",
+              "field_ref": "FY2017 annual report PDF p22, group cement-and-clinker aggregate net sales volume."
+            }]
+          }
+        ]
+      },
+      "annual_d3_d4_availability": [
+        {"period_end": "2013-12-31", "evidence": [{"source_id": "CNINFO:600585:ANN:20140325:63719331", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600585", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "unit": "RMB", "published_at": "2014-03-25", "field_ref": "FY2013 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2014-12-31", "evidence": [{"source_id": "CNINFO:600585:ANN:20150324:1200733224", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600585", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "unit": "RMB", "published_at": "2015-03-24", "field_ref": "FY2014 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:600585:ANN:20160324:1202069257", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600585", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "unit": "RMB", "published_at": "2016-03-24", "field_ref": "FY2015 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:600585:ANN:20170324:1203189438", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600585", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "unit": "RMB", "published_at": "2017-03-24", "field_ref": "FY2016 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:600585:ANN:20180323:1204507132", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600585", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600585", "unit": "RMB", "published_at": "2018-03-23", "field_ref": "FY2017 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]}
+      ]
+    },
+    {
+      "company_id": "CN:600801",
+      "issuer_id": "ISSUER:CN:600801",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801",
+      "control_group_id": "CONTROL:LAFARGEHOLCIM_LTD",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "unit": "RMB"},
+      "industry_business_evidence": [{"source_id": "CNINFO:600801:ANN:20180326:1204514309", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2018-03-26", "field_ref": "FY2017 annual report PDF p11, cement-and-clinker sales and principal operating discussion."}],
+      "control_group_evidence": [{"source_id": "CNINFO:600801:ANN:20180326:1204514309", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2018-03-26", "field_ref": "FY2017 annual report PDF p33: LafargeHolcim Ltd is the first shareholder's actual controller.", "observed_control_group_id": "CONTROL:LAFARGEHOLCIM_LTD"}],
+      "final_peer_panel_disposition": "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK",
+      "final_peer_panel_rationale": "The FY2016 report discloses acquisition approval for 15 cement plants from LafargeHolcim in three provinces; this is a material consolidation-scope break for the preliminary window and requires exclusion unless a later action-window review selects a continuous perimeter.",
+      "comparability_break_evidence": [{"source_id": "CNINFO:600801:ANN:20170324:1203190337", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2017-03-24", "field_ref": "FY2016 annual report PDF p9, disclosed acquisition approval for 15 LafargeHolcim cement plants."}],
+      "d2_field_availability": {"field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES_VOLUME", "definition": "Annual issuer cement-and-clinker sales volume. Field availability only; no customer-absorption conclusion is made in Stage 0.", "repetitions": [
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20160331:1202113147", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2016-03-31", "field_ref": "FY2015 annual report PDF p11, cement-and-clinker sales total."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20170324:1203190337", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2017-03-24", "field_ref": "FY2016 annual report PDF p9, cement-and-clinker sales total."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20180326:1204514309", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2018-03-26", "field_ref": "FY2017 annual report PDF p11, cement-and-clinker sales total."}]}
+      ]},
+      "annual_d3_d4_availability": [
+        {"period_end": "2013-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20140329:63752775", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2014-03-29", "field_ref": "FY2013 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2014-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20150327:1200750046", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2015-03-27", "field_ref": "FY2014 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20160331:1202113147", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2016-03-31", "field_ref": "FY2015 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20170324:1203190337", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2017-03-24", "field_ref": "FY2016 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:600801:ANN:20180326:1204514309", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600801", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600801", "unit": "RMB", "published_at": "2018-03-26", "field_ref": "FY2017 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]}
+      ]
+    },
+    {
+      "company_id": "CN:000401",
+      "issuer_id": "ISSUER:CN:000401",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401",
+      "control_group_id": "CONTROL:BEIJING_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "unit": "RMB"},
+      "industry_business_evidence": [{"source_id": "CNINFO:000401:ANN:20180323:1204506085", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2018-03-23", "field_ref": "FY2017 annual report PDF p9, issuer business is production and sales of cement clinker and related building materials."}],
+      "control_group_evidence": [{"source_id": "CNINFO:000401:ANN:20180323:1204506085", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2018-03-23", "field_ref": "FY2017 annual report PDF p52: Beijing SASAC is actual controller and did not change during the year.", "observed_control_group_id": "CONTROL:BEIJING_SASAC"}],
+      "final_peer_panel_disposition": "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK",
+      "final_peer_panel_rationale": "The FY2017 report describes the ongoing major restructuring and formation of a joint venture with the indirect controlling shareholder. This is a material operating and consolidation-perimeter break for the preliminary window and requires exclusion unless a later action-window review finds a continuous segment.",
+      "comparability_break_evidence": [{"source_id": "CNINFO:000401:ANN:20180323:1204506085", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2018-03-23", "field_ref": "FY2017 annual report PDF p9, ongoing major asset restructuring and joint-venture formation with Jinyu Group."}],
+      "d2_field_availability": {"field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES_VOLUME", "definition": "Annual issuer sales volume of cement and clinker. Field availability only; not an action-specific customer conclusion.", "repetitions": [
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20160412:1202162448", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2016-04-12", "field_ref": "FY2015 annual report PDF p11, cement and clinker sales volume."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20170323:1203186347", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2017-03-23", "field_ref": "FY2016 annual report PDF p9, issuer reports cement-and-clinker combined sales volume; exact raw row to be acquired only if a candidate action survives discovery."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20180323:1204506085", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2018-03-23", "field_ref": "FY2017 annual report PDF p12, cement and clinker sales volume."}]}
+      ]},
+      "annual_d3_d4_availability": [
+        {"period_end": "2013-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20140415:63839496", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2014-04-15", "field_ref": "FY2013 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2014-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20150414:1200826167", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2015-04-14", "field_ref": "FY2014 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20160412:1202162448", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2016-04-12", "field_ref": "FY2015 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20170323:1203186347", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2017-03-23", "field_ref": "FY2016 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:000401:ANN:20180323:1204506085", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:000401", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:000401", "unit": "RMB", "published_at": "2018-03-23", "field_ref": "FY2017 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]}
+      ]
+    },
+    {
+      "company_id": "CN:600425",
+      "issuer_id": "ISSUER:CN:600425",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425",
+      "control_group_id": "CONTROL:XPCC_FIRST_DIVISION_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "unit": "RMB"},
+      "industry_business_evidence": [{"source_id": "CNINFO:600425:ANN:20180421:1204677754", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2018-04-21", "field_ref": "FY2017 annual report PDF p12, product sales-volume table identifies cement as the recurring product field."}],
+      "control_group_evidence": [{"source_id": "CNINFO:600425:ANN:20180421:1204677754", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2018-04-21", "field_ref": "FY2017 annual report PDF p4: XPCC First Division SASAC is the issuer's actual controller.", "observed_control_group_id": "CONTROL:XPCC_FIRST_DIVISION_SASAC"}],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Source availability is established, but the selected action/reference window must still be checked for consolidation and operating-perimeter continuity before final peer inclusion.",
+      "d2_field_availability": {"field_id": "ISSUER_CONSOLIDATED_CEMENT_SALES_VOLUME", "definition": "Annual issuer cement sales volume from the recurring product production/sales/inventory table. Field availability only; not an action-specific customer conclusion.", "repetitions": [
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20160409:1202157712", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2016-04-09", "field_ref": "FY2015 annual report PDF p10, cement production/sales/inventory table."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20170408:1203264291", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2017-04-08", "field_ref": "FY2016 annual report PDF p12, cement production/sales/inventory table."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20180421:1204677754", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2018-04-21", "field_ref": "FY2017 annual report PDF p12, cement production/sales/inventory table."}]}
+      ]},
+      "annual_d3_d4_availability": [
+        {"period_end": "2013-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20140403:63781007", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2014-04-03", "field_ref": "FY2013 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2014-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20150411:1200812468", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2015-04-11", "field_ref": "FY2014 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20160409:1202157712", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2016-04-09", "field_ref": "FY2015 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20170408:1203264291", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2017-04-08", "field_ref": "FY2016 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:600425:ANN:20180421:1204677754", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600425", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600425", "unit": "RMB", "published_at": "2018-04-21", "field_ref": "FY2017 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]}
+      ]
+    },
+    {
+      "company_id": "CN:600802",
+      "issuer_id": "ISSUER:CN:600802",
+      "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802",
+      "control_group_id": "CONTROL:FUJIAN_SASAC",
+      "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+      "boundary": {"responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "unit": "RMB"},
+      "industry_business_evidence": [{"source_id": "CNINFO:600802:ANN:20180417:1204639756", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2018-04-17", "field_ref": "FY2017 annual report PDF p66, principal products are ordinary Portland cement brands; p11 has the cement production/sales discussion."}],
+      "control_group_evidence": [{"source_id": "CNINFO:600802:ANN:20180417:1204639756", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2018-04-17", "field_ref": "FY2017 annual report PDF p133: Fujian Energy Group is actual controller and Fujian SASAC is final controller.", "observed_control_group_id": "CONTROL:FUJIAN_SASAC"}],
+      "final_peer_panel_disposition": "PENDING_ACTION_WINDOW_REVIEW",
+      "final_peer_panel_rationale": "Source availability is established, but the selected action/reference window must still be checked for consolidation and operating-perimeter continuity before final peer inclusion.",
+      "d2_field_availability": {"field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_SALES_VOLUME", "definition": "Annual issuer cement and clinker sales volumes from the recurring product production/sales/inventory table. Field availability only; not an action-specific customer conclusion.", "repetitions": [
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20160426:1202245558", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2016-04-26", "field_ref": "FY2015 annual report PDF p11, cement and clinker production/sales/inventory table."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20170411:1203274263", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2017-04-11", "field_ref": "FY2016 annual report PDF p11, cement and clinker production/sales/inventory table."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20180417:1204639756", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2018-04-17", "field_ref": "FY2017 annual report PDF p11, product sales summary and cement operating discussion."}]}
+      ]},
+      "annual_d3_d4_availability": [
+        {"period_end": "2013-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20140318:63687174", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2014-03-18", "field_ref": "FY2013 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2014-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20150324:1200733162", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2015-03-24", "field_ref": "FY2014 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2015-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20160426:1202245558", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2016-04-26", "field_ref": "FY2015 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2016-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20170411:1203274263", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2017-04-11", "field_ref": "FY2016 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]},
+        {"period_end": "2017-12-31", "evidence": [{"source_id": "CNINFO:600802:ANN:20180417:1204639756", "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT", "issuer_id": "ISSUER:CN:600802", "perimeter_id": "LISTED_CONSOLIDATED_ISSUER", "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600802", "unit": "RMB", "published_at": "2018-04-17", "field_ref": "FY2017 full annual report, consolidated income statement, cash-flow statement and balance sheet."}]}
+      ]
+    }
+  ]
+}

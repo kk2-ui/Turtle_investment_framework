@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "judgment_id": "HOLDOUT_BASELINE_PREOUTCOME_JUDGMENT:CN601933:FY2023",
+  "status": "FROZEN_PRE_OUTCOME_JUDGMENT",
+  "forecaster_role": "BASELINE",
+  "as_of_cutoff": "2024-05-01",
+  "company": {
+    "company_id": "CN:601933",
+    "security_code": "601933",
+    "company_name": "永辉超市"
+  },
+  "best_current_judgment": {
+    "confidence": "MODERATE",
+    "summary": "The retained-store and digital/supply-chain platform may be becoming operationally leaner, but the FY2021-FY2023 record does not yet show that customer reach or network activity earns through to repeatable store economics, normalized earnings, and recovery of the capital committed to the network. The appropriate base treatment is an incomplete turnaround with elevated capital-recovery risk, rather than a completed recovery.",
+    "enterprise_judgments": [
+      {
+        "judgment": "Store rationalization and digital operating work are real execution steps, but they have not yet established a durable recovery in the core retail earnings engine.",
+        "evidence": [
+          "Revenue declined from RMB91.062bn in FY2021 to RMB90.091bn in FY2022 and RMB78.642bn in FY2023; FY2023 revenue fell 12.71% year on year.",
+          "Attributable net losses were RMB3.944bn, RMB2.763bn, and RMB1.329bn respectively. FY2023 loss reduction therefore indicates less damage, not demonstrated normal profitability.",
+          "FY2023 closed 45 stores, opened 12, and ended with 1,000 stores. The company attributed the FY2023 revenue decline both to closing persistently loss-making stores and to weak consumer willingness and capacity."
+        ],
+        "causal_mechanism": "Closing loss-making stores can remove direct losses and concentrate effort in better locations, while digital tools can lower picking, labor, inventory, and procurement friction. But the same rationalization reduces sales capacity; unless retained stores hold or grow customer spend at a sufficient gross margin after labor, delivery, rent, and maintenance, the network becomes smaller without earning back the capital already embedded in it.",
+        "treatment": "Do not infer normalized profitability from narrowing reported losses. Treat the retained estate's earnings power as unproven until it is visible in stabilized revenue and gross economics after the closure program."
+      },
+      {
+        "judgment": "Customer and network activity is a constructive leading indicator, but it is not yet creditable as proof of unit economics, owner cash, or capital recovery.",
+        "evidence": [
+          "FY2023 online revenue was RMB16.1bn, 20.5% of revenue; self-operated delivery covered 920 stores, recorded RMB8.38bn sales and a 50% monthly repeat rate, and third-party delivery covered 910 stores with RMB7.7bn sales.",
+          "The company reported FY2023 logistics inventory days down 2.5 days, inventory down RMB83m, and an average 20% improvement in picking efficiency in covered core-city stores; full-year operating cash flow remained positive at RMB4.569bn.",
+          "These activity and efficiency metrics coexist with the FY2023 revenue decline, a RMB10.28bn decrease in gross profit, and operating cash flow down 22.09% year on year."
+        ],
+        "causal_mechanism": "Repeat orders, broader delivery coverage, and better fulfillment can increase customer lifetime value and lower unit cost. That transmission is economically valuable only if the incremental order has adequate merchandise contribution after fulfillment and does not require a disproportionate store, logistics, or working-capital commitment. Grocery operating cash flow can also remain positive during a contraction because inventory and payables release cash, so it is not automatically owner cash.",
+        "explicit_crediting_boundary": {
+          "customer_activity": "Credited as evidence that demand access and repeat behavior exist; not credited as earnings recovery because no reviewed evidence establishes contribution after delivery, store labor, rent, and support costs.",
+          "store_and_network_activity": "Credited as evidence of rationalization and potential efficiency. Closures, delivery coverage, logistics scale, and digital deployment are not credited as capital recovery unless retained-store cash generation exceeds their ongoing lease, maintenance, working-capital, and reinvestment needs.",
+          "normal_earnings": "No uplift is credited for online scale, memberships, repeat rate, store count, or digital rollout alone.",
+          "owner_cash": "Positive operating cash flow is credited as a liquidity-positive fact, but not as distributable owner cash before recurring leases, maintenance/reconfiguration needs, and the working-capital source of cash are resolved.",
+          "capital_recovery": "No recovery credit is given for the existing store/logistics asset base until the retained network produces sustained economics without recurring closure or asset impairment."
+        }
+      },
+      {
+        "judgment": "Management execution is mixed: it has implemented a credible operating response but has not yet demonstrated that the response creates an investable capital-return outcome.",
+        "evidence": [
+          "Across the three reports, management repeatedly described digital ordering, scheduling, product selection, and supply-chain work, as well as pruning tail stores; FY2023 reported online merchandise gross margin up 0.9 percentage points and productivity improvements in several processes.",
+          "Yet losses persisted across FY2021-FY2023, and the reports recorded store/network-related impairment charges for long-loss-making or planned-closure stores of RMB3.09bn in FY2021, RMB4.37bn in FY2022, and RMB0.087bn in FY2023."
+        ],
+        "causal_mechanism": "Execution quality must be judged after implementation: better systems and smaller loss-making exposure should eventually appear as positive retained-store contribution, cash after necessary reinvestment, and fewer assets written down. Repeated impairment and losses mean the historic capital deployment has not yet shown that outcome, even if current operational actions are sensible.",
+        "treatment": "Assess management as capable of corrective action, but retain a material execution and capital-allocation discount until post-rationalization economics, rather than activity milestones, confirm the turnaround."
+      }
+    ]
+  },
+  "strongest_countercase": {
+    "case": "The FY2023 result may be a late-stage cleanup rather than an ongoing economic deterioration: reported loss halved, positive operating cash flow remained substantial, online gross margin and logistics efficiency improved, and closing tail stores could expose a profitable, more productive retained estate once consumer conditions normalize.",
+    "why_it_is_currently_less_plausible": "This is plausible and prevents treating the company as a failed business. It is not the base case because the core revenue contraction was still severe in FY2023, gross profit fell by RMB10.28bn, operating cash flow also declined, and there is no reviewed retained-store contribution, comparable-sales, or cash-after-reinvestment evidence showing that customer engagement and efficiency have crossed into normal earnings."
+  },
+  "normal_earnings_owner_cash_and_permanent_loss": {
+    "normal_earnings": "Use a depressed and conditional normal-earnings view. Remove clearly non-recurring financial-investment marks when considering recurring retail performance, but do not normalize away recurring store/network closure and asset impairment as if it had no economic meaning. Across three years it is evidence that earlier physical-network capital has not fully earned through. A normal-earnings upgrade requires sustained retained-store sales and gross-margin recovery with operating costs held below that recovery.",
+    "owner_cash": "Treat positive operating cash flow as useful but insufficient. FY2021-FY2023 operating cash flow was RMB5.827bn, RMB5.864bn, and RMB4.569bn, while sales and reported earnings weakened. Until the annual reports show the split between working-capital release and repeatable store cash generation, and reconcile ongoing lease, maintenance, reconfiguration, and supply-chain investment needs, owner cash is materially below operating cash flow for underwriting purposes.",
+    "permanent_loss": "Permanent-loss risk is elevated principally through capital recovery, not presumed near-term liquidity failure: stores, leasehold improvements, and logistics/network investment may require continuing closures, impairment, or reinvestment before they yield adequate cash. The risk would decline if the retained estate earns sustained cash after maintenance with no recurring impairment; it rises if sales contraction or closure-led write-downs continue."
+  },
+  "frozen_material_treatment": {
+    "treatment": "Do not treat recurring store/network impairment and closure costs as fully non-recurring in normal earnings. Preserve a material capital-recovery burden until post-rationalization retained-store economics prove otherwise.",
+    "reason": "The same economic carrier—long-loss-making or closing stores and related assets—appears in all three released annual reports, while revenue and reported earnings remain weak despite customer and network activity.",
+    "expected_decision_consequence": "The directional valuation implication is less favorable than a case that capitalizes customer reach, delivery scale, or logistics investment as an already-completed earnings recovery; the base case gives those activities no recovery premium."
+  },
+  "scenario_conditions": {
+    "optimistic": {
+      "conditions": [
+        "Retained-store revenue stabilizes or grows despite the smaller estate.",
+        "Merchandise gross margin and store/fulfillment productivity improve enough to cover delivery, labor, rent, and maintenance costs.",
+        "Operating cash flow remains strong after stable working capital, leases, maintenance, and reconfiguration, while store-related impairment ceases."
+      ],
+      "consequence": "Customer engagement and network efficiency would then earn a normal-earnings and capital-recovery credit."
+    },
+    "base": {
+      "conditions": [
+        "Tail-store closures and digital tools reduce losses, but weak consumer demand and competition prevent a clear retained-store revenue and gross-profit recovery.",
+        "Operating cash flow remains positive but partly reflects working-capital movement and is absorbed by leases and ongoing network maintenance or adjustment."
+      ],
+      "consequence": "The business remains a partial operational repair with below-potential normal earnings and unresolved capital recovery."
+    },
+    "adverse": {
+      "conditions": [
+        "Customer traffic or online order growth fails to translate into profitable store or fulfillment contribution.",
+        "Revenue contraction continues, leading to further closures, impairment, and cash demands from the physical network."
+      ],
+      "consequence": "The capital-recovery problem becomes a lasting owner-cash and permanent-loss problem rather than a temporary turnaround cost."
+    }
+  },
+  "local_unknowns_and_present_treatment": [
+    {
+      "unknown": "The reviewed packet does not establish retained-store comparable sales, store-level contribution after delivery and occupancy costs, or the mature economics of online orders.",
+      "present_treatment": "Do not credit memberships, order volume, repeat rate, coverage, or process-productivity metrics to normal earnings; retain them as upside conditions rather than base-case cash generation."
+    },
+    {
+      "unknown": "The reviewed packet does not establish how much positive operating cash flow is a durable retail cash surplus versus cash released by lower sales, inventory, or other working-capital changes, after recurring leases and maintenance/reconfiguration.",
+      "present_treatment": "Underwrite owner cash below reported operating cash flow and require the FY2024 cash-flow and lease/reinvestment cells before promoting the cash conversion view."
+    }
+  ],
+  "fy2024_annual_report_resolution_cells": [
+    {
+      "cell": "Retail operating-information rows for year-end store count, new stores, and closed stores, compared with FY2023's 1,000 stores, 12 openings, and 45 closures.",
+      "resolves": "Whether rationalization is reaching a stable retained estate or remains an expanding closure program.",
+      "judgment_change_rule": "Stabilization alone is necessary but not sufficient; it improves the case only when paired with the earnings and cash cells below."
+    },
+    {
+      "cell": "Income-statement rows for FY2024 revenue, operating cost, gross profit/gross margin, and attributable net profit, compared with FY2023's RMB78.642bn revenue and RMB1.329bn attributable loss.",
+      "resolves": "Whether retained customer and store activity is converting into a core revenue and gross-economics recovery.",
+      "judgment_change_rule": "A sustained revenue and gross-profit recovery without merely adding loss-making capacity would support a normal-earnings upgrade."
+    },
+    {
+      "cell": "Cash-flow-statement row for net cash from operating activities together with the investing-cash rows for purchases of property, plant, equipment, intangible assets and other long-lived assets, and the lease note's total lease cash outflow.",
+      "resolves": "Whether operating cash is durable owner cash after recurring physical-network cash demands.",
+      "judgment_change_rule": "Stable or stronger operating cash only upgrades owner cash if long-lived-asset and lease outflows leave a recurring surplus without a working-capital release being the main explanation."
+    },
+    {
+      "cell": "Asset-impairment note rows for loss-making/planned-closure store asset groups, including fixed assets, right-of-use assets, and leasehold improvements.",
+      "resolves": "Whether the historic capital-recovery problem is ending or recurring.",
+      "judgment_change_rule": "A material repeat impairment retains the frozen capital-recovery burden; its absence is supportive only alongside recovered retained-store economics."
+    }
+  ],
+  "reversal_observation": "The judgment would reverse toward a completed recovery if the FY2024 annual report shows a stabilized retained estate, clear revenue and gross-profit recovery, operating cash that remains after recurring lease and maintenance/reinvestment needs, and no material repeat store/network impairment.",
+  "evidence_references": [
+    "FY2021_1213271083.txt:449-459, 710-790, 912-945, 1634-1639, 3569-3600",
+    "FY2022_1216707511.txt:455-464, 702-769, 885-889, 3201-3226",
+    "FY2023_1219878384.txt:451-459, 683-752, 801-898, 1423-1426, 21502-21508, 22504-22527"
+  ],
+  "firewall_and_allocation_attestation": {
+    "only_released_company_evidence_used": [
+      "FY2021 annual-report local text extraction, announcement 1213271083",
+      "FY2022 annual-report local text extraction, announcement 1216707511",
+      "FY2023 annual-report local text extraction, announcement 1219878384"
+    ],
+    "report_reads_used": 3,
+    "synthesis_turns_used": 1,
+    "local_search_and_extraction_only": true,
+    "browser_or_external_access_used": false,
+    "outcome_or_outcome_proxy_read": false,
+    "post_cutoff_or_fy2024_plus_metadata_or_body_read": false,
+    "price_return_analyst_or_valuation_material_read": false,
+    "other_campaign_or_curriculum_artifact_read": false,
+    "result_isolation_preserved": true
+  }
+}

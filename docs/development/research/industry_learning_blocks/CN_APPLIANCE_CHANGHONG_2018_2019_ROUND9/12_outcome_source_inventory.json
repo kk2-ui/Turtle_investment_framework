@@ -1,0 +1,33 @@
+{
+  "schema_version": "turtle-outcome-measurement-static-pdf-inventory.v1",
+  "inventory_id": "OMINV:CN600839:FY2019:R9:V1",
+  "measurement_contract_ref": {
+    "measurement_contract_id": "OMC:CN600839:20180930:EIGHT_DIMENSION:V3",
+    "measurement_contract_version": 3
+  },
+  "custodian_id": "ROLE:ROUND9:APPLIANCE:OUTCOME_CUSTODIAN",
+  "registered_at": "2026-08-27T19:00:00+08:00",
+  "documents": [
+    {
+      "source_id": "CNINFO:600839:ANN:20200418:1207528466",
+      "source_url": "https://static.cninfo.com.cn/finalpage/2020-04-18/1207528466.PDF",
+      "local_pdf_path": "/tmp/CN600839_FY2019_1207528466.PDF",
+      "issuer_id": "ISSUER:CN:600839",
+      "responsibility_boundary": "ISSUER_FILING:CN:600839:FY2019:MULTI_TYPED_BOUNDARIES",
+      "report_period_end": "2019-12-31",
+      "official_source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "report_scope": "ISSUER_FILING",
+      "currency": "RMB",
+      "revision_policy": "ORIGINAL_VINTAGE",
+      "consolidation_or_restatement_note": "Original FY2019 annual-report vintage. The issuer disposed of Sichuan Changhong New Energy at year-end and added newly established entities; the scope event is observed separately and does not rewrite the frozen product or issuer fields.",
+      "availability_precision": "DATE_ONLY",
+      "source_available_at": null,
+      "source_available_date": "2020-04-18"
+    }
+  ],
+  "object_class": "OUTCOME_MEASUREMENT_STATIC_PDF_INVENTORY",
+  "claim_class": "REGISTERED_LOCAL_OFFICIAL_ANNUAL_REPORTS_ONLY",
+  "allowed_outputs": [
+    "ENTERPRISE_OUTCOME_ACQUISITION_ONLY"
+  ]
+}

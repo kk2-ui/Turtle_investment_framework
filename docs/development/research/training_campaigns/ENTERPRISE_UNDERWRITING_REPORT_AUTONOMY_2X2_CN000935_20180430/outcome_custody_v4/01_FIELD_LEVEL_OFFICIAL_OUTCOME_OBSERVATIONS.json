@@ -1,0 +1,633 @@
+{
+  "schema_version": "outcome-custody-v4.1",
+  "issuer": {
+    "security_code": "CN:000935",
+    "name_during_window": [
+      "四川双马水泥股份有限公司",
+      "四川和谐双马股份有限公司"
+    ]
+  },
+  "custody_scope": {
+    "result_window": "FY2018--FY2022",
+    "selection_rule": "For each fiscal year, use only the first complete issuer/CNINFO annual report published before 2023-05-01T00:00:00+08:00. A withdrawn first report is not replaced by a later update.",
+    "permitted_sources_used": [
+      "CNINFO official announcement index and the full annual-report PDFs linked by CNINFO"
+    ],
+    "excluded": [
+      "prices, returns, news, earnings flashes, peers, third-party data, existing outcome/review materials, and all arm materials"
+    ],
+    "arm_evaluation": "Not performed. This file records official facts and field observability only; it does not classify any arm as SUPPORTED, WEAKENED_OR_FALSIFIED, or NON_DISCRIMINATING. Those three outcomes require a separate comparison to the frozen arm claim, direction, responsibility boundary, and flip condition.",
+    "status_use": {
+      "SOURCE_MISMATCH": "Used where the locked first-report window is cancelled or a required control/accounting bridge is missing.",
+      "INCONCLUSIVE_DATA": "Used where the permitted report does not disclose the required responsibility-unit allocation, realized price, maintenance-capex split, or sale-proceeds tracing.",
+      "SUPPORTED_WEAKENED_OR_FALSIFIED_NON_DISCRIMINATING": "Reserved for the independent post-unsealing reviewer only, after arm comparison."
+    }
+  },
+  "reports": [
+    {
+      "fiscal_year": "FY2018",
+      "selection": "first complete annual report",
+      "announcement_title": "2018年年度报告",
+      "announcement_date_CST": "2019-04-27",
+      "version": "original full annual report",
+      "cninfo_announcement_id": "1206115124",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2019-04-27/1206115124.PDF",
+      "usable_for_observation": true
+    },
+    {
+      "fiscal_year": "FY2019",
+      "selection": "first complete annual report",
+      "announcement_title": "2019年年度报告",
+      "announcement_date_CST": "2020-04-30",
+      "version": "original full annual report",
+      "cninfo_announcement_id": "1207679010",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2020-04-30/1207679010.PDF",
+      "usable_for_observation": true
+    },
+    {
+      "fiscal_year": "FY2020",
+      "selection": "first complete annual report, then withdrawn",
+      "announcement_title": "2020年年度报告（已取消）",
+      "announcement_date_CST": "2021-04-30",
+      "version": "cancelled full annual report; later 2021-05-15 update is deliberately not substituted",
+      "cninfo_announcement_id": "1209863337",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2021-04-30/1209863337.PDF",
+      "official_index_provenance": {
+        "url": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+        "request_identity": "CNINFO historical-announcement query: stock=000935,gssz0000935; secid=gssz0000935; category=category_ndbg_szsh; column=szse",
+        "observed_listing": "The CNINFO index labels announcement 1209863337 as 2020年年度报告（已取消） and separately lists a 2021-05-15 更新后 version."
+      },
+      "usable_for_observation": false,
+      "field_status": "SOURCE_MISMATCH",
+      "reason": "The custody rule prohibits replacement with the later updated report. No FY2020 result field is populated from a comparative column in a later report."
+    },
+    {
+      "fiscal_year": "FY2021",
+      "selection": "first complete annual report",
+      "announcement_title": "2021年年度报告",
+      "announcement_date_CST": "2022-04-30",
+      "version": "original full annual report",
+      "cninfo_announcement_id": "1213245548",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2022-04-30/1213245548.PDF",
+      "usable_for_observation": true
+    },
+    {
+      "fiscal_year": "FY2022",
+      "selection": "first complete annual report",
+      "announcement_title": "2022年年度报告",
+      "announcement_date_CST": "2023-04-29",
+      "version": "original full annual report",
+      "cninfo_announcement_id": "1216682703",
+      "official_url": "https://static.cninfo.com.cn/finalpage/2023-04-29/1216682703.PDF",
+      "usable_for_observation": true
+    }
+  ],
+  "field_level_observations": [
+    {
+      "field_id": "cement_mature_core.FY2018.segment_product_operations",
+      "custody_layer": "水泥成熟核心",
+      "evidence_state": "OBSERVED_OFFICIAL",
+      "arm_settlement_status": null,
+      "facts": {
+        "currency": "CNY",
+        "cement_segment_revenue": 1562533918.67,
+        "cement_segment_cost": 1026788029.58,
+        "cement_segment_gross_margin_pct": 34.29,
+        "cement_product_revenue": 1562533918.67,
+        "cement_product_cost": 1026788029.58,
+        "cement_product_gross_margin_pct": 34.29,
+        "regional_disclosure": "四川及贵州地区：收入1,562,533,918.67元、成本1,026,788,029.58元、毛利率34.29%。",
+        "sales_volume_tonnes": 5206802,
+        "production_volume_tonnes": 5215951,
+        "ending_inventory_tonnes": 49034
+      },
+      "responsibility_boundary": "The revenue/cost/margin row is the issuer's 水泥业务分部 / 水泥产品, and the regional row is 四川及贵州地区. It is not a separate Yibin-versus-Zunyi allocation.",
+      "continuity": "Direct cement segment/product disclosure; the report says the comparison changed because two subsidiaries left consolidation, so FY2017 is not an unadjusted continuing-core comparator.",
+      "citations": [
+        {
+          "report": "FY2018",
+          "pdf_pages": [16, 17],
+          "section": "第四节 经营情况讨论与分析／二、主营业务分析／2、收入与成本／(1)-(3)"
+        }
+      ]
+    },
+    {
+      "field_id": "cement_mature_core.FY2019.segment_product_operations",
+      "custody_layer": "水泥成熟核心",
+      "evidence_state": "OBSERVED_OFFICIAL",
+      "arm_settlement_status": null,
+      "facts": {
+        "currency": "CNY",
+        "cement_segment_revenue": 1427590845.62,
+        "cement_segment_cost": 945816841.39,
+        "cement_segment_gross_margin_pct": 33.75,
+        "cement_product_revenue": 1342570568.6,
+        "cement_product_cost": 913611159.11,
+        "cement_product_gross_margin_pct": 31.95,
+        "aggregate_cement_sales_volume_tonnes": 4804863,
+        "aggregate_cement_production_volume_tonnes": 4790278,
+        "aggregate_cement_ending_inventory_tonnes": 33230,
+        "regional_operating_table": {
+          "yibin": {
+            "production_10000_tonnes": 255.88,
+            "sales_10000_tonnes": 256.97,
+            "inventory_10000_tonnes": 1.24,
+            "sales_gross_margin_pct": 38.61
+          },
+          "zunyi": {
+            "production_10000_tonnes": 223.15,
+            "sales_10000_tonnes": 223.52,
+            "inventory_10000_tonnes": 2.08,
+            "sales_gross_margin_pct": 23.92
+          }
+        }
+      },
+      "responsibility_boundary": "The segment figures include water-cement and aggregate activity; the product table separates cement from aggregate. The regional operating table identifies Yibin and Zunyi only for water-cement production, sales, inventory, and sales gross margin, not revenue or costs by legal entity.",
+      "continuity": "The report retains a cement segment/product series after FY2018 and adds aggregate as a separate product. It separately identifies Yibin and Zunyi operational metrics in FY2019.",
+      "citations": [
+        {
+          "report": "FY2019",
+          "pdf_pages": [18, 19, 20],
+          "section": "第三节 经营情况讨论与分析／非金属建材行业披露／(五)；二、主营业务分析／2、收入与成本／(1)-(3)"
+        }
+      ]
+    },
+    {
+      "field_id": "cement_mature_core.FY2020.all_locked_fields",
+      "custody_layer": "水泥成熟核心",
+      "evidence_state": "NOT_OBSERVED_IN_ELIGIBLE_VERSION",
+      "arm_settlement_status": "SOURCE_MISMATCH",
+      "facts": null,
+      "responsibility_boundary": "No FY2020 field may be sourced from the later update or from a later report's comparative column.",
+      "continuity": "Broken at the locked FY2020 version because CNINFO labels the first full report 已取消.",
+      "citations": [
+        {
+          "report": "FY2020",
+          "pdf_pages": [],
+          "section": "CNINFO official announcement index / cancelled first full annual report"
+        }
+      ]
+    },
+    {
+      "field_id": "cement_mature_core.FY2021.segment_product_operations",
+      "custody_layer": "水泥成熟核心",
+      "evidence_state": "OBSERVED_OFFICIAL",
+      "arm_settlement_status": null,
+      "facts": {
+        "currency": "CNY",
+        "cement_segment_revenue": 930397774.41,
+        "cement_segment_cost": 626060082.06,
+        "cement_segment_gross_margin_pct": 32.71,
+        "cement_product_revenue": 712299615.48,
+        "cement_product_cost": 533047350.97,
+        "cement_product_gross_margin_pct": 25.17,
+        "cement_sales_10000_tonnes": 233.66,
+        "cement_production_10000_tonnes": 235.58,
+        "cement_ending_inventory_10000_tonnes": 3.52,
+        "aggregate_sales_10000_tonnes": 484.53,
+        "aggregate_production_10000_tonnes": 486.06,
+        "aggregate_ending_inventory_10000_tonnes": 1.9
+      },
+      "responsibility_boundary": "The company labels the segment 水泥业务分部 but product disclosure separately labels 水泥 and 骨料. Neither table allocates cash, revenue, cost, or margin between Yibin and any other cement entity.",
+      "continuity": "FY2021 has direct current-year disclosure, but its FY2020 comparative column cannot repair the locked FY2020 SOURCE_MISMATCH. Product mix includes a distinct aggregate line.",
+      "citations": [
+        {
+          "report": "FY2021",
+          "pdf_pages": [21, 22, 23],
+          "section": "第三节 管理层讨论与分析／四、主营业务分析／2、收入与成本／(1)-(3)"
+        }
+      ]
+    },
+    {
+      "field_id": "cement_mature_core.FY2022.segment_product_operations",
+      "custody_layer": "水泥成熟核心",
+      "evidence_state": "OBSERVED_OFFICIAL",
+      "arm_settlement_status": null,
+      "facts": {
+        "currency": "CNY",
+        "building_materials_segment_revenue": 946484431.84,
+        "building_materials_segment_cost": 703328565.84,
+        "building_materials_segment_gross_margin_pct": 25.69,
+        "cement_product_revenue": 728366667.63,
+        "cement_product_cost": 590147268.25,
+        "cement_product_gross_margin_pct": 18.98,
+        "aggregate_product_revenue": 218117764.21,
+        "aggregate_product_cost": 113181297.59,
+        "aggregate_product_gross_margin_pct": 48.11,
+        "reported_actual_cement_sales_10000_tonnes": 229.39,
+        "reported_actual_aggregate_sales_10000_tonnes": 541.53
+      },
+      "responsibility_boundary": "The FY2022 segment is renamed 建材业务分部 and includes cement plus aggregate. The cement product row is the permitted cement-only metric; segment totals must not be attributed wholly to cement.",
+      "continuity": "The FY2022 product table preserves a cement-only row but segment nomenclature/boundary is broader than the earlier 水泥业务分部. The FY2020 gap remains unbridged.",
+      "citations": [
+        {
+          "report": "FY2022",
+          "pdf_pages": [21, 22, 23, 32],
+          "section": "第三节 管理层讨论与分析／四、主营业务分析／2、收入与成本／(1)-(2)；十一、公司未来发展的展望"
+        }
+      ]
+    },
+    {
+      "field_id": "customers_and_unit_economics.disclosed_concentration_channels_and_price_limits",
+      "custody_layer": "客户与单位经济",
+      "evidence_state": "PARTIALLY_OBSERVED_OFFICIAL",
+      "arm_settlement_status": "INCONCLUSIVE_DATA",
+      "facts_by_fiscal_year": {
+        "FY2018": {
+          "top_five_customer_sales_CNY": 847798979.63,
+          "top_five_customer_share_pct": 43.71,
+          "related_party_sales_share_within_total_sales_pct": 19.02,
+          "realized_price_per_tonne": null
+        },
+        "FY2019": {
+          "top_five_customer_sales_CNY": 739837736.83,
+          "top_five_customer_share_pct": 40.86,
+          "related_party_sales_share_within_total_sales_pct": 20.71,
+          "sales_mode": "经销和直销相结合",
+          "realized_price_per_tonne": null,
+          "regional_price_statement": "宜宾水泥销售毛利率上升，报告称原因为销售价格同比上升且成本同比下降；遵义毛利率下降，报告称原因为销售价格同比下降。"
+        },
+        "FY2020": {
+          "field_status": "SOURCE_MISMATCH"
+        },
+        "FY2021": {
+          "top_five_customer_sales_CNY": 546585573.07,
+          "top_five_customer_share_pct": 44.66,
+          "related_party_sales_share_within_total_sales_pct": 23.81,
+          "sales_mode_revenue_CNY": {
+            "dealer": 743418443.22,
+            "direct": 186979331.19
+          },
+          "realized_price_per_tonne": null
+        },
+        "FY2022": {
+          "top_five_customer_sales_CNY": 458078778.56,
+          "top_five_customer_share_pct": 37.56,
+          "related_party_sales_share_within_total_sales_pct": 22.15,
+          "sales_mode_revenue_CNY": {
+            "dealer": 624335002.5,
+            "direct": 322149429.34
+          },
+          "realized_price_per_tonne": null
+        }
+      },
+      "responsibility_boundary": "Customer concentration and sales-mode rows are issuer-wide annual sales disclosures and include non-cement activities where shown. None of the permitted reports gives a realized cement price per tonne, a customer-level cement allocation, or a customer-level cash conversion bridge.",
+      "continuity": "Concentration is disclosed in each usable report, but the FY2020 cancelled first report breaks a five-year locked series. FY2019 only gives directional regional price commentary, not a realized-price series.",
+      "why_inconclusive": "A price-dependent, customer-specific, or cement-only unit-economics claim cannot be settled from these disclosures without substituting undisclosed proxies.",
+      "citations": [
+        {
+          "report": "FY2018",
+          "pdf_pages": [18, 19],
+          "section": "第四节／二、主营业务分析／2、收入与成本／(8)主要销售客户和主要供应商情况"
+        },
+        {
+          "report": "FY2019",
+          "pdf_pages": [18, 21],
+          "section": "第三节／非金属建材行业披露／(五)；二、主营业务分析／2、收入与成本／(8)"
+        },
+        {
+          "report": "FY2021",
+          "pdf_pages": [21, 24],
+          "section": "第三节／四、主营业务分析／2、收入与成本／(1)、(8)"
+        },
+        {
+          "report": "FY2022",
+          "pdf_pages": [21, 23, 24],
+          "section": "第三节／四、主营业务分析／2、收入与成本／(1)、(8)"
+        }
+      ]
+    },
+    {
+      "field_id": "working_capital_and_cash.consolidated_series",
+      "custody_layer": "营运资本与现金",
+      "evidence_state": "OBSERVED_OFFICIAL_WITH_COMPONENT_LIMIT",
+      "arm_settlement_status": "INCONCLUSIVE_DATA",
+      "units": "CNY",
+      "facts_by_fiscal_year": {
+        "FY2018": {
+          "operating_cash_flow_net": 693782464.23,
+          "accounts_receivable": 74620245.38,
+          "inventory": 80811467.71,
+          "prepayments": 10495153.69,
+          "accounts_payable": null,
+          "notes_and_accounts_payable_combined": 264143515.98,
+          "advance_receipts": 117233323.7,
+          "cash_and_cash_equivalents_at_year_end": 401312438.01
+        },
+        "FY2019": {
+          "operating_cash_flow_net": 898639491.19,
+          "accounts_receivable": 29720721.09,
+          "inventory": 78202693.69,
+          "prepayments": 14781503.53,
+          "accounts_payable": 142291869.54,
+          "advance_receipts": 169753086.66,
+          "cash_and_cash_equivalents_at_year_end": 603075428.79
+        },
+        "FY2020": {
+          "field_status": "SOURCE_MISMATCH"
+        },
+        "FY2021": {
+          "operating_cash_flow_net": 441215657.85,
+          "accounts_receivable": 3387149.22,
+          "inventory": 64249962.88,
+          "prepayments": 12577945.29,
+          "accounts_payable": 55219989.64,
+          "contract_liabilities": 116117804.92,
+          "cash_and_cash_equivalents_at_year_end": 654764058.77
+        },
+        "FY2022": {
+          "operating_cash_flow_net": 413915706.91,
+          "accounts_receivable": 18393779.9,
+          "inventory": 42938858.55,
+          "prepayments": 6442673.57,
+          "accounts_payable": 124210097.12,
+          "contract_liabilities": 92026671.83,
+          "cash_and_cash_equivalents_at_year_end": 555644679.02
+        }
+      },
+      "responsibility_boundary": "All values are consolidated balance-sheet or consolidated cash-flow-statement values. They are not allocated among cement, aggregate, private-equity management, education, or individual subsidiaries. FY2018 presents payables as a combined 应付票据及应付账款 line; it is therefore not interchangeable with later accounts-payable-only lines.",
+      "continuity": "FY2019 splits the payable presentation and begins new financial/income standards; FY2021/FY2022 use contract liabilities rather than advance receipts. The FY2020 cancelled first report prevents a fully locked annual cash/working-capital bridge.",
+      "why_inconclusive": "A consolidated OCF or working-capital line cannot substitute for a cement-core cash bridge or for a component-level owner-cash conclusion.",
+      "citations": [
+        {
+          "report": "FY2018",
+          "pdf_pages": [80, 81, 89, 90, 165],
+          "section": "第十一节 财务报告／合并资产负债表、合并现金流量表、附注／现金和现金等价物构成"
+        },
+        {
+          "report": "FY2019",
+          "pdf_pages": [83, 84, 85, 94, 95],
+          "section": "第十二节 财务报告／合并资产负债表、合并现金流量表"
+        },
+        {
+          "report": "FY2021",
+          "pdf_pages": [107, 108, 117, 118],
+          "section": "第十节 财务报告／合并资产负债表、合并现金流量表"
+        },
+        {
+          "report": "FY2022",
+          "pdf_pages": [89, 90, 96, 97],
+          "section": "第十节 财务报告／合并资产负债表、合并现金流量表"
+        }
+      ]
+    },
+    {
+      "field_id": "capital_and_financing.consolidated_series",
+      "custody_layer": "资本与融资",
+      "evidence_state": "OBSERVED_OFFICIAL_WITH_MAINTENANCE_SPLIT_LIMIT",
+      "arm_settlement_status": "INCONCLUSIVE_DATA",
+      "units": "CNY",
+      "facts_by_fiscal_year": {
+        "FY2018": {
+          "fixed_assets": 1530157021.71,
+          "construction_in_progress": 29164942.55,
+          "cash_paid_for_long_lived_assets": 40003600.49,
+          "short_term_borrowings": 200000000,
+          "long_term_borrowings": 0,
+          "cash_proceeds_from_borrowings": 818992192.28,
+          "cash_repayment_of_debt": 1270303244.69,
+          "cash_paid_for_dividends_profit_or_interest": 181300140.86
+        },
+        "FY2019": {
+          "fixed_assets": 1528167891.36,
+          "construction_in_progress": 10525151.37,
+          "cash_paid_for_long_lived_assets": 35694826.42,
+          "short_term_borrowings": 0,
+          "long_term_borrowings": 0,
+          "cash_proceeds_from_borrowings": 0,
+          "cash_repayment_of_debt": 200000000,
+          "cash_paid_for_dividends_profit_or_interest": 1720666.68
+        },
+        "FY2020": {
+          "field_status": "SOURCE_MISMATCH"
+        },
+        "FY2021": {
+          "fixed_assets": 754933893.16,
+          "construction_in_progress": 129477.92,
+          "cash_paid_for_long_lived_assets": 101729432.4,
+          "short_term_borrowings": 24400000,
+          "long_term_borrowings": 0,
+          "cash_proceeds_from_borrowings": 102960707.49,
+          "cash_repayment_of_debt": 104366505.38,
+          "cash_paid_for_dividends_profit_or_interest": 162097836.34
+        },
+        "FY2022": {
+          "fixed_assets": 766254372.37,
+          "construction_in_progress": 4471667.51,
+          "cash_paid_for_long_lived_assets": 67606951.42,
+          "short_term_borrowings": 43044015.29,
+          "long_term_borrowings": 0,
+          "cash_proceeds_from_borrowings": 71158132.72,
+          "cash_repayment_of_debt": 52558132.72,
+          "cash_paid_for_dividends_profit_or_interest": 183840549.85
+        }
+      },
+      "responsibility_boundary": "The asset, capex, borrowing, debt-repayment, and distribution lines are consolidated. The annual reports do not classify long-lived-asset cash payments into maintenance versus growth capital, nor allocate them to cement versus the investment-management component.",
+      "continuity": "Balance-sheet presentation is continuous within each usable report but FY2020 is unobservable under the locked rule. A zero on the long-term-borrowing line means no amount was presented on that line, not that the group had no other financing obligations.",
+      "why_inconclusive": "The permitted disclosures do not support calling all capex maintenance capex, or treating total group capex/financing as cement-core capital need.",
+      "citations": [
+        {
+          "report": "FY2018",
+          "pdf_pages": [80, 81, 89, 90],
+          "section": "第十一节 财务报告／合并资产负债表、合并现金流量表"
+        },
+        {
+          "report": "FY2019",
+          "pdf_pages": [83, 84, 85, 94, 95],
+          "section": "第十二节 财务报告／合并资产负债表、合并现金流量表"
+        },
+        {
+          "report": "FY2021",
+          "pdf_pages": [107, 108, 117, 118],
+          "section": "第十节 财务报告／合并资产负债表、合并现金流量表"
+        },
+        {
+          "report": "FY2022",
+          "pdf_pages": [89, 90, 96, 97],
+          "section": "第十节 财务报告／合并资产负债表、合并现金流量表"
+        }
+      ]
+    },
+    {
+      "field_id": "asset_control_boundary.disposals_and_consolidation",
+      "custody_layer": "资产/控制边界",
+      "evidence_state": "OBSERVED_OFFICIAL_WITH_FY2020_BREAK",
+      "arm_settlement_status": "SOURCE_MISMATCH",
+      "facts": {
+        "FY2018": {
+          "disposed_entities": [
+            {
+              "name": "都江堰拉法基水泥有限公司",
+              "disclosed_disposal": "75%股权以股权转让方式处置；公司披露该公司自2018-02-01起不再纳入合并资产负债表范围。"
+            },
+            {
+              "name": "江油拉豪双马水泥有限公司",
+              "disclosed_disposal": "100%股权以股权转让方式处置；公司披露该公司自2018-02-01起不再纳入合并资产负债表范围。"
+            }
+          ],
+          "reported_key_remaining_cement_subsidiaries": [
+            "四川双马宜宾水泥制造有限公司（生产和销售水泥）",
+            "遵义三岔拉法基水泥有限公司（生产和销售水泥）"
+          ],
+          "consolidation_change": "新增1家子公司、减少2家子公司。"
+        },
+        "FY2019": {
+          "reported_key_cement_subsidiaries": [
+            "四川双马宜宾水泥制造有限公司（生产和销售水泥）",
+            "遵义砺锋水泥有限公司（生产和销售水泥）"
+          ],
+          "consolidation_change": "新增4家子公司。"
+        },
+        "FY2020": {
+          "field_status": "SOURCE_MISMATCH"
+        },
+        "FY2021": {
+          "reported_key_building_materials_subsidiary": "四川双马宜宾水泥制造有限公司（生产和销售水泥、骨料）",
+          "reported_key_subsidiary_list_does_not_include": "遵义砺锋水泥有限公司",
+          "consolidation_change": "新增3家子公司。"
+        },
+        "FY2022": {
+          "reported_key_building_materials_subsidiary": "四川双马宜宾水泥制造有限公司（生产和销售水泥、骨料）",
+          "reported_key_subsidiary_list_does_not_include": "遵义砺锋水泥有限公司",
+          "consolidation_change": "新增1家子公司、减少1家子公司；披露减少的是北京匠成教育科技有限公司。"
+        }
+      },
+      "responsibility_boundary": "FY2018 identifies which cement legal entities exited consolidation and identifies Yibin/Zunyi as significant retained cement subsidiaries. Subsequent significant-subsidiary tables are not a complete legal-entity register and therefore cannot by themselves establish the complete timing or consideration of any later boundary change.",
+      "continuity": "Yibin and Zunyi are separately identified in FY2018/FY2019, while FY2021/FY2022 significant-subsidiary tables list Yibin only. The locked FY2020 report is cancelled and no usable same-window bridge identifies the reason/timing for the change. Do not interpolate FY2020 or carry FY2019 two-unit economics forward.",
+      "citations": [
+        {
+          "report": "FY2018",
+          "pdf_pages": [17, 24, 165, 169, 170],
+          "section": "第四节／二、主营业务分析／合并范围变动、主要控股参股公司；第十一节 财务报告／附注／合并范围的变更／处置子公司"
+        },
+        {
+          "report": "FY2019",
+          "pdf_pages": [27],
+          "section": "第三节／七、主要控股参股公司分析"
+        },
+        {
+          "report": "FY2021",
+          "pdf_pages": [22, 23, 33],
+          "section": "第三节／四、主营业务分析／合并范围变动、产销量；九、主要控股参股公司分析"
+        },
+        {
+          "report": "FY2022",
+          "pdf_pages": [23, 31],
+          "section": "第三节／四、主营业务分析／合并范围变动；九、主要控股参股公司分析"
+        }
+      ]
+    },
+    {
+      "field_id": "sale_proceeds_use.after_cutoff_1065m",
+      "custody_layer": "出售收款去向",
+      "evidence_state": "OBSERVED_RECEIPT_UNTRACED_USE",
+      "arm_settlement_status": "INCONCLUSIVE_DATA",
+      "facts": {
+        "FY2018_receipt_note": {
+          "cash_received_from_disposal_of_subsidiaries": 1065000000,
+          "by_entity": {
+            "都江堰拉法基公司": 913001299.98,
+            "江油拉豪公司": 151998700.02
+          },
+          "less_cash_and_cash_equivalents_held_by_disposed_subsidiaries": 29362047.74,
+          "net_cash_received_from_disposal_of_subsidiaries": 1035637952.26
+        },
+        "consolidated_cashflow_facts_after_receipt": {
+          "FY2018": {
+            "debt_repayment": 1270303244.69,
+            "long_lived_asset_cash_outflow": 40003600.49,
+            "investment_cash_outflow": 2397620506.09,
+            "dividend_profit_or_interest_cash_outflow": 181300140.86
+          },
+          "FY2019": {
+            "debt_repayment": 200000000,
+            "long_lived_asset_cash_outflow": 35694826.42,
+            "investment_cash_outflow": 2328443290.89,
+            "dividend_profit_or_interest_cash_outflow": 1720666.68
+          },
+          "FY2021": {
+            "debt_repayment": 104366505.38,
+            "long_lived_asset_cash_outflow": 101729432.4,
+            "investment_cash_outflow": 2112550000,
+            "dividend_profit_or_interest_cash_outflow": 162097836.34
+          },
+          "FY2022": {
+            "debt_repayment": 52558132.72,
+            "long_lived_asset_cash_outflow": 67606951.42,
+            "investment_cash_outflow": 1478750000,
+            "dividend_profit_or_interest_cash_outflow": 183840549.85
+          }
+        }
+      },
+      "responsibility_boundary": "The FY2018 note identifies the gross 1,065.000m cash receipt and 1,035.638m net cash receipt. Later cash-flow rows are consolidated inflows/outflows, not an earmarked ledger tying a remaining sale-proceeds balance to debt repayment, investment, distribution, or a particular operating component.",
+      "continuity": "FY2020 source is locked as SOURCE_MISMATCH. No usable annual report separately reports a remaining balance or a source-and-use roll-forward for the 1,065.000m receipt.",
+      "why_inconclusive": "The observation establishes receipt but cannot identify the post-cutoff balance or attribute subsequent consolidated uses to that receipt. It must not be counted as ordinary operating cash, fund value, or automatically zero/distributable cash.",
+      "citations": [
+        {
+          "report": "FY2018",
+          "pdf_pages": [89, 90, 164, 165],
+          "section": "第十一节 财务报告／合并现金流量表；附注／现金流量表补充资料／本期收到的处置子公司的现金净额"
+        },
+        {
+          "report": "FY2019",
+          "pdf_pages": [94, 95],
+          "section": "第十二节 财务报告／合并现金流量表"
+        },
+        {
+          "report": "FY2021",
+          "pdf_pages": [117, 118],
+          "section": "第十节 财务报告／合并现金流量表"
+        },
+        {
+          "report": "FY2022",
+          "pdf_pages": [96, 97],
+          "section": "第十节 财务报告／合并现金流量表"
+        }
+      ]
+    },
+    {
+      "field_id": "continuing_cement_boundary.yibin_zunyi_vs_dujiangyan_jiangyou",
+      "custody_layer": "持续水泥边界",
+      "evidence_state": "PARTIALLY_OBSERVED_WITH_UNBRIDGED_CHANGE",
+      "arm_settlement_status": "SOURCE_MISMATCH",
+      "facts": {
+        "FY2018": "都江堰、江油自2018-02-01不再纳入合并范围；宜宾和遵义三岔为年度报告列示的主要水泥子公司。",
+        "FY2019": "宜宾和遵义砺锋仍为年度报告列示的主要水泥子公司；年度行业表分别披露两地水泥产销存和销售毛利率。",
+        "FY2020": "First full annual report cancelled; no bridge used.",
+        "FY2021": "主要建材子公司表列示宜宾（水泥、骨料），未列示遵义砺锋；当前年度水泥/骨料产品数据仅为汇总产品数据。",
+        "FY2022": "主要建材子公司表列示宜宾（水泥、骨料），未列示遵义砺锋；建材分部包括水泥和骨料。"
+      },
+      "responsibility_boundary": "The retained Yibin/Zunyi and sold Dujiangyan/Jiangyou entities are legal/control boundaries. Product/segment tables are not a substitute for a continuous legal-entity bridge, and the later 'major subsidiaries' table is not a complete consolidation schedule.",
+      "continuity": "The official series is continuous through FY2019 for Yibin/Zunyi operations and explicitly excludes Dujiangyan/Jiangyou from FY2018 onward. It is not continuous across FY2020: the selected report was cancelled and later disclosures do not supply a permitted same-window bridge to the FY2021/FY2022 one-name significant-subsidiary presentation.",
+      "citations": [
+        {
+          "report": "FY2018",
+          "pdf_pages": [24, 169, 170],
+          "section": "第四节／主要控股参股公司；第十一节 财务报告／附注／合并范围的变更／处置子公司"
+        },
+        {
+          "report": "FY2019",
+          "pdf_pages": [18, 27],
+          "section": "第三节／非金属建材行业披露／(五)；七、主要控股参股公司分析"
+        },
+        {
+          "report": "FY2021",
+          "pdf_pages": [21, 22, 33],
+          "section": "第三节／四、主营业务分析／2、收入与成本；九、主要控股参股公司分析"
+        },
+        {
+          "report": "FY2022",
+          "pdf_pages": [21, 22, 31],
+          "section": "第三节／四、主营业务分析／2、收入与成本；九、主要控股参股公司分析"
+        }
+      ]
+    }
+  ],
+  "custodian_seal": {
+    "fact_only": true,
+    "no_arm_material_read_or_evaluated": true,
+    "no_price_return_or_market_material_used": true,
+    "official_sources_only": true,
+    "reviewer_next_step": "Compare only these field observations and their stated boundaries against each frozen arm; apply the locked status rules without rewriting any arm or substituting an undisclosed metric."
+  }
+}

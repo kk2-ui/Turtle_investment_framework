@@ -1,0 +1,173 @@
+{
+  "schema_version": "industry-experience-pack.v1",
+  "pack_id": "IEP:CN:CEMENT_LISTED:2014_2018:REPLAY:V1",
+  "industry_id": "INDUSTRY:CN:CEMENT_LISTED",
+  "version": 1,
+  "state": "DRAFT",
+  "knowledge_cutoff_at": "2018-04-30T23:59:59+08:00",
+  "source_objects": [
+    {
+      "kind": "INDUSTRY_LEARNING_BLOCK",
+      "object_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "available_at": "2018-04-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "INDUSTRY_UNDERWRITING_CONTEXT",
+      "object_id": "IUC:CN:CEMENT_LISTED:CN600585:20180430:REPLAY:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/55_industry_underwriting_context_replay_v1.json",
+      "available_at": "2018-04-30T23:59:59+08:00",
+      "knowledge_role": "CUTOFF_SAFE_PROJECTION",
+      "use_status": "INCLUDED"
+    },
+    {
+      "kind": "WORKED_CASE",
+      "object_id": "EUE:CN600585:20240501:WORKED:V1",
+      "ref": "docs/development/research/enterprise_underwriting_episodes/CN600585_20240501_WORKED_CASE_V1.json",
+      "available_at": "2026-08-29T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    },
+    {
+      "kind": "NEAR_MISS_OR_FAILURE",
+      "object_id": "CEMENT:PERIMETER_AND_MEASUREMENT_NEAR_MISSES:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/08_investor_readout.md",
+      "available_at": "2026-08-26T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    },
+    {
+      "kind": "FEEDBACK_OR_REVIEW",
+      "object_id": "REVIEW:CN:CEMENT:ROUND5:POSTOUTCOME:V1",
+      "ref": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/35_round5_independent_postoutcome_review.json",
+      "available_at": "2026-08-26T00:00:00+08:00",
+      "knowledge_role": "REPLAY_AUDIT_ONLY",
+      "use_status": "BOUNDARY_ONLY"
+    }
+  ],
+  "current_synthesis": {
+    "central_industry_path": "截至 2018-04-30，现有多公司材料足以判断中国水泥是区域 delivered-market、资本密集且公司边界差异显著的行业；但缺少同 cutoff 的官方需求、供给、价格、成本与产能利用率序列，不能判断未来利润池方向。",
+    "strongest_rival": "供给侧约束、行业整合和区域集中可能已经改善价格纪律与利润池，现有 block 只是因采集偏重公司边界而没有观察到该方向，而非行业方向本身不可判断。",
+    "profit_pool_transmission": "待补证路径为需求与供给约束先改变区域价格和产能利用率，再通过公司区域组合、成本位置、资本强度和边界连续性传导到正常盈利与 owner cash；当前只能确认传导框架，不能确认方向。",
+    "scope_conditions": [
+      "以区域 delivered market 而不是注册地或全国总量定义竞争范围。",
+      "公司比较必须保持相同责任边界并保留重组、并购和合资造成的 perimeter break。",
+      "同行事实只建立行业 reference class，不能建立海螺或其他目标公司的现金事实。"
+    ],
+    "break_conditions": [
+      "官方行业序列显示供给、需求、价格或利用率与公司年报叙事方向相反。",
+      "区域组合和运输半径使同一全国行业变量无法解释公司的实际 delivered-market 利润池。",
+      "重组、并购或控制权变化破坏公司跨期经营和现金口径。"
+    ],
+    "source_refs": [
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json",
+      "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/55_industry_underwriting_context_replay_v1.json"
+    ],
+    "evidence_ceiling": "RESEARCH_AGENDA"
+  },
+  "role_coverage": {
+    "company_paths": [
+      {
+        "company_id": "CN:600585",
+        "archetype_id": "ARCHETYPE:CONSOLIDATED_OPERATING_AND_CASH_TRACK",
+        "roles": ["CENTRAL"],
+        "source_refs": ["docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"]
+      },
+      {
+        "company_id": "CN:600425",
+        "archetype_id": "ARCHETYPE:REGIONAL_OVERCAPACITY_CONTEXT",
+        "roles": ["HETEROGENEOUS"],
+        "source_refs": ["docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"]
+      },
+      {
+        "company_id": "CN:600802",
+        "archetype_id": "ARCHETYPE:REGIONAL_MANUFACTURING_CONTEXT",
+        "roles": ["HETEROGENEOUS"],
+        "source_refs": ["docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"]
+      },
+      {
+        "company_id": "CN:600801",
+        "archetype_id": "ARCHETYPE:ACQUISITION_PERIMETER_CONTINUITY",
+        "roles": ["FAILURE_OR_NEAR_MISS"],
+        "source_refs": ["docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"]
+      },
+      {
+        "company_id": "CN:000401",
+        "archetype_id": "ARCHETYPE:RESTRUCTURING_AND_JV_PERIMETER",
+        "roles": ["FAILURE_OR_NEAR_MISS"],
+        "source_refs": ["docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"]
+      }
+    ],
+    "structural_epochs": [
+      {
+        "epoch_id": "EPOCH:CEMENT:2014_2016",
+        "cutoff_at": "2016-04-27T00:00:00+08:00",
+        "source_refs": ["docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"]
+      },
+      {
+        "epoch_id": "EPOCH:CEMENT:2017_2018",
+        "cutoff_at": "2018-04-30T23:59:59+08:00",
+        "source_refs": ["docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"]
+      }
+    ],
+    "shared_shock_comparisons": []
+  },
+  "settlement_plan": {
+    "industry_claims": [
+      {
+        "claim_id": "IEP:CEMENT:INDUSTRY_REGIME_AND_PROFIT_POOL",
+        "claim": "需求、供给约束、区域价格和利用率如何改变 2018 年后水泥利润池。",
+        "measurement_sources": [
+          "国家统计局或工信部水泥产量与投资序列",
+          "中国水泥协会产能、错峰与区域价格资料",
+          "至少四类公司同口径销量、价格、成本和利用率结果"
+        ],
+        "unresolved_treatment": "行业方向保持未结算；仅保留区域市场、资本强度和公司边界的研究框架。"
+      }
+    ],
+    "company_transmission_claims": [
+      {
+        "claim_id": "IEP:CEMENT:COMPANY_DIVERGENCE",
+        "claim": "区域组合、成本位置、并购重组和资本强度是否导致公司在同一行业变化下出现不同正常盈利与现金路径。",
+        "measurement_sources": [
+          "同责任边界的公司销量、价格、成本、经营现金和资本开支",
+          "重组、并购、合资和控制权变化的官方 perimeter bridge"
+        ],
+        "unresolved_treatment": "只结算具备同边界结果的公司路径，不用单家公司替代行业结果。"
+      }
+    ]
+  },
+  "transfer_reviews": [],
+  "next_sampling_decision": {
+    "question": "2018 年前后水泥利润改善究竟来自可持续供给纪律和区域集中，还是主要来自短周期需求、价格与低基数变化？",
+    "discriminator": "在同 cutoff 下补齐官方供需、产能、价格和利用率序列，并比较至少四种公司 archetype 的量价、成本、现金和资本结果。",
+    "if_central_supported": "若行业序列仍无法支持方向，则 Pack 继续保持 DRAFT，并把公司判断限定为区域和公司特定传导。",
+    "if_rival_supported": "若供给纪律、集中度和区域价格共同改善且公司分化符合成本与区域暴露，则新增方向性行业主路径并重编译 Context。",
+    "unaffected_claims": [
+      "公司责任边界必须先于跨期比较。",
+      "并购重组公司必须保留为 near miss 或独立 archetype。",
+      "单家公司结果不能结算整个行业利润池。"
+    ],
+    "candidate_company_or_epoch_refs": [
+      "INDUSTRY:CN:CEMENT_LISTED@2018-04-30",
+      "CN:600585@2018-04-30",
+      "CN:600425@2018-04-30",
+      "CN:600802@2018-04-30",
+      "CN:600801@2018-04-30",
+      "CN:000401@2018-04-30"
+    ]
+  },
+  "revision": {
+    "prior_pack_ref": null,
+    "revision_class": "INITIAL",
+    "change_summary": "首次把水泥多公司 block、目标公司 Context、near miss 和反馈边界组织为行业经验发布清单；没有新增公司或行业事实。"
+  },
+  "boundary": {
+    "creates_fact_store": false,
+    "establishes_target_company_facts": false,
+    "grants_valuation_or_investment_authority": false,
+    "replay_proves_agent_capability": false
+  }
+}

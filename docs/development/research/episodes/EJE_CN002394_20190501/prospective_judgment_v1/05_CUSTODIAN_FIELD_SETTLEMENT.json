@@ -1,0 +1,66 @@
+{
+  "schema_version": "prospective-enterprise-judgment-field-settlement.v1",
+  "custodian_role": "INDEPENDENT_OUTCOME_ONLY_CUSTODIAN",
+  "contract_id": "PEJOC:CN002394:20190501:FY2019:V1",
+  "source_receipt_ref": "04_OUTCOME_SOURCE_RECEIPT.json",
+  "source_boundary": "ONE_OFFICIAL_FY2019_FULL_ANNUAL_REPORT / ISSUER_CONSOLIDATED:CN:002394",
+  "cells": [
+    {
+      "cell_id": "CELL:CN002394:FY2019:CUSTOMER_MARKET_MIX",
+      "status": "OBSERVED",
+      "fields": [
+        {"field_id": "DOMESTIC_REVENUE_RMB", "value": 1992802321.87, "unit": "RMB", "locator": "PDF p.13, revenue by region", "quote": "国内 1,992,802,321.87 50.96%"},
+        {"field_id": "EUROPE_REVENUE_RMB", "value": 496558074.38, "unit": "RMB", "locator": "PDF p.13, revenue by region", "quote": "欧洲 496,558,074.38 12.70%"},
+        {"field_id": "US_REVENUE_RMB", "value": 673384829.71, "unit": "RMB", "locator": "PDF p.13, revenue by region", "quote": "美国 673,384,829.71 17.22%"},
+        {"field_id": "OTHER_REGION_REVENUE_RMB", "value": 705542248.52, "unit": "RMB", "locator": "PDF p.13, revenue by region", "quote": "其他 705,542,248.52 18.04%"},
+        {"field_id": "TOP5_CUSTOMER_SALES_SHARE_PCT", "value": 8.71, "unit": "PERCENT", "locator": "PDF p.16, major customers", "quote": "前五名客户合计销售金额占年度销售总额比例 8.71%"},
+        {"field_id": "COLOR_WOVEN_SALES_VOLUME_10K_METERS", "value": 10267.85, "unit": "TEN_THOUSAND_METERS", "locator": "PDF p.13, physical sales", "quote": "色织布 销售量 万米 10,267.85"},
+        {"field_id": "DYED_FABRIC_SALES_VOLUME_10K_METERS", "value": 4330.74, "unit": "TEN_THOUSAND_METERS", "locator": "PDF p.14, physical sales", "quote": "印染布 销售量 万米 4,330.74"}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002394:FY2019:UNIT_ECONOMICS",
+      "status": "OBSERVED",
+      "fields": [
+        {"field_id": "TEXTILE_APPAREL_GROSS_MARGIN_PCT", "value": 25.49, "unit": "PERCENT", "locator": "PDF p.13, gross margin by industry", "quote": "纺织服装 2,852,491,002.59 2,125,344,240.83 25.49%"},
+        {"field_id": "COLOR_WOVEN_GROSS_MARGIN_PCT", "value": 30.26, "unit": "PERCENT", "locator": "PDF p.13, gross margin by product", "quote": "色织布 1,370,627,070.61 955,829,764.46 30.26%"},
+        {"field_id": "DYED_FABRIC_GROSS_MARGIN_PCT", "value": 28.25, "unit": "PERCENT", "locator": "PDF p.13, gross margin by product", "quote": "印染布 672,206,628.24 482,315,185.52 28.25%"},
+        {"field_id": "DOMESTIC_GROSS_MARGIN_PCT", "value": 18.49, "unit": "PERCENT", "locator": "PDF p.13, gross margin by region", "quote": "国内 1,992,802,321.87 1,624,359,720.87 18.49%"},
+        {"field_id": "EUROPE_GROSS_MARGIN_PCT", "value": 23.60, "unit": "PERCENT", "locator": "PDF p.13, gross margin by region", "quote": "欧洲 496,558,074.38 379,363,772.04 23.60%"},
+        {"field_id": "US_GROSS_MARGIN_PCT", "value": 25.99, "unit": "PERCENT", "locator": "PDF p.13, gross margin by region", "quote": "美国 673,384,829.71 498,390,908.17 25.99%"}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002394:FY2019:IMPLEMENTATION",
+      "status": "OBSERVED",
+      "fields": [
+        {"field_id": "XINJIANG_HOME_TEXTILE_PROJECT_STATUS_EVENT", "value": "初步形成200台织机和5万锭纱线的生产规模", "unit": "EVENT", "locator": "PDF p.12, strategic investment", "quote": "已经取得项目投产前必要的审批流程和前置手续，初步形成了200台织机和5万锭纱线的生产规模。"}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002394:FY2019:CASH_CAPITAL_LOSS",
+      "status": "OBSERVED",
+      "fields": [
+        {"field_id": "NET_OPERATING_CASH_RMB", "value": 444695407.36, "unit": "RMB", "locator": "PDF p.93, consolidated cash-flow statement", "quote": "经营活动产生的现金流量净额 444,695,407.36"},
+        {"field_id": "CASH_CAPEX_RMB", "value": 241422661.85, "unit": "RMB", "locator": "PDF p.93, consolidated cash-flow statement", "quote": "购建固定资产、无形资产和其他长期资产支付的现金 241,422,661.85"},
+        {"field_id": "ACCOUNTS_RECEIVABLE_RMB", "value": 392561610.46, "unit": "RMB", "locator": "PDF pp.81-82, consolidated balance sheet", "quote": "应收账款 392,561,610.46"},
+        {"field_id": "INVENTORY_RMB", "value": 777055327.38, "unit": "RMB", "locator": "PDF pp.81-82, consolidated balance sheet", "quote": "存货 777,055,327.38"},
+        {"field_id": "SHORT_TERM_BORROWINGS_RMB", "value": 86504544.81, "unit": "RMB", "locator": "PDF pp.81,83, consolidated balance sheet", "quote": "短期借款 86,504,544.81"},
+        {"field_id": "LONG_TERM_BORROWINGS_RMB", "value": 300853043.31, "unit": "RMB", "locator": "PDF pp.81,84, consolidated balance sheet", "quote": "长期借款 300,853,043.31"}
+      ]
+    }
+  ],
+  "local_resolution": {
+    "observed_field_count": 20,
+    "unknown_field_count": 0,
+    "measurement_mismatch_field_count": 0,
+    "implementation_rule": "The actual formed production scale is observed; repeated future-plan language was not used as the event."
+  },
+  "prohibited_inferences_confirmed": [
+    "CUSTOMER_LOYALTY",
+    "MANAGEMENT_ACTION_EFFECT",
+    "OWNER_CASH",
+    "PERMANENT_LOSS",
+    "VALUATION_OR_INVESTMENT_USEFULNESS"
+  ]
+}

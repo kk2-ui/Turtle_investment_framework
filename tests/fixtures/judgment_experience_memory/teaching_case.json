@@ -1,0 +1,24 @@
+{
+  "case_id": "TEACH:CN002080:20190501:FY2019",
+  "company_id": "CN:002080",
+  "company_cluster_id": "COMPANY:CN002080",
+  "track": "TEACHING",
+  "status": "CURATED",
+  "source_refs": [
+    "tests/fixtures/judgment_experience_memory/preoutcome_source_packet.json",
+    "tests/fixtures/judgment_experience_memory/outcome_settlement.json"
+  ],
+  "artifact_refs": {
+    "postoutcome_review_ref": "tests/fixtures/judgment_experience_memory/independent_postoutcome_review.md"
+  },
+  "lesson": {
+    "state_and_constraint": "A capital-intensive new line had reached construction completion before unit economics matured.",
+    "management_choice_or_no_action": "Management added a second line before the first line had a mature capital return.",
+    "customer_or_operating_response": "Customer certification and revenue improved while line profit remained unresolved.",
+    "cash_or_capital_result": "Parent funding did not establish project cash recovery.",
+    "mechanism_lesson": "Construction, customer absorption, and capital return are separate stages.",
+    "strongest_rival": "Early losses can be normal ramp-up rather than permanent failure.",
+    "investor_treatment": "Keep the option outside base owner cash until customer and unit-economic evidence converge.",
+    "transfer_question": "Do customer absorption, line economics, and cash recovery improve together?"
+  }
+}

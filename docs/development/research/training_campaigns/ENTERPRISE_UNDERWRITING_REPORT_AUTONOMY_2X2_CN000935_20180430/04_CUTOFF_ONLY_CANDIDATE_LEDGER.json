@@ -1,0 +1,137 @@
+{
+  "schema_version": "enterprise-underwriting-cutoff-candidate-ledger.v1",
+  "ledger_id": "CN_CEMENT_HOLDOUT_CANDIDATES:20180430:V1",
+  "state": "FROZEN_BEFORE_ARM_EXECUTION_NO_OUTCOME_ACCESS",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "universe_rule": "START_WITH_ALL_SHENZHEN_A_SHARE_ISSUERS_IN_CSRC_2017Q4_INDUSTRY_30_NONMETALLIC_MINERAL_PRODUCTS; RETAIN_ISSUERS_WHOSE_CUTOFF_VISIBLE_PRIMARY_BUSINESS_INCLUDES_CLINKER_OR_CEMENT_PRODUCTION; EXCLUDE_PRIOR_TRAINING_OR_SOURCE_VERSION_CONFLICT; REQUIRE_FY2015_FY2016_FY2017_OFFICIAL_ANNUAL_REPORTS_AVAILABLE_IN_ONE_UNAMBIGUOUS_VERSION_BEFORE_CUTOFF; SORT_BY_SECURITY_CODE",
+  "universe_source": {
+    "title": "中国证监会 2017年4季度上市公司行业分类结果",
+    "available_at": "2018-01-19T00:00:00+08:00",
+    "url": "https://www.csrc.gov.cn/csrc/c100103/c1452004/1452004/files/1616066687576_64273.pdf",
+    "pdf_pages": [24, 25],
+    "scope_note": "Pages 24-25 list the complete Shenzhen A-share industry-30 universe; page 24 contains every code through CN:000935. Business screening before the first eligible code is then performed from each issuer's cutoff-visible annual report."
+  },
+  "complete_csrc_2017q4_industry_30_shenzhen_a_share_universe": [
+    "000012", "000023", "000401", "000511", "000546", "000672", "000786",
+    "000789", "000795", "000877", "000935", "002066", "002080", "002088",
+    "002162", "002201", "002205", "002225", "002233", "002271", "002297",
+    "002302", "002392", "002457", "002571", "002596", "002623", "002671",
+    "002742", "002785", "002918", "300064", "300073", "300080", "300089",
+    "300093", "300160", "300179", "300196", "300224", "300234", "300344",
+    "300374", "300395", "300409", "300554", "300606", "300690", "300700",
+    "300715"
+  ],
+  "ordered_candidates_through_selected_code": [
+    {
+      "security_code": "000012",
+      "issuer_name": "南玻A",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "NO",
+      "disposition": "EXCLUDED_OUTSIDE_CLINKER_OR_CEMENT_PRODUCTION_ARENA",
+      "evidence": "FY2017 annual report says the principal businesses are energy-saving glass, solar photovoltaic products and display devices.",
+      "source_ref": "https://static.cninfo.com.cn/finalpage/2018-04-23/1204680426.PDF#pdf_page=9"
+    },
+    {
+      "security_code": "000023",
+      "issuer_name": "深天地A",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "NO",
+      "disposition": "EXCLUDED_READY_MIX_CONCRETE_AND_REAL_ESTATE_NOT_CLINKER_OR_CEMENT_PRODUCTION",
+      "evidence": "FY2017 annual report describes commercial concrete as the main business and real estate as the pillar business.",
+      "source_ref": "https://static.cninfo.com.cn/finalpage/2018-04-20/1204664164.PDF#pdf_page=9"
+    },
+    {
+      "security_code": "000401",
+      "issuer_name": "冀东水泥",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "YES",
+      "disposition": "EXCLUDED_ALREADY_USED_IN_CEMENT_PACK_AND_EPISODES",
+      "evidence_path": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/04_industry_learning_block.json"
+    },
+    {
+      "security_code": "000511",
+      "issuer_name": "*ST烯碳",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "NO",
+      "disposition": "EXCLUDED_OUTSIDE_CLINKER_OR_CEMENT_PRODUCTION_ARENA",
+      "evidence": "FY2017 annual report says revenue mainly came from real-estate sales and trading.",
+      "source_ref": "https://static.cninfo.com.cn/finalpage/2018-04-28/1204828127.PDF#pdf_page=8"
+    },
+    {
+      "security_code": "000546",
+      "issuer_name": "金圆股份",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "YES",
+      "disposition": "EXCLUDED_FY2017_ANNUAL_REPORT_VERSION_CONFLICT_BEFORE_CUTOFF",
+      "evidence": "The 2018-04-17 FY2017 annual report was officially marked cancelled and replaced by an updated report on 2018-04-27; the experiment excludes such version transitions before source curation.",
+      "source_refs": [
+        "https://static.cninfo.com.cn/finalpage/2018-04-17/1204642392.PDF",
+        "https://static.cninfo.com.cn/finalpage/2018-04-27/1204803534.PDF"
+      ]
+    },
+    {
+      "security_code": "000672",
+      "issuer_name": "上峰水泥",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "YES",
+      "disposition": "EXCLUDED_ALREADY_USED_AS_COURSE_2B_HOLDOUT",
+      "evidence_path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/00_EXPERIMENT_PREREGISTRATION.md"
+    },
+    {
+      "security_code": "000786",
+      "issuer_name": "北新建材",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "NO",
+      "disposition": "EXCLUDED_GYPSUM_BOARD_AND_LIGHT_BUILDING_MATERIALS_NOT_CLINKER_OR_CEMENT_PRODUCTION",
+      "evidence": "FY2017 annual report's main-business section describes gypsum board and related light building materials rather than clinker or cement production.",
+      "source_ref": "https://static.cninfo.com.cn/finalpage/2018-03-17/1204486847.PDF#pdf_page=9"
+    },
+    {
+      "security_code": "000789",
+      "issuer_name": "万年青",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "YES",
+      "disposition": "EXCLUDED_ANNUAL_REPORT_WITHDRAWAL_OR_UPDATE_VERSION_CONFLICT",
+      "evidence_path": "docs/development/research/training_campaigns/ENTERPRISE_UNDERWRITING_COURSE_2B_CN000672_20180430/00_EXPERIMENT_PREREGISTRATION.md"
+    },
+    {
+      "security_code": "000795",
+      "issuer_name": "英洛华",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "NO",
+      "disposition": "EXCLUDED_RARE_EARTH_MAGNETS_MOTORS_AND_EQUIPMENT_NOT_CLINKER_OR_CEMENT_PRODUCTION",
+      "evidence": "FY2017 annual report lists rare-earth permanent magnetic materials, motors, logistics and fire-control equipment as the main businesses.",
+      "source_ref": "https://static.cninfo.com.cn/finalpage/2018-03-09/1204464389.PDF#pdf_page=9"
+    },
+    {
+      "security_code": "000877",
+      "issuer_name": "天山股份",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "YES",
+      "disposition": "EXCLUDED_ALREADY_BOUND_IN_CEMENT_PACK_IDENTITY_AND_PROJECTION",
+      "evidence_path": "docs/development/research/industry_learning_blocks/CN_CEMENT_2014_2018/65a_cement_issuer_identity_catalog_v1.json"
+    },
+    {
+      "security_code": "000885",
+      "issuer_name": "同力水泥",
+      "csrc_2017q4_industry": "54 道路运输业",
+      "cement_primary_screen": "NO",
+      "disposition": "EXCLUDED_OUTSIDE_PREDECLARED_CSRC_INDUSTRY_30_UNIVERSE",
+      "evidence": "Despite its then security short name, the cutoff-visible CSRC 2017Q4 classification places it in road transportation, not industry 30.",
+      "source_ref": "https://www.csrc.gov.cn/csrc/c100103/c1452004/1452004/files/1616066687576_64273.pdf"
+    },
+    {
+      "security_code": "000935",
+      "issuer_name": "四川双马",
+      "csrc_2017q4_industry": "30 非金属矿物制品业",
+      "cement_primary_screen": "YES",
+      "disposition": "SELECTED_FIRST_ELIGIBLE_AFTER_ORDERED_EXCLUSIONS",
+      "source_ref": "https://static.cninfo.com.cn/finalpage/2018-04-10/1204593933.PDF#pdf_page=9"
+    }
+  ],
+  "selection_result": {
+    "company_id": "CN:000935",
+    "first_eligible": true,
+    "post_cutoff_or_outcome_inputs_used": false
+  }
+}

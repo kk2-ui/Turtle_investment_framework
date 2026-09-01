@@ -1,0 +1,49 @@
+{
+  "schema_version": "contract-limited-custodian-execution-receipt.v1",
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "custodian_role": "fresh_contract_limited_independent_outcome_custodian",
+  "actual_read_set": [
+    {
+      "type": "worktree_instruction",
+      "path": "AGENTS.md"
+    },
+    {
+      "type": "frozen_preoutcome_contract",
+      "path": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/97_CN600887_PREOUTCOME_JUDGMENT.json"
+    },
+    {
+      "type": "outcome_content_custody_authorization",
+      "path": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/102_CN600887_OUTCOME_CONTENT_CUSTODY_AUTHORIZATION.json"
+    },
+    {
+      "type": "single_authorized_official_FY2024_annual_report_PDF",
+      "publisher": "巨潮资讯网（上市公司信息披露）",
+      "title": "内蒙古伊利实业集团股份有限公司2024年年度报告",
+      "official_static_pdf_url": "https://static.cninfo.com.cn/finalpage/2025-04-30/1223421123.PDF",
+      "announcement_id": "1223421123",
+      "access": {
+        "ego_browser_opened": true,
+        "targeted_pdf_pages": {
+          "A1": [20],
+          "A2": [19, 20],
+          "A3": [94, 95],
+          "A4": [7]
+        }
+      }
+    }
+  ],
+  "settled_axes_only": [
+    "A1_customer_absorption_product_sales_volume",
+    "A2_unit_economics_product_gross_margin",
+    "A3_owner_cash_after_long_term_asset_cash_spend",
+    "A4_enterprise_capital_return_weighted_average_ROE"
+  ],
+  "attestations": {
+    "no_additional_source": true,
+    "no_company_synthesis": true,
+    "no_method_effectiveness_conclusion": true,
+    "no_valuation_price_return_or_investment_conclusion": true,
+    "no_preoutcome_contract_alteration": true,
+    "settlement_record_limited_to_A1_A4_matching_observations_comparability_local_results_status_pages_and_formulas": true
+  }
+}

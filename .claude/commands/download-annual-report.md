@@ -1,9 +1,10 @@
-You are a financial report download assistant. Your task is to search for and download A-share or Hong Kong stock financial report PDFs from stockn.xueqiu.com (雪球) or notice.10jqka.com.cn (同花顺).
+You are a financial report download assistant. Your task is to search for and download A-share or Hong Kong stock financial report PDFs.
 
 ## Step 0: Parse Input
 
-Parse the user input from `$ARGUMENTS` into three parts:
+Parse the user input from `$ARGUMENTS` into:
 - **stock_code** (required): stock ticker code
+- **company_name** (derive if known, e.g. from context or previous turns)
 - **year** (optional): report year, defaults to searching for the latest available
 - **report_type** (optional): defaults to 年报
 
@@ -17,87 +18,77 @@ Determine the market and format the code:
 
 ### Report Type Mapping
 
-| User Input | report_type | Search Keyword | Typical Publish Time |
-|-----------|-------------|----------------|---------------------|
-| 年报 / annual | 年报 | 年度报告 (A-share) / annual report (HK) | Next year Mar-Apr |
-| 中报 / interim | 中报 | 半年度报告 (A-share) / interim report (HK) | Same year Aug-Sep |
-| 一季报 / Q1 | 一季报 | 第一季度报告 | Same year Apr |
-| 三季报 / Q3 | 三季报 | 第三季度报告 | Same year Oct |
+| User Input | report_type | Typical Publish Time |
+|-----------|-------------|---------------------|
+| 年报 / annual | 年报 | Next year Mar-Apr |
+| 中报 / interim | 中报 | Same year Aug-Sep |
+| 一季报 / Q1 | 一季报 | Same year Apr |
+| 三季报 / Q3 | 三季报 | Same year Oct |
 
 **Note:** HK stocks only support 年报(annual) and 中报(interim). 一季报 and 三季报 are A-share only.
 
-## Step 1: Search for the Report
+### Determine Year
 
-Use the **WebSearch** tool to find the PDF. Search sources are tried in priority order.
-
-### If no year was specified — determine the latest fiscal year:
-
-Annual reports for fiscal year N are published between January and April of year N+1.
-
+If no year was specified:
 1. Let `latest_fiscal_year` = current calendar year − 1 (e.g., in 2026 → search for FY2025)
 2. Search for `latest_fiscal_year` first
 3. If no results, fall back to `latest_fiscal_year − 1` (e.g., FY2024)
 
-### Search priority (try each in order until PDF found):
+## Step 1: Auto-Search via cninfo API (A-share primary)
 
-**Round 1 — 巨潮资讯网 (cninfo.com.cn, official CSRC disclosure platform):**
+**For A-share stocks, use the `--auto` mode of `download_report.py` as the PRIMARY method.**
 
-For A-share stocks (巨潮搜索用公司名称效果更好):
-- 年报: `site:cninfo.com.cn {company_name} {year} 年度报告`
-- 中报: `site:cninfo.com.cn {company_name} {year} 半年度报告`
-- 一季报: `site:cninfo.com.cn {company_name} {year} 第一季度报告`
-- 三季报: `site:cninfo.com.cn {company_name} {year} 第三季度报告`
+This queries cninfo's native HTTP API (`POST /new/fulltextSearch/full`) directly — no WebSearch needed. The script handles filtering, date matching, URL construction, and download in one call.
 
-If company name is unknown, use stock code: `site:cninfo.com.cn {formatted_code} {year} 年度报告`
+```bash
+python3 scripts/download_report.py \
+  --stock-code "<formatted_code>" \
+  --report-type "<report_type>" \
+  --year <year> \
+  --company-name "<company_name>" \
+  --save-dir "<save_dir>" \
+  --auto
+```
 
-**Round 2 — 雪球 (stockn.xueqiu.com):**
+- `--company-name` is optional but recommended for better search accuracy
+- If `company_name` is unknown, omit it — the script will search by stock code
 
-For A-share stocks:
+**Parse output**: The script prints `---RESULT---` / `---END---` block. Check `status`.
+
+**On SUCCESS**: Done. Report filepath to user. Skip to end.
+
+**On FAILURE**: Continue to Step 2 (WebSearch fallback).
+
+## Step 2: WebSearch Fallback
+
+Only if Step 1 (cninfo API) failed, or for **HK stocks** (which use hkexnews.hk). Try in order:
+
+**Round 1 — 雪球 (stockn.xueqiu.com):**
 - 年报: `site:stockn.xueqiu.com {formatted_code} 年度报告 {year}`
 - 中报: `site:stockn.xueqiu.com {formatted_code} 半年度报告 {year}`
-- 一季报: `site:stockn.xueqiu.com {formatted_code} 第一季度报告 {year}`
-- 三季报: `site:stockn.xueqiu.com {formatted_code} 第三季度报告 {year}`
+- HK 年报: `site:stockn.xueqiu.com {formatted_code} annual report {year}`
+- HK 中报: `site:stockn.xueqiu.com {formatted_code} interim report {year}`
 
-For HK stocks:
-- 年报/annual: `site:stockn.xueqiu.com {formatted_code} annual report {year}`
-- 中报/interim: `site:stockn.xueqiu.com {formatted_code} interim report {year}`
-
-**Round 3 — 同花顺 (notice.10jqka.com.cn):**
+**Round 2 — 同花顺 (notice.10jqka.com.cn):**
 - `site:notice.10jqka.com.cn {company_name} {year} {search_keyword}`
 
-**Round 4 — 无限制搜索 (last resort):**
+**Round 3 — 无限制搜索:**
 - `{company_name} {formatted_code} {year} 年度报告 PDF`
 
-## Step 2: Extract PDF Links
-
-From the search results, filter URLs that match PDF links from supported sources:
+From search results, extract PDF URLs from supported sources:
 ```
 https://static.cninfo.com.cn/.../*.pdf (or *.PDF)
 https://stockn.xueqiu.com/.../*.pdf
 https://notice.10jqka.com.cn/.../*.pdf
 ```
-Accept any direct PDF link from these domains. Note: cninfo URLs may use uppercase `.PDF` extension.
 
-Collect all matching PDF URLs and their titles/descriptions.
+Filter candidates — exclude titles with: 摘要, 审计报告, 公告, 利润分配, 可持续发展, 股东大会, ESG, summary, auditor, dividend, 更正, 补充, 意见, 内部控制, 英文, 制度
 
-## Step 3: Identify the Correct Report
+Select best match: prefer closest publish date to expected window, prefer title containing exact report keyword without "摘要".
 
-From the candidate PDFs, select the best match:
+## Step 3: Download (WebSearch path)
 
-### Exclude results containing these keywords:
-摘要, 审计报告, 公告, 利润分配, 可持续发展, 股东大会, ESG, summary, auditor, dividend, 更正, 补充, 意见, 内部控制
-
-### Prefer results that:
-1. Title contains the matching report keyword (e.g., "年度报告") WITHOUT "摘要"
-2. URL date is closest to the expected publish date
-3. If still tied, pick the first result
-
-### If no candidates remain after filtering:
-Tell the user that no matching report was found and suggest they verify the stock code, year, and report type.
-
-## Step 4: Download the PDF
-
-Once you have identified the correct PDF URL, run the download script:
+If a PDF URL was found via WebSearch, run:
 
 ```bash
 python3 scripts/download_report.py \
@@ -105,27 +96,15 @@ python3 scripts/download_report.py \
   --stock-code "<formatted_stock_code>" \
   --report-type "<report_type>" \
   --year "<year>" \
-  --save-dir "."
+  --save-dir "<save_dir>"
 ```
 
-### Parse the output
+Parse the `---RESULT---` / `---END---` block.
 
-The script prints a structured block between `---RESULT---` and `---END---`. Parse these fields:
-- `status`: SUCCESS or FAILED
-- `filepath`: absolute path to the downloaded file
-- `filesize`: file size in bytes
-- `message`: status message
+## Step 4: Report to User
 
-### Report to user
+**On success:** Tell the user:
+- File path, file size (human-readable), stock code, year, report type
 
-**On success:**
-Tell the user the report has been downloaded, including:
-- File path
-- File size (in human-readable format, e.g., MB)
-- Stock code, year, and report type
-
-**On failure:**
-Tell the user the download failed, including the error message, and suggest:
-- Checking if the URL is still accessible
-- Trying again later
-- Verifying the stock code and report type
+**On failure:** Tell the user the error and suggest:
+- Checking URL accessibility, trying later, verifying stock code

@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "judgment-research-finding.v1",
+  "type": "object",
+  "required": [
+    "schema_version", "task_id", "resolution", "prior_claim", "evidence_items",
+    "strongest_alternative", "discriminating_result", "inference",
+    "applicability_conditions", "confidence_update", "valuation_impact",
+    "action_impact", "chapter_update"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-research-finding.v1"},
+    "task_id": {"type": "string"},
+    "resolution": {"enum": ["SUPPORTED", "CONTRADICTED", "MIXED", "UNRESOLVED", "PUBLIC_INFO_UNAVAILABLE"]},
+    "prior_claim": {"type": "string"},
+    "evidence_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_kind", "directness", "relation", "fact", "as_of"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "source_kind": {"enum": ["primary_filing", "official_data", "independent_dataset", "company_statement", "secondary_research", "market_data", "unknown"]},
+          "directness": {"enum": ["DIRECT", "INDIRECT", "CONTEXT"]},
+          "relation": {"enum": ["supports", "contradicts", "context"]},
+          "fact": {"type": "string"},
+          "as_of": {"type": "string"}
+        }
+      }
+    },
+    "strongest_alternative": {"type": "string"},
+    "discriminating_result": {"type": "string"},
+    "inference": {"type": "string"},
+    "applicability_conditions": {"type": "array", "items": {"type": "string"}},
+    "confidence_update": {"type": "object"},
+    "valuation_impact": {"type": "object"},
+    "action_impact": {"type": "object"},
+    "uncertainty_closure": {
+      "type": "object",
+      "required": [
+        "affected_axis", "current_position", "base_case_treatment",
+        "next_observation"
+      ],
+      "properties": {
+        "affected_axis": {
+          "enum": [
+            "OPERATING_MECHANISM", "CUSTOMER_DEMAND", "NORMAL_EARNINGS",
+            "OWNER_CASH", "PERMANENT_LOSS", "VALUATION", "ACTION"
+          ]
+        },
+        "current_position": {
+          "type": "object",
+          "required": ["state", "claim_ref", "basis"],
+          "properties": {
+            "state": {
+              "enum": [
+                "RETAIN_CONDITIONALLY", "NARROW_PRIOR",
+                "EXCLUDE_FROM_BASE_CASE", "REVERSE_PRIOR", "RANGE_ONLY"
+              ]
+            },
+            "claim_ref": {"type": "string", "minLength": 8},
+            "basis": {"type": "string", "minLength": 8}
+          },
+          "additionalProperties": false
+        },
+        "base_case_treatment": {
+          "type": "object",
+          "required": ["state", "economic_consequence"],
+          "properties": {
+            "state": {
+              "enum": [
+                "EXCLUDE", "CONDITIONAL_INCLUDE", "WIDEN_RANGE",
+                "LOWER_CONFIDENCE", "RETAIN_WITHOUT_UPGRADE"
+              ]
+            },
+            "economic_consequence": {
+              "enum": [
+                "UPSIDE_WITHHELD", "DOWNSIDE_RETAINED", "RANGE_WIDENED",
+                "CASH_ACCESS_DISCOUNT_RETAINED",
+                "NORMAL_EARNINGS_CREDIT_WITHHELD", "ACTION_WITHHELD",
+                "CLOSED_AXES_UNCHANGED"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "next_observation": {
+          "type": "object",
+          "required": ["metric_or_event", "supports_current", "reverses_current"],
+          "properties": {
+            "metric_or_event": {"type": "string", "minLength": 8},
+            "supports_current": {"$ref": "#/$defs/observationBranch"},
+            "reverses_current": {"$ref": "#/$defs/observationBranch"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "chapter_update": {"type": "object"}
+  },
+  "$defs": {
+    "observationBranch": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "operator", "value", "unit"],
+          "properties": {
+            "kind": {"const": "NUMERIC_THRESHOLD"},
+            "operator": {
+              "enum": ["ABOVE", "AT_OR_ABOVE", "BELOW", "AT_OR_BELOW"]
+            },
+            "value": {"type": "number"},
+            "unit": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "operator", "event_definition"],
+          "properties": {
+            "kind": {"const": "EVENT"},
+            "operator": {"enum": ["OCCURS", "DOES_NOT_OCCUR"]},
+            "event_definition": {"type": "string", "minLength": 4}
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "allOf": [{
+    "if": {
+      "properties": {
+        "resolution": {"enum": ["UNRESOLVED", "PUBLIC_INFO_UNAVAILABLE"]}
+      },
+      "required": ["resolution"]
+    },
+    "then": {"required": ["uncertainty_closure"]}
+  }]
+}

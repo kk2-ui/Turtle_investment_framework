@@ -1,0 +1,450 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-settlement.v1",
+  "settlement_id": "PEJOS:CN600570:20180501:FY2018:NEGATIVE_CONTROL:V1",
+  "authorization_id": "PEJOA:CN600570:20180501:FY2018:NEGATIVE_CONTROL:V1",
+  "company_id": "CN:600570",
+  "issuer_id": "ISSUER:CN:600570",
+  "cutoff_at": "2018-05-01T00:00:00+08:00",
+  "period": "FY2018",
+  "source_selection": {
+    "publisher": "CNINFO",
+    "document_type": "OFFICIAL_FULL_ANNUAL_REPORT",
+    "announcement_id": "1205970104",
+    "announcement_title": "恒生电子：2018年年度报告",
+    "published_at": "2019-03-30",
+    "pdf_url": "https://static.cninfo.com.cn/finalpage/2019-03-30/1205970104.PDF",
+    "selection_result": "UNIQUE_QUALIFYING_FULL_REPORT",
+    "excluded_summary_announcement_id": "1205969733"
+  },
+  "field_set_rule": "UNION_OF_02_BASELINE_AND_03_ENHANCED_CONTRACT_FIELDS_ONLY",
+  "fields": [
+    {
+      "field_id": "CORE_FINANCIAL_IT_CUSTOMER_DEPLOYMENT_REPLACEMENT_EVENT_FY2018",
+      "status": "EVENT_DISCLOSED",
+      "value": {
+        "core_platform": "UF3.0_WON_CHINA_MERCHANTS_SECURITIES",
+        "broker_deployments": "INSTITUTIONAL_COUNTER_SIGNED_17_BROKERS_AND_BOP_ADDED_14_BROKERS",
+        "bank_deployments": "PAPER_ELECTRONIC_INTEGRATION_COMPLETED_FOR_ALL_CUSTOMERS_AND_TRADING_MANAGEMENT_SYSTEMS_LAUNCHED_AT_NEARLY_20_BANKS"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [16, 17],
+      "paraphrase": "The report identifies multiple named core-platform wins, multi-customer broker signings, and completed bank system go-lives during FY2018.",
+      "scope": "Core financial-software customer deployment or replacement only; no physical-capacity, production, or inventory carrier is used."
+    },
+    {
+      "field_id": "NEW_AI_BLOCKCHAIN_CLOUD_CROSS_CUSTOMER_ADOPTION_EVENT_FY2018",
+      "status": "EVENT_DISCLOSED_WITH_ECONOMICS_UNSEPARATED",
+      "value": {
+        "cross_customer_event": "ISEE_COOPERATED_WITH_THREE_NAMED_SECURITIES_FIRMS_AND_AI_PRODUCTS_HAD_MULTIPLE_APPLICATION_CASES",
+        "cloud_constraint": "FINANCIAL_INDUSTRY_CLOUD_APPLICATION_REMAINED_CONSTRAINED",
+        "blockchain_stage": "RESEARCH_EXPLORATION_AND_DEMONSTRATION"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [11, 17, 18],
+      "paraphrase": "AI-related offerings reached several customers, while cloud use remained constrained and blockchain remained at an exploratory stage; the report does not isolate repeat economics for these options.",
+      "scope": "AI, blockchain, and cloud option adoption only; product releases and broad internet revenue are not treated as repeat demand."
+    },
+    {
+      "field_id": "SOFTWARE_REVENUE_RMB_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 3186775619.54,
+      "unit": "RMB",
+      "evidence_pages": [16],
+      "paraphrase": "FY2018 software revenue was RMB 3,186,775,619.54, up 23.62% year on year.",
+      "scope": "Consolidated reported software-product revenue; not attributed solely to core or new options."
+    },
+    {
+      "field_id": "SOFTWARE_GROSS_MARGIN_PERCENT_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 98.78,
+      "unit": "PERCENT",
+      "evidence_pages": [16],
+      "paraphrase": "FY2018 software gross margin was 98.78%, 0.25 percentage point below the prior year.",
+      "scope": "Consolidated reported software-product gross margin."
+    },
+    {
+      "field_id": "BUSINESS_LINE_REVENUE_AND_DIRECTION_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": {
+        "brokerage_it": {"revenue_rmb": 487279058.82, "year_on_year_percent": 20.97},
+        "asset_management_it": {"revenue_rmb": 1052194539.59, "year_on_year_percent": 22.65},
+        "wealth_it": {"revenue_rmb": 787192517.58, "year_on_year_percent": 43.19},
+        "exchange_it": {"revenue_rmb": 104537710.79, "year_on_year_percent": 4.16},
+        "bank_it": {"revenue_rmb": 246817685.28, "year_on_year_percent": -20.25},
+        "internet_business": {"revenue_rmb": 467414696.69, "year_on_year_percent": 69.02},
+        "non_financial_business": {"revenue_rmb": 110275794.74, "year_on_year_percent": -32.74}
+      },
+      "unit": "RMB_AND_PERCENT",
+      "evidence_pages": [15],
+      "paraphrase": "The annual report gives FY2018 revenue and year-on-year direction for all seven reported business lines.",
+      "scope": "Reported business-line perimeter; internet business is a broad line and is not treated as pure AI, blockchain, or cloud revenue."
+    },
+    {
+      "field_id": "R_AND_D_EXPENSE_RMB_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 1404668841.96,
+      "unit": "RMB",
+      "evidence_pages": [19],
+      "paraphrase": "All FY2018 R&D input of RMB 1,404,668,841.96 was expensed and none was capitalized.",
+      "scope": "Consolidated FY2018 expensed R&D; already reflected in operating cash flow and not subtracted again."
+    },
+    {
+      "field_id": "R_AND_D_TO_REVENUE_PERCENT_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 43.05,
+      "unit": "PERCENT",
+      "evidence_pages": [19],
+      "paraphrase": "FY2018 R&D input equaled 43.05% of revenue.",
+      "scope": "Consolidated reported R&D-to-revenue ratio."
+    },
+    {
+      "field_id": "R_AND_D_HEADCOUNT_AND_SHARE_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": {"headcount": 4590, "share_percent": 64.45},
+      "unit": "PEOPLE_AND_PERCENT",
+      "evidence_pages": [19],
+      "paraphrase": "The company reported 4,590 R&D staff, 64.45% of total employees.",
+      "scope": "Consolidated reported R&D personnel."
+    },
+    {
+      "field_id": "CONSOLIDATED_OCF_RMB_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 937082661.39,
+      "unit": "RMB",
+      "evidence_pages": [15, 71],
+      "paraphrase": "FY2018 consolidated net cash from operating activities was RMB 937,082,661.39.",
+      "scope": "Consolidated statutory cash flow; expensed R&D is already included and is not deducted again."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_CAPEX_RMB_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 146639523.76,
+      "unit": "RMB",
+      "evidence_pages": [71],
+      "paraphrase": "Consolidated cash paid to acquire or construct fixed assets, intangible assets, and other long-term assets was RMB 146,639,523.76.",
+      "scope": "All consolidated cash capex; no maintenance-versus-growth split is available."
+    },
+    {
+      "field_id": "CONSOLIDATED_WORKING_CAPITAL_CASH_SUPPORT_RMB_FY2018_LEVEL",
+      "status": "CALCULATED_FROM_DISCLOSED_COMPONENTS",
+      "value": 309094894.61,
+      "unit": "RMB",
+      "evidence_pages": [144],
+      "paraphrase": "Inventory decrease of RMB 26,060,266.17 plus operating-receivable decrease of RMB 62,825,373.22 plus operating-payable increase of RMB 220,209,255.22 provided RMB 309,094,894.61 of cash support.",
+      "scope": "Consolidated cash-flow reconciliation components under the contract formula; no physical inventory metric is used as an operating-method carrier."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_BALANCE_RMB_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 562238594.65,
+      "unit": "RMB",
+      "evidence_pages": [72, 145],
+      "paraphrase": "FY2018 ending consolidated cash and cash equivalents were RMB 562,238,594.65.",
+      "scope": "Cash and cash equivalents; excludes RMB 4,265,586.50 of restricted guarantee deposits from the RMB 566,504,181.15 balance-sheet cash line."
+    },
+    {
+      "field_id": "CONSOLIDATED_INTEREST_BEARING_DEBT_RMB_FY2018_LEVEL",
+      "status": "DISCLOSED",
+      "value": 60000000.0,
+      "unit": "RMB",
+      "evidence_pages": [64, 126, 131],
+      "paraphrase": "Year-end consolidated interest-bearing debt was RMB 60,000,000, entirely a current maturity of a long-term bank loan; short-term and long-term borrowing lines were nil.",
+      "scope": "Consolidated interest-bearing bank debt at FY2018 year end."
+    },
+    {
+      "field_id": "ADVANCE_RECEIPTS_AND_OPERATING_PAYABLES_RMB_FY2018_LEVEL",
+      "status": "DISCLOSED_COMPONENTS",
+      "value": {
+        "advance_receipts_for_software_sales_and_services_rmb": 1292433289.03,
+        "goods_and_materials_payables_rmb": 20323195.68,
+        "expense_payables_rmb": 59612476.05,
+        "direct_operating_components_total_rmb": 1372368960.76
+      },
+      "unit": "RMB",
+      "evidence_pages": [127, 128],
+      "paraphrase": "Software sales and service advances were RMB 1,292,433,289.03; disclosed goods/material and expense payables added RMB 79,935,671.73.",
+      "scope": "Directly identified operating balances only; RMB 55,112,224.79 of long-term-asset purchase payables and non-operating other payables are excluded."
+    },
+    {
+      "field_id": "ACQUISITION_EQUITY_AND_OTHER_EXTERNAL_INVESTMENT_CASH_RMB_FY2018_LEVEL",
+      "status": "LOWER_BOUND_DISCLOSED",
+      "value": {
+        "known_acquisition_equity_cash_rmb": 455075000.0,
+        "additional_external_strategic_cash_rmb": "UNKNOWN_NONNEGATIVE_OUTFLOW",
+        "combined_lower_bound_rmb": 455075000.0,
+        "combined_upper_bound_rmb": "UNBOUNDED_FROM_REPORT_DISAGGREGATION"
+      },
+      "unit": "RMB",
+      "evidence_pages": [22, 23, 72, 143, 144, 154],
+      "paraphrase": "The group paid RMB 455,075,000 to raise its stake in Hengyun Holdings while retaining control; the report identifies other strategic equity investments but does not disclose a complete non-overlapping cash amount for them.",
+      "scope": "Acquisition-equity and other external strategic cash only; financial cash-management principal, capex, and intra-group capital are excluded, and no unknown amount or causal attribution is invented."
+    },
+    {
+      "field_id": "CONSOLIDATION_AND_BUSINESS_LINE_REPORTING_PERIMETER_EVENT",
+      "status": "EVENT_DISCLOSED",
+      "value": {
+        "business_line_perimeter": "SEVEN_LINES_REPORTED_WITH_FY2017_COMPARATIVES",
+        "newly_consolidated_by_establishment": ["JINGTENG_NETWORK", "WUXI_XINGLU", "SINGAPORE_AYERS"],
+        "disposed_with_loss_of_control": "WUXI_HENGLE",
+        "ownership_change_without_loss_of_control": "HENGYUN_HOLDINGS_54.70_PERCENT_TO_96.45_PERCENT"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [15, 149, 150, 154],
+      "paraphrase": "The report supplies comparable FY2017 business-line columns and separately discloses FY2018 consolidation additions, one disposal, and a minority-interest purchase without loss of control.",
+      "scope": "Measurement-comparability perimeter only; no operating causality is assigned to consolidation changes."
+    },
+    {
+      "field_id": "CORE_BUSINESS_LINE_REPORTING_PERIMETER_EVENT",
+      "status": "PERIMETER_DISCLOSED_AND_COMPARABLE",
+      "value": ["BROKERAGE_IT", "ASSET_MANAGEMENT_IT", "WEALTH_IT", "EXCHANGE_IT", "BANK_IT"],
+      "unit": "EVENT",
+      "evidence_pages": [15],
+      "paraphrase": "Brokerage, asset management, wealth, exchange, and bank IT were each reported separately with FY2017 comparative revenue and direction.",
+      "scope": "Five core financial-IT business lines only."
+    },
+    {
+      "field_id": "SOFTWARE_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 3186775619.54,
+      "unit": "RMB",
+      "evidence_pages": [16],
+      "paraphrase": "FY2018 software revenue was RMB 3,186,775,619.54, up 23.62% year on year.",
+      "scope": "Consolidated reported software-product revenue."
+    },
+    {
+      "field_id": "SOFTWARE_GROSS_MARGIN_PERCENT",
+      "status": "DISCLOSED",
+      "value": 98.78,
+      "unit": "PERCENT",
+      "evidence_pages": [16],
+      "paraphrase": "FY2018 software gross margin was 98.78%.",
+      "scope": "Consolidated reported software-product gross margin."
+    },
+    {
+      "field_id": "BROKERAGE_IT_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 487279058.82,
+      "unit": "RMB",
+      "evidence_pages": [15],
+      "paraphrase": "FY2018 brokerage IT revenue was RMB 487,279,058.82, up 20.97% year on year.",
+      "scope": "Reported brokerage business line."
+    },
+    {
+      "field_id": "ASSET_MANAGEMENT_IT_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 1052194539.59,
+      "unit": "RMB",
+      "evidence_pages": [15],
+      "paraphrase": "FY2018 asset-management IT revenue was RMB 1,052,194,539.59, up 22.65% year on year.",
+      "scope": "Reported asset-management business line."
+    },
+    {
+      "field_id": "WEALTH_IT_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 787192517.58,
+      "unit": "RMB",
+      "evidence_pages": [15],
+      "paraphrase": "FY2018 wealth IT revenue was RMB 787,192,517.58, up 43.19% year on year.",
+      "scope": "Reported wealth business line."
+    },
+    {
+      "field_id": "EXCHANGE_IT_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 104537710.79,
+      "unit": "RMB",
+      "evidence_pages": [15],
+      "paraphrase": "FY2018 exchange IT revenue was RMB 104,537,710.79, up 4.16% year on year.",
+      "scope": "Reported exchange business line."
+    },
+    {
+      "field_id": "BANK_IT_REVENUE_RMB",
+      "status": "DISCLOSED",
+      "value": 246817685.28,
+      "unit": "RMB",
+      "evidence_pages": [15],
+      "paraphrase": "FY2018 bank IT revenue was RMB 246,817,685.28, down 20.25% year on year.",
+      "scope": "Reported bank business line."
+    },
+    {
+      "field_id": "CORE_CUSTOMER_DEPLOYMENT_REPLACEMENT_AND_LOSS_EVENT",
+      "status": "DEPLOYMENTS_DISCLOSED_LOSS_NOT_DISCLOSED",
+      "value": {
+        "deployment_and_replacement_events": "MULTIPLE_CORE_PLATFORM_WINS_SIGNINGS_AND_GO_LIVES",
+        "material_core_customer_loss": "NOT_DISCLOSED"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [16, 17, 20],
+      "paraphrase": "The report discloses multiple core-system wins and go-lives, including UF3.0, 17 broker signings, 14 BOP additions, and nearly 20 bank deployments, and does not identify a material core customer loss.",
+      "scope": "Core customer deployment, replacement, and explicitly disclosed loss only; absence of disclosure is not proof that no loss occurred."
+    },
+    {
+      "field_id": "NEW_OPTION_REPORTING_PERIMETER_EVENT",
+      "status": "PURE_OPTION_PERIMETER_NOT_SEPARATELY_DISCLOSED",
+      "value": "BROAD_INNOVATION_SUBSIDIARY_AND_INTERNET_BUSINESS_DISCLOSURES_ONLY",
+      "unit": "EVENT",
+      "evidence_pages": [15, 17, 18, 151, 152],
+      "paraphrase": "The report discusses named innovation subsidiaries and a broad internet-business line but does not isolate a comparable AI, blockchain, and cloud responsibility perimeter.",
+      "scope": "New-option responsibility boundary only; broad internet revenue and mixed subsidiary disclosures are not treated as pure option economics."
+    },
+    {
+      "field_id": "NEW_OPTION_CROSS_CUSTOMER_DEPLOYMENT_EVENT",
+      "status": "EVENT_DISCLOSED",
+      "value": {
+        "iSee_customers": ["CICC_INTERNATIONAL", "CENTRAL_CHINA_SECURITIES", "SEALAND_SECURITIES"],
+        "other_ai_event": "EIGHT_AI_PRODUCTS_RELEASED_WITH_APPLICATION_CASES_ACROSS_MULTIPLE_USE_CASES"
+      },
+      "unit": "EVENT",
+      "evidence_pages": [17, 18],
+      "paraphrase": "The iSee intelligent product cooperated with three named securities firms, and the report describes application cases for several AI products.",
+      "scope": "Cross-customer deployment evidence only; it does not establish repeat revenue, maintenance revenue, or option profitability."
+    },
+    {
+      "field_id": "NEW_OPTION_REPEAT_OR_MAINTENANCE_REVENUE_RMB",
+      "status": "NOT_SEPARATELY_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [15, 17, 18, 152, 153],
+      "paraphrase": "Neither the broad internet-business line nor subsidiary disclosures isolate repeat or maintenance revenue for AI, blockchain, or cloud options.",
+      "scope": "Pure new-option repeat or maintenance revenue; releases, cases, customer lists, and broad internet revenue are excluded."
+    },
+    {
+      "field_id": "NEW_OPTION_OPERATING_PROFIT_RMB",
+      "status": "NOT_SEPARATELY_DISCLOSED",
+      "value": null,
+      "unit": "RMB",
+      "evidence_pages": [152, 153, 154],
+      "paraphrase": "Subsidiary tables provide mixed-scope net profit figures but do not disclose operating profit for a comparable AI, blockchain, or cloud option responsibility unit.",
+      "scope": "Pure new-option operating profit only; mixed subsidiary net profit is not substituted."
+    },
+    {
+      "field_id": "NEW_OPTION_DISCONTINUATION_IMPAIRMENT_OR_CUSTOMER_LOSS_EVENT",
+      "status": "QUALITATIVE_CUSTOMER_WEAKNESS_DISCLOSED",
+      "value": {
+        "event": "YUNYING_NETWORK_NEW_AND_RENEWAL_CUSTOMERS_BOTH_DECLINED",
+        "amount_or_count": null,
+        "separate_material_discontinuation_or_impairment": "NOT_DISCLOSED"
+      },
+      "unit": "RMB_OR_EVENT",
+      "evidence_pages": [18],
+      "paraphrase": "Yunying Network reported declines in both new and renewal customers; the report gives no count, amount, or separate material discontinuation or impairment for the option scope.",
+      "scope": "Localized new-option customer weakness only; no magnitude, materiality, or group-level causality is inferred."
+    },
+    {
+      "field_id": "R_AND_D_EXPENSE_RMB",
+      "status": "DISCLOSED",
+      "value": 1404668841.96,
+      "unit": "RMB",
+      "evidence_pages": [19],
+      "paraphrase": "All FY2018 R&D input of RMB 1,404,668,841.96 was expensed.",
+      "scope": "Consolidated FY2018 R&D; already included in operating cash flow and never deducted twice."
+    },
+    {
+      "field_id": "R_AND_D_TO_REVENUE_PERCENT",
+      "status": "DISCLOSED",
+      "value": 43.05,
+      "unit": "PERCENT",
+      "evidence_pages": [19],
+      "paraphrase": "FY2018 R&D input was 43.05% of revenue.",
+      "scope": "Consolidated reported ratio."
+    },
+    {
+      "field_id": "R_AND_D_HEADCOUNT_AND_SHARE",
+      "status": "DISCLOSED",
+      "value": {"headcount": 4590, "share_percent": 64.45},
+      "unit": "PEOPLE_AND_PERCENT",
+      "evidence_pages": [19],
+      "paraphrase": "R&D headcount was 4,590, representing 64.45% of total employees.",
+      "scope": "Consolidated reported R&D personnel."
+    },
+    {
+      "field_id": "CONSOLIDATED_OCF_RMB",
+      "status": "DISCLOSED",
+      "value": 937082661.39,
+      "unit": "RMB",
+      "evidence_pages": [71],
+      "paraphrase": "FY2018 consolidated operating cash flow was RMB 937,082,661.39.",
+      "scope": "Consolidated statutory OCF; expensed R&D is already included."
+    },
+    {
+      "field_id": "CONSOLIDATED_WORKING_CAPITAL_CASH_SUPPORT_RMB",
+      "status": "CALCULATED_FROM_DISCLOSED_COMPONENTS",
+      "value": 309094894.61,
+      "unit": "RMB",
+      "evidence_pages": [144],
+      "paraphrase": "The contract formula sums disclosed inventory, operating-receivable, and operating-payable cash-support components to RMB 309,094,894.61.",
+      "scope": "Consolidated cash-flow reconciliation only; no physical-capacity, production, or inventory operating carrier is introduced."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_CAPEX_RMB",
+      "status": "DISCLOSED",
+      "value": 146639523.76,
+      "unit": "RMB",
+      "evidence_pages": [71],
+      "paraphrase": "FY2018 consolidated cash capex was RMB 146,639,523.76.",
+      "scope": "All consolidated cash capex; maintenance and growth are not split."
+    },
+    {
+      "field_id": "DIRECTIONAL_CONSOLIDATED_OCF_AFTER_WORKING_CAPITAL_AND_ALL_CAPEX_RMB",
+      "status": "CALCULATED_FROM_DISCLOSED_COMPONENTS",
+      "value": 481348243.02,
+      "unit": "RMB",
+      "evidence_pages": [71, 144],
+      "paraphrase": "RMB 937,082,661.39 of OCF less RMB 309,094,894.61 of working-capital cash support and RMB 146,639,523.76 of all capex leaves RMB 481,348,243.02.",
+      "scope": "One-period consolidated directional proxy, not core cash or normalized owner earnings; expensed R&D is not deducted again."
+    },
+    {
+      "field_id": "CASH_PAID_FOR_ACQUISITIONS_NET_OF_ACQUIRED_CASH_RMB",
+      "status": "DISCLOSED_NIL",
+      "value": 0.0,
+      "unit": "RMB",
+      "evidence_pages": [71, 145, 147],
+      "paraphrase": "The consolidated cash-flow line for cash paid to acquire subsidiaries net of acquired cash was nil, consistent with no business combination in FY2018.",
+      "scope": "Acquisition-of-control cash-flow line only; the RMB 455,075,000 purchase of an additional stake in an already controlled subsidiary is excluded here and kept in external strategic equity cash."
+    },
+    {
+      "field_id": "OTHER_NONOVERLAPPING_EXTERNAL_STRATEGIC_INVESTMENT_CASH_RMB",
+      "status": "LOWER_BOUND_DISCLOSED",
+      "value": {
+        "known_nonnegative_outflow_rmb": 455075000.0,
+        "additional_amount_rmb": "UNKNOWN_NONNEGATIVE_OUTFLOW",
+        "lower_bound_rmb": 455075000.0,
+        "upper_bound_rmb": "UNBOUNDED_FROM_REPORT_DISAGGREGATION"
+      },
+      "unit": "RMB",
+      "evidence_pages": [22, 23, 72, 143, 144, 154],
+      "paraphrase": "The known non-overlapping external strategic outflow is the RMB 455,075,000 minority-interest purchase; other named strategic investments lack a complete cash disaggregation, so only their nonnegative outflow sign is retained.",
+      "scope": "External strategic cash excluding financial cash-management principal, capex, acquisition-of-control net cash, and intra-group capital; no unknown magnitude or causal attribution is supplied."
+    },
+    {
+      "field_id": "CONSOLIDATED_POST_CAPEX_POST_ACQUISITION_FUNDING_RESIDUAL_BOUND_RMB",
+      "status": "RANGE_SETTLED",
+      "value": {
+        "upper_bound_rmb": 26273243.02,
+        "lower_bound_rmb": "UNBOUNDED_FROM_REPORT_DISAGGREGATION",
+        "formula": "481348243.02_MINUS_0.00_MINUS_455075000.00_MINUS_UNKNOWN_NONNEGATIVE_ADDITIONAL_EXTERNAL_STRATEGIC_OUTFLOW"
+      },
+      "unit": "RMB_RANGE",
+      "evidence_pages": [71, 72, 144, 154],
+      "paraphrase": "After all capex, acquisition-of-control net cash, and the known minority-interest purchase, the residual cannot exceed RMB 26,273,243.02; undisclosed additional strategic outflow can reduce it, so the report does not establish a lower bound.",
+      "scope": "One-period consolidated funding residual bound only; it is not normalized owner cash, acquisition return, new-option causality, or proof of misallocation, and expensed R&D is not deducted again."
+    },
+    {
+      "field_id": "CONSOLIDATED_CASH_BALANCE_RMB",
+      "status": "DISCLOSED",
+      "value": 562238594.65,
+      "unit": "RMB",
+      "evidence_pages": [72, 145],
+      "paraphrase": "Ending consolidated cash and cash equivalents were RMB 562,238,594.65.",
+      "scope": "Cash and cash equivalents, excluding restricted guarantee deposits."
+    },
+    {
+      "field_id": "CONSOLIDATED_INTEREST_BEARING_DEBT_RMB",
+      "status": "DISCLOSED",
+      "value": 60000000.0,
+      "unit": "RMB",
+      "evidence_pages": [64, 126, 131],
+      "paraphrase": "Year-end consolidated interest-bearing debt was RMB 60,000,000, classified as a current maturity of a long-term loan.",
+      "scope": "Consolidated interest-bearing bank debt at FY2018 year end."
+    }
+  ]
+}

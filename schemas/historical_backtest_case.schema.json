@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/historical_backtest_case.schema.json",
+  "title": "Turtle Historical Backtest Frozen Case",
+  "type": "object",
+  "required": ["schema_version", "case_id", "experiment_id", "company_code", "simulation_cutoff", "report_freeze", "credibility", "route", "forecast", "sources", "inputs", "calibration_ledger", "taxes_fees_fx", "price_identity", "status"],
+  "properties": {
+    "schema_version": {"const": "historical-backtest-case.v1"},
+    "case_id": {"type": "string", "pattern": "^HBTCASE:"},
+    "experiment_id": {"type": "string", "pattern": "^HBT:"},
+    "company_code": {"type": "string", "minLength": 1},
+    "simulation_cutoff": {"type": "string", "minLength": 10},
+    "report_freeze": {
+      "type": "object",
+      "required": ["frozen_at", "evidence_cutoff", "settlement_locked", "report_status", "mode", "freeze_id", "frozen_report", "independent_review", "quality_failure"],
+      "properties": {
+        "frozen_at": {"type": "string"},
+        "evidence_cutoff": {"type": "string"},
+        "settlement_locked": {"const": true},
+        "report_status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE"]},
+        "mode": {"enum": ["TEST_FIXTURE", "PRODUCTION_PIPELINE", "PIT_ENGINEERING"]},
+        "freeze_id": {"type": "string", "pattern": "^HBTFRZ:"},
+        "frozen_report": {
+          "type": "object",
+          "required": ["report_id", "variant_id", "origin", "artifact_path", "artifact_sha256", "format", "writer_id", "writer_provenance", "writer_status", "claim_ids", "section_markers"],
+          "properties": {
+            "report_id": {"type": "string", "pattern": "^HBTREP:"},
+            "variant_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+            "origin": {
+              "type": "object",
+              "required": ["kind"],
+              "properties": {
+                "kind": {"enum": ["TEST_FIXTURE", "TURTLE_PIPELINE", "PIT_ENGINEERING"]},
+                "output_dir": {"type": "string", "minLength": 1},
+                "acceptance_root": {"type": "string", "minLength": 1},
+                "sample_id": {"type": "string", "minLength": 1},
+                "run_manifest_path": {"type": "string", "minLength": 1},
+                "completion_report_path": {"type": "string", "minLength": 1},
+                "publication_snapshot_path": {"type": "string", "minLength": 1},
+                "review_artifact_path": {"type": "string", "minLength": 1},
+                "pit_runner": {
+                  "type": "object",
+                  "description": "P10-A source-package runner declared-process attestation.",
+                  "required": ["attestation_path", "source_package_manifest_path", "package_root", "status"],
+                  "properties": {
+                    "attestation_path": {"type": "string", "minLength": 1},
+                    "source_package_manifest_path": {"type": "string", "minLength": 1},
+                    "package_root": {"type": "string", "minLength": 1},
+                    "status": {"enum": ["PASS", "INCOMPLETE", "INVALID"]}
+                  }
+                }
+              }
+            },
+            "artifact_path": {"type": "string", "minLength": 1},
+            "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "format": {"const": "MARKDOWN"},
+            "writer_id": {"type": "string", "minLength": 1},
+            "writer_provenance": {"$ref": "#/$defs/actor_provenance"},
+            "writer_status": {"enum": ["COMPLETE", "QUALITY_FAILURE"]},
+            "claim_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^HBTCLM:"}},
+            "section_markers": {"type": "array", "minItems": 4, "items": {"type": "string", "minLength": 1}}
+          }
+        },
+        "independent_review": {
+          "type": "object",
+            "required": ["review_id", "reviewed_variant_id", "reviewer_id", "reviewer_provenance", "independence", "reviewed_report_sha256", "status", "claim_reviews"],
+            "properties": {
+              "review_id": {"type": "string", "pattern": "^HBTREV:"},
+              "reviewed_variant_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+            "reviewer_id": {"type": "string", "minLength": 1},
+            "reviewer_provenance": {"$ref": "#/$defs/actor_provenance"},
+            "independence": {"$ref": "#/$defs/reviewer_independence"},
+            "reviewed_report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "status": {"enum": ["PASS", "FAIL"]},
+            "claim_reviews": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["claim_id", "disposition", "source_ids", "notes"],
+                "properties": {
+                  "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
+                  "disposition": {"enum": ["SUPPORTED", "PARTIAL", "UNSUPPORTED", "UNKNOWN_PRESERVED"]},
+                  "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+                  "notes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+                }
+              }
+            }
+          }
+        },
+        "quality_failure": {
+          "type": ["object", "null"],
+          "properties": {
+            "classifications": {"type": "array", "minItems": 1, "items": {"enum": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL", "WRITING"]}},
+            "economic_impact": {"type": "string", "minLength": 1},
+            "missing_facts": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+            "prohibited_assumptions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+            "remediation": {"type": "string", "minLength": 1},
+            "acceptance_criteria": {"type": "string", "minLength": 1}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"mode": {"const": "PRODUCTION_PIPELINE"}},
+            "required": ["mode"]
+          },
+          "then": {
+            "properties": {
+              "frozen_report": {
+                "properties": {
+                  "origin": {"required": ["pit_runner"]}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {"mode": {"const": "PIT_ENGINEERING"}},
+            "required": ["mode"]
+          },
+          "then": {
+            "properties": {
+              "frozen_report": {
+                "properties": {
+                  "origin": {"required": ["pit_runner", "review_artifact_path"]}
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "credibility": {
+      "description": "Case-level model-memory assessment. A controlled candidate still needs the separately preregistered cross-issuer/cross-cutoff calibration design and holdout evidence.",
+      "type": "object",
+      "required": ["model_memory_control", "backtest_credibility", "assessment_basis", "control_evidence", "calibration_role"],
+      "properties": {
+        "model_memory_control": {"enum": ["CONTROLLED", "MITIGATED", "UNCONTROLLED"]},
+        "backtest_credibility": {"enum": ["STRICT", "QUALIFIED", "EXPLORATORY"]},
+        "assessment_basis": {"type": "string", "minLength": 1},
+        "control_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["evidence_id", "artifact_path", "artifact_sha256", "control_level", "method", "verifier_id", "scope"],
+            "properties": {
+              "evidence_id": {"type": "string", "pattern": "^HBTMEM:"},
+              "artifact_path": {"type": "string", "minLength": 1},
+              "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "control_level": {"enum": ["MITIGATION", "CONTROL"]},
+              "method": {"type": "string", "minLength": 1},
+              "verifier_id": {"type": "string", "minLength": 1},
+              "scope": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "calibration_role": {"enum": ["ENGINEERING_DIAGNOSTIC_ONLY", "MODEL_MEMORY_CONTROLLED_CANDIDATE"]}
+      }
+    },
+    "route": {"enum": ["LONG_TERM_OWNER", "FINITE_XIRR", "DUAL"]},
+    "forecast": {
+      "type": "object",
+      "required": ["horizon_years", "terminal_handling", "cash_flow_basis"],
+      "properties": {
+        "horizon_years": {"type": "number", "minimum": 0},
+        "terminal_handling": {"enum": ["NO_REQUIRED_EXIT", "BUSINESS_VALUE_EXIT", "MARKET_EXIT", "LEGAL_END", "DUAL_TERMINAL_PATH"]},
+        "cash_flow_basis": {"type": "string", "minLength": 1},
+        "independent_terminal_evidence": {"type": "boolean"}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_version", "source_type", "published_at", "data_as_of", "revision_policy", "admissible"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "source_version": {"type": "string", "minLength": 1},
+          "source_type": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OFFICIAL_STATISTICS", "MARKET_DATA", "OTHER_OFFICIAL"]},
+          "published_at": {"type": "string"},
+          "data_as_of": {"type": "string"},
+          "revision_published_at": {"type": ["string", "null"]},
+          "revision_policy": {"enum": ["ORIGINAL_VINTAGE", "HISTORICAL_RESTATEMENT_PUBLISHED_BEFORE_CUTOFF", "CURRENT_RESTATED_ONLY"]},
+          "admissible": {"type": "boolean"}
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value", "input_role", "source_ids"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "value": {},
+          "input_role": {"enum": ["HISTORICAL_FACT", "JUDGMENT", "MODEL_ASSUMPTION"]},
+          "source_ids": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "calibration_ledger": {
+      "description": "Frozen material claims for later calibration. This is not a scorecard and cannot contain realized outcomes.",
+      "type": "object",
+      "required": ["claims"],
+      "properties": {
+        "claims": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["claim_id", "statement", "materiality", "frozen_disposition", "source_ids", "prediction", "threshold", "unknown", "counter_thesis", "flip_condition", "observable_outcome"],
+            "properties": {
+              "claim_id": {"type": "string", "pattern": "^HBTCLM:"},
+              "statement": {"type": "string", "minLength": 1},
+              "materiality": {"enum": ["CENTRAL_THESIS", "VALUATION", "RETURN", "PERMANENT_LOSS"]},
+              "frozen_disposition": {"enum": ["PREDICTION", "UNKNOWN"]},
+              "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+              "prediction": {
+                "type": ["object", "null"],
+                "properties": {
+                  "metric": {"type": "string", "minLength": 1},
+                  "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS"]},
+                  "value": {"type": "number"},
+                  "unit": {"type": "string", "minLength": 1},
+                  "horizon": {"type": "string", "minLength": 1}
+                }
+              },
+              "threshold": {
+                "type": ["object", "null"],
+                "properties": {
+                  "metric": {"type": "string", "minLength": 1},
+                  "operator": {"enum": ["AT_LEAST", "AT_MOST", "EQUALS"]},
+                  "value": {"type": "number"},
+                  "unit": {"type": "string", "minLength": 1},
+                  "consequence": {"type": "string", "minLength": 1}
+                }
+              },
+              "unknown": {
+                "type": ["object", "null"],
+                "properties": {
+                  "statement": {"type": "string", "minLength": 1},
+                  "economic_impact": {"type": "string", "minLength": 1},
+                  "resolution_observation": {"type": "string", "minLength": 1}
+                }
+              },
+              "counter_thesis": {"type": "string", "minLength": 1},
+              "flip_condition": {"type": "string", "minLength": 1},
+              "observable_outcome": {
+                "type": "object",
+                "required": ["metric", "unit", "measurement_basis", "measurement_rule", "period_start", "period_end", "allowed_source_types", "settlement_version_policy"],
+                "properties": {
+                  "metric": {"type": "string", "minLength": 1},
+                  "unit": {"type": "string", "minLength": 1},
+                  "measurement_basis": {"type": "string", "minLength": 1},
+                  "measurement_rule": {"type": "string", "minLength": 1},
+                  "period_start": {"type": "string", "minLength": 10},
+                  "period_end": {"type": "string", "minLength": 10},
+                  "allowed_source_types": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {"enum": ["ANNUAL_REPORT", "INTERIM_REPORT", "EXCHANGE_ANNOUNCEMENT", "OTHER_OFFICIAL", "LICENSED_INDUSTRY_DATA"]}
+                  },
+                  "industry_measurement_inference": {"enum": ["WITHIN_PROVIDER_RELATIVE_CHANGE", "LEVEL_WITH_STATED_LIMITS"]},
+                  "settlement_version_policy": {"enum": ["INITIAL_DISCLOSURE", "LATEST_OFFICIAL_AS_OF_EVALUATION"]},
+                  "conversion_rule": {
+                    "type": "object",
+                    "required": ["rule_id", "raw_unit", "converted_unit", "multiplier"],
+                    "properties": {
+                      "rule_id": {"type": "string", "minLength": 1},
+                      "raw_unit": {"type": "string", "minLength": 1},
+                      "converted_unit": {"type": "string", "minLength": 1},
+                      "multiplier": {"type": "number", "exclusiveMinimum": 0}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "taxes_fees_fx": {
+      "type": "object",
+      "required": ["tax_rate", "transaction_fee_rate", "dividend_tax_rate", "base_currency", "fx_rule"],
+      "properties": {
+        "tax_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "transaction_fee_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "dividend_tax_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "base_currency": {"type": "string", "minLength": 3},
+        "fx_rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "price_identity": {
+      "type": "object",
+      "required": ["primary_route", "primary_price_identity", "prices"],
+      "properties": {
+        "primary_route": {"enum": ["LONG_TERM_OWNER", "FINITE_XIRR", "DUAL", "PRIMARY_ROUTE_UNKNOWN"]},
+        "primary_price_identity": {"enum": ["P_LONG", "P_XIRR", "P_LEGAL", "P_BUSINESS_VALUE_EXIT", "UNKNOWN"]},
+        "prices": {"type": "array", "items": {"type": "object", "required": ["identity", "currency", "value", "meaning"], "properties": {"identity": {"type": "string"}, "currency": {"type": "string"}, "value": {"type": "number"}, "meaning": {"type": "string"}}}}
+      }
+    },
+    "investment_decision": {
+      "description": "Action and execution rule frozen with the report; optional for legacy calibration-only cases.",
+      "type": "object",
+      "required": ["action", "price_identity", "execution_rule"],
+      "properties": {
+        "action": {"enum": ["BUY", "HOLD", "WAIT", "SELL", "NO_BUY", "UNKNOWN"]},
+        "price_identity": {"enum": ["P_LONG", "P_XIRR", "P_LEGAL", "P_BUSINESS_VALUE_EXIT", "UNKNOWN"]},
+        "execution_rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "status": {"enum": ["FROZEN", "FROZEN_WITH_QUALITY_FAILURE", "INVALID"]}
+  },
+  "$defs": {
+    "actor_provenance": {
+      "type": "object",
+      "required": ["actor_type", "context_id"],
+      "properties": {
+        "actor_type": {"enum": ["human", "model", "hybrid"]},
+        "provider": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "context_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "reviewer_independence": {
+      "type": "object",
+      "required": ["did_not_generate_candidate", "no_prior_review_seen", "reviewer_context_isolated", "generator_identity_disjoint"],
+      "properties": {
+        "did_not_generate_candidate": {"const": true},
+        "no_prior_review_seen": {"const": true},
+        "reviewer_context_isolated": {"const": true},
+        "generator_identity_disjoint": {"const": true}
+      }
+    }
+  }
+}

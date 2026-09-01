@@ -1,0 +1,34 @@
+{
+  "schema_version": "historical-holdout-paired-attempt.v1",
+  "attempt_id": "PAIR_ATTEMPT:HIST:CN600161:20240501:STRICT_V2",
+  "pair_id": "PAIR:HIST:CN600161:20240501:STRICT_V2",
+  "episode_id": "HIST:CN600161:20240501:FY2024:PAIR_V2",
+  "company_id": "CN:600161",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "review_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/63_CN600161_STRICT_PAIRED_HOLDOUT_PREOUTCOME_REVIEW_RETURN.md",
+  "verdict": "RETURN_PAIR_NOT_EVALUABLE",
+  "outcome_state": "SEALED_NOT_READ",
+  "arm_revision_allowed": false,
+  "outcome_access": "NONE",
+  "method_utility": "NOT_DIAGNOSTIC",
+  "method_validated": false,
+  "transfer_validated": false,
+  "permissions": {
+    "outcome_read": "NONE",
+    "training_utility": "NONE",
+    "method_validation": "NONE",
+    "transfer_validation": "NONE",
+    "comparative": "NONE",
+    "cjo": "NONE",
+    "formal_valuation": "NONE",
+    "buy_band": "NONE",
+    "report": "NONE",
+    "investment_action": "NONE"
+  },
+  "blocking_findings": [
+    "baseline_operating_cells_couple_unrelated_nci_parent_access",
+    "baseline_merges_capacity_product_with_quality",
+    "baseline_and_enhanced_normal_earnings_perimeters_not_comparable"
+  ],
+  "next_action": "REGISTER_NEXT_BLIND_CASE"
+}

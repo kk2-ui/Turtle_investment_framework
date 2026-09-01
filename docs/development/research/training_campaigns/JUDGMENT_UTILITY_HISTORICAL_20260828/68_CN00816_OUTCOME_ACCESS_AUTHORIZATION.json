@@ -1,0 +1,66 @@
+{
+  "schema_version": "blind-outcome-access-authorization.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "case_id": "BLIND:HK00816:20240501:FY2024",
+  "company": {
+    "name": "金茂物业服务发展股份有限公司",
+    "ticker": "HK:00816"
+  },
+  "purpose": "在不倒流修改已冻结判断的前提下，只结算FY2024年报足以观察的经营、现金与并购责任轴，并交由后续独立审阅判断其对下一案例研究行为的实际影响。",
+  "authorized_custodian_role": "fresh isolated outcome custodian",
+  "required_preoutcome_artifacts": [
+    "65_CN00816_FORECASTER_EXECUTION_RECEIPT.json",
+    "66_CN00816_PREOUTCOME_JUDGMENT.json",
+    "67_CN00816_INDEPENDENT_PREOUTCOME_REVIEW.md"
+  ],
+  "authorized_source": {
+    "count": 1,
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "document": "金茂物业服务发展股份有限公司FY2024年度报告",
+    "result_window": "FY2024 annual-report disclosure only",
+    "permitted_use": "只提取三个预冻结责任轴完成机械结算所需的年报披露及FY2023比较数。"
+  },
+  "settlement_scope": {
+    "axes": [
+      {
+        "id": "J1_OPERATING_AND_CUSTOMER_ABSORPTION",
+        "question": "基础物管规模是否被单位毛利、剔除可直接计算并购减值影响后的责任匹配归母利润和非关联客户回款质量吸收。"
+      },
+      {
+        "id": "J2_GROUP_CASH_RELATED_CREDIT_AND_PARENT_AVAILABILITY",
+        "question": "集团现金转换、关联信用/资金占用及香港母公司资金可得性。"
+      },
+      {
+        "id": "J3_ACQUISITION_CAPITAL_ALLOCATION",
+        "question": "首置服务、润物嘉业及符合预冻结门槛的新收购是否出现可观察的利润或经营现金回报，或发生并购资产损失。"
+      }
+    ],
+    "method": "严格按66号工件的outcome_settlement.ordered_cells逐轴、按顺序的first-match结算。缺失字段只能使其责任轴LOCAL_UNKNOWN；不得由单年CFO、关联信用、面积、无减值、整体利润或其他轴事实补位。"
+  },
+  "required_output": {
+    "path": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/69_CN00816_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "must_include": [
+      "唯一官方年报身份及页码/定位",
+      "每个轴的原始输入、直接可复算推导、命中的第一个cell和轴内结论",
+      "每个LOCAL_UNKNOWN的缺失字段和为何不跨轴传播",
+      "不对方法效用、投资行动、正式估值或BuyBand作出结论"
+    ]
+  },
+  "prohibited": [
+    "读取或使用价格、回报、市场表现、卖方研究、新闻、旧派生报告、其他结果期资料或其他公司资料",
+    "修改、润色或重写结果前判断、情景、阈值、轴定义或审阅结论",
+    "生成总体胜负、方法验证、迁移验证、CJO、正式估值、报告、买卖或投资权限结论",
+    "把未披露的被收购业务贡献当作零，或把集团现金当作香港母公司可自由分配现金"
+  ],
+  "role_isolation": {
+    "fresh_agent_required": true,
+    "preoutcome_artifacts_are_read_only": true,
+    "outcome_may_not_be_shared_with_preoutcome_forecaster": true,
+    "postoutcome_reviewer_must_be_fresh_and_separate": true
+  },
+  "browser_cleanup_if_needed": {
+    "skill_must_be_read_before_use": "ego-browser",
+    "completion": "completeTaskSpace(..., { keep: false }) then listTaskSpaces(); when none remain, run /Users/xiami/.codexcc/scripts/quit_ego_lite.py"
+  },
+  "authorization_state": "AUTHORIZED_FOR_SINGLE_FY2024_OFFICIAL_REPORT_ONLY"
+}

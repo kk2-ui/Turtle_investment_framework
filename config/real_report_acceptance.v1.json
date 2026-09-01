@@ -1,0 +1,61 @@
+{
+  "schema_version": "real-report-acceptance-config.v1",
+  "phase": "08",
+  "frozen_at": "2026-08-03",
+  "policy": {
+    "minimum_independent_reviews": 2,
+    "human_approval_required": true,
+    "automatic_ceiling": "READY_FOR_BLIND_REVIEW",
+    "no_compensating_score": true,
+    "control_sample_hidden_until_rules_frozen": true,
+    "rules_frozen": true,
+    "forward_judgment_contract_required": true
+  },
+  "samples": [
+    {
+      "sample_id": "01502_phase_k",
+      "company_code": "01502.HK",
+      "archetype": "property_management_governance",
+      "role": "primary_candidate",
+      "output_dir": "output/01502_金融街物业_phase08_reliability_20260804",
+      "report_period": "FY2025",
+      "rules_visible": true
+    },
+    {
+      "sample_id": "000651_legacy",
+      "company_code": "000651.SZ",
+      "archetype": "mature_manufacturing_capital_allocation",
+      "role": "historical_baseline",
+      "output_dir": "output/000651_格力电器",
+      "report_period": "FY2025",
+      "rules_visible": true
+    },
+    {
+      "sample_id": "000651_phase08",
+      "company_code": "000651.SZ",
+      "archetype": "mature_manufacturing_capital_allocation",
+      "role": "current_validation_candidate",
+      "output_dir": "output/000651_格力电器_phase08_20260803",
+      "report_period": "FY2025",
+      "rules_visible": true
+    },
+    {
+      "sample_id": "002027_new",
+      "company_code": "002027.SZ",
+      "archetype": "asset_light_cyclical_franchise",
+      "role": "generation_candidate",
+      "output_dir": "output/002027_分众传媒",
+      "report_period": "FY2025",
+      "rules_visible": true
+    },
+    {
+      "sample_id": "02669_control",
+      "company_code": "02669.HK",
+      "archetype": "property_management_control",
+      "role": "held_out_control",
+      "output_dir": "output/02669_中海物业",
+      "report_period": "FY2025",
+      "rules_visible": false
+    }
+  ]
+}

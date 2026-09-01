@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Judgment Research Synthesis",
+  "type": "object",
+  "required": ["schema_version", "report_id", "state", "execution_state", "task_findings", "independent_review", "fingerprint"],
+  "properties": {
+    "schema_version": {"const": "judgment-research-synthesis.v1"},
+    "report_id": {"type": "string"},
+    "state": {"enum": ["NO_ACTION", "IN_PROGRESS", "INVALID", "AWAITING_INDEPENDENT_REVIEW", "REVIEWED"]},
+    "execution_state": {"type": ["string", "null"]},
+    "task_findings": {"type": "array", "items": {"type": "object"}},
+    "decision_changed_task_ids": {"type": "array", "items": {"type": "string"}},
+    "unresolved_task_ids": {"type": "array", "items": {"type": "string"}},
+    "pending_task_ids": {"type": "array", "items": {"type": "string"}},
+    "invalid_findings": {"type": "array", "items": {"type": "string"}},
+    "independent_review": {"type": "object"},
+    "fingerprint": {"type": "string"}
+  }
+}

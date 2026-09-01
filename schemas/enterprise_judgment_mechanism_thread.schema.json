@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enterprise-judgment-mechanism-thread-set.v1",
+  "title": "Turtle J2 Enterprise Judgment Mechanism Thread Set",
+  "description": "A closed, pre-outcome thread contract that references a J0 episode and J1 reconstruction without forecasting, comparative settlement, or investment authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "thread_set_id",
+    "episode_ref",
+    "reconstruction_ref",
+    "threads",
+    "outcome_access",
+    "object_class",
+    "claim_class",
+    "allowed_outputs"
+  ],
+  "properties": {
+    "schema_version": {"const": "enterprise-judgment-mechanism-thread-set.v1"},
+    "thread_set_id": {"type": "string", "minLength": 1},
+    "episode_ref": {"$ref": "#/$defs/episode_ref"},
+    "reconstruction_ref": {"$ref": "#/$defs/reconstruction_ref"},
+    "threads": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {"$ref": "#/$defs/thread"},
+      "contains": {
+        "type": "object",
+        "required": ["role"],
+        "properties": {"role": {"const": "PRIMARY"}}
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "outcome_access": {"const": "NONE"},
+    "object_class": {"const": "ENTERPRISE_JUDGMENT_MECHANISM_THREAD_SET"},
+    "claim_class": {"const": "LOCAL_MECHANISM_THREADS"},
+    "allowed_outputs": {"const": ["MECHANISM_THREAD_READ_MODEL", "RESEARCH_AGENDA"]}
+  },
+  "$defs": {
+    "episode_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["episode_id", "schema_version"],
+      "properties": {
+        "episode_id": {"type": "string", "minLength": 1},
+        "schema_version": {"const": "enterprise-judgment-episode-manifest.v1"}
+      }
+    },
+    "reconstruction_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reconstruction_id", "schema_version"],
+      "properties": {
+        "reconstruction_id": {"type": "string", "minLength": 1},
+        "schema_version": {"const": "enterprise-judgment-reconstruction.v1"}
+      }
+    },
+    "thread": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "thread_id",
+        "role",
+        "claim_ids",
+        "claim_type",
+        "hypotheses",
+        "responsibility_boundary",
+        "reconstruction_loop_ids",
+        "evidence_discriminator",
+        "observation_clock",
+        "outcome_cell_refs",
+        "source_refs",
+        "local_status",
+        "evidence_ceiling",
+        "permitted_outputs",
+        "e3_comparative_requested"
+      ],
+      "properties": {
+        "thread_id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["PRIMARY", "SUPPORTING"]},
+        "claim_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "claim_type": {
+          "enum": ["DESCRIPTIVE_STRUCTURE", "WITHIN_CASE_MECHANISM", "LIFECYCLE_TRANSITION", "RELATIVE_CAUSAL"]
+        },
+        "hypotheses": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/hypothesis"}
+        },
+        "responsibility_boundary": {"$ref": "#/$defs/responsibility_boundary"},
+        "reconstruction_loop_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "evidence_discriminator": {"$ref": "#/$defs/evidence_discriminator"},
+        "observation_clock": {"$ref": "#/$defs/observation_clock"},
+        "outcome_cell_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/source_ref"}
+        },
+        "local_status": {
+          "enum": ["OBSERVED", "INFERRED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "NOT_APPLICABLE"]
+        },
+        "evidence_ceiling": {"enum": ["CONTEXT", "TEACHING", "MECHANISM"]},
+        "permitted_outputs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["MECHANISM_VIEW", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
+          }
+        },
+        "e3_comparative_requested": {"type": "boolean"},
+        "comparative_projection_contract": {
+          "description": "Optional pre-J4 semantic bridge. It is valid only for an explicit RELATIVE_CAUSAL E3 thread and carries no Comparative authority by itself.",
+          "$ref": "#/$defs/comparative_projection_contract"
+        }
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis_id", "role", "statement"],
+      "properties": {
+        "hypothesis_id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["H_A", "H_B"]},
+        "statement": {"type": "string", "minLength": 1}
+      }
+    },
+    "responsibility_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["responsibility_unit_id", "arena_id"],
+      "properties": {
+        "responsibility_unit_id": {"type": "string", "minLength": 1},
+        "arena_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidence_discriminator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discriminator_id", "observable", "expected_if_h_a", "expected_if_h_b"],
+      "properties": {
+        "discriminator_id": {"type": "string", "minLength": 1},
+        "observable": {"type": "string", "minLength": 1},
+        "expected_if_h_a": {"type": "string", "minLength": 1},
+        "expected_if_h_b": {"type": "string", "minLength": 1}
+      }
+    },
+    "observation_clock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clock_id", "opens_at", "due_at"],
+      "properties": {
+        "clock_id": {"type": "string", "minLength": 1},
+        "opens_at": {"type": "string", "format": "date-time"},
+        "due_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_ref", "available_at", "information_role"],
+      "properties": {
+        "source_ref": {"type": "string", "minLength": 1},
+        "available_at": {"type": "string", "format": "date-time"},
+        "information_role": {"const": "CUTOFF_VISIBLE"}
+      }
+    },
+    "comparative_projection_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis_bindings", "outcome_bindings", "source_lineage"],
+      "properties": {
+        "hypothesis_bindings": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/comparative_hypothesis_binding"}
+        },
+        "outcome_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/comparative_outcome_binding"}
+        },
+        "source_lineage": {"$ref": "#/$defs/comparative_source_lineage"}
+      }
+    },
+    "comparative_hypothesis_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "j2_hypothesis_id",
+        "j2_statement",
+        "v5_hypothesis_id",
+        "v5_mechanism"
+      ],
+      "properties": {
+        "role": {"enum": ["H_A", "H_B"]},
+        "j2_hypothesis_id": {"type": "string", "minLength": 1},
+        "j2_statement": {"type": "string", "minLength": 1},
+        "v5_hypothesis_id": {"type": "string", "minLength": 1},
+        "v5_mechanism": {"type": "string", "minLength": 1}
+      }
+    },
+    "comparative_outcome_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome_cell_id", "measurement_contract_ref", "v5_measurement_contracts"],
+      "properties": {
+        "outcome_cell_id": {"type": "string", "minLength": 1},
+        "measurement_contract_ref": {"type": "string", "minLength": 1},
+        "v5_measurement_contracts": {
+          "description": "Exactly one opaque V5-owned measurement contract, frozen here and validated by the existing V5 engine at J4.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {"type": "object"}
+        }
+      }
+    },
+    "comparative_source_lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["j1_source_packet_refs", "j2_source_refs", "v5_source_provenance", "v5_sources"],
+      "properties": {
+        "j1_source_packet_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["receipt_id", "receipt_version"],
+            "properties": {
+              "receipt_id": {"type": "string", "minLength": 1},
+              "receipt_version": {"type": "integer", "minimum": 1}
+            }
+          }
+        },
+        "j2_source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/source_ref"}
+        },
+        "v5_source_provenance": {
+          "description": "Opaque V5-owned pre-outcome provenance frozen before J4.",
+          "type": "object",
+          "minProperties": 1
+        },
+        "v5_sources": {
+          "description": "Opaque V5-owned pre-outcome source manifest frozen before J4.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "object"}
+        }
+      }
+    }
+  }
+}

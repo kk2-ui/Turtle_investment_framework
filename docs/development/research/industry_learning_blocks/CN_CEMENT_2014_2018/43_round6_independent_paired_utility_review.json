@@ -1,0 +1,127 @@
+{
+  "schema_version": "enterprise-judgment-round6-transfer-utility-review.v1",
+  "review_id": "R6REVIEW:CN600801:20160427:FY2016:V1",
+  "package_ref": "EJTU:CN:CEMENT:600801:20160427:V1",
+  "utility_evaluation": {
+    "schema_version": "turtle-decision-utility-evaluation.v1",
+    "evaluation_id": "DUEVAL:CN600801:20160427:R6:V1",
+    "pairing_id": "DUPAIR:CN600801:20160427:R6:V1",
+    "evaluated_at": "2026-08-27T04:40:00+00:00",
+    "reviewer_id": "ROLE:CEMENT:ROUND6:INDEPENDENT_UTILITY_REVIEWER",
+    "outcome_settlement_ref": "R6SETTLE:CN600801:20160427:FY2016:V1",
+    "dimension_findings": [
+      {
+        "dimension_id": "PERMANENT_LOSS_GUARDRAIL",
+        "baseline_assessment": "UNKNOWN",
+        "enhanced_assessment": "UNKNOWN",
+        "rationale": "One annual report and an UNKNOWN direct-loss event cannot establish permanent-loss absence or presence."
+      },
+      {
+        "dimension_id": "OWNER_CASH_ACCESS",
+        "baseline_assessment": "NOT_DIAGNOSTIC",
+        "enhanced_assessment": "NOT_DIAGNOSTIC",
+        "rationale": "Higher operating cash and lower cash capex do not establish owner-cash accessibility or acquisition economics."
+      },
+      {
+        "dimension_id": "KEY_UNKNOWN_DISCOVERY",
+        "baseline_assessment": "UNKNOWN",
+        "enhanced_assessment": "MATERIAL_IMPROVEMENT",
+        "rationale": "The enhanced view separates formal approval from issuer control, product participation, consolidation and customer response; FY2016 directly resolves control and consolidation as absent while preserving the other two unknowns."
+      },
+      {
+        "dimension_id": "RESEARCH_COST",
+        "baseline_assessment": "NO_DIFFERENCE",
+        "enhanced_assessment": "NO_DIFFERENCE",
+        "rationale": "Both views used the same cutoff packet and the same outcome source; the improvement came from question structure, not additional evidence."
+      }
+    ],
+    "holdout": {
+      "training_company_ids": [
+        "CN:600802"
+      ],
+      "holdout_company_ids": [
+        "CN:600801"
+      ],
+      "training_cutoff_through": "2015-04-15T00:00:00+08:00",
+      "holdout_cutoff_from": "2016-04-27T00:00:00+08:00"
+    },
+    "object_class": "DECISION_UTILITY_EVALUATION",
+    "claim_class": "MATERIAL_DECISION_UTILITY_REVIEW",
+    "allowed_outputs": [
+      "DECISION_UTILITY_EVALUATION_ONLY",
+      "RESEARCH_AGENDA"
+    ]
+  },
+  "settlement_ref": "R6SETTLE:CN600801:20160427:FY2016:V1",
+  "reviewer_id": "ROLE:CEMENT:ROUND6:INDEPENDENT_UTILITY_REVIEWER",
+  "reviewed_at": "2026-08-27T04:40:00+00:00",
+  "paired_claim_findings": [
+    {
+      "dimension": "formal_progress_versus_control_and_consolidation",
+      "baseline_assessment": "The broad baseline correctly records acquisition approval as progress but does not resolve what became issuer-controlled operating capacity.",
+      "enhanced_assessment": "Approval was observed, while supported entities remained LafargeHolcim-controlled and the acquired factories were not yet consolidated at FY2016 year-end.",
+      "economic_effect": "An investor must not add the factories' capacity, earnings or integration success to the FY2016 issuer merely because approval and support services existed.",
+      "supporting_cell_ids": [
+        "CELL:600801:20160427:ACTION_PROGRESS",
+        "CELL:600801:20160427:DECISION_CONTROL",
+        "CELL:600801:20160427:CONSOLIDATION_SCOPE"
+      ],
+      "prohibited_inference": "This does not prove that the acquisition later failed or succeeded."
+    },
+    {
+      "dimension": "issuer_operating_state_versus_action_effect",
+      "baseline_assessment": "Issuer operating cash improved while cash capex and short-term borrowings declined.",
+      "enhanced_assessment": "The same directions are retained as issuer state and are not attributed to a transaction that had not closed.",
+      "economic_effect": "The balance-sheet and cash direction improved near-term resilience but provides no acquisition-effect or management-quality label.",
+      "supporting_cell_ids": [
+        "CELL:600801:20160427:OPERATING_CASH",
+        "CELL:600801:20160427:CASH_CAPEX",
+        "CELL:600801:20160427:SHORT_TERM_BORROWINGS"
+      ],
+      "prohibited_inference": "Operating cash is not owner cash, and correlation is not transaction causality."
+    },
+    {
+      "dimension": "product_and_customer_realization",
+      "baseline_assessment": "Aggregate progress and issuer volume do not identify whose products or customers produced the observed state.",
+      "enhanced_assessment": "Issuer-product participation and transaction-specific customer response remain UNKNOWN; unsupported reverse-engineering also leaves volume and margin direction locally UNKNOWN.",
+      "economic_effect": "The method exposes the evidence needed before crediting commercial realization instead of filling the gap with company-wide growth.",
+      "supporting_cell_ids": [
+        "CELL:600801:20160427:ISSUER_PRODUCT_PARTICIPATION",
+        "CELL:600801:20160427:CUSTOMER_RESPONSE",
+        "CELL:600801:20160427:CEMENT_CLINKER_SALES_VOLUME",
+        "CELL:600801:20160427:CEMENT_GROSS_MARGIN"
+      ],
+      "prohibited_inference": "UNKNOWN is not evidence of no product participation or no customer response."
+    }
+  ],
+  "overall_verdict": "ENHANCED_IMPROVED_KEY_UNKNOWN",
+  "investor_effect": "The enhanced method materially improves the enterprise boundary: FY2016 contains formal acquisition progress and fee-based support, but not issuer control or consolidation. It prevents premature attribution of capacity, cash improvement or integration quality while identifying the next evidence required.",
+  "unknowns_preserved": [
+    "Issuer-product participation inside the supported-company scope",
+    "Customer response attributable to that scope",
+    "Comparable combined FY2015 volume and cement-margin raw values",
+    "Permanent-loss outcome and owner-cash accessibility",
+    "Post-closing integration effectiveness and management quality"
+  ],
+  "limitations": [
+    "Repository history contains later summaries, so this is MODEL_MEMORY_MITIGATED development utility and has no holdout score authority.",
+    "One company and one outcome period cannot validate method transfer.",
+    "The annual report does not establish causal effects of the support or acquisition actions."
+  ],
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "ENTERPRISE_JUDGMENT_TRANSFER_UTILITY_REVIEW",
+  "claim_class": "PAIRED_MATERIAL_DECISION_UTILITY_REVIEW",
+  "allowed_outputs": [
+    "DECISION_UTILITY_EVALUATION_ONLY",
+    "RESEARCH_AGENDA"
+  ]
+}

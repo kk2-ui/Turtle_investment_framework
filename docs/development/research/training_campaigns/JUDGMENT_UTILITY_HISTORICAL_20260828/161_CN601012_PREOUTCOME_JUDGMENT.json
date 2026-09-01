@@ -1,0 +1,240 @@
+{
+  "judgment_id": "CN601012_BLIND11_PREOUTCOME_JUDGMENT",
+  "judgment_version": "1.0",
+  "judgment_date": "2026-08-29",
+  "judgment_status": "FROZEN_PRE_OUTCOME",
+  "case_identity": "BLIND:CN601012:20240501:FY2024",
+  "issuer_name_at_cutoff": "隆基绿能",
+  "security_code": "601012",
+  "cutoff_exclusive": "2024-05-01",
+  "source_boundary": {
+    "used": "Only 158_BLIND11_FEEDBACK_LINKED_SELECTION_REGISTER.json, 159_CN601012_CUTOFF_BEFORE_PACKET_RECEIPT.json, and the packet's three local FY2021-FY2023 annual-report text extractions.",
+    "excluded": [
+      "other campaign, curriculum, method, and feedback materials",
+      "FY2024 and later metadata, bodies, and outcomes",
+      "external or browser evidence",
+      "market-price, return, valuation, and analyst material"
+    ],
+    "point_in_time_rule": "The FY2023 annual report, published 2024-04-30, is the last admissible company evidence. Nothing after the exclusive 2024-05-01 cutoff informs this judgment."
+  },
+  "overall_best_current_judgment": {
+    "direction": "隆基绿能 enters the cutoff as a genuine scale and technology contender, but not as a capacity-led normal-earnings conclusion. Its 2023 shipment growth defended revenue while industry price collapse, rapid technology replacement, write-downs, and capital absorption made the link from additional GW to owner cash materially weaker. The base case credits the enterprise with survival capacity and a plausible differentiation option, while requiring proof that BC-led volume can earn a durable spread and convert to cash before treating the expanded asset base as value creating.",
+    "inference_confidence": "medium",
+    "why_this_is_not_a_company_rejection": "The company retained RMB57.00bn of reported cash, produced RMB8.12bn of operating cash in FY2023, held leading reported shipment scale, and has a technically credible product path. Those facts mitigate immediate financing-led failure; they do not validate the economics of the entire capacity build."
+  },
+  "named_judgments": [
+    {
+      "judgment_id": "J1_CAPACITY_AND_VOLUME",
+      "best_current_judgment": "Volume execution is strong in absolute terms but capacity growth is ahead of demonstrated value realization. The base case expects material shipments and continued scale leadership, yet treats new capacity as an option whose economic value depends on utilization and unit contribution rather than as evidence of normal earnings.",
+      "inference_confidence": "medium",
+      "decisive_evidence": [
+        {
+          "fact": "Reported wafer shipments rose from 70.01GW in FY2021 to 85.06GW in FY2022 and 125.42GW in FY2023; component shipments rose from 38.52GW to 46.76GW to 67.52GW.",
+          "source": "FY2021 annual report, management discussion, extracted text lines 1320-1323; FY2022 lines 1199-1200; FY2023 lines 1227-1232."
+        },
+        {
+          "fact": "Year-end wafer/cell/component capacity rose from 105/37/60GW in FY2021 to 133/50/85GW in FY2022 and 170/80/120GW in FY2023.",
+          "source": "FY2021 lines 1354-1360; FY2022 lines 1223-1226; FY2023 lines 1271-1277."
+        },
+        {
+          "fact": "FY2023 management targets were 190/110/130GW capacity, 130GW wafer shipments, 85GW battery-plus-component shipments, and revenue above RMB160bn. Actual reported capacity was 170/80/120GW, wafer shipments were 125.42GW, reported component shipments were 67.52GW plus 5.90GW external cell sales, and revenue was RMB129.50bn.",
+          "source": "FY2022 annual report, operating plan lines 3772-3778; FY2023 annual report, management discussion lines 1227-1233 and 1271-1277, operating plan lines 3775-3781, and income statement lines 12469-12480.",
+          "boundary": "The 73.42GW arithmetic combines disclosed component shipments and external cell sales; it is not asserted to be perfectly like-for-like with the management target, which included self-use. It is evidence of direction, not a mechanical management score."
+        }
+      ],
+      "causal_mechanism": "Lower module prices can stimulate end-market installation and keep a leading supplier's factories busy, but industry-wide expansion and rapid technology change make shipment volume insufficient to establish an economic return on each new production line. A supplier earns the added capacity only if utilization, yield, customer acceptance, and per-watt contribution jointly cover replacement and refresh capital.",
+      "management_execution": {
+        "credit": "Management expanded the physical platform and shipments substantially, completed HPBC-related projects, and explicitly slowed construction in FY2023 amid the cycle rather than simply maximizing announced capacity.",
+        "constraint": "The FY2022 and FY2023 plans were more ambitious than the subsequently reported capacity, shipment, and revenue results. The record supports execution ability, but it does not support underwriting management capacity or revenue targets as achieved economics."
+      },
+      "strongest_countercase": {
+        "case": "Global installation growth and lower system cost could absorb the capacity; a global leader with falling manufacturing cost, a broad channel, and differentiating BC products may retain high utilization while weaker competitors exit.",
+        "why_not_base_case_yet": "The FY2023 report itself describes acute supply-demand imbalance, component tender prices below RMB1/W, new-technology expansion, and price-led impairment. High volumes have therefore not yet demonstrated a protected return on the enlarged base."
+      },
+      "frozen_altering_result": {
+        "annual_report_cell_id": "FY2024_CELL_1",
+        "specific_result": "The FY2024 annual report's disclosed actual battery-plus-component shipment in GW, tested against the FY2024 90-100GW target.",
+        "upward_update_condition": "At least 90GW, with the shipment disclosed as actual rather than target, would strengthen the volume-realization leg of this judgment.",
+        "downward_update_condition": "Below 90GW would strengthen the case that the capacity program is outrunning demand realization.",
+        "scope_of_update": "This result updates capacity/volume only; it does not by itself establish price, owner cash, or permanent-loss protection."
+      }
+    },
+    {
+      "judgment_id": "J2_PRICE_AND_UNIT_ECONOMICS",
+      "best_current_judgment": "The base case is that scale has bought volume but not yet demonstrated stable per-watt economics. Falling inputs lifted FY2023 reported gross margin versus FY2022, yet much faster shipment growth than revenue in the core module business, sharply falling industry selling prices, and technology-related write-downs mean that a 2022-style profit rate is not a defensible normal unit-economics anchor.",
+      "inference_confidence": "medium",
+      "decisive_evidence": [
+        {
+          "fact": "FY2023 revenue was RMB129.50bn, essentially flat year on year, while component shipment volume rose 44.40%. Product revenue for components and cells increased 16.91% and product gross margin was 18.38%; wafer and ingot revenue fell 35.81% and gross margin was 15.88%.",
+          "source": "FY2023 annual report, management discussion lines 1227-1234; product analysis lines 1618-1675; consolidated income statement lines 12469-12525."
+        },
+        {
+          "fact": "Management reported FY2023 industry price declines of about 70% for polysilicon, 60% for PERC wafers/cells, and 50% for PERC modules; components fell below RMB1/W in tenders late in the year.",
+          "source": "FY2023 annual report, industry discussion lines 1330-1346."
+        },
+        {
+          "fact": "The company reported RMB6.757bn of inventory and fixed-asset provisions from product-price decline and technology iteration, including about RMB1.35bn of inventory provision associated with products delayed in US ports. Its financial statements show RMB7.025bn of total asset-impairment loss versus RMB2.076bn in FY2022; attributable net profit fell 27.41% to RMB10.75bn.",
+          "source": "FY2023 annual report, management discussion lines 1233-1238 and consolidated income statement lines 12514-12538."
+        }
+      ],
+      "causal_mechanism": "In a rapidly oversupplied manufacturing chain, price falls can be partly offset by cheaper silicon, logistics, and scale, but they also compress the return on inventory and older equipment. A differentiated technology changes the conclusion only when customers pay for its lifetime-yield advantage at volume and that premium survives the next competing technology wave.",
+      "management_execution": {
+        "credit": "HPBC first-generation products were reported at stable monthly shipments above 2GW after fourth-quarter yield and cost progress; management had an HPBC second-generation product ready for planned second-half 2024 launch, and its lighthouse factory claimed lower manufacturing cost and better yield.",
+        "constraint": "Those are implementation milestones and management performance claims, not audited proof of a durable price premium, product-level cash contribution, or protection from a subsequent technology transition."
+      },
+      "strongest_countercase": {
+        "case": "The FY2023 gross-margin increase from 15.38% to 18.26%, lower raw-material and freight costs, reported HPBC performance advantages, and scale could mean the price decline is a healthy pass-through that expands demand while a leader keeps or improves its spread.",
+        "why_not_base_case_yet": "Reported gross-margin recovery coincided with a 27% profit decline and large inventory/fixed-asset provisions. The report does not establish a product-level realized BC premium, price per watt, or cash contribution that would make that recovery a normal-through-cycle spread."
+      },
+      "frozen_altering_result": {
+        "annual_report_cell_id": "FY2024_CELL_2",
+        "specific_result": "The FY2024 annual report's components-and-cells product revenue, cost, and gross-margin cell.",
+        "upward_update_condition": "A reported gross margin at or above FY2023's 18.38% on expanded FY2024 product revenue would strengthen the case that the product mix can retain a spread through the cycle.",
+        "downward_update_condition": "A lower product margin would strengthen the commodity-price/technology-refresh mechanism, especially if accompanied by another material inventory or fixed-asset write-down in FY2024_CELL_4.",
+        "scope_of_update": "This result updates price and unit economics only; it does not turn shipment or capacity growth into owner cash without FY2024_CELL_3."
+      }
+    },
+    {
+      "judgment_id": "J3_CASH_CAPITAL_DEBT_AND_PERMANENT_LOSS",
+      "best_current_judgment": "Permanent-loss risk is material through capital misallocation, technology obsolescence, and a prolonged negative spread, rather than presently through an observed liquidity cliff. FY2023 retained substantial reported cash and operating cash flow, but operating cash of RMB8.12bn was below RMB9.26bn of cash capital expenditure, while capacity and long-lived assets kept expanding. The base case therefore gives no credit for all accounting profit as owner cash and treats the balance sheet as a buffer that can be consumed by a continued refresh-and-price-war cycle.",
+      "inference_confidence": "medium",
+      "decisive_evidence": [
+        {
+          "fact": "Operating cash flow was RMB12.32bn in FY2021, RMB24.37bn in FY2022, and RMB8.12bn in FY2023. Cash paid to buy fixed, intangible, and other long-lived assets was RMB4.90bn, RMB5.01bn, and RMB9.26bn respectively. The simple FY2023 operating-cash-less-cash-capex screen is about negative RMB1.14bn; it is a screen, not free cash flow or maintenance capex.",
+          "source": "FY2022 annual report, cash-flow statement lines 13764-13990; FY2023 annual report, cash-flow statement lines 12994-13223."
+        },
+        {
+          "fact": "At FY2023 year end the group reported RMB57.00bn cash, RMB37.06bn fixed assets, RMB6.28bn construction in progress, RMB93.26bn total liabilities, RMB5.27bn long-term loans, RMB6.80bn bonds, RMB1.50bn current non-current liabilities, and RMB5.46bn lease liabilities. Total assets and liabilities increased from RMB139.56bn and RMB77.30bn in FY2022 to RMB163.97bn and RMB93.26bn in FY2023.",
+          "source": "FY2023 annual report, consolidated balance sheet lines 11599-12022."
+        },
+        {
+          "fact": "Management's FY2024 plan remained expansionary: future three-year capacity of 200GW wafers, 100GW BC cells, and 150GW components, with FY2024 goals of about 135GW wafer shipments and 90-100GW battery-plus-component shipments.",
+          "source": "FY2023 annual report, operating plan lines 3775-3781."
+        }
+      ],
+      "causal_mechanism": "If selling prices do not cover a technology-refreshing asset base, cash must be redeployed into new lines, working capital, or debt service before it becomes owner cash. Inventory and fixed-asset impairment is the accounting carrier of that permanent-loss mechanism: it shows that a portion of prior capital no longer earns its intended return. Cash and financing access postpone a liquidity event but cannot repair an uncompetitive installed base.",
+      "normal_earnings_owner_cash_and_permanent_loss_treatment": {
+        "normal_earnings": "Do not extrapolate FY2022 attributable profit of RMB14.81bn as normal. The admissible range is a mid-cycle earnings band below a peak-price anchor, requiring high utilization, no assumption of a durable BC premium until observed, and an allowance for recurring technology-refresh cost. FY2023's RMB10.75bn reported profit, including large provisions, is informative but not by itself a normalized endpoint.",
+        "owner_cash": "Do not credit the FY2022 RMB24.37bn operating cash flow as recurring owner cash. Use a conservative range bounded by the FY2023 RMB8.12bn operating cash result and its approximately negative RMB1.14bn cash-after-capex screen, while preserving the unobserved split between maintenance and growth capital as a local unknown.",
+        "permanent_loss": "Treat capital destruction as a live adverse branch, not as a conclusion that the enterprise fails. The FY2023 cash balance and operating cash generation are meaningful buffers, but they should not be netted mechanically against all liabilities or used to assume that future capacity has recoverable value."
+      },
+      "management_execution": {
+        "credit": "Management recognized the price/technology impairment rather than leaving it implicit, retained cash, and stated that it was controlling construction progress during the FY2023 downturn.",
+        "constraint": "The annual reports do not separate maintenance from growth capital, disclose freely deployable cash after restrictions, or prove that BC conversion earns more than the cost of repeated line refreshes. Those omissions limit cash and permanent-loss attribution, not the ability to make the conditional judgment."
+      },
+      "strongest_countercase": {
+        "case": "The reported cash balance is large relative to stated loans and bonds, FY2023 still generated positive operating cash, and selective investment in a more efficient technology platform may be the right way to emerge with a stronger cost and product position after a cyclical shakeout.",
+        "why_not_base_case_yet": "The same period produced a sharp operating-cash decline, higher capital spending, larger long-lived assets and liabilities, and a material write-down. The balance sheet therefore reduces immediate failure risk but does not establish that the next capital cycle earns a return."
+      },
+      "frozen_altering_result": {
+        "annual_report_cell_ids": [
+          "FY2024_CELL_3",
+          "FY2024_CELL_4"
+        ],
+        "specific_results": [
+          "FY2024 operating cash flow less cash paid for fixed, intangible, and other long-lived assets.",
+          "FY2024 closing cash, current and non-current interest-bearing debt/bonds/lease liabilities, and inventory-plus-fixed-asset impairment disclosure."
+        ],
+        "upward_update_condition": "Operating cash flow covers cash capital expenditure, the debt/cash buffer is not meaningfully weakened, and there is no material new inventory or fixed-asset impairment.",
+        "downward_update_condition": "Cash capital expenditure again exceeds operating cash flow together with a weaker debt/cash buffer or another material impairment.",
+        "scope_of_update": "These results update owner-cash capacity and the permanent-loss branch; they do not establish a technology premium without FY2024_CELL_2."
+      }
+    }
+  ],
+  "scenario_conditions_and_directional_valuation_implications": {
+    "optimistic": {
+      "conditions": "FY2024_CELL_1 reaches at least 90GW battery-plus-component shipments; FY2024_CELL_2 preserves or improves the FY2023 product margin on higher revenue; FY2024_CELL_3 is cash-positive after cash capex; and FY2024_CELL_4 shows no material new technology- or price-led impairment while the cash/debt buffer remains intact.",
+      "enterprise_interpretation": "BC differentiation and scale are converting capacity into a resilient spread and owner cash rather than simply filling factories.",
+      "directional_valuation_implication": "A normal-owner-cash range could be widened upward and placed on a more durable earnings base, rather than on a purely cyclical capacity basis."
+    },
+    "base": {
+      "conditions": "Wafer and module volume remains high, but price competition continues; product margin is volatile around the FY2023 level; BC ramps without a proven, durable premium; and operating cash conversion remains sensitive to capex and working capital.",
+      "enterprise_interpretation": "The firm remains viable and strategically relevant, but surplus capacity and refresh capital consume much of the benefit from scale.",
+      "directional_valuation_implication": "Normal earnings and owner cash warrant a cyclical, capital-intensive treatment below a peak-profit extrapolation; capacity additions receive little standalone credit."
+    },
+    "adverse": {
+      "conditions": "FY2024_CELL_1 misses 90GW, FY2024_CELL_2 compresses, operating cash again fails to cover cash capital expenditure, and FY2024_CELL_4 records another material impairment or a weaker debt/cash buffer.",
+      "enterprise_interpretation": "The price war and technology transition are destroying returns on inventory and fixed assets faster than differentiation can restore them.",
+      "directional_valuation_implication": "The permanent-loss branch becomes central: the normal-owner-cash range and recoverable value of the asset base should move materially lower."
+    },
+    "boundary": "These are conditional enterprise-value implications, not a valuation number, market-price view, or investment action."
+  },
+  "local_unknowns_and_current_treatment": [
+    {
+      "unknown": "Maintenance versus growth capital expenditure, committed conversion spend, and the cash needed to keep the installed base technologically current.",
+      "current_treatment": "Do not convert operating cash flow minus all capex into a precise free-cash-flow estimate. Give no owner-cash credit for expansion capex until the FY2024 cash-flow and asset disclosures show its coverage and consequences."
+    },
+    {
+      "unknown": "Realized price per watt, product-level contribution, and the sustainable price premium of HPBC/BC products relative to competing technology.",
+      "current_treatment": "Treat performance claims as an upside option; use FY2023 reported product margins and price-war evidence rather than assuming a premium in the base case."
+    },
+    {
+      "unknown": "Utilization by factory and technology route, including the share of capacity that is economically usable after the technology transition.",
+      "current_treatment": "Treat disclosed capacity as physical capability only. Shipment realization and product margin, not nameplate GW, determine whether it upgrades the capacity judgment."
+    },
+    {
+      "unknown": "The proportion of reported cash that is freely deployable and the exact maturity/recourse profile of all financing obligations.",
+      "current_treatment": "Recognize the reported cash balance as a liquidity buffer but do not mechanically call the group net cash or use it to dismiss the permanent-loss branch."
+    }
+  ],
+  "FY2024_annual_report_mechanical_resolution_cells": [
+    {
+      "cell_id": "FY2024_CELL_1",
+      "annual_report_location": "Management discussion / operating results",
+      "field": "Actual FY2024 battery-plus-component shipment in GW",
+      "test": "Compare the disclosed actual to the pre-cutoff 90-100GW target; 90GW is the frozen threshold for J1."
+    },
+    {
+      "cell_id": "FY2024_CELL_2",
+      "annual_report_location": "Revenue and cost analysis / product table",
+      "field": "Components-and-cells revenue, cost, and gross margin",
+      "test": "Compare product gross margin with FY2023's 18.38% and revenue direction; this is the frozen price/unit-economics test for J2."
+    },
+    {
+      "cell_id": "FY2024_CELL_3",
+      "annual_report_location": "Consolidated cash-flow statement",
+      "field": "Operating cash flow and cash paid for fixed, intangible, and other long-lived assets",
+      "test": "Compute the disclosed operating-cash-less-cash-capex screen; non-negative is the frozen positive condition for J3."
+    },
+    {
+      "cell_id": "FY2024_CELL_4",
+      "annual_report_location": "Consolidated balance sheet and impairment disclosures",
+      "field": "Closing cash; current/non-current loans, bonds, and lease liabilities; inventory and fixed-asset impairment",
+      "test": "Determine whether the debt/cash buffer weakened and whether a material additional technology- or price-led impairment occurred; this is the frozen permanent-loss test for J3."
+    }
+  ],
+  "next_cutoff_research_agenda": {
+    "sequence": [
+      "Resolve FY2024_CELL_1 before narrating capacity as demand realization.",
+      "Resolve FY2024_CELL_2 before crediting BC with a durable price or margin advantage.",
+      "Resolve FY2024_CELL_3 and FY2024_CELL_4 together before revising normal owner cash or permanent-loss treatment."
+    ],
+    "research_discipline": "Do not add market-price, analyst, or post-cutoff material to the frozen judgment. The next operator should acquire the FY2024 annual report only after preserving this file, then update each named judgment solely through its mapped cells."
+  },
+  "source_map": [
+    {
+      "source": "FY2021_1213161635.txt",
+      "relevant_sections": [
+        "management discussion: shipment, capacity, technology, and FY2022 plan (extracted lines 1300-1360 and 3488-3540)",
+        "consolidated financial statements (extracted lines 11142-12534)"
+      ]
+    },
+    {
+      "source": "FY2022_1216664294.txt",
+      "relevant_sections": [
+        "management discussion: shipment, capacity, competition, and FY2023 plan (extracted lines 1178-1260 and 3740-3800)",
+        "product revenue/cost analysis (extracted lines 1578-1760)",
+        "consolidated balance sheet and cash-flow statement (extracted lines 12369-12815 and 13755-14070)"
+      ]
+    },
+    {
+      "source": "FY2023_1219925312.txt",
+      "relevant_sections": [
+        "management discussion: shipment, price/impairment, technology, and capacity (extracted lines 1208-1435)",
+        "product revenue/cost and cash-flow analysis (extracted lines 1515-1785 and 2360-2450)",
+        "FY2024 plan and risk discussion (extracted lines 3770-3870)",
+        "consolidated financial statements (extracted lines 11592-12030 and 12455-13235)"
+      ]
+    }
+  ]
+}

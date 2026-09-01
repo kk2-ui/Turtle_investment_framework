@@ -1,0 +1,316 @@
+{
+  "schema_version": "historical-outcome-cell-settlement.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN603195:20240501:FY2024",
+  "company_id": "CN:603195",
+  "custodian_id": "/root/cn603195_outcome_custodian",
+  "source": {
+    "period": "FY2024",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-04-25/1223284030.PDF",
+    "documents_used": 1
+  },
+  "scope": "FY2024_OUTCOME_FACT_EXTRACTION_AND_CELL_SETTLEMENT_ONLY",
+  "cells": [
+    {
+      "cell_id": "FY2024_CORE_EARNINGS_DELIVERY",
+      "responsibility_boundary": "issuer-reported consolidated main-business product categories: electrical connection products plus smart electrical and lighting products",
+      "raw_reported_values": [
+        {
+          "field": "FY2024 electrical connection revenue",
+          "value": 7683488616.28,
+          "unit": "CNY",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 4.01,
+          "printed_page": 25,
+          "source_locator": "主营业务分产品情况—电连接产品"
+        },
+        {
+          "field": "FY2024 electrical connection cost",
+          "value": 4535787243.96,
+          "unit": "CNY",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 3.87,
+          "printed_page": 25,
+          "source_locator": "主营业务分产品情况—电连接产品"
+        },
+        {
+          "field": "FY2024 smart electrical and lighting revenue",
+          "value": 8330943960.24,
+          "unit": "CNY",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 5.42,
+          "printed_page": 25,
+          "source_locator": "主营业务分产品情况—智能电工照明产品"
+        },
+        {
+          "field": "FY2024 smart electrical and lighting cost",
+          "value": 4483681242.98,
+          "unit": "CNY",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 4.70,
+          "printed_page": 25,
+          "source_locator": "主营业务分产品情况—智能电工照明产品"
+        },
+        {
+          "field": "reported segment-definition or perimeter change",
+          "value": "报告期内业务、产品或服务发生重大变化或调整：不适用",
+          "unit": "text",
+          "period": "FY2024",
+          "printed_page": 27,
+          "source_locator": "报告期内公司业务、产品或服务发生重大变化或调整有关情况"
+        }
+      ],
+      "derived_values": {
+        "derivation_note": "FY2023 comparable product revenue and cost are mechanically back-solved from FY2024 raw amounts and the same table's rounded year-on-year percentages; therefore restored FY2023 values are approximate, while the classification thresholds are not borderline.",
+        "FY2023_comparable_electrical_connection_revenue_CNY_approx": 7387259509.93,
+        "FY2023_comparable_electrical_connection_cost_CNY_approx": 4366792378.90,
+        "FY2023_comparable_smart_electrical_and_lighting_revenue_CNY_approx": 7902621855.66,
+        "FY2023_comparable_smart_electrical_and_lighting_cost_CNY_approx": 4282408063.97,
+        "FY2024_combined_core_revenue_CNY": 16014432576.52,
+        "FY2024_combined_core_cost_CNY": 9019468486.94,
+        "FY2023_comparable_combined_core_revenue_CNY_approx": 15289881365.59,
+        "FY2023_comparable_combined_core_cost_CNY_approx": 8649200442.87,
+        "core_revenue_growth_pct_approx": 4.7388,
+        "FY2024_core_weighted_gross_margin_pct": 43.6791,
+        "FY2023_comparable_core_weighted_gross_margin_pct_approx": 43.4319,
+        "core_weighted_gross_margin_change_pp_approx": 0.2473
+      },
+      "first_match": {
+        "classification": "CORE_HOLDING",
+        "matched_condition_ordinal": 4,
+        "matched_condition": "not compounding and revenue growth >= 0% and margin change >= -2.0pp",
+        "mechanical_basis": "Approximate comparable combined revenue growth is 4.7388%, below the 8% compounding threshold but non-negative; weighted gross-margin change is +0.2473pp."
+      }
+    },
+    {
+      "cell_id": "FY2024_CONSERVATIVE_CASH_FLOOR_AND_IMMEDIATE_LIQUIDITY",
+      "responsibility_boundary": "consolidated cash flows and consolidated liquidity, with adjusted profit attributable to parent shareholders as denominator",
+      "raw_reported_values": [
+        {
+          "field": "consolidated operating cash flow",
+          "value": 3730346896.27,
+          "unit": "CNY",
+          "period": "FY2024",
+          "printed_page": 99,
+          "source_locator": "合并现金流量表—经营活动产生的现金流量净额"
+        },
+        {
+          "field": "cash paid to acquire fixed, intangible, and other long-term assets",
+          "value": 938519618.43,
+          "unit": "CNY",
+          "period": "FY2024",
+          "printed_page": 100,
+          "source_locator": "合并现金流量表—投资活动现金流量"
+        },
+        {
+          "field": "adjusted parent profit",
+          "value": 3741807159.86,
+          "unit": "CNY",
+          "period": "FY2024",
+          "printed_page": 9,
+          "source_locator": "近三年主要会计数据—归属于上市公司股东的扣除非经常性损益的净利润"
+        },
+        {
+          "field": "NCI equity",
+          "value": 8864679.68,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 93,
+          "source_locator": "合并资产负债表—少数股东权益"
+        },
+        {
+          "field": "total equity",
+          "value": 15874980370.76,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 93,
+          "source_locator": "合并资产负债表—所有者权益合计"
+        },
+        {
+          "field": "cash and cash equivalents before use restriction adjustment",
+          "value": 836314404.91,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 197,
+          "source_locator": "现金和现金等价物的构成—期末现金及现金等价物余额"
+        },
+        {
+          "field": "cash and cash equivalents with restricted use",
+          "value": 168332891.49,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 198,
+          "source_locator": "使用范围受限但仍作为现金和现金等价物列示的情况—募集资金使用范围受限但可随时支取"
+        },
+        {
+          "field": "time deposits excluded from cash and cash equivalents",
+          "value": 3962247972.34,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 198,
+          "source_locator": "不属于现金及现金等价物的货币资金—定期存款；以获取利息收入为主要目的，并持有到期"
+        },
+        {
+          "field": "trading financial assets",
+          "value": 9215000000.00,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 143,
+          "source_locator": "交易性金融资产"
+        },
+        {
+          "field": "closed-end portion of trading financial assets",
+          "value": 8631000000.00,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 143,
+          "source_locator": "变现有限制的交易性金融资产说明—863,100.00万元封闭式产品"
+        },
+        {
+          "field": "short borrowings carrying amount",
+          "value": 282663754.75,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 176,
+          "source_locator": "短期借款分类—合计"
+        },
+        {
+          "field": "bank-borrowing undiscounted contractual cash due within one year",
+          "value": 282813035.31,
+          "unit": "CNY",
+          "period": "within one year from 2024-12-31",
+          "printed_page": 208,
+          "source_locator": "流动性风险—金融负债按剩余到期日分类—银行借款"
+        },
+        {
+          "field": "one-year non-current-liability undiscounted contractual cash due within one year",
+          "value": 14044620.11,
+          "unit": "CNY",
+          "period": "within one year from 2024-12-31",
+          "printed_page": 208,
+          "source_locator": "流动性风险—金融负债按剩余到期日分类—一年内到期的非流动负债"
+        },
+        {
+          "field": "composition of one-year non-current-liability carrying amount",
+          "value": 13165325.36,
+          "unit": "CNY",
+          "period": "2024-12-31",
+          "printed_page": 181,
+          "source_locator": "1年内到期的非流动负债—1年内到期的租赁负债"
+        }
+      ],
+      "derived_values": {
+        "consolidated_conservative_cash_floor_CNY": 2791827277.84,
+        "cash_floor_conversion_pct": 74.6117,
+        "ocf_profit_conversion_pct": 99.6937,
+        "nci_equity_ratio_pct": 0.0558,
+        "nci_immaterial_gate": true,
+        "nci_gate_note": "NCI equity is below 5% of total equity, and the authorized report contains no evidence that material consolidated OCF arises in non-wholly-owned subsidiaries.",
+        "unrestricted_cash_and_equivalents_CNY": 667981513.42,
+        "verified_additional_assets_redeemable_before_matched_debt_maturity_CNY": 0.00,
+        "additional_asset_exclusion_note": "The authorized report does not verify matched redemption dates before the disclosed one-year debt maturities; closed-end products and held-to-maturity time deposits are therefore excluded locally.",
+        "immediate_liquidity_CNY": 667981513.42,
+        "interest_bearing_contractual_cash_due_within_one_year_CNY": 296857655.42,
+        "immediate_debt_coverage_x": 2.2502
+      },
+      "first_match": {
+        "classification": "POSITIVE_BUT_MIXED_CASH_FLOOR",
+        "matched_condition_ordinal": 7,
+        "matched_condition": "not durable, cash floor > 0, and immediate debt coverage >= 1",
+        "mechanical_basis": "The conservative cash floor is CNY 2,791,827,277.84 and immediate debt coverage is 2.2502x, but cash-floor conversion is 74.6117%, below the 80% durable threshold."
+      }
+    },
+    {
+      "cell_id": "FY2024_NEW_ENERGY_GROWTH_OPTION",
+      "responsibility_boundary": "issuer-reported consolidated new-energy product category, with production, sales, and inventory all reported in 10,000 units",
+      "raw_reported_values": [
+        {
+          "field": "FY2024 new-energy revenue",
+          "value": 777445713.13,
+          "unit": "CNY",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 104.75,
+          "printed_page": 25,
+          "source_locator": "主营业务分产品情况—新能源产品"
+        },
+        {
+          "field": "FY2024 new-energy cost",
+          "value": 506839414.32,
+          "unit": "CNY",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 102.72,
+          "printed_page": 25,
+          "source_locator": "主营业务分产品情况—新能源产品"
+        },
+        {
+          "field": "FY2024 new-energy production",
+          "value": 134.91,
+          "unit": "10,000 units",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 109.68,
+          "printed_page": 26,
+          "source_locator": "产销量情况分析表—新能源产品"
+        },
+        {
+          "field": "FY2024 new-energy sales volume",
+          "value": 126.04,
+          "unit": "10,000 units",
+          "period": "FY2024",
+          "reported_comparative_change_pct": 119.27,
+          "printed_page": 26,
+          "source_locator": "产销量情况分析表—新能源产品"
+        },
+        {
+          "field": "FY2024 year-end new-energy inventory",
+          "value": 14.71,
+          "unit": "10,000 units",
+          "period": "2024-12-31",
+          "reported_comparative_change_pct": 151.83,
+          "printed_page": 26,
+          "source_locator": "产销量情况分析表—新能源产品"
+        },
+        {
+          "field": "reported product definition",
+          "value": "新能源汽车充电桩/枪、家庭储能、工商业储能、户外便携式储能等",
+          "unit": "text",
+          "period": "FY2024",
+          "printed_page": 20,
+          "source_locator": "报告期内公司从事的业务情况—主要业务"
+        },
+        {
+          "field": "reported product-definition or perimeter change",
+          "value": "报告期内业务、产品或服务发生重大变化或调整：不适用",
+          "unit": "text",
+          "period": "FY2024",
+          "printed_page": 27,
+          "source_locator": "报告期内公司业务、产品或服务发生重大变化或调整有关情况"
+        }
+      ],
+      "allowed_explicit_value_destruction_carrier_observation": {
+        "observed": false,
+        "scope": "No new-energy-specific operating loss, operating cash outflow, impairment, warranty or after-sales cost, or irrevocable material capital commitment was disclosed in the authorized annual report."
+      },
+      "derived_values": {
+        "derivation_note": "FY2023 comparable values are mechanically back-solved from FY2024 raw values and the same tables' rounded year-on-year percentages; therefore restored values are approximate, while reported growth percentages are used directly for threshold matching.",
+        "FY2023_comparable_new_energy_revenue_CNY_approx": 379704866.00,
+        "FY2023_comparable_new_energy_cost_CNY_approx": 250019442.74,
+        "FY2023_comparable_new_energy_production_10000_units_approx": 64.3409,
+        "FY2023_comparable_new_energy_sales_10000_units_approx": 57.4816,
+        "FY2023_comparable_new_energy_inventory_10000_units_approx": 5.8412,
+        "revenue_growth_pct": 104.75,
+        "gross_margin_pct": 34.8071,
+        "production_growth_pct": 109.68,
+        "sales_growth_pct": 119.27,
+        "production_sales_gap_pp": -9.59
+      },
+      "first_match": {
+        "classification": "QUALITY_SCALE_OPTION_RETAINED",
+        "matched_condition_ordinal": 5,
+        "matched_condition": "valid scale inputs show revenue growth >= 50%, margin >= 30%, and production-sales growth gap <= 15pp",
+        "mechanical_basis": "Reported revenue growth is 104.75%, calculated gross margin is 34.8071%, and the production-sales growth gap is -9.59pp."
+      }
+    }
+  ],
+  "non_inference_notice": "No management-quality, investment-utility, valuation, enterprise, price, return, or investment-action conclusion is included."
+}

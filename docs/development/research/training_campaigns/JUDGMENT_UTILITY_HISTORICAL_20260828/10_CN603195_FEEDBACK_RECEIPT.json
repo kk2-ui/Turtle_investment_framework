@@ -1,0 +1,120 @@
+{
+  "schema_version": "postoutcome-feedback-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN603195:20240501:FY2024",
+  "company_id": "CN:603195",
+  "review_role": "/root/cn603195_feedback_reviewer",
+  "six_axis_before_after": {
+    "management_execution": {
+      "before": "POSITIVE_CREDIT",
+      "after": "POSITIVE_CREDIT_RETAINED_AT_ENTERPRISE_LEVEL; FY2024_CORE_INCREMENT=CONDITIONAL_CREDIT; NEW_ENERGY_CREDIT=PROJECT_ONLY_POSITIVE_CREDIT",
+      "change_type": "CONFIDENCE_AND_SCOPE_ONLY",
+      "material_delta": false,
+      "reason": "Core revenue remained positive and core margin did not erode, but 4.7388% growth did not establish a new compounding result. New-energy credit cannot propagate beyond the project."
+    },
+    "normal_earnings": {
+      "before": "RAISE",
+      "after": "RAISED_PREOUTCOME_BASELINE_RETAINED; FY2024_INCREMENT=UNCHANGED; NEW_ENERGY=EXCLUDE_COMPONENT",
+      "change_type": "NO_FURTHER_UPGRADE",
+      "material_delta": false,
+      "reason": "CORE_HOLDING preserves rather than raises the already-underwritten core baseline, and new-energy scale lacks repeat-purchase, operating-profit, cash-input, and warranty closure."
+    },
+    "owner_cash": {
+      "before": "COUNT_IN_PARENT_OWNER_CASH",
+      "after": "COUNT_CONDITIONALLY",
+      "change_type": "MATERIAL_BOUNDED_TREATMENT_TIGHTENING",
+      "material_delta": true,
+      "reason": "The conservative cash floor remained positive at CNY 2.7918 billion and OCF/profit conversion was 99.6937%, but cash-floor conversion was 74.6117%, below the frozen 80% durable threshold. NCI remained immaterial."
+    },
+    "permanent_loss": {
+      "before": "RELAX_CONSTRAINT",
+      "after": "RELAX_CONSTRAINT",
+      "change_type": "UNCHANGED",
+      "material_delta": false,
+      "reason": "Verified immediate liquidity covered one-year interest-bearing contractual cash due by 2.2502x, while closed-end products and unmatched deposits were excluded."
+    },
+    "valuation_direction": {
+      "before": "UP",
+      "after": "UP_BASELINE_RETAINED; FY2024_INCREMENT=UNCHANGED",
+      "change_type": "NO_FURTHER_UPGRADE",
+      "material_delta": false,
+      "reason": "Core holding, conditional owner cash, and an excluded new-energy component do not reverse the preoutcome direction but do not support an additional upward change. No price or formal valuation was reviewed."
+    },
+    "next_research_action": {
+      "before": {
+        "action_family": "UNIT_ECONOMICS_AND_SELL_THROUGH_VALIDATION",
+        "target_scope": "NEW_ENERGY_CHARGING_BUSINESS",
+        "decision_axis": "Whether new energy can enter normal earnings"
+      },
+      "after": {
+        "rank": 1,
+        "action_family": "CORE_SELL_THROUGH_DIAGNOSIS",
+        "target_scope": "ELECTRICAL_CONNECTION_AND_SMART_ELECTRICAL_LIGHTING",
+        "fact_or_metric": "Same-scope price-volume bridge, terminal or same-store sell-through, dealer purchases-sales-inventory, and channel inventory days",
+        "decision_axis": "Whether FY2024 core holding reflects durable share and terminal demand or stocking and mix",
+        "positive_effect": "Restore incremental confidence in RAISE and reinforce the valuation direction without requiring an arbitrary 8% hurdle",
+        "negative_effect": "Only terminal weakness plus inventory accumulation and margin pressure would support a further execution downgrade and consideration of LOWER/DOWN"
+      },
+      "change_type": "MATERIAL_RESEARCH_RESOURCE_REALLOCATION",
+      "material_delta": true,
+      "reason": "New-energy scale quality was established but remains excluded; the economically dominant unresolved question is now the quality of the core segment's 4.7388% growth. The pre-frozen sixth axis reallocates the next unit of limited research budget, so this is not a wording-only change."
+    }
+  },
+  "material_delta": {
+    "overall": true,
+    "scope": "BOUNDED_SIX_AXIS_TREATMENT_UPDATE_WITHOUT_ENTERPRISE_THESIS_OR_VALUATION_REVERSAL",
+    "materially_changed_axes": [
+      "owner_cash",
+      "next_research_action"
+    ],
+    "non_material_updates": [
+      "FY2024 core incremental execution credit narrowed to conditional without revoking the multi-year enterprise credit",
+      "Normal earnings and valuation received no incremental upgrade",
+      "Enterprise-level management credit retained while FY2024 incremental credit narrowed"
+    ],
+    "material_updates": [
+      "Owner cash moved from COUNT_IN_PARENT_OWNER_CASH to COUNT_CONDITIONALLY, changing the certainty of underwritten parent cash",
+      "Rank-1 research priority moved from new-energy validation to core sell-through diagnosis, reallocating the next unit of limited research budget"
+    ],
+    "economic_reason": "The settled facts changed two pre-frozen treatment axes. The update is bounded because it did not reverse the central enterprise thesis, permanent-loss conclusion, or valuation direction."
+  },
+  "verdict": {
+    "real_feedback_turn": {
+      "classification": "COMPLETED",
+      "reason": "The outcome directly tested three frozen cells and changed owner-cash treatment plus the frozen rank-1 research-action axis."
+    },
+    "enterprise_investment_treatment": {
+      "classification": "MATERIAL_UPDATE_BOUNDED",
+      "is_genuine_judgment_update": true,
+      "is_enterprise_thesis_reversal": false,
+      "is_valuation_direction_reversal": false,
+      "reason": "Owner-cash certainty and limited research-budget allocation changed, while core moat, permanent loss, and the preoutcome UP valuation baseline did not reverse."
+    },
+    "method_learning_utility": {
+      "classification": "NOT_APPLICABLE",
+      "learned_rule_candidate": "NONE",
+      "reason": "This was single-arm discovery with no fair baseline/enhanced comparison, so no relative method utility can be inferred."
+    },
+    "is_not_diagnostic": false,
+    "diagnostic_basis": "The three cells directly tested core revenue and margin, conservative cash and immediate liquidity, and new-energy scale quality.",
+    "utility_not_awarded_for": [
+      "additional fields",
+      "classification matches",
+      "reviewer prose"
+    ]
+  },
+  "learned_rule_candidate": "NONE",
+  "learned_rule_reason": "Treating sub-threshold positive core growth with stable margin as holding rather than moat failure, and refusing to capitalize doubled new-business revenue before repeat-purchase, profit, cash, and after-sales closure, are existing fair-research discipline already present before the outcome. Single-arm discovery also provides no fair baseline/enhanced comparison for method learning.",
+  "permissions": {
+    "read_parent_workspace": "NONE",
+    "read_repository_other_files": "NONE",
+    "external_search": "NONE",
+    "read_other_post_cutoff_materials": "NONE",
+    "read_prices": "NONE",
+    "read_returns": "NONE",
+    "read_old_reports": "NONE",
+    "read_derived_research": "NONE",
+    "read_other_outcomes": "NONE",
+    "all_other_permissions": "NONE"
+  }
+}

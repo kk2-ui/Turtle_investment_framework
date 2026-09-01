@@ -1,0 +1,85 @@
+{
+  "receipt_type": "BLIND9_SELECTION_REGISTER",
+  "status": "ISSUED",
+  "candidate": {
+    "security_id": "CN:600276",
+    "legal_name": "江苏恒瑞医药股份有限公司",
+    "cninfo_resolution": {
+      "ticker": "600276",
+      "org_id": "gssh0600276",
+      "company_name": "恒瑞医药",
+      "column": "sse",
+      "plate": "sh"
+    }
+  },
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "metadata_acquisition": {
+    "method": "CninfoDownloader.resolve_company followed by the official CNINFO hisAnnouncement/query classification mechanism",
+    "classification": "category_ndbg_szsh;",
+    "announcement_date_window": {
+      "start": "2022-01-01",
+      "end": "2024-04-30"
+    },
+    "metadata_only": true,
+    "announcement_or_pdf_bodies_accessed": false
+  },
+  "selection_result": {
+    "clean_original_annual_report_set_complete": true,
+    "selected_source_count": 3,
+    "selected_sources": [
+      {
+        "source_key": "FY2021_ORIGINAL_ANNUAL_REPORT",
+        "fiscal_year": 2021,
+        "original_report_title": "恒瑞医药2021年年度报告",
+        "disclosure_date": "2022-04-23",
+        "announcement_id": "1213053755",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2022-04-23/1213053755.PDF"
+      },
+      {
+        "source_key": "FY2022_ORIGINAL_ANNUAL_REPORT",
+        "fiscal_year": 2022,
+        "original_report_title": "恒瑞医药2022年年度报告",
+        "disclosure_date": "2023-04-22",
+        "announcement_id": "1216518776",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2023-04-22/1216518776.PDF"
+      },
+      {
+        "source_key": "FY2023_ORIGINAL_ANNUAL_REPORT",
+        "fiscal_year": 2023,
+        "original_report_title": "恒瑞医药2023年年度报告",
+        "disclosure_date": "2024-04-18",
+        "announcement_id": "1219650115",
+        "official_static_pdf_url": "http://static.cninfo.com.cn/finalpage/2024-04-18/1219650115.PDF"
+      }
+    ]
+  },
+  "broad_candidate_mechanism_descriptor": {
+    "statement": "A pharmaceutical enterprise can invest in research and development to advance drug candidates, obtain approvals and commercialize approved products through its sales channels, collect product sales cash, and recycle that cash into research, production and commercialization.",
+    "scope_limit": "This is a broad R&D-to-commercialization-to-cash mechanism descriptor only; it contains no enterprise-quality, growth, valuation, return, or FY2024 outcome judgment."
+  },
+  "role_firewall": {
+    "custodian": {
+      "may_hold": "This selection register, the packet receipt, and the three enumerated official URLs.",
+      "may_do": "Release only the listed pre-cutoff source packet and check deterministic manifest consistency.",
+      "must_not_do": "Read or disclose FY2024-or-later metadata or any outcome material; form or transmit an enterprise judgment; add substitute sources."
+    },
+    "forecaster": {
+      "may_receive": "Only the three-source packet released by the custodian and this cutoff boundary.",
+      "must_not_receive": "FY2024 outcome information, FY2024-or-later metadata or bodies, market/return data, analyst material, curriculum/campaign material, or reviewer outcome-aware feedback."
+    },
+    "reviewer": {
+      "may_receive": "The same fixed packet and a blinded forecaster submission.",
+      "must_not_receive": "Any outcome material or any source outside the fixed packet."
+    },
+    "local_mismatch_only": {
+      "permitted_review_or_custody_return": "A return may identify only a local deterministic mismatch against this manifest: candidate identity, fiscal year, original-report title, disclosure date, announcement ID, official static-PDF URL, cutoff, or role-boundary violation.",
+      "prohibited_return": "No outcome comparison, hindsight scoring, enterprise re-judgment, source expansion, or use of later information may be sent to the forecaster."
+    }
+  },
+  "negative_attestation": {
+    "no_fy2024_or_later_fiscal_period_metadata_accessed": true,
+    "no_announcement_or_pdf_body_accessed": true,
+    "no_fallback_source_used": true,
+    "clarification": "The date-bounded query included disclosure metadata through 2024-04-30 solely to identify the FY2023 annual report. No metadata for fiscal year 2024 or later was accessed."
+  }
+}

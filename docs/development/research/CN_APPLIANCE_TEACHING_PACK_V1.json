@@ -1,0 +1,67 @@
+{
+  "schema_version": "turtle-cn-appliance-teaching-pack.v1",
+  "training_pack_id": "CN_APPLIANCE_TEACHING_V1",
+  "block_ref": {"block_id": "ILB:CN:APPLIANCE:NATIONAL:V1", "schema_version": "turtle-cn-appliance-industry-j234.v1"},
+  "training_level": "HISTORICAL_SELF_REPLAY",
+  "memory_status": "MODEL_MEMORY_MITIGATED_NOT_EVALUATION_ELIGIBLE",
+  "result_access": "NOT_OPENED",
+  "allowed_outputs": ["TEACHING_ONLY", "RESEARCH_AGENDA"],
+  "prohibited_outputs": ["FORECAST", "PROBABILITY", "OUTCOME_SETTLEMENT", "METHOD_TRANSFER", "METHOD_SCORE", "CJO", "VALUATION", "REPORT", "INVESTMENT"],
+  "drills": [
+    {
+      "drill_id": "APPLIANCE:DRILL:GREE:C1:CHANNEL_COMPONENT",
+      "episode_id": "J2:CN:000651:C1",
+      "thread_id": "T:GREE:CHANNEL_COMPONENT",
+      "fact_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"],
+      "source_refs": [{"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 8}, {"source_id": "CNINFO:000651:ANN:20170427:1203403930", "physical_page": 20}],
+      "exercise_question": "Which links in the room-air-conditioner channel and component system are observable, and which alternative can still explain the same facts?",
+      "learner_tasks": ["Draw the state-to-driver-to-operating chain without naming a winner.", "State the strongest H-B fact that would keep the mechanism unresolved.", "Request one next source-bound observation rather than a result or price."],
+      "unknown_cell_ids": ["CAPITAL_RETURN", "PERMANENT_LOSS"],
+      "prohibited_substitutes": ["Do not treat operating cash as owner cash.", "Do not treat industry demand as proof of a durable company mechanism."]
+    },
+    {
+      "drill_id": "APPLIANCE:DRILL:MIDEA:C2:CHANNEL_SUPPLY_CHAIN",
+      "episode_id": "J2:CN:000333:C2",
+      "thread_id": "T:MIDEA:CHANNEL_SUPPLY_CHAIN",
+      "fact_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"],
+      "source_refs": [{"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 21}, {"source_id": "CNINFO:000333:ANN:20180330:1204557296", "physical_page": 22}],
+      "exercise_question": "Can channel simplification and order-supply coordination be separated from category-cycle and acquisition-boundary explanations?",
+      "learner_tasks": ["Map the operational friction the disclosed system could remove.", "Write the strongest non-nested rival explanation.", "Name the next same-boundary field needed before any cash conclusion."],
+      "unknown_cell_ids": ["CAPITAL_RETURN", "PERMANENT_LOSS"],
+      "prohibited_substitutes": ["Do not promote multi-category execution to a causal verdict.", "Do not combine acquisition cash with home-appliance owner cash."]
+    },
+    {
+      "drill_id": "APPLIANCE:DRILL:HAIER:C2:SERVICE_LOGISTICS",
+      "episode_id": "J2:CN:600690:C2",
+      "thread_id": "T:HAIER:SERVICE_LOGISTICS",
+      "fact_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"],
+      "source_refs": [{"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 13}, {"source_id": "CNINFO:600690:ANN:20180426:1204797433", "physical_page": 16}],
+      "exercise_question": "What would distinguish a service-and-logistics delivery mechanism from product-cycle, global-brand and consolidation effects?",
+      "learner_tasks": ["Separate the observed delivery-system facts from customer conversion.", "Describe the fact pattern that would favor H-B without using later outcomes.", "Record the responsibility-boundary limitation on cash interpretation."],
+      "unknown_cell_ids": ["CAPITAL_RETURN", "PERMANENT_LOSS"],
+      "prohibited_substitutes": ["Do not use global acquisition effects as evidence of domestic appliance owner cash.", "Do not rank the company against other issuers."]
+    },
+    {
+      "drill_id": "APPLIANCE:DRILL:HISENSE:C1:PRODUCT_COST_INVENTORY",
+      "episode_id": "J2:CN:000921:C1",
+      "thread_id": "T:HISENSE:PRODUCT_COST_INVENTORY",
+      "fact_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"],
+      "source_refs": [{"source_id": "CNINFO:000921:ANN:20170330:1203223381", "physical_page": 11}, {"source_id": "CNINFO:000921:ANN:20170330:1203223381", "physical_page": 12}, {"source_id": "CNINFO:000921:ANN:20170330:1203223381", "physical_page": 15}],
+      "exercise_question": "Do product commonality, cost work and inventory turnover describe a company mechanism, or can weather and category-cycle context explain the same facts?",
+      "learner_tasks": ["Trace the proposed product-to-cost-to-delivery mechanism.", "Make the weather-and-cycle rival concrete rather than generic.", "Specify the missing evidence needed to discuss durable customer acceptance."],
+      "unknown_cell_ids": ["CAPITAL_RETURN", "LEVERAGE", "PERMANENT_LOSS"],
+      "prohibited_substitutes": ["Do not convert annual-report market references into a customer-outcome conclusion.", "Do not substitute group cash for a distributable-cash claim."]
+    },
+    {
+      "drill_id": "APPLIANCE:DRILL:CHANGHONG:C2:WHITEGOODS_PORTFOLIO",
+      "episode_id": "J2:CN:600839:C2",
+      "thread_id": "T:CHANGHONG:WHITEGOODS_PORTFOLIO",
+      "fact_cell_ids": ["CUSTOMER", "OPERATING", "COMPETITION"],
+      "source_refs": [{"source_id": "CNINFO:600839:ANN:20180418:1204647552", "physical_page": 10}, {"source_id": "CNINFO:600839:ANN:20180418:1204647552", "physical_page": 12}, {"source_id": "CNINFO:600839:ANN:20180418:1204647552", "physical_page": 14}],
+      "exercise_question": "Can product upgrades, channel adjustment and organisation change be separated from a multi-product issuer mix and category-cycle explanation?",
+      "learner_tasks": ["Map the white-goods mechanism without borrowing facts from unrelated businesses.", "State why H-B remains live at the listed-issuer boundary.", "Request a product-boundary observation that would reduce the ambiguity."],
+      "unknown_cell_ids": ["CAPITAL_RETURN", "LEVERAGE", "PERMANENT_LOSS"],
+      "prohibited_substitutes": ["Do not use group cash or asset disposals as proof of white-goods economics.", "Do not construct a homogeneous causal panel from the five issuers."]
+    }
+  ]
+}

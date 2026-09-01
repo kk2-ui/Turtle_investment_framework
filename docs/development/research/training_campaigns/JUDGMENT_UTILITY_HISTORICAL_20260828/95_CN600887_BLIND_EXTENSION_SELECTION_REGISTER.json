@@ -1,0 +1,82 @@
+{
+  "schema_version": "historical-blind-extension-selection-register.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "extension_id": "HISTORICAL_BLIND_EXTENSION_2",
+  "extension_status": "PREOUTCOME_SOURCE_CURATION_ACCEPTED",
+  "relationship_to_frozen_roster": {
+    "frozen_roster_ref": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/02_FROZEN_3_2_1_ROSTER.json",
+    "frozen_roster_episode_count": 6,
+    "frozen_roster_consumption": "All six original roster rows have been consumed or dispositioned. This extension neither amends nor relabels an original row.",
+    "selection_type": "NEW_EXTENSION_AFTER_EXHAUSTED_ROSTER"
+  },
+  "selection_order": 8,
+  "case_id": "BLIND:CN600887:20240501:FY2024",
+  "company": {
+    "ticker": "CN:600887",
+    "name": "内蒙古伊利实业集团股份有限公司"
+  },
+  "preoutcome_cutoff": "2024-05-01T00:00:00+08:00",
+  "outcome_period": "FY2024",
+  "selection_rule": {
+    "eligible_only_if": [
+      "the original six-row frozen roster is exhausted without changing its order",
+      "the company contributes a branded dairy and cold-chain consumer model distinct from the prior Blind company clusters",
+      "exactly one original official FY2021, FY2022, and FY2023 annual-report PDF is available under the frozen date-only cutoff rule"
+    ],
+    "permitted_selection_inputs": [
+      "original-roster exhaustion",
+      "company identity, broad business-model class, and industry mechanism",
+      "metadata-only CNINFO code-to-orgId route and date-bounded original-annual-report identities"
+    ],
+    "fixed_extension_slot": "SCALED_BRANDED_DAIRY_SUPPLY_CHANNEL_AND_CASH_CONVERSION",
+    "reason_not_result_selected": "CN:600887 is selected to add a branded dairy producer whose raw-milk procurement, cold-chain distribution, product mix, channel economics and working-capital conversion present a different operating mechanism from the prior industrial, service and premium-spirits Blind cases. Selection used no FY2024 result source, price, return, valuation, analyst material or result comparison.",
+    "prohibited_selection_inputs": [
+      "FY2024-or-later document content, metadata, URLs or source inventories",
+      "price, return, market performance, analyst commentary, valuation or derived company report",
+      "prior-case result direction, expected utility or outcome quality",
+      "selection of another company because its result is expected to be easier, better or worse"
+    ]
+  },
+  "preoutcome_research_problem": {
+    "materiality_statement": "The forecaster must decide from the frozen issuer packet whether the company can translate branded product and channel scale into durable customer absorption, responsibility-matched economics and owner-cash conversion. This registration makes no factual or directional company judgment.",
+    "state_and_constraint": "Separate a scaled branded dairy platform's procurement and cold-chain commitments from demonstrated product demand, price-volume resilience, channel economics and cash conversion.",
+    "management_choice_or_no_action": "Assess product-mix, channel, supply-chain, capacity and capital-allocation choices or no-action without presuming their outcome.",
+    "customer_or_operating_link": "Trace any claimed operating strength through product sales, volume and pricing where disclosed, channel/customer adoption, gross-profit or unit-economics carrier and execution before giving enterprise credit.",
+    "cash_or_capital_link": "Separate revenue and accounting profit from collection, inventory, receivables, procurement commitments, operating cash flow and capital spending before treating a result as owner cash or capital return."
+  },
+  "role_and_source_firewall": {
+    "selection_agent_read_boundary": [
+      "metadata-only technical code-to-orgId resolution",
+      "date-bounded metadata for the three named original annual reports",
+      "no annual-report body, outcome source, price, return, analyst material or derived company report"
+    ],
+    "preoutcome_source_allowed_for_next_forecaster": "Only the three documents named in 96_CN600887_CUTOFF_BEFORE_SOURCE_PACKET_RECEIPT.json and the worktree AGENTS.md instructions required for the isolated role.",
+    "outcome_source_sealed": "No FY2024-or-later issuer source, result metadata or outcome body may be accessed until a fresh forecaster freezes a judgment contract and a result-free independent preoutcome reviewer accepts it.",
+    "forecaster_must_be_fresh": true,
+    "independent_preoutcome_reviewer_must_be_result_free": true,
+    "price_or_return_allowed": false,
+    "formal_valuation_allowed": false,
+    "investment_action_allowed": false
+  },
+  "custodian_authority_frozen": {
+    "activation_prerequisites": [
+      "fresh forecaster preoutcome judgment is frozen",
+      "independent result-free preoutcome review accepts the judgment contract",
+      "a separate one-case outcome-access authorization names the exact official FY2024 document"
+    ],
+    "custodian_role": "fresh_independent_contract_limited_outcome_custodian",
+    "may_read": [
+      "the accepted preoutcome judgment contract solely to identify frozen settlement cells",
+      "the one authorized issuer official FY2024 annual report solely to settle matching operating or cash/capital cells"
+    ],
+    "must_not_read_or_do": [
+      "selection material, prior-case outcomes, method packs, curricula, prices, returns, valuation or investment recommendations",
+      "expand settlement beyond a contracted cell",
+      "convert an unavailable or mismatched measure into another measure",
+      "write enterprise synthesis, training-effectiveness or investment conclusions"
+    ],
+    "mismatch_treatment": "A non-matching, non-disclosed or perimeter-incompatible measure receives LOCAL_UNKNOWN or MEASUREMENT_MISMATCH for that cell only. It does not invalidate remaining contracted cells or create a new global gate."
+  },
+  "registration_status": "PREOUTCOME_SOURCE_CURATION_ACCEPTED",
+  "authority": "NONE"
+}

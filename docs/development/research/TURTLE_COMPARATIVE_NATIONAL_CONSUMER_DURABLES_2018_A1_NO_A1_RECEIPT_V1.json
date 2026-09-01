@@ -1,0 +1,57 @@
+{
+  "receipt_type": "ACTION_FIRST_EVIDENCE_INELIGIBLE_NO_A1_RECEIPT",
+  "receipt_id": "A1:NO_A1:NCD-2018-ACT-001:V1",
+  "receipt_version": 1,
+  "candidate_id": "NCD-2018-ACT-001",
+  "cutoff_at": "2018-12-31T00:00:00+08:00",
+  "decision": "EVIDENCE_INELIGIBLE",
+  "a1_receipt_status": "NO_A1_RECEIPT",
+  "root_cause_classification": [
+    "ACQUISITION_MODULE"
+  ],
+  "material_reason": "The only permitted official CNINFO metadata for the cited cutoff-before static PDF supplies an announcement date but no time-of-day or timezone-aware availability timestamp.  A1 requires every static source to carry an exact timestamp; date-only metadata cannot be promoted by inference.",
+  "source_screen": {
+    "official_artifact_id": "CNINFO:002024:ANN:20181031:1205562833",
+    "source_url": "https://static.cninfo.com.cn/finalpage/2018-10-31/1205562833.PDF",
+    "source_type": "OFFICIAL_STATIC_FINALPAGE_PDF",
+    "official_metadata_availability_precision": "DATE_ONLY",
+    "static_pdf_pages_reviewed": [
+      1,
+      8,
+      11,
+      12
+    ],
+    "source_time_gate": "FAIL_DATE_ONLY_NOT_TIMESTAMP"
+  },
+  "missing_fact": "An official, timezone-aware publication or availability instant for each source intended to support the A1 action, hypotheses, or strongest rival.",
+  "prohibited_assumptions": [
+    "Do not infer a midnight timestamp from the CNINFO date.",
+    "Do not substitute the PDF URL date for a publication instant.",
+    "Do not use a later disclosure, result, price, or named comparator to cure this source-time defect."
+  ],
+  "economic_impact": "No investor conclusion, action efficacy conclusion, comparator selection, or method claim can be drawn from this screen.  The candidate may remain a discovery lead, but it cannot enter the A1 comparator-recruitment path.",
+  "rights_granted": [],
+  "rights_explicitly_not_granted": [
+    "A1_CANDIDATE_RECEIPT",
+    "COMPARATOR_RECRUITMENT_BRIEF",
+    "H1",
+    "H2",
+    "V5_PANEL",
+    "OUTCOME_ACCESS",
+    "SETTLEMENT",
+    "LEARNING",
+    "CJO",
+    "VALUATION",
+    "REPORT",
+    "INVESTMENT"
+  ],
+  "registration": "NOT_ATTEMPTED",
+  "executable_remediation": "A new independent source-acquisition pass may supply a cutoff-before official static filing whose metadata itself records a timezone-aware availability instant, with issuer, responsibility-unit, perimeter, page and support-role bindings.  It must be screened as a new receipt version before any A1 registration.",
+  "acceptance_criteria_for_retry": [
+    "Every proposed static source has availability_precision TIMESTAMP.",
+    "Each published_at value is timezone-aware and strictly before the cutoff.",
+    "The official source, not an inferred date, supplies the availability instant.",
+    "The remaining A1 implementation, materiality, H-A, H-B, strongest-rival and same-boundary evidence gates are then independently rechecked."
+  ],
+  "next_legal_command": "INDEPENDENT_A1_SOURCE_TIME_PRECISION_ACQUISITION_ONLY"
+}

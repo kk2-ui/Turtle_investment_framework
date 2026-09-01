@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:HK02669:20221231:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "HK:02669",
+  "company_name": "China Overseas Property Holdings",
+  "cutoff_at": "2022-12-31T23:59:59+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:HK02669:TEACHING", "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_HK02669_THIRD_PARTY_GROWTH_COLLECTION_OWNER_CASH_V1.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:HK02669:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2023-12-31T23:59:59+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "第三方合同、服务吸收、项目经济和应收是否沿同一 cohort 共同改善。"},
+    {"clock_id": "CLOCK:HK02669:LONG", "horizon": "NORMALIZATION_AND_CASH", "opens_at": "2025-12-31T23:59:59+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "第三方扩张是否形成维护投入后的可持续普通股现金而非面积与合并利润。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

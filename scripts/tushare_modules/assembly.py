@@ -13,6 +13,33 @@ from format_utils import format_number, format_table, format_header
 class AssemblyMixin:
     """Mixin providing data pack assembly for TushareClient."""
 
+    @staticmethod
+    def _normalized_coverage_note(ts_code: str) -> str | None:
+        upper = ts_code.upper()
+        if upper.endswith(".US"):
+            return (
+                "> 美股数据覆盖有限：§16质押不适用（美股无此制度），"
+                "§3P/§4P母公司报表在US GAAP体系下不适用，"
+                "c_pay_to_staff 原始现金流字段通常不可用。"
+            )
+        if upper.endswith(".HK"):
+            return (
+                "> 港股数据覆盖有限：§16质押不适用（港股无此制度），"
+                "§3P/§4P母公司报表在HKFRS体系下不适用，"
+                "c_pay_to_staff 原始现金流字段通常不可用。"
+            )
+        return None
+
+    def _normalize_warning_section_text(self, ts_code: str, text: str) -> str:
+        note = self._normalized_coverage_note(ts_code)
+        if not note:
+            return text
+        return re.sub(
+            r"> (?:港股|美股)数据覆盖有限：[^\n]+",
+            note,
+            text,
+        )
+
     def compute_derived_metrics(self, ts_code: str) -> str:
         """Compute §17: Derived metrics from stored DataFrames.
 
@@ -35,6 +62,7 @@ class AssemblyMixin:
             self._compute_sotp_inputs,
             lambda: self._compute_factor4_ev_baseline(ts_code),
             lambda: self._compute_factor4_sensitivity(ts_code),
+            lambda: self._compute_factor4_asset_value(ts_code),
             # §17.10-17.13 grids (run after §17.5 which populates factor3_sensitivity;
             # §17.10 must precede §17.11/§17.13 which read _store["payout_crosscheck"])
             self._compute_payout_crosscheck,
@@ -185,6 +213,8 @@ class AssemblyMixin:
                     print(f"  ⚠️ Failed to refresh {name}: {e}, keeping old data")
                     new_sections.append((key, text))
             else:
+                if key == "13":
+                    text = self._normalize_warning_section_text(ts_code, text)
                 new_sections.append((key, text))
 
         # Build new header with refresh-mode annotation
@@ -322,14 +352,24 @@ class AssemblyMixin:
             lines.append(format_header(2, "14. 无风险利率"))
             lines.append(f"\n数据获取失败: {e}\n")
 
-        # Agent-only placeholder sections (§8, §10)
-        for sec_num, sec_name in [
-            ("8", "行业与竞争"),
-            ("10", "管理层讨论与分析 (MD&A)"),
-        ]:
-            lines.append(format_header(2, f"{sec_num}. {sec_name}"))
+        # Section 8: deterministic local fallback when available
+        try:
+            lines.append(self.get_industry_competition(ts_code))
             lines.append("")
-            lines.append(f"*[§{sec_num} 待Agent WebSearch补充]*")
+        except Exception:
+            lines.append(format_header(2, "8. 行业与竞争"))
+            lines.append("")
+            lines.append("*[§8 待Agent WebSearch补充]*")
+            lines.append("")
+
+        # §10 MD&A: use method when available (HK local-report fallback), otherwise placeholder
+        try:
+            lines.append(self.get_mda_summary(ts_code))
+            lines.append("")
+        except Exception:
+            lines.append(format_header(2, "10. 管理层讨论与分析 (MD&A)"))
+            lines.append("")
+            lines.append("*[§10 待Agent WebSearch补充]*")
             lines.append("")
 
         # §17 Derived metrics (pre-computed from stored DataFrames)
@@ -431,9 +471,10 @@ class AssemblyMixin:
             lines.append("")
         elif self._is_hk(ts_code):
             lines.append("")
-            lines.append("> 港股数据覆盖有限：§9业务构成/§15回购 暂缺，"
+            lines.append("> 港股数据覆盖有限："
                          "§16质押不适用（港股无此制度），"
-                         "§3P/§4P母公司报表在HKFRS体系下不适用，c_pay_to_staff 不可用。")
+                         "§3P/§4P母公司报表在HKFRS体系下不适用，"
+                         "c_pay_to_staff 原始现金流字段通常不可用。")
             lines.append("")
 
         lines.append("### 13.2 Agent WebSearch 补充")

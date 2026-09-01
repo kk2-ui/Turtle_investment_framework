@@ -1,0 +1,43 @@
+{
+  "receipt_type": "BLIND10_FORECASTER_EXECUTION_RECEIPT",
+  "status": "COMPLETED",
+  "candidate": {
+    "security_id": "CN:600036",
+    "legal_name": "招商银行股份有限公司"
+  },
+  "cutoff": "2024-05-01T00:00:00+08:00",
+  "role": "one-shot fresh forecaster",
+  "source_packet_used": {
+    "exactly_three_original_annual_reports": true,
+    "fixed_packet_only": true,
+    "reports": [
+      {
+        "fiscal_year": "FY2021",
+        "original_report_title": "招商银行股份有限公司2021年度报告",
+        "disclosure_date": "2022-03-19",
+        "announcement_id": "1212626208"
+      },
+      {
+        "fiscal_year": "FY2022",
+        "original_report_title": "招商银行股份有限公司2022年度报告",
+        "disclosure_date": "2023-03-25",
+        "announcement_id": "1216221326"
+      },
+      {
+        "fiscal_year": "FY2023",
+        "original_report_title": "招商银行股份有限公司2023年度报告",
+        "disclosure_date": "2024-03-26",
+        "announcement_id": "1219403503"
+      }
+    ]
+  },
+  "access_attestation": {
+    "no_outcome_access": true,
+    "no_FY2024_or_later_information_access": true,
+    "no_external_source_access": true,
+    "no_market_price_return_or_valuation_access": true,
+    "no_analyst_or_curriculum_material_access": true,
+    "no_browser_or_network_access": true
+  },
+  "output": "131_CN600036_PREOUTCOME_JUDGMENT.json"
+}

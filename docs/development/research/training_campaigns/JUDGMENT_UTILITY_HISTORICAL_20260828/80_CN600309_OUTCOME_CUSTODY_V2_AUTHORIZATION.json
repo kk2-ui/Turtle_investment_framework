@@ -1,0 +1,40 @@
+{
+  "schema_version": "blind-outcome-custody-v2-authorization.v1",
+  "case_id": "BLIND:CN600309:20240501:FY2024",
+  "prior_custody_disposition": [
+    "77_CN600309_OUTCOME_CUSTODY_ISOLATION_INCIDENT.md",
+    "78_CN600309_OUTCOME_ACCESS_RECOVERY_AUTHORIZATION.json"
+  ],
+  "frozen_preoutcome_contract": "74_CN600309_PREOUTCOME_JUDGMENT.json#fy2024_first_match_settlement",
+  "single_value_free_source_inventory": "79_CN600309_OUTCOME_SOURCE_INVENTORY.json",
+  "single_official_pdf_path": "/tmp/CN600309_OUTCOME_SOURCE/600309_2024_annual_report.pdf",
+  "source_identity": {
+    "issuer": "万华化学集团股份有限公司",
+    "document": "万华化学2024年年度报告",
+    "official_url": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-15/600309_20250415_CQ5Z.pdf",
+    "disclosure_date": "2025-04-15"
+  },
+  "fresh_custodian_scope": {
+    "allowed_axes": [
+      "A_CORE_POLYURETHANE_CUSTOMER_ABSORPTION_AND_SPREAD",
+      "B_PETROCHEMICAL_AND_NEW_MATERIALS_UNIT_ECONOMICS",
+      "C_GROWTH_CAPEX_CASH_CONVERSION_AND_DEBT_LOAD"
+    ],
+    "required_output": "docs/development/research/training_campaigns/JUDGMENT_UTILITY_HISTORICAL_20260828/81_CN600309_CUSTODIAN_OUTCOME_SETTLEMENT.json",
+    "rule": "Read the single PDF only to settle the frozen first-match conditions. Record raw inputs, direct calculations, the first matched cell, page locator and axis-limited economic meaning."
+  },
+  "prohibited": [
+    "all other files, URLs, announcement lists, search pages, prices, returns, news, analyst material and other company material",
+    "modification of the preoutcome judgment, thresholds, scenarios or responsibility boundaries",
+    "cross-axis substitution",
+    "method, transfer, valuation, BuyBand, report or investment-action conclusions"
+  ],
+  "failure_behavior": "If a needed field is absent from the single PDF, emit LOCAL_UNKNOWN for only the affected axis. If the PDF cannot be read, stop; do not acquire a substitute source.",
+  "role_isolation": {
+    "fresh_agent_required": true,
+    "prior_custodians_may_not_receive_outcome_access_again": true,
+    "outcome_may_not_be_shared_with_preoutcome_forecaster": true,
+    "fresh_postoutcome_reviewer_required": true
+  },
+  "authorization_state": "AUTHORIZED_SINGLE_LOCAL_OFFICIAL_PDF_ONLY"
+}

@@ -3,6 +3,9 @@
 Utility methods: market detection, display formatting, HK pivot, store helpers.
 """
 
+import json
+from pathlib import Path
+
 import pandas as pd
 
 from format_utils import format_number
@@ -263,3 +266,51 @@ class InfrastructureMixin:
             if div_total and np_val and np_val > 0:
                 result[year] = div_total / np_val * 100
         return result
+
+    def _load_hk_report_fallback(self, ts_code: str) -> dict | None:
+        """Load cached HK annual-report fallback JSON if available."""
+        cache_key = f"_hk_report_fallback::{ts_code}"
+        if cache_key in self._store:
+            return self._store[cache_key]
+
+        output_dir = self._store.get("_output_dir")
+        if not output_dir:
+            self._store[cache_key] = None
+            return None
+
+        path = Path(output_dir) / "hk_report_fallback.json"
+        if not path.exists():
+            self._store[cache_key] = None
+            return None
+
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            payload = None
+
+        self._store[cache_key] = payload
+        return payload
+
+    def _get_hk_report_fallback_df(self, ts_code: str, key: str) -> pd.DataFrame:
+        """Read one HK fallback dataset branch into a DataFrame."""
+        payload = self._load_hk_report_fallback(ts_code)
+        if not payload:
+            return pd.DataFrame()
+        rows = payload.get(key) or []
+        if not isinstance(rows, list) or not rows:
+            return pd.DataFrame()
+        df = pd.DataFrame(rows)
+        if key == "cashflow":
+            # Backward-compatibility: older fallback JSONs stored employee-cost proxy
+            # in c_pay_to_staff without an explicit marker. If we see the proxy payload
+            # but no marker column, infer it so §17 won't mistake it for real cash flow.
+            if "_c_pay_to_staff_is_proxy" not in df.columns:
+                if "_employee_benefit_total" in df.columns:
+                    proxy_mask = df["_employee_benefit_total"].notna() & (
+                        df["c_pay_to_staff"].notna() if "c_pay_to_staff" in df.columns else False
+                    )
+                    df["_c_pay_to_staff_is_proxy"] = proxy_mask.astype(float)
+        if "end_date" in df.columns:
+            df["end_date"] = df["end_date"].astype(str)
+            df = df.sort_values("end_date", ascending=False)
+        return df

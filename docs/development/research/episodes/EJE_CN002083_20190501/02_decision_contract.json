@@ -1,0 +1,43 @@
+{
+  "schema_version": "turtle-training-decision-contract.v1",
+  "contract_id": "DC:CN002083:20190501:J1",
+  "contract_version": 1,
+  "company_id": "CN:002083",
+  "issuer_id": "ISSUER:CN:002083",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "decision_purpose": "HISTORICAL_TRAINING",
+  "holding_horizon": {"minimum_years": 1, "maximum_years": 5},
+  "permanent_loss_constraints": [
+    {
+      "constraint_id": "PLC:CN002083:OPERATING_CONTINUITY",
+      "condition": "A conclusion must not assume that disclosed earnings translate into durable owner cash or operating continuity without same-boundary evidence.",
+      "required_treatment": "Retain permanent loss as an explicit unknown rather than a price or return conclusion."
+    }
+  ],
+  "decision_flip_questions": [
+    {
+      "question_id": "DQ:CN002083:STATE",
+      "statement": "Does the cutoff-visible product, channel, export-exposure, earnings and operating-cash state support a coherent enterprise reconstruction?",
+      "decision_effect": "A negative answer keeps the operating-system claim as a research agenda rather than a CJO or investment conclusion."
+    },
+    {
+      "question_id": "DQ:CN002083:LOSS",
+      "statement": "What same-boundary evidence would be needed before converting historical cash facts into a permanent-loss assessment?",
+      "decision_effect": "Absent that evidence, permanent-loss and capital-allocation claims remain unknown."
+    }
+  ],
+  "evidence_budget": {
+    "evidence_budget_id": "BUDGET:CN002083:20190501:ANNUAL_REPORTS",
+    "source_packet_refs": [{"receipt_id": "SP:CN002083:20190501:ANNUAL_REPORTS", "receipt_version": 1}]
+  },
+  "price_and_opportunity_cost_policy": "PROHIBITED_FOR_HISTORICAL_TRAINING",
+  "outcome_access": "NONE",
+  "roles": {
+    "judgment_owner_id": "ROLE:CN002083:20190501:JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CN002083:20190501:INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CN002083:20190501:OUTCOME_CUSTODIAN"
+  },
+  "object_class": "DECISION_CONTRACT",
+  "claim_class": "EX_ANTE_DECISION_SCOPE",
+  "allowed_outputs": ["CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "enterprise-underwriting-training-contract.v1",
+  "contract_id": "UWTRAIN:CN000100TTE:20040827:WORKED:C1",
+  "training_track": "WORKED_CASE",
+  "company_id": "CN:000100:TTE",
+  "company_name": "TCL-Thomson / TTE",
+  "cutoff_at": "2004-08-27T00:00:00+08:00",
+  "sample_identity": "WORKED_CASE",
+  "outcome_access": "RESULT_KNOWN",
+  "allowed_sources": [{"source_id": "SOURCE:CN000100TTE:TEACHING", "source_ref": "docs/development/research/training_curricula/teaching_cases/TC_CN000100_TCL_THOMSON_TTE_CONTROL_AND_CASH_V1.md", "available_at": "2026-08-29T00:00:00+08:00", "time_role": "RESULT_KNOWN"}],
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:CN000100TTE:EARLY", "horizon": "OPERATING_ADAPTATION", "opens_at": "2005-12-31T23:59:59+08:00", "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION", "SURVIVAL_AND_FINANCING"], "discriminating_observation": "资产、销售和营销控制是否形成产品客户吸收与经常利润。"},
+    {"clock_id": "CLOCK:CN000100TTE:LONG", "horizon": "LONG_TERM_PERMANENT_LOSS", "opens_at": "2006-12-31T23:59:59+08:00", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"], "discriminating_observation": "现金是否来自健康经营而非营运资本释放、重组和退出。"}
+  ],
+  "primary_training_product": {"object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2", "completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY"},
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY"
+}

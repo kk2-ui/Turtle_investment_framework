@@ -1,0 +1,900 @@
+{
+  "schema_version": "historical-judgment-first-draft.v1",
+  "episode_id": "HIST:CN603338:20240501:FY2024",
+  "company_id": "CN:603338",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "forecaster_id": "AGENT:CN603338:FORECASTER:FRESH",
+  "outcome_state": "SEALED_NOT_IN_PACKET",
+  "enterprise_view": "截至2024-05-01，浙江鼎力已不只是产能扩张故事，而是一家以创始人控制、净现金缓冲、产品电动化和海外渠道为底座，正在把臂式产品投资转化为更高经常利润与母公司现金的优质装备企业。2021年的扩张曾出现收入增长快于利润、毛利率下滑且资本开支增长更快的转换三联征，故当时不应因建设和产量升级；但到2023年，臂式收入增长68.24%、臂式毛利率由20.64%升至30.52%、集团同口径经常经营利润显著上升，母公司经营现金流减全部购建长期资产现金由2021年的约-1.22亿元、2022年的约0.25亿元改善到2023年的约16.76亿元，已经构成经济吸收而不只是产能投放。当前整体判断明确偏正面：提升normal earnings、计入有母公司报表直接证据的parent owner cash，并将内在价值方向上调；但不把仍处试生产的年产4,000台高位平台项目视为已被需求吸收，也不解除融资租赁应收、对子公司约10.45亿元担保、欧美贸易壁垒和新并购整合带来的永久损失约束。没有价格，不能形成BuyBand或买卖结论。",
+  "evidence_boundary": {
+    "allowed_sources_read": [
+      "FORECASTER_PACKET.json",
+      "FROZEN_METHOD_PACK.json",
+      "FY2021.pdf",
+      "FY2022.pdf",
+      "FY2023.pdf"
+    ],
+    "post_cutoff_outcomes_read": false,
+    "prices_or_returns_read": false,
+    "other_workspace_files_read": false,
+    "internet_used": false
+  },
+  "method_rule_assessment": [
+    {
+      "rule_id": "SAME_BOUNDARY_RECURRING_ECONOMICS_FIRST",
+      "application": "先把臂式销量、收入和产能与臂式毛利、集团持续费用负担、信用损失和排除投资/政府补助/公允价值/净财务收益后的经常经营利润连接，再决定管理层、normal earnings和估值方向。",
+      "pre_cutoff_test_result": "SUPPORTED_AS_DECISION_USEFUL_IN_THIS_COMPANY_NOT_METHOD_VALIDATED",
+      "result": "2021年产量和收入放大时臂式毛利率仍低、集团毛利率下降，单看产能会过早升级；2023年臂式销量增长56.42%、臂式收入增长68.24%、臂式毛利率提升9.88个百分点，同时集团经常经营利润和母公司现金改善，才满足升级所需的经济吸收桥。尚在试生产的4,000台项目仍不得单独获得信用。",
+      "disconfirming_fact_to_watch": "若FY2024同边界经常经营利润和现金继续改善，但臂式毛利、利用率或费用桥仍显示疲弱，则需承认本规则在该公司可能过度收窄升级。"
+    },
+    {
+      "rule_id": "CONVERSION_TRIAD_RETAIN_AND_NARROW",
+      "application": "2021年触发收入增速高于利润增速、主营毛利率下降、资本开支增速高于利润增速后，保留电动化、产品和渠道优势，但暂停把新增建设视为增值，直至持续单位利润和现金回报闭合。",
+      "pre_cutoff_test_result": "SUPPORTED_AS_DECISION_USEFUL_IN_THIS_COMPANY_NOT_METHOD_VALIDATED",
+      "result": "该规则没有把2021年的转换压力误判为企业失败；2022至2023年海外渠道、臂式单位毛利、集团经常经营利润和母公司现金逐步修复后，允许在保留原有优势的基础上重新升级。它在这里有效避免了过早奖励建设，也没有阻止后来吸收证据出现时上调。",
+      "disconfirming_fact_to_watch": "若FY2024显示新增高位平台即使缺少当前同边界桥也已形成高回报现金，而保守暂停并未改善任何投资处理，则需下调该规则的边际用途。"
+    }
+  ],
+  "most_important_enterprise_judgments": [
+    {
+      "rank": 1,
+      "judgment_id": "J1_ARM_AND_GLOBAL_CHANNEL_ECONOMIC_ABSORPTION",
+      "current_judgment": "臂式产品与海外渠道已在2023年完成第一轮可验证的经济吸收，管理层应获得正面执行信用，normal earnings和内在价值方向应上调；但新增高位平台试生产本身不计入吸收。",
+      "causal_mechanism": "公司把产品组合从低毛利臂式爬坡转向电动化、高附加值臂式，并用海外本土团队、前置仓和经销/直销渠道进入更高毛利市场。2023年臂式销售收入24.46亿元、同比增长68.24%，销量5,492台、同比增长56.42%，臂式毛利率30.52%、同比提高9.88个百分点，海外臂式收入同比增长141.28%；同年主营毛利率提升7.12个百分点，收入减营业成本、税金、销售、管理、研发并计入信用损失的经常经营利润约17.77亿元（税前），不是只有产量扩张。",
+      "strongest_counterargument": "2023年毛利改善部分来自原材料和运价下降，海外收入增速已由2022年的71.21%降至13.35%，销售费用增长47.56%、产品售后维修费用和预计负债明显上升；因此单位利润可能包含周期红利，三年质保也可能把质量成本后移。",
+      "investment_implication": "对已兑现的臂式和海外组合给予POSITIVE_CREDIT。FY2023约15.107亿元税后同口径经常经营利润是已实现值，不直接等同于normal earnings；以FY2023主营收入59.602亿元分别回撤2和4个毛利率百分点后约为14.09亿元和13.08亿元，normal earnings据此仍较FY2022同口径约9.93亿元上调。对仍在试生产、募集资金累计投入64.79%的4,000台项目不预先计入新增收益或资本回报。",
+      "flip_facts": [
+        "FY2024臂式毛利率降至25%以下，同时臂式销量或收入下降超过15%，且臂式库存增加超过10%。",
+        "FY2024排除政府补助、投资收益、公允价值、处置和净财务收益后的集团经常经营利润同比下降15%以上，销售、研发、管理、售后或信用损失负担解释该下降。",
+        "相反，若高位平台商业销量放量且臂式毛利率维持29%以上、集团经常经营利润继续增长，则可把试生产项目从保留项转为已吸收资产。"
+      ],
+      "evidence_anchors": [
+        "FY2021.pdf pp.14-18: 主营毛利率27.85%、同比下降5.34个百分点；臂式毛利率18.16%；集团经营现金流3.74亿元。",
+        "FY2022.pdf pp.18-23: 臂式毛利率20.64%；海外收入增长71.21%；销售/管理/研发持续费用均上升。",
+        "FY2023.pdf pp.9-11,19-23: 臂式收入、销量、毛利率和海外臂式增速，以及集团持续费用和现金流。"
+      ]
+    },
+    {
+      "rank": 2,
+      "judgment_id": "J2_PARENT_OWNER_CASH_CONVERSION",
+      "current_judgment": "2023年利润已大体转化为母公司所有者可接触的现金，不应因合并口径顾虑撤回整家公司判断；当前可计入parent owner cash，但应以母公司口径、全资本开支扣除和正常化范围表达。",
+      "causal_mechanism": "母公司而非仅合并集团的经营现金流在2023年达到20.42亿元，母公司购建固定资产、无形资产和其他长期资产支付3.66亿元，得到约16.76亿元的全资本开支后现金代理。相同口径2021年约-1.22亿元、2022年约0.25亿元，改善与集团经常利润和资本开支高峰回落同步。2023年母公司货币资金40.76亿元，直接闭合了归属与上划边界；2023年合并报表也无少数股东权益。",
+      "strongest_counterargument": "单年现金受经营性应付款增加和利息收入影响，全部资本开支又包含增长项目，维持性资本开支未单独披露；所以16.76亿元既可能因营运资金融资被高估，也可能因把增长资本开支全扣除而被低估，不能直接当永久年金。",
+      "investment_implication": "当前COUNT_IN_PARENT_OWNER_CASH；把2023年观察值16.76亿元作为母公司全资本开支后现金代理，正常化parent owner cash采用约13亿至17亿元、中心约15亿元，不以集团OCF减capex替代母公司证据。",
+      "flip_facts": [
+        "FY2024母公司经营现金流减全部购建长期资产现金转负，且母公司OCF/净利润低于0.5，同时应收或存货增长明显快于收入。",
+        "FY2024母公司现金与可变现低风险金融资产不足以覆盖母公司有息债务与已发生的担保代偿。",
+        "若FY2024母公司全资本开支后现金仍不低于15亿元且OCF/净利润不低于0.9，则当前现金转换判断得到机械强化。"
+      ],
+      "evidence_anchors": [
+        "FY2021.pdf pp.70-73: 母公司OCF2.17亿元、购建长期资产3.39亿元。",
+        "FY2022.pdf pp.81-83: 母公司OCF8.37亿元、购建长期资产8.13亿元。",
+        "FY2023.pdf pp.77-84: 母公司货币资金、利润、OCF20.42亿元、购建长期资产3.66亿元；合并无少数股东损益/权益。"
+      ]
+    },
+    {
+      "rank": 3,
+      "judgment_id": "J3_BALANCE_SHEET_STRENGTH_WITH_CREDIT_AND_ALLOCATION_CONSTRAINT",
+      "current_judgment": "现金和创始人控制降低了毁灭性损失概率，但融资租赁/分期应收、对子公司担保、欧美贸易壁垒以及CMEC控股收购使永久损失约束仍必须保留；这些风险尚不足以否定正面的企业判断。",
+      "causal_mechanism": "2023年集团货币资金43.97亿元、母公司货币资金40.76亿元，母公司短期及一年内到期有息债务显著低于现金；创始人许树根直接持股45.53%，并持有第二大股东德清中鼎39.69%股权，且公司持续分红。另一方面，2023年应收账款和长期应收款毛额合计约44.78亿元、相关坏账准备约1.07亿元；上海鼎策融资租赁资产与借款由母公司提供10.45亿元担保。公司还在截止日前完成约99.497%控股CMEC并退出Magni 20%股权，资本重新部署的回报尚未被经营现金验证。",
+      "strongest_counterargument": "历史坏账计提比例仍低、客户融资担保余额为零、融资子公司保持盈利，且母公司现金足以覆盖现有对子公司担保；同时海外本地化收购可能是缓解贸易壁垒并加速市场进入的高回报选择，因此维持约束可能低估管理层的风险控制与资本配置能力。",
+      "investment_implication": "permanent loss维持约束而非THESIS_BLOCKING：对现有信用敞口做穿透压力处理，不将融资租赁利润、CMEC整合协同或Magni处置所得自动资本化；只有出现实际信用损失、担保代偿、持续低利用率或并购现金回报不足时才进一步收紧。",
+      "flip_facts": [
+        "FY2024应收账款加长期应收款的综合减值率不低于4%，且信用减值损失不低于1.5亿元，且（集团同口径经常经营利润小于等于0，或信用减值损失不低于正数集团同口径经常经营利润的10%）。",
+        "FY2024发生客户融资或上海鼎策相关实际担保代偿，或上海鼎策融资租赁组合减值率升至3%以上并出现亏损。",
+        "CMEC纳入控制后商誉/资产减值达到1.5亿元且达到normal earnings中心值14.09亿元的10%、持续经营亏损，或母公司为其实际现金支出达到1亿元且达到FY2023母公司全资本开支后现金的5%；反之，若其产生可验证的经营利润和现金且降低贸易摩擦暴露，可放松资本配置约束。"
+      ],
+      "evidence_anchors": [
+        "FY2023.pdf pp.59-64: 对上海鼎策担保余额10.45亿元、客户购买设备担保余额为零、募投进度。",
+        "FY2023.pdf pp.66-70: 创始人及德清中鼎持股关系。",
+        "FY2023.pdf pp.24-29,73-84, notes: 现金、应收及减值、融资租赁组合、CMEC购买与Magni出售。"
+      ]
+    }
+  ],
+  "management_choices_and_execution": {
+    "overall_treatment": "POSITIVE_CREDIT",
+    "selection_judgment": "选择电动化、臂式化、海外本土渠道和高位差异化产品符合需求结构；从Magni少数股权转向近全资控股CMEC显示管理层追求经营控制权，但后者尚未获得回报信用。",
+    "execution_judgment": "臂式单位毛利、海外臂式销售、集团经常经营利润、母公司现金和客户集中度（前五大销售占比由2021年的62.28%降至2023年的39.69%）共同支持正面执行信用。",
+    "capital_allocation_judgment": "2021定增扩产在2022经历高资本开支、2023进入试生产，旧一轮臂式产能已有吸收，新4,000台项目仍条件处理；2023拟每10股派10元，分红提升但不替代项目回报检验。",
+    "withheld_credit": [
+      "年产4,000台高位平台的建设完成或试生产本身",
+      "CMEC控股收购的协同、贸易壁垒缓解和现金回报",
+      "Magni出售所得的后续再投资回报"
+    ]
+  },
+  "normal_earnings": {
+    "current_estimate_cny": {
+      "low": 1308000000,
+      "central": 1409000000,
+      "high": 1510700000
+    },
+    "treatment": "RAISE",
+    "reference_state": "FY2022 same-boundary recurring operating economics",
+    "realized_same_boundary_earnings_cny": {
+      "FY2022_after_tax": 993000000,
+      "FY2023_before_tax": 1777314936,
+      "FY2023_after_tax": 1510717696
+    },
+    "bridge": "FY2023营业收入63.1196亿元减营业成本38.8244亿元、税金0.3338亿元、销售费用2.3246亿元、管理费用1.4123亿元、研发费用2.2001亿元及信用减值0.2514亿元，得到约17.773亿元税前、按15%税率约15.107亿元税后已实现同口径经常经营利润。FY2022同口径税后约9.93亿元。已实现值不是normal earnings答案。",
+    "gross_margin_reversion_sensitivity": {
+      "revenue_base": "FY2023主营业务收入59.602亿元",
+      "zero_point_reversion_after_tax_cny": 1510717696,
+      "two_percentage_point_reversion_formula": "15.107亿元 - 59.602亿元 × 2% × (1-15%)",
+      "two_percentage_point_reversion_after_tax_cny": 1409394492,
+      "four_percentage_point_reversion_formula": "15.107亿元 - 59.602亿元 × 4% × (1-15%)",
+      "four_percentage_point_reversion_after_tax_cny": 1308071288,
+      "interpretation": "年报未拆分产品结构、制造效率与原材料/运价回落对7.12个百分点主营毛利改善的贡献，因此以0、2、4个百分点回撤形成可反驳区间；不假设全部改善永久化，也不假设全部回撤。"
+    },
+    "excluded_or_separately_treated": [
+      "政府补助和其他收益",
+      "投资收益，含联营企业收益",
+      "金融资产公允价值变动",
+      "资产处置与营业外损益",
+      "大额净利息收入和汇率收益",
+      "Magni出售及CMEC取得控制权相关的一次性或尚未闭合收益"
+    ],
+    "why_not_reported_net_profit": "FY2023归母净利润18.67亿元包含约1亿元其他收益、0.92亿元投资收益、大额净财务收益并受公允价值损失影响；这些不能与制造业务经常经营利润混为一体。母公司现金转换是独立证据，不能反向证明FY2023毛利率可永久化。",
+    "why_raise_survives_sensitivity": "即使主营毛利率回撤4个百分点，税后同口径约13.08亿元仍比FY2022约9.93亿元高约32%，故保留RAISE；区间宽度和置信度反映可逆成本贡献未知。",
+    "confidence": "MEDIUM"
+  },
+  "parent_owner_cash": {
+    "current_estimate_cny": {
+      "low": 1300000000,
+      "central": 1500000000,
+      "high": 1700000000
+    },
+    "treatment": "COUNT_IN_PARENT_OWNER_CASH",
+    "observed_parent_full_capex_proxy_cny": {
+      "FY2021": -121505971.44,
+      "FY2022": 24720800.79,
+      "FY2023": 1675772530.69
+    },
+    "formula": "母公司经营活动现金流量净额 - 母公司购建固定资产、无形资产和其他长期资产支付的现金",
+    "ownership_boundary": "PARENT_DIRECT",
+    "nci_scope": "CLOSED_FOR_FY2023_PARENT_PROXY_AND_NO_NCI_IN_FY2023_CONSOLIDATED_STATEMENTS",
+    "parent_access": "EVIDENCED_BY_PARENT_CASH_FLOW_AND_BALANCE_SHEET",
+    "normalization": "下调单年营运资金与利息收入可能带来的高估，同时承认全部资本开支包含增长项目、可能低估维持性口径现金；因此不把16.76亿元直接永久化，而采用13亿至17亿元范围。",
+    "confidence": "MEDIUM_HIGH"
+  },
+  "permanent_loss": {
+    "current_treatment": "MAINTAIN_CONSTRAINT",
+    "current_assessment": "不是当前主论点阻断项。母公司现金、无少数股东分流、创始人高持股、盈利和分红提供缓冲；但信用融资模式、对子公司担保、贸易壁垒、质保成本、项目吸收和并购整合仍可形成足以改变normal earnings、owner cash或永久损失处理的损失。outcome中仅以明确金额与比例双门槛触发处理变化。",
+    "principal_risk_carriers": [
+      {
+        "carrier": "客户与融资租赁信用",
+        "evidence": "FY2023应收账款和长期应收款毛额合计约44.78亿元，综合坏账准备约1.07亿元；融资租赁组合本身规模大。",
+        "current_handling": "维持约束，按减值率、信用损失、回款和融资子公司盈利机械检验。"
+      },
+      {
+        "carrier": "母公司对子公司债务担保",
+        "evidence": "FY2023对上海鼎策担保余额约10.45亿元；客户购买设备担保余额为零。",
+        "current_handling": "不从parent owner cash中重复扣除未发生担保额，但在压力情景计入实际代偿和融资租赁资产损失。"
+      },
+      {
+        "carrier": "欧美贸易壁垒与海外集中",
+        "evidence": "FY2023海外主营收入占比约64.43%，年报明确披露美国及欧盟双反风险。",
+        "current_handling": "维持估值和永久损失约束，不在缺少具体税率影响时假装精确量化。"
+      },
+      {
+        "carrier": "新增产能与并购资本配置",
+        "evidence": "4,000台项目仍试生产；CMEC近全资收购和Magni退出在截止日前完成。",
+        "current_handling": "不预先计入新增收益，等待利用率、单位利润与现金回报。"
+      }
+    ],
+    "severe_branch": "若parent full-capex cash转负且OCF/净利润低于0.5，并伴随综合应收减值率不低于4%、信用减值损失不低于1.5亿元，且（集团同口径经常经营利润小于等于0，或信用减值损失不低于正数集团同口径经常经营利润的10%），或母公司实际代偿不低于1亿元且不低于FY2023母公司全资本开支后现金5%，则TIGHTEN_CONSTRAINT；只有累计已实现损失超过当期母公司现金及低风险流动金融资产且normal earnings转负，才升级为THESIS_BLOCKING。"
+  },
+  "scenario_analysis": {
+    "optimistic": {
+      "operating_path": "欧美之外新市场、CMEC本地化和电动臂式继续扩张，高位平台从试生产转为有订单支撑的商业吸收；臂式毛利率保持约30%或更高，集团经常经营利润继续增长，母公司全资本开支后现金维持15亿元以上，信用减值受控。",
+      "investment_effect": "若毛利改善主要来自产品结构与效率且继续增长，normal earnings可处于约15.1亿至17亿元；管理层执行和资本配置获得进一步信用。owner cash是否继续全额计入仍由独立母公司现金桥决定；信用指标稳定确认但不单独解除其他永久损失约束，内在价值方向继续UP。",
+      "discriminating_facts": [
+        "FY2024臂式毛利率不低于29%且臂式毛利额增长至少10%。",
+        "FY2024集团经常经营利润同比增长至少5%，销售、售后和信用成本没有吞噬增量毛利。",
+        "FY2024母公司全资本开支后现金不低于15亿元，母公司实际代偿未同时达到1亿元与FY2023母公司全资本开支后现金5%，且未满足以下统一账面信用门槛：综合应收减值率不低于4%、信用减值损失不低于1.5亿元，并且集团同口径经常经营利润小于等于0或信用减值损失不低于正数集团同口径经常经营利润的10%。"
+      ]
+    },
+    "base": {
+      "operating_path": "海外成熟市场增速放缓、国内竞争仍激烈；FY2023毛利改善中的部分原材料/运价红利回撤2至4个百分点，但电动臂式结构与制造效率保留，高位项目渐进爬坡，销售费用和质保成本吸收部分毛利，融资应收保持可控。",
+      "investment_effect": "normal earnings约13.08亿至14.50亿元，仍显著高于FY2022同口径约9.93亿元，因此维持POSITIVE_CREDIT与RAISE；母公司全资本开支后现金若为8亿至低于15亿元且转换率合格，继续COUNT_IN_PARENT_OWNER_CASH；永久损失维持约束，内在价值方向仍UP。",
+      "discriminating_facts": [
+        "FY2024臂式毛利率约27%至30%，集团经常经营利润在FY2023的-5%至+10%区间。",
+        "FY2024母公司全资本开支后现金为不低于8亿元且低于15亿元，OCF/净利润不低于0.7。",
+        "融资应收综合减值率相对FY2023变化不超过0.5个百分点且母公司实际担保代偿低于1亿元或低于FY2023母公司全资本开支后现金的5%。"
+      ]
+    },
+    "pessimistic": {
+      "operating_path": "欧美双反与国内低价竞争同时压缩销量和价格，高位平台利用不足导致库存和折旧负担上升，三年质保及渠道费用继续增加；融资租赁客户回款恶化并触发减值或担保现金流出，CMEC整合未产生可用现金。",
+      "investment_effect": "在4个百分点毛利回撤之外再叠加销量/费用或信用恶化，normal earnings可降至约9亿至12亿元，管理层信用转负并收紧permanent-loss约束。owner cash只有在母公司现金桥恶化或母公司实际代偿达到1亿元且达到FY2023母公司全资本开支后现金的5%时才改为条件计入；仅账面减值恶化不得自动DO_NOT_COUNT。若母公司全资本开支后现金转负且损失穿透净现金缓冲，估值方向DOWN。",
+      "discriminating_facts": [
+        "FY2024臂式收入或销量下降超过15%、毛利率低于25%，同时库存增加超过10%。",
+        "FY2024集团经常经营利润同比下降超过15%，母公司全资本开支后现金转负且OCF/净利润低于0.5。",
+        "综合应收减值率不低于4%、信用减值损失不低于1.5亿元，且集团同口径经常经营利润小于等于0或信用减值损失不低于正数集团同口径经常经营利润的10%；融资租赁组合减值率升至3%以上并亏损，或母公司实际担保代偿达到1亿元且达到FY2023母公司全资本开支后现金的5%。"
+      ]
+    }
+  },
+  "valuation_treatment": {
+    "price_used": false,
+    "buy_band_produced": false,
+    "treatment": "DIRECTIONAL_ONLY",
+    "reference_state": "FY2022 same-boundary enterprise economics before FY2023 absorption evidence",
+    "direction": "UP",
+    "reason": "FY2023约15.107亿元税后同口径经常经营利润是已实现值；按FY2023主营收入回撤2和4个毛利率百分点后约为14.09亿元和13.08亿元，仍显著高于FY2022同口径约9.93亿元，因此在承认可逆成本因素后内在价值方向仍UP，但幅度与置信度低于把FY2023毛利全部永久化的判断。",
+    "normalization_and_constraints": "以13.08亿至15.107亿元、中心约14.09亿元的normal-earnings区间处理，不把政府补助、投资/公允价值、净财务收益和未验证并购协同资本化；母公司现金与净现金单独估计，不作为毛利永久化证据；对融资应收、担保、贸易壁垒及新产能设置保守情景。",
+    "what_is_not_concluded": "无市场价格，不能判断安全边际、预期回报、买入/卖出或正式估值区间。"
+  },
+  "localized_unknowns": [
+    {
+      "unknown_id": "U1_MAINTENANCE_VS_GROWTH_CAPEX",
+      "unknown_fact": "三份年报未把母公司资本开支机械拆成维持性与增长性。",
+      "claim_limited_only": "限制可持续parent owner cash的精确点估计，不限制2023母公司现金转换已显著改善的方向判断。",
+      "current_treatment_despite_unknown": "扣除全部购建长期资产现金作为保守代理，COUNT_IN_PARENT_OWNER_CASH，并用13亿至17亿元范围而不是单点永久化。",
+      "next_discriminating_evidence": "FY2024母公司现金流量表、固定资产/在建工程变动及4,000台项目投产后资本支出。"
+    },
+    {
+      "unknown_id": "U2_ARM_SPECIFIC_PERSISTENT_EXPENSES",
+      "unknown_fact": "年报未按臂式产品披露销售、研发、管理、售后和信用损失。",
+      "claim_limited_only": "限制臂式产品独立税后normal earnings的精确量化，不限制臂式毛利改善与集团经常经营利润同步改善的企业级判断。",
+      "current_treatment_despite_unknown": "使用臂式收入/毛利与集团同责任边界持续费用桥，RAISE normal earnings；若集团费用吞噬增量毛利则翻转。",
+      "next_discriminating_evidence": "FY2024臂式毛利额、集团经常经营利润、销售/研发/管理/售后/信用损失。"
+    },
+    {
+      "unknown_id": "U3_HIGH_PLATFORM_UTILIZATION",
+      "unknown_fact": "截至截止日，年产4,000台大型智能高位平台项目处于试生产，未披露可验证利用率、单位利润或现金回报。",
+      "claim_limited_only": "只限制该新增项目的执行和估值信用，不撤回已被旧臂式产品经济数据支持的企业判断。",
+      "current_treatment_despite_unknown": "项目新增收益EXCLUDE/不预先计入；整体管理层仍为POSITIVE_CREDIT。",
+      "next_discriminating_evidence": "FY2024高位产品商业销量、臂式库存、毛利率、固定资产周转和项目现金回报。"
+    },
+    {
+      "unknown_id": "U4_CMEC_POST_CONTROL_RETURN",
+      "unknown_fact": "CMEC近全资收购于截止日前刚完成，FY2023没有其取得控制后的经营、现金和少数股东归属数据。",
+      "claim_limited_only": "只限制对CMEC资本配置、贸易壁垒缓解和新增owner cash的信用。",
+      "current_treatment_despite_unknown": "不计并购协同，不把该局部缺口扩展为整家公司UNKNOWN；整体估值方向仍UP但永久损失维持约束。",
+      "next_discriminating_evidence": "FY2024购买日会计、CMEC收入/利润/现金、商誉或减值、NCI归属和母公司可接触现金。"
+    },
+    {
+      "unknown_id": "U5_TRADE_BARRIER_QUANTIFICATION",
+      "unknown_fact": "年报确认美国和欧盟双反风险，但未给出可直接映射到FY2024销量、税负和单位利润的完整量化桥。",
+      "claim_limited_only": "限制悲观情景损失幅度的精确数字，不限制海外暴露是永久损失载体的判断。",
+      "current_treatment_despite_unknown": "MAINTAIN_CONSTRAINT，以海外收入、毛利、销量和贸易相关费用实际变化结算，不把未披露自动判为恶化。",
+      "next_discriminating_evidence": "FY2024分地区收入与毛利、贸易税费、CMEC本地生产/销售贡献。"
+    }
+  ],
+  "outcome_cells": [
+    {
+      "cell_id": "OC1_FY2024_ARM_RECURRING_ECONOMIC_ABSORPTION",
+      "judgment_link": "J1_ARM_AND_GLOBAL_CHANNEL_ECONOMIC_ABSORPTION",
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "臂式销量、毛利额、毛利率和库存共同检验产品吸收；建设或产量不能单独升级。",
+        "normal_earnings": "集团排除非经常与财务项后的同口径经常经营利润独立检验normal earnings，即使某个臂式字段缺失也继续结算。",
+        "valuation_direction": "产品吸收与集团经常利润改变内在价值方向；母公司现金由OC2独立结算。"
+      },
+      "preserved_axis_reasons": {
+        "owner_cash": "本cell不消费母公司现金流和资本开支。",
+        "permanent_loss": "单年产品或利润变化不自动成为不可逆损失；现金和信用损失由OC2、OC3结算。",
+        "next_research_action": "本cell只结算既定吸收问题。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "FY2024臂式收入、销量及库存，相对FY2023的24.459亿元、5,492台、2,447台",
+        "recurring_profit_metric": "FY2024臂式毛利额与集团经常经营利润；后者为营业收入减营业成本、税金、销售、管理、研发费用并计入信用/资产减值",
+        "persistent_cost_burden_metrics": [
+          "销售费用",
+          "管理费用",
+          "研发费用",
+          "产品售后维修费用与预计负债变动",
+          "信用及资产减值损失"
+        ],
+        "nonrecurring_exclusions": [
+          "政府补助及其他收益",
+          "投资收益",
+          "公允价值变动",
+          "资产处置和营业外损益",
+          "净利息与汇率收益",
+          "收购处置一次性影响"
+        ]
+      },
+      "axis_minimum_inputs": {
+        "management_execution": [
+          "臂式毛利率",
+          "臂式毛利额同比",
+          "臂式销量同比",
+          "臂式库存同比"
+        ],
+        "normal_earnings": [
+          "集团同口径经常经营利润同比"
+        ],
+        "valuation_direction": [
+          "集团同口径经常经营利润同比；或完整臂式产品吸收输入"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "逐轴冻结：臂式库存等产品字段缺失只冻结management_execution的产品吸收结算；只要集团经常经营利润完整，normal_earnings及其valuation载体仍按independent_axis_first_match结算。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "产品分类不可比只冻结产品吸收轴；集团同口径利润若可重算仍独立结算。"
+        }
+      },
+      "independent_axis_first_match": {
+        "group_recurring_profit": [
+          {
+            "class_id": "OC1_GROUP_PROFIT_ADVERSE",
+            "condition": "集团同口径经常经营利润同比下降超过15%。",
+            "axis_updates": {
+              "normal_earnings": "LOWER",
+              "valuation_direction": "DOWN"
+            }
+          },
+          {
+            "class_id": "OC1_GROUP_PROFIT_FAVORABLE",
+            "condition": "集团同口径经常经营利润同比增长至少5%。",
+            "axis_updates": {
+              "normal_earnings": "RAISE",
+              "valuation_direction": "UP"
+            }
+          },
+          {
+            "class_id": "OC1_GROUP_PROFIT_NEUTRAL",
+            "condition": "集团同口径经常经营利润同比不低于-5%且低于5%。",
+            "axis_updates": {
+              "normal_earnings": "RAISE",
+              "valuation_direction": "UP"
+            }
+          },
+          {
+            "class_id": "OC1_GROUP_PROFIT_MILD_ADVERSE_RESIDUAL",
+            "condition": "集团同口径经常经营利润同比下降超过5%且不超过15%。",
+            "axis_updates": {
+              "normal_earnings": "LOWER",
+              "valuation_direction": "DOWN"
+            }
+          }
+        ]
+      },
+      "valid_input_first_match": [
+        {
+          "class_id": "OC1_ADVERSE_CLEAR_DEABSORPTION",
+          "economic_direction": "ADVERSE",
+          "condition": "完整可比输入下，同时满足：(a)臂式收入或销量同比下降超过15%；(b)臂式毛利率低于25%；(c)集团经常经营利润同比下降超过15%；(d)臂式库存同比增加超过10%。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "臂式需求下降",
+            "单位毛利压缩",
+            "库存吸收失败",
+            "持续费用后经常经营利润下降"
+          ],
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "normal_earnings": "LOWER",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "OC1_FAVORABLE_CONFIRMED_ABSORPTION",
+          "economic_direction": "FAVORABLE",
+          "condition": "完整可比输入下，同时满足：(a)臂式毛利额同比增长至少10%；(b)臂式毛利率不低于29%；(c)集团经常经营利润同比增长至少5%；(d)臂式库存同比增速不超过臂式销量同比增速加10个百分点。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "OC1_NEUTRAL_HIGH_BASE_HELD",
+          "economic_direction": "NEUTRAL",
+          "condition": "完整可比输入下，明确未命中OC1_ADVERSE和OC1_FAVORABLE，并且臂式毛利率不低于27%且不高于31%、集团经常经营利润同比不低于-5%且不高于10%、臂式库存同比增速不超过臂式销量同比增速加15个百分点。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "OC1_MIXED_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "完整可比输入且明确未命中OC1_ADVERSE、OC1_FAVORABLE或OC1_NEUTRAL。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "OC2_FY2024_PARENT_OWNER_CASH_AND_CAPITAL_ABSORPTION",
+      "judgment_link": "J2_PARENT_OWNER_CASH_CONVERSION",
+      "direct_axes": [
+        "management_execution",
+        "owner_cash",
+        "permanent_loss",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "normal_earnings",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "母公司现金转换和资本开支吸收检验营运与投资执行。",
+        "owner_cash": "母公司OCF减全部购建长期资产现金是当前可接触现金代理。",
+        "permanent_loss": "只有母公司现金桥受损或达到明确门槛的母公司现金代偿才收紧。",
+        "valuation_direction": "正常化母公司可分配现金改变内在价值方向。"
+      },
+      "preserved_axis_reasons": {
+        "normal_earnings": "现金时点不自动重写权责发生制normal earnings。",
+        "next_research_action": "先完成既定母公司现金桥。"
+      },
+      "owner_cash_bridge": {
+        "cash_proxy_scope": "PARENT",
+        "nci_scope": "CLOSED",
+        "parent_access": "EVIDENCED",
+        "capex_treatment": "扣除母公司购建固定资产、无形资产和其他长期资产支付的全部现金；未拆分维持与增长资本开支。"
+      },
+      "quantified_thresholds": {
+        "parent_guarantee_cash_outflow": "母公司实际现金代偿不低于1亿元，并且不低于FY2023母公司全资本开支后现金16.758亿元的5%（约0.838亿元）；两项均满足才触发。",
+        "working_capital_absorption": "母公司应收加存货增速高于母公司营业收入增速15个百分点以上。"
+      },
+      "permanent_loss_bridge": {
+        "risk_carrier": "母公司OCF崩塌并伴随结构性营运资金占用或达到明确门槛的母公司担保现金流出",
+        "materiality_or_persistence_test": "FY2024母公司全资本开支后现金小于0且OCF/净利润低于0.5，并至少出现应收加存货增速高于收入15个百分点，或母公司实际代偿不低于1亿元且不低于FY2023母公司全资本开支后现金的5%。",
+        "reversibility_test": "若现金下降仅由明确增长资本开支造成、pre-capex OCF/净利润仍不低于0.9且项目已有订单和毛利吸收，则只更新owner cash，不收紧permanent loss。"
+      },
+      "axis_minimum_inputs": {
+        "owner_cash_full_bridge": [
+          "母公司OCF",
+          "母公司净利润",
+          "母公司全部购建长期资产现金",
+          "母公司现金及低风险流动金融资产",
+          "母公司有息债务"
+        ],
+        "parent_cash_loss_event": [
+          "母公司实际担保代偿现金金额"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "母公司现金流量表或capex缺失只冻结完整现金桥；已披露的母公司实际代偿仍按parent_cash_event_first_match结算owner_cash和permanent_loss。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "合并OCF/capex不得替代母公司桥；母公司实际现金代偿凭母公司现金证据独立结算。"
+        }
+      },
+      "parent_cash_event_first_match": [
+        {
+          "class_id": "OC2_PARENT_GUARANTEE_CASH_OUTFLOW_ADVERSE",
+          "condition": "母公司实际现金代偿不低于1亿元，并且不低于FY2023母公司全资本开支后现金的5%。",
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "TIGHTEN_CONSTRAINT",
+            "valuation_direction": "DOWN"
+          }
+        },
+        {
+          "class_id": "OC2_PARENT_GUARANTEE_CASH_OUTFLOW_BELOW_THRESHOLD",
+          "condition": "母公司实际现金代偿低于1亿元，或低于FY2023母公司全资本开支后现金的5%。",
+          "axis_updates": {}
+        }
+      ],
+      "valid_input_first_match": [
+        {
+          "class_id": "OC2_ADVERSE_STRUCTURAL_CASH_ABSORPTION",
+          "economic_direction": "ADVERSE",
+          "condition": "完整母公司输入下，同时满足：(a)母公司OCF减全部购建长期资产现金小于0；(b)母公司OCF/净利润低于0.5；(c)母公司应收加存货增速高于收入增速15个百分点以上，或母公司实际代偿同时达到1亿元与FY2023母公司全资本开支后现金5%的双门槛。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "母公司全资本开支后现金为负",
+            "OCF/净利润低于0.5",
+            "营运资金超收入15个百分点或母公司代偿达到双门槛"
+          ],
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "owner_cash": "DO_NOT_COUNT",
+            "permanent_loss": "TIGHTEN_CONSTRAINT",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "OC2_FAVORABLE_PARENT_CASH_REPEATS",
+          "economic_direction": "FAVORABLE",
+          "condition": "完整母公司输入下，母公司OCF减全部购建长期资产现金不低于15亿元、母公司OCF/净利润不低于0.9、母公司现金及低风险流动金融资产覆盖母公司有息债务，并且母公司实际代偿未达到1亿元与5%的双门槛。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "OC2_NEUTRAL_POSITIVE_CASH",
+          "economic_direction": "NEUTRAL",
+          "condition": "完整母公司输入下，明确未命中OC2_ADVERSE或OC2_FAVORABLE，母公司OCF减全部购建长期资产现金不低于8亿元且严格低于15亿元、母公司OCF/净利润不低于0.7，并且母公司实际代偿未达到1亿元与5%的双门槛。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "OC2_MIXED_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "完整同口径输入且明确未命中OC2_ADVERSE、OC2_FAVORABLE或OC2_NEUTRAL。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "OC3_FY2024_CREDIT_FINANCING_AND_GUARANTEE_LOSS_CARRIER",
+      "judgment_link": "J3_BALANCE_SHEET_STRENGTH_WITH_CREDIT_AND_ALLOCATION_CONSTRAINT",
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "owner_cash",
+        "permanent_loss",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "授信、融资租赁、减值和担保管理检验销售质量与资本配置执行。",
+        "normal_earnings": "达到quantified_thresholds.book_credit_loss统一门槛的账面信用损失或融资租赁亏损直接降低经常利润。",
+        "owner_cash": "默认不更新；只有母公司实际回款、子公司向母公司现金分配、母公司实际代偿或OC2母公司现金桥受损才更新。",
+        "permanent_loss": "应收本金损失和实际代偿是永久损失载体。",
+        "valuation_direction": "信用成本改变风险调整后价值，但不越界传播为母公司现金。"
+      },
+      "preserved_axis_reasons": {
+        "next_research_action": "本cell是既定信用穿透行动。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "FY2024营业收入及融资租赁/分期应收规模相对FY2023",
+        "recurring_profit_metric": "FY2024集团经常经营利润（含信用减值）及上海鼎策净利润",
+        "persistent_cost_burden_metrics": [
+          "应收账款信用减值损失",
+          "长期应收款信用减值损失",
+          "融资租赁融资成本"
+        ],
+        "nonrecurring_exclusions": [
+          "政府补助",
+          "投资收益及公允价值变动",
+          "收购处置一次性收益",
+          "与信用经营无关的汇率损益"
+        ]
+      },
+      "owner_cash_bridge": {
+        "cash_proxy_scope": "PARENT",
+        "nci_scope": "OPEN",
+        "parent_access": "EVIDENCED",
+        "capex_treatment": "账面减值、上海鼎策利润和集团回款默认不更新owner_cash。只消费母公司实际现金回款、子公司向母公司现金分配、母公司实际担保代偿或OC2同口径母公司现金桥。FY2024 CMEC NCI仍待量化。"
+      },
+      "quantified_thresholds": {
+        "book_credit_loss": "综合应收减值率不低于4%，且信用减值损失不低于1.5亿元，且（集团同口径经常经营利润小于等于0，或信用减值损失不低于正数集团同口径经常经营利润的10%）。",
+        "finance_lease_deterioration": "融资租赁组合减值率不低于3%，且上海鼎策净利润小于0。",
+        "parent_cash_event": "母公司实际代偿、实际回款或子公司向母公司现金分配不低于1亿元，并且不低于FY2023母公司全资本开支后现金的5%。"
+      },
+      "permanent_loss_bridge": {
+        "risk_carrier": "应收账款与长期应收款本金损失、融资租赁组合恶化、母公司实际担保代偿",
+        "materiality_or_persistence_test": "账面信用载体要求综合应收减值率不低于4%、信用减值损失不低于1.5亿元，且集团同口径经常经营利润小于等于0或信用减值损失不低于正数集团同口径经常经营利润的10%；母公司现金载体使用1亿元且FY2023母公司全资本开支后现金5%的双门槛。",
+        "reversibility_test": "仅账龄迁移或账面减值上升但无母公司现金流出且OC2现金桥仍强，只更新匹配的management、normal earnings、permanent loss和valuation，不更新owner_cash。"
+      },
+      "axis_minimum_inputs": {
+        "book_credit_axes": [
+          "综合应收毛额和准备",
+          "当年信用减值损失",
+          "当年集团经常经营利润"
+        ],
+        "finance_lease_axes": [
+          "融资租赁组合毛额和准备",
+          "上海鼎策净利润"
+        ],
+        "owner_cash": [
+          "母公司实际现金回款、子公司向母公司现金分配、母公司实际担保代偿或OC2母公司现金桥"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "逐轴冻结：融资租赁细项缺失只冻结finance_lease_axes；已观察到的母公司实际代偿仍结算owner_cash/permanent_loss，完整综合应收与信用损失仍结算book_credit_axes。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "应收重分类只冻结受影响账面轴；不得用集团现金替代母公司现金，也不得让账面减值自动改写owner_cash。"
+        }
+      },
+      "parent_cash_event_first_match": [
+        {
+          "class_id": "OC3_PARENT_CASH_OUTFLOW_ADVERSE",
+          "condition": "母公司实际担保代偿不低于1亿元，并且不低于FY2023母公司全资本开支后现金的5%。",
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "TIGHTEN_CONSTRAINT",
+            "valuation_direction": "DOWN"
+          }
+        },
+        {
+          "class_id": "OC3_PARENT_CASH_INFLOW_FAVORABLE",
+          "condition": "母公司实际信用回款或子公司向母公司现金分配不低于1亿元，并且不低于FY2023母公司全资本开支后现金的5%，且无达到同门槛的母公司代偿。",
+          "axis_updates": {
+            "owner_cash": "COUNT_IN_PARENT_OWNER_CASH"
+          }
+        },
+        {
+          "class_id": "OC3_NO_QUALIFYING_PARENT_CASH_EVENT",
+          "condition": "不存在达到1亿元与5%双门槛的母公司现金流入或代偿。",
+          "axis_updates": {}
+        }
+      ],
+      "valid_input_first_match": [
+        {
+          "class_id": "OC3_ADVERSE_OBSERVED_CREDIT_LOSS",
+          "economic_direction": "ADVERSE",
+          "condition": "完整同口径账面输入下，满足任一：(a)融资租赁组合减值率不低于3%且上海鼎策净利润小于0；或(b)综合应收减值率不低于4%，且信用减值损失不低于1.5亿元，且（集团同口径经常经营利润小于等于0，或信用减值损失不低于正数集团同口径经常经营利润的10%）。本分支不消费母公司现金。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "融资租赁组合减值与经营亏损",
+            "达到quantified_thresholds.book_credit_loss统一门槛的账面信用损失"
+          ],
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "normal_earnings": "LOWER",
+            "permanent_loss": "TIGHTEN_CONSTRAINT",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "OC3_FAVORABLE_CREDIT_CONTROL",
+          "economic_direction": "FAVORABLE",
+          "condition": "完整同口径账面输入下，同时满足：(a)综合应收减值率不高于2.39%；(b)融资租赁组合减值率不高于1%；(c)上海鼎策净利润大于0；(d)不存在达到1亿元与5%双门槛的母公司代偿；(e)对子公司担保余额不高于13亿元。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "OC3_NEUTRAL_STABLE_CREDIT",
+          "economic_direction": "NEUTRAL",
+          "condition": "完整同口径账面输入下，明确未命中OC3_ADVERSE或OC3_FAVORABLE，综合应收减值率相对FY2023约2.39%的变化绝对值不超过0.5个百分点、融资租赁组合减值率低于2%、上海鼎策净利润不低于0，并且不存在达到1亿元与5%双门槛的母公司代偿。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        },
+        {
+          "class_id": "OC3_MIXED_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "完整同口径账面输入且明确未命中OC3_ADVERSE、OC3_FAVORABLE或OC3_NEUTRAL。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [],
+            "required_parent_access_at_settlement": "NOT_APPLICABLE"
+          }
+        }
+      ]
+    }
+  ],
+  "outcome_axis_merge_rules": {
+    "scope": "逐轴合并，不是全局gate；局部UNKNOWN只冻结其最小输入对应轴。",
+    "within_cell": "OC1完整产品分支负责management_execution；OC1的group_recurring_profit独立规则负责normal_earnings及对应valuation，完整分支为MIXED时也不得覆盖已观察到的集团利润方向。OC3账面分支与parent_cash_event分支各自只更新声明的轴。",
+    "normal_earnings": "若OC1集团经常经营利润完整，因其已包含信用减值，OC1给出的normal_earnings处理为唯一结果，OC3只解释信用载体而不重复更新；若OC1利润缺失但OC3账面信用损失达到quantified_thresholds.book_credit_loss统一门槛，使用OC3处理。",
+    "owner_cash": "OC2完整母公司现金桥优先；OC3账面信用分支永不更新owner_cash。只有OC3观察到达到1亿元与5%双门槛的母公司实际现金流入/分配/代偿时才与OC2合并：完整OC2桥已包含该现金时不重复计算；若OC2缺失，则代偿为COUNT_CONDITIONALLY、现金流入维持COUNT_IN。",
+    "management_execution": "同轴信号一致时取一致结果；POSITIVE与NEGATIVE来自不同载体时合并为CONDITIONAL_CREDIT；若两个独立cell均为NEGATIVE则为NEGATIVE_CREDIT。",
+    "permanent_loss": "按THESIS_BLOCKING、TIGHTEN_CONSTRAINT、MAINTAIN_CONSTRAINT、RELAX_CONSTRAINT顺序取已观察到的最强处理；UNKNOWN不覆盖已观察处理。",
+    "valuation_direction": "同向取同向；UP与DOWN冲突取UNCHANGED；只有责任匹配轴更新可以参与合并。",
+    "no_double_count": "同一信用损失若已进入OC1集团经常经营利润，不得在OC3再次降低normal earnings；同一母公司代偿若已进入OC2现金桥，不得在OC3再次扣减owner cash。"
+  },
+  "preoutcome_counterexamples": [
+    {
+      "vector_id": "V1_OC1_FAVORABLE_UNIQUE",
+      "inputs": "臂式毛利率30%、臂式毛利额+12%、集团经常经营利润+7%、库存增速不高于销量增速。",
+      "expected_unique_match": "仅OC1_FAVORABLE_CONFIRMED_ABSORPTION；OC1_NEUTRAL因明确排除FAVORABLE而不命中。",
+      "expected_unique_treatment": {
+        "management_execution": "POSITIVE_CREDIT",
+        "normal_earnings": "RAISE",
+        "owner_cash": "PRESERVE_CURRENT",
+        "permanent_loss": "PRESERVE_CURRENT",
+        "valuation_direction": "UP"
+      }
+    },
+    {
+      "vector_id": "V2_OC2_EXACT_15_BILLION_UNIQUE",
+      "inputs": "母公司全资本开支后现金恰15亿元、OCF/净利润不低于0.9、债务覆盖闭合、母公司代偿未达到双门槛。",
+      "expected_unique_match": "仅OC2_FAVORABLE_PARENT_CASH_REPEATS；OC2_NEUTRAL严格要求低于15亿元。",
+      "expected_unique_treatment": {
+        "management_execution": "POSITIVE_CREDIT",
+        "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+        "permanent_loss": "MAINTAIN_CONSTRAINT",
+        "valuation_direction": "UP"
+      }
+    },
+    {
+      "vector_id": "V3_OC3_STABLE_CREDIT_NO_OWNER_CASH_UPDATE",
+      "inputs": "综合应收减值率不高于2.39%、融资租赁减值率不高于1%、上海鼎策盈利、无达到双门槛的母公司代偿、对子公司担保不高于13亿元。",
+      "expected_unique_match": "仅OC3_FAVORABLE_CREDIT_CONTROL；OC3_NEUTRAL明确排除FAVORABLE。",
+      "expected_unique_treatment": {
+        "management_execution": "POSITIVE_CREDIT",
+        "normal_earnings": "PRESERVE_RAISE",
+        "owner_cash": "PRESERVE_COUNT_IN_PARENT_OWNER_CASH",
+        "permanent_loss": "MAINTAIN_CONSTRAINT",
+        "valuation_direction": "UP"
+      }
+    },
+    {
+      "vector_id": "V4_INVENTORY_UNKNOWN_GROUP_PROFIT_ADVERSE",
+      "inputs": "臂式库存缺失，但集团同口径经常经营利润完整且同比下降20%。",
+      "expected_unique_match": "产品吸收的management_execution为LOCAL_UNKNOWN；独立命中OC1_GROUP_PROFIT_ADVERSE。",
+      "expected_unique_treatment": {
+        "management_execution": "LOCAL_UNKNOWN_PRESERVE_CURRENT",
+        "normal_earnings": "LOWER",
+        "owner_cash": "PRESERVE_CURRENT",
+        "permanent_loss": "PRESERVE_CURRENT",
+        "valuation_direction": "DOWN"
+      }
+    },
+    {
+      "vector_id": "V5_PARENT_GUARANTEE_PAYOUT_FINANCE_LEASE_UNKNOWN",
+      "inputs": "母公司实际担保代偿不低于1亿元且不低于FY2023母公司全资本开支后现金5%，融资租赁细项缺失。",
+      "expected_unique_match": "融资租赁账面轴LOCAL_UNKNOWN，但命中OC3_PARENT_CASH_OUTFLOW_ADVERSE；若OC2完整桥也包含代偿则只计一次。",
+      "expected_unique_treatment": {
+        "management_execution": "NEGATIVE_CREDIT",
+        "normal_earnings": "PRESERVE_UNLESS_RECOGNIZED_RECURRING_LOSS_IS_EVIDENCED",
+        "owner_cash": "COUNT_CONDITIONALLY",
+        "permanent_loss": "TIGHTEN_CONSTRAINT",
+        "valuation_direction": "DOWN"
+      }
+    },
+    {
+      "vector_id": "V6_BOOK_IMPAIRMENT_ADVERSE_PARENT_CASH_STRONG",
+      "inputs": "唯一负面载体是账面信用损失达到OC3统一门槛，并使已包含该减值的集团同口径经常经营利润同比下降20%；无母公司现金流出，且OC2母公司现金桥命中FAVORABLE。",
+      "expected_unique_match": "OC3_ADVERSE_OBSERVED_CREDIT_LOSS与OC2_FAVORABLE分别结算后按逐轴规则合并；账面减值不触发owner_cash更新。",
+      "expected_unique_treatment": {
+        "management_execution": "CONDITIONAL_CREDIT",
+        "normal_earnings": "LOWER",
+        "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+        "permanent_loss": "TIGHTEN_CONSTRAINT",
+        "valuation_direction": "UNCHANGED"
+      }
+    },
+    {
+      "vector_id": "V7_NONPOSITIVE_RECURRING_PROFIT_CREDIT_LOSS",
+      "inputs": "综合应收减值率4.1%、信用减值损失1.5亿元、集团同口径经常经营利润为0或负数、无母公司现金流出，且OC2母公司现金桥命中FAVORABLE。",
+      "expected_unique_match": "OC3_ADVERSE_OBSERVED_CREDIT_LOSS通过集团同口径经常经营利润小于等于0的支路命中，OC2_FAVORABLE独立命中；账面减值不触发owner_cash更新。",
+      "expected_unique_treatment": {
+        "management_execution": "CONDITIONAL_CREDIT",
+        "normal_earnings": "LOWER",
+        "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+        "permanent_loss": "TIGHTEN_CONSTRAINT",
+        "valuation_direction": "UNCHANGED"
+      }
+    }
+  ],
+  "material_treatment_snapshot": {
+    "management_execution": {
+      "treatment_code": "POSITIVE_CREDIT",
+      "rationale": "臂式销量、毛利、海外推广、经常经营利润和母公司现金同步改善；信用只给已吸收的旧轮产品/渠道，不给试生产项目或刚完成并购。"
+    },
+    "normal_earnings": {
+      "treatment_code": "RAISE",
+      "rationale": "FY2023已实现同责任边界税后经常经营利润约15.107亿元；以FY2023主营收入回撤2和4个毛利率百分点后约为14.09亿元和13.08亿元，仍高于FY2022同口径约9.93亿元，故RAISE但置信度为MEDIUM。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_IN_PARENT_OWNER_CASH",
+      "rationale": "FY2023母公司OCF减全部购建长期资产现金约16.76亿元，母公司口径和归属边界直接闭合；正常化范围为13亿至17亿元。"
+    },
+    "permanent_loss": {
+      "treatment_code": "MAINTAIN_CONSTRAINT",
+      "rationale": "大额现金降低损失概率，但应收/融资租赁、10.45亿元对子公司担保、贸易壁垒、新产能及CMEC整合仍可实质改变永久损失处理；具体变化只由outcome中金额与比例双门槛触发。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UP",
+      "rationale": "相对FY2022共同参考状态，normal earnings、臂式单位毛利和parent owner cash均改善；方向不依赖市场价格，也不是BuyBand。"
+    },
+    "next_research_action": {
+      "action_family": "SAME_BOUNDARY_ABSORPTION_AND_PARENT_CASH_SETTLEMENT",
+      "target_scope": "FY2024臂式/高位平台、集团持续费用、母公司现金流、融资租赁应收与担保",
+      "fact_or_metric": "臂式毛利额与毛利率、销量和库存；集团经常经营利润；母公司OCF减全部购建长期资产现金；综合应收及融资租赁组合减值率；实际担保代偿",
+      "decision_axis": "management_execution, normal_earnings, owner_cash, permanent_loss, valuation_direction",
+      "positive_effect": "若臂式毛利率不低于29%、经常经营利润增长至少5%、母公司全资本开支后现金不低于15亿元，综合应收减值率不高于2.39%且融资租赁组合减值率不高于1%，则确认吸收并可局部放松信用约束。",
+      "negative_effect": "若臂式单位利润和集团经常经营利润同时达到OC1负面阈值则降低normal earnings；只有母公司现金桥转负且OCF/净利润低于0.5，或母公司实际代偿同时达到1亿元与5%双门槛，才降低owner-cash处理；达到OC3账面信用统一门槛只更新匹配轴。"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "turtle-training-decision-contract.v1",
+  "contract_id": "DC:PILOT:CN:CEMENT:20180430:CN:600585",
+  "contract_version": 1,
+  "company_id": "CN:600585",
+  "issuer_id": "ISSUER:CN:600585",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "decision_purpose": "HISTORICAL_TRAINING",
+  "holding_horizon": {"minimum_years": 1, "maximum_years": 5},
+  "permanent_loss_constraints": [
+    {
+      "constraint_id": "PLC:OPERATING_CONTINUITY",
+      "condition": "Cutoff-visible operating continuity or owner-cash access deteriorates materially.",
+      "required_treatment": "Retain a conservative permanent-loss guardrail; do not substitute a price target."
+    },
+    {
+      "constraint_id": "PLC:PERIMETER_BREAK",
+      "condition": "A material consolidation perimeter or control transition prevents a continuous issuer trajectory.",
+      "required_treatment": "Classify the affected dimension as boundary/lifecycle evidence ineligible rather than forcing a forecast."
+    }
+  ],
+  "decision_flip_questions": [
+    {
+      "question_id": "DQ:NORMAL_EARNINGS",
+      "statement": "Does the cutoff-visible operating state support a normal-earnings and operating-margin trajectory over one, three and five years?",
+      "decision_effect": "A negative or unsupported answer preserves the dimension-level uncertainty or coverage gap."
+    },
+    {
+      "question_id": "DQ:PERMANENT_LOSS",
+      "statement": "Could a loss of operating continuity, cash formation or scope continuity create permanent loss on the declared issuer perimeter?",
+      "decision_effect": "A positive answer keeps the permanent-loss question explicit and prohibits valuation or report use."
+    }
+  ],
+  "evidence_budget": {
+    "evidence_budget_id": "BUDGET:H1:CN:CEMENT:20180430:CN:600585",
+    "source_packet_refs": [
+      {"receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1", "receipt_version": 1}
+    ]
+  },
+  "roles": {
+    "judgment_owner_id": "JUDGMENT_OWNER:CN:CEMENT:20180430:FORECAST_LANE",
+    "independent_challenger_id": "CHALLENGER:INDEPENDENT:CN:CEMENT:20180430:FORECAST_LANE",
+    "outcome_custodian_id": "CUSTODIAN:INDEPENDENT:CN:CEMENT:20180430:OUTCOME_ONLY"
+  },
+  "outcome_access": "NONE",
+  "price_and_opportunity_cost_policy": "PROHIBITED_FOR_HISTORICAL_TRAINING",
+  "object_class": "DECISION_CONTRACT",
+  "claim_class": "EX_ANTE_DECISION_SCOPE",
+  "allowed_outputs": ["CJO_TRAINING_MIRROR", "RESEARCH_AGENDA"]
+}

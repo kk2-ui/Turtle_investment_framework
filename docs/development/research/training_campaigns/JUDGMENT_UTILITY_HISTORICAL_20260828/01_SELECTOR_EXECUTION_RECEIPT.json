@@ -1,0 +1,33 @@
+{
+  "schema_version": "historical-selector-execution-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "selector_id": "/root/fresh_selector_execution",
+  "execution_mode": "FRESH_AGENT_NO_PARENT_CONTEXT",
+  "fork_turns": "none",
+  "declared_input": {
+    "source_universe_ref": "00_SELECTOR_UNIVERSE.json",
+    "packet_path": "/tmp/turtle-selector-packet.Y0BjW7/SELECTOR_PACKET.json",
+    "allowed_files": [
+      "SELECTOR_PACKET.json"
+    ],
+    "parent_conversation_visible": false,
+    "workspace_search_authorized": false,
+    "outcome_body_access": false,
+    "price_or_return_access": false
+  },
+  "candidate_count": 6,
+  "selection_policy": "BUSINESS_MODEL_HETEROGENEITY_THEN_CUTOFF_SOURCE_READINESS",
+  "frozen_order": [
+    "CN:603195",
+    "CN:601598",
+    "CN:600549",
+    "CN:603338",
+    "CN:600323",
+    "CN:600161"
+  ],
+  "selector_explanation": "All candidates had the same cutoff and three pre-outcome sources. The selector preserved the packet order, which already maximized business-model heterogeneity, and did not query outcomes.",
+  "execution_status": "COMPLETED",
+  "isolation_status": "ROLE_SCOPED_ONE_SHOT_EXECUTED",
+  "training_utility_credit": "NONE",
+  "authority": "NONE"
+}

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>黄金报告候选 · 内容阅读</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f0e8;
+      --panel: #fffdf8;
+      --ink: #1d2d28;
+      --muted: #71807a;
+      --line: #d9d4c7;
+      --accent: #2b6654;
+      --accent-soft: #e4eee8;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .app {
+      min-height: 100%;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+    }
+
+    aside {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+      padding: 26px 18px;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    h1 {
+      margin: 0;
+      font: 700 23px/1.25 ui-serif, Georgia, "Songti SC", serif;
+    }
+
+    .hint {
+      margin: 8px 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    nav { display: grid; gap: 8px; }
+
+    .report-link {
+      display: block;
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      color: var(--ink);
+      background: transparent;
+      text-align: left;
+      text-decoration: none;
+      transition: background .15s ease, border-color .15s ease;
+    }
+
+    .report-link:hover {
+      border-color: var(--line);
+      background: #f8f5ed;
+    }
+
+    .report-link.active {
+      border-color: #bfd3c8;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .code {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .aside-foot {
+      margin-top: auto;
+      padding-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    main {
+      min-width: 0;
+      padding: 18px;
+    }
+
+    .viewer {
+      height: calc(100vh - 36px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 16px 42px rgba(43, 54, 49, .08);
+    }
+
+    .toolbar {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    #current-title {
+      overflow: hidden;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #open-new {
+      flex: 0 0 auto;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    #open-new:hover { text-decoration: underline; }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: calc(100% - 50px);
+      border: 0;
+      background: white;
+    }
+
+    @media (max-width: 780px) {
+      .app { grid-template-columns: 1fr; }
+      aside { min-height: auto; padding: 18px; border-right: 0; border-bottom: 1px solid var(--line); }
+      nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .aside-foot { margin-top: 12px; padding-top: 4px; }
+      main { padding: 10px; }
+      .viewer { height: 72vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <h1>黄金报告候选</h1>
+      <p class="hint">点公司名称，直接看正文</p>
+
+      <nav aria-label="报告列表">
+        <a class="report-link active"
+           href="../worktrees/Turtle_investment_framework/feat-q1-02669-revision-20260811/output/02669_中海物业/reports/02669_投资研究报告_Q1_读者版.revision-20260811.candidate.html"
+           target="report-frame"
+           data-title="中海物业 · 报告正文">
+          中海物业<span class="code">02669</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-000651-golden-candidate/output/000651_格力电器/reports/000651_书籍案例黄金报告候选_20260813.html"
+           target="report-frame"
+           data-title="格力电器 · 报告正文">
+          格力电器<span class="code">000651</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-00506-golden-candidate/output/00506_中国食品/reports/00506_中国食品_黄金报告候选_20260814.html"
+           target="report-frame"
+           data-title="中国食品 · 报告正文">
+          中国食品<span class="code">00506</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-00882-golden-candidate/output/00882_天津发展/reports/00882_天津发展_黄金报告候选_20260813.html"
+           target="report-frame"
+           data-title="天津发展 · 报告正文">
+          天津发展<span class="code">00882</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-01522-golden-candidate/output/01522_京投交通科技/reports/01522_黄金报告候选_20260813.html"
+           target="report-frame"
+           data-title="京投交通科技 · 报告正文">
+          京投交通科技<span class="code">01522</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-600585-golden-candidate/output/600585_海螺水泥/reports/600585_海螺水泥_黄金报告候选_20260814.html"
+           target="report-frame"
+           data-title="海螺水泥 · 报告正文">
+          海螺水泥<span class="code">600585</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-601899-golden-candidate/output/601899_紫金矿业/reports/601899_紫金矿业_黄金报告候选_20260814.html"
+           target="report-frame"
+           data-title="紫金矿业 · 报告正文">
+          紫金矿业<span class="code">601899</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-87001-golden-candidate/output/87001_汇贤产业信托/reports/87001_汇贤产业信托_黄金报告候选_20260813.html"
+           target="report-frame"
+           data-title="汇贤产业信托 · 报告正文">
+          汇贤产业信托<span class="code">87001</span>
+        </a>
+        <a class="report-link"
+           href="../worktrees/Turtle_investment_framework/feat-q1-900936-golden-candidate/output/900936_鄂尔多斯B/reports/900936_黄金报告候选_20260813.html"
+           target="report-frame"
+           data-title="鄂尔多斯 B · 报告正文">
+          鄂尔多斯 B<span class="code">900936</span>
+        </a>
+      </nav>
+
+      <p class="aside-foot">当前可阅读 9 份候选正文</p>
+    </aside>
+
+    <main>
+      <section class="viewer" aria-label="报告阅读区">
+        <div class="toolbar">
+          <span id="current-title">中海物业 · 报告正文</span>
+          <a id="open-new"
+             href="../worktrees/Turtle_investment_framework/feat-q1-02669-revision-20260811/output/02669_中海物业/reports/02669_投资研究报告_Q1_读者版.revision-20260811.candidate.html"
+             target="_blank" rel="noopener">新窗口打开</a>
+        </div>
+        <iframe
+          name="report-frame"
+          title="黄金报告候选正文"
+          src="../worktrees/Turtle_investment_framework/feat-q1-02669-revision-20260811/output/02669_中海物业/reports/02669_投资研究报告_Q1_读者版.revision-20260811.candidate.html">
+        </iframe>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const links = [...document.querySelectorAll('.report-link')];
+    const title = document.querySelector('#current-title');
+    const openNew = document.querySelector('#open-new');
+
+    links.forEach((link) => {
+      link.addEventListener('click', () => {
+        links.forEach((item) => item.classList.remove('active'));
+        link.classList.add('active');
+        title.textContent = link.dataset.title;
+        openNew.href = link.href;
+      });
+    });
+  </script>
+</body>
+</html>

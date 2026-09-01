@@ -1,0 +1,70 @@
+{
+  "schema_version": "enterprise-judgment-round8-independent-utility-acceptance.v2",
+  "acceptance_id": "R8UTILITYACCEPT:CN002120:20190501:V2",
+  "evaluation_ref": "UTILITY:EVAL:CN002120:20190501:ROUND8:V3",
+  "package_ref": "R8:CN:FRANCHISE_EXPRESS:CN002120:20190501:V1",
+  "settlement_ref": "R8SETTLE:CN002120:20190501:FY2019:V1",
+  "scope_clock_adjudication_ref": "R8ADJ:CN002120:20190501:FY2019:V1",
+  "reviewer_id": "ROLE:ROUND8:INDEPENDENT_UTILITY_REVIEWER",
+  "reviewed_at": "2026-08-27T14:22:30+08:00",
+  "review_status": "SUBSTANTIVE_ACCEPTED_NO_METHOD_ADVANTAGE",
+  "accepted_dimension_conclusions": {
+    "INITIAL_CONDITIONS": {
+      "baseline_assessment": "NOT_DIAGNOSTIC",
+      "enhanced_assessment": "NOT_DIAGNOSTIC"
+    },
+    "IMPLEMENTED_MANAGEMENT_ACTION": {
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE"
+    },
+    "EXECUTION": {
+      "baseline_assessment": "NOT_DIAGNOSTIC",
+      "enhanced_assessment": "NOT_DIAGNOSTIC"
+    },
+    "CUSTOMER_COMPETITION_RESPONSE": {
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE"
+    },
+    "UNIT_ECONOMICS": {
+      "baseline_assessment": "NOT_DIAGNOSTIC",
+      "enhanced_assessment": "NOT_DIAGNOSTIC"
+    },
+    "WORKING_CAPITAL_CASH_CAPITAL": {
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE"
+    },
+    "ADAPTATION_PERMANENT_LOSS": {
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE"
+    },
+    "STRONGEST_ALTERNATIVE_EXPLANATION": {
+      "baseline_assessment": "NO_DIFFERENCE",
+      "enhanced_assessment": "NO_DIFFERENCE"
+    }
+  },
+  "overall_conclusion": "REAL_FEEDBACK_COMPLETED_NO_MATERIAL_METHOD_ADVANTAGE_PROVED",
+  "accepted_controls": [
+    "Every OBSERVED raw value is recomputed from declared tokens on the cited official PDF page before acquisition.",
+    "Evaluation replays the canonical settlement and exact no-causal-credit adjudication.",
+    "Each dimension finding cites frozen outcome cells and no dimension receives avoided-error or material-improvement credit.",
+    "Completion requires this independent acceptance and preserves all downstream rights as NOT_AUTHORIZED.",
+    "The eight dimensions remain a no-score question skeleton rather than a validated superior method."
+  ],
+  "remaining_material_findings": [],
+  "rights": {
+    "directional_learning": "NOT_AUTHORIZED",
+    "enterprise_learning": "NOT_AUTHORIZED",
+    "comparative": "NOT_AUTHORIZED",
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "INDEPENDENT_UTILITY_REVIEW_ACCEPTANCE",
+  "claim_class": "NO_METHOD_ADVANTAGE_ACCEPTANCE",
+  "allowed_outputs": [
+    "ROUND8_COMPLETION_RECEIPT",
+    "RESEARCH_AGENDA"
+  ]
+}

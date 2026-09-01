@@ -1,0 +1,335 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/industry_underwriting_context_v1.schema.json",
+  "title": "IndustryUnderwritingContext v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "context_id",
+    "company_identity",
+    "context_status",
+    "report_use",
+    "industry_value_chain",
+    "structural_epochs",
+    "industry_drivers",
+    "profit_pool_outlook",
+    "company_archetype_exposure",
+    "representative_peers",
+    "near_misses",
+    "candidate_main_paths",
+    "strongest_counter_thesis",
+    "company_verification_fields",
+    "evidence_refs",
+    "knowledge_time",
+    "source_objects",
+    "coverage",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": {"const": "industry-underwriting-context.v1"},
+    "context_id": {"$ref": "#/$defs/nonempty"},
+    "company_identity": {"$ref": "#/$defs/company_identity"},
+    "context_status": {"enum": ["READY", "BOUNDED"]},
+    "report_use": {"$ref": "#/$defs/report_use"},
+    "industry_value_chain": {"$ref": "#/$defs/value_chain"},
+    "structural_epochs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/epoch"}
+    },
+    "industry_drivers": {"$ref": "#/$defs/drivers"},
+    "profit_pool_outlook": {"$ref": "#/$defs/profit_pool"},
+    "company_archetype_exposure": {"$ref": "#/$defs/company_exposure"},
+    "representative_peers": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/peer"}
+    },
+    "near_misses": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/near_miss"}
+    },
+    "candidate_main_paths": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/candidate_path"}
+    },
+    "strongest_counter_thesis": {"$ref": "#/$defs/counter_thesis"},
+    "company_verification_fields": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/verification_field"}
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidence_ref"}
+    },
+    "knowledge_time": {"$ref": "#/$defs/knowledge_time"},
+    "source_objects": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/source_object"}
+    },
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "warnings": {"$ref": "#/$defs/strings"}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "strings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/nonempty"},
+      "uniqueItems": true
+    },
+    "company_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_id", "company_name", "cutoff_at", "industry_ids"],
+      "properties": {
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "company_name": {"$ref": "#/$defs/nonempty"},
+        "cutoff_at": {"$ref": "#/$defs/nonempty"},
+        "industry_ids": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "report_use": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "non_blocking", "can_support", "cannot_establish", "boundary"],
+      "properties": {
+        "mode": {"const": "REPORT_PREPARATION_READ_MODEL"},
+        "non_blocking": {"const": true},
+        "can_support": {"$ref": "#/$defs/strings"},
+        "cannot_establish": {"$ref": "#/$defs/strings"},
+        "boundary": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "value_chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stages", "customer_jobs"],
+      "properties": {
+        "stages": {"type": "array", "items": {"$ref": "#/$defs/value_chain_stage"}},
+        "customer_jobs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "value_chain_stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arena_id", "mechanism", "economic_scope", "customer_job_or_choice",
+        "value_driver", "failure_mode", "profit_pool_direction", "evidence_refs",
+        "source_object_ref"
+      ],
+      "properties": {
+        "arena_id": {"$ref": "#/$defs/nonempty"},
+        "mechanism": {"$ref": "#/$defs/nonempty"},
+        "economic_scope": {"$ref": "#/$defs/nonempty"},
+        "customer_job_or_choice": {"$ref": "#/$defs/nonempty"},
+        "value_driver": {"$ref": "#/$defs/nonempty"},
+        "failure_mode": {"$ref": "#/$defs/nonempty"},
+        "profit_pool_direction": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "epoch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["epoch_id", "as_of", "condition", "observations", "evidence_refs", "source_object_ref"],
+      "properties": {
+        "epoch_id": {"$ref": "#/$defs/nonempty"},
+        "as_of": {"$ref": "#/$defs/nonempty"},
+        "condition": {"$ref": "#/$defs/nonempty"},
+        "observations": {"$ref": "#/$defs/strings"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "drivers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["demand", "supply", "competition", "regulation"],
+      "properties": {
+        "demand": {"type": "array", "items": {"$ref": "#/$defs/driver"}},
+        "supply": {"type": "array", "items": {"$ref": "#/$defs/driver"}},
+        "competition": {"type": "array", "items": {"$ref": "#/$defs/driver"}},
+        "regulation": {"type": "array", "items": {"$ref": "#/$defs/driver"}}
+      }
+    },
+    "driver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["driver", "profit_pool_effect", "evidence_refs", "source_object_ref"],
+      "properties": {
+        "driver": {"$ref": "#/$defs/nonempty"},
+        "profit_pool_effect": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "profit_pool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["direction", "horizon", "thesis", "confidence", "evidence_refs"],
+      "properties": {
+        "direction": {"$ref": "#/$defs/nonempty"},
+        "horizon": {"$ref": "#/$defs/nonempty"},
+        "thesis": {"$ref": "#/$defs/nonempty"},
+        "confidence": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "company_exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "archetype", "responsibility_boundary", "arena_ids", "exposures",
+        "current_state", "adaptation_hypothesis", "evidence_refs", "source_object_ref"
+      ],
+      "properties": {
+        "archetype": {"$ref": "#/$defs/nonempty"},
+        "responsibility_boundary": {"$ref": "#/$defs/nonempty"},
+        "arena_ids": {"$ref": "#/$defs/strings"},
+        "exposures": {"type": "array", "items": {"$ref": "#/$defs/exposure"}},
+        "current_state": {"$ref": "#/$defs/nonempty"},
+        "adaptation_hypothesis": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "relation", "rationale", "evidence_refs"],
+      "properties": {
+        "dimension": {"$ref": "#/$defs/nonempty"},
+        "relation": {"$ref": "#/$defs/nonempty"},
+        "rationale": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "peer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_id", "company_name", "archetype", "common_arena_ids",
+        "comparison_role", "why_representative", "evidence_refs", "source_object_ref"
+      ],
+      "properties": {
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "company_name": {"$ref": "#/$defs/nonempty"},
+        "archetype": {"$ref": "#/$defs/nonempty"},
+        "common_arena_ids": {"$ref": "#/$defs/strings"},
+        "comparison_role": {"$ref": "#/$defs/nonempty"},
+        "why_representative": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "near_miss": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_id", "company_name", "archetype", "common_arena_ids",
+        "comparison_role", "why_representative", "evidence_refs", "source_object_ref",
+        "near_miss_reason"
+      ],
+      "properties": {
+        "company_id": {"$ref": "#/$defs/nonempty"},
+        "company_name": {"$ref": "#/$defs/nonempty"},
+        "archetype": {"$ref": "#/$defs/nonempty"},
+        "common_arena_ids": {"$ref": "#/$defs/strings"},
+        "comparison_role": {"$ref": "#/$defs/nonempty"},
+        "why_representative": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"},
+        "near_miss_reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "candidate_path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path_id", "status", "industry_regime", "industry_force", "profit_pool_effect",
+        "company_exposure", "adaptation_hypothesis", "economics_implication",
+        "permanent_loss_implication", "reversal_observations", "evidence_refs"
+      ],
+      "properties": {
+        "path_id": {"$ref": "#/$defs/nonempty"},
+        "status": {"const": "CANDIDATE_TO_VERIFY"},
+        "industry_regime": {"$ref": "#/$defs/nonempty"},
+        "industry_force": {"$ref": "#/$defs/nonempty"},
+        "profit_pool_effect": {"$ref": "#/$defs/nonempty"},
+        "company_exposure": {"$ref": "#/$defs/nonempty"},
+        "adaptation_hypothesis": {"$ref": "#/$defs/nonempty"},
+        "economics_implication": {"$ref": "#/$defs/nonempty"},
+        "permanent_loss_implication": {"$ref": "#/$defs/nonempty"},
+        "reversal_observations": {"$ref": "#/$defs/strings"},
+        "evidence_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "counter_thesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "why_plausible", "discriminating_observations", "evidence_refs", "source_object_ref"],
+      "properties": {
+        "statement": {"$ref": "#/$defs/nonempty"},
+        "why_plausible": {"$ref": "#/$defs/nonempty"},
+        "discriminating_observations": {"$ref": "#/$defs/strings"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "verification_field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "kind", "why_it_matters", "evidence_refs", "source_object_ref"],
+      "properties": {
+        "field": {"$ref": "#/$defs/nonempty"},
+        "kind": {"enum": ["FIELD", "QUESTION"]},
+        "why_it_matters": {"$ref": "#/$defs/nonempty"},
+        "evidence_refs": {"$ref": "#/$defs/strings"},
+        "source_object_ref": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_ref", "source_object_refs", "supports", "knowledge_status"],
+      "properties": {
+        "evidence_ref": {"$ref": "#/$defs/nonempty"},
+        "source_object_refs": {"$ref": "#/$defs/strings"},
+        "supports": {"$ref": "#/$defs/strings"},
+        "knowledge_status": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "knowledge_time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cutoff_at", "latest_included_at", "excluded_future_source_refs", "undated_source_refs"],
+      "properties": {
+        "cutoff_at": {"$ref": "#/$defs/nonempty"},
+        "latest_included_at": {"$ref": "#/$defs/nonempty"},
+        "excluded_future_source_refs": {"$ref": "#/$defs/strings"},
+        "undated_source_refs": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "source_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "ref", "schema_version", "use_status", "boundary"],
+      "properties": {
+        "kind": {"$ref": "#/$defs/nonempty"},
+        "ref": {"$ref": "#/$defs/nonempty"},
+        "schema_version": {"$ref": "#/$defs/nonempty"},
+        "use_status": {"$ref": "#/$defs/nonempty"},
+        "boundary": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "bounded"],
+      "properties": {
+        "available": {"$ref": "#/$defs/strings"},
+        "bounded": {"$ref": "#/$defs/strings"}
+      }
+    }
+  }
+}

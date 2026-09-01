@@ -1,0 +1,144 @@
+{
+  "schema_version": "turtle-pit-company-state-forecast.v4",
+  "forecast_id": "FORECAST:PILOT:CN:CEMENT:20180430:CN:600585:V4:ISOLATED",
+  "forecast_epoch_id": "TURTLE_PIT_COMPANY_FORECAST_EPOCH_V4",
+  "company_id": "CN:600585",
+  "issuer_id": "ISSUER:CN:600585",
+  "subject_id": "ECONOMIC_ENTITY:CN:600585",
+  "cutoff_at": "2018-04-30T23:59:59+08:00",
+  "forecast_windows": ["ONE_YEAR", "THREE_YEAR", "FIVE_YEAR"],
+  "source_packet_refs": [
+    {"receipt_id": "H1:COHORT:CN:CEMENT_LISTED:20180430:STATIC:V1", "receipt_version": 1}
+  ],
+  "model_memory_mitigation": {
+    "mode": "MODEL_MEMORY_MITIGATED",
+    "isolated_forecaster_id": "ISOLATED_FORECASTER:CN:600585:V4",
+    "known_outcome_access": "NONE",
+    "price_access": "NONE",
+    "post_cutoff_access": "NONE",
+    "network_route": "H1_DECLARED_STATIC_PDF_ONLY",
+    "notes": "This submission used only the declared H1 static package, preforecast curator extraction, and frozen decision and measurement contracts; no known outcomes, prices, or post-cutoff material were accessed."
+  },
+  "decision_contract_ref": {
+    "contract_id": "DC:PILOT:CN:CEMENT:20180430:CN:600585",
+    "contract_version": 1
+  },
+  "outcome_measurement_contract_ref": {
+    "measurement_contract_id": "OMC:PILOT:CN:CEMENT:20180430:CN:600585:V3",
+    "measurement_contract_version": 1
+  },
+  "preforecast_evidence_receipt_ref": {
+    "evidence_receipt_id": "PREFORCAST:PILOT:CN:CEMENT:20180430:CN:600585:V1",
+    "evidence_receipt_version": 1
+  },
+  "applied_policy_change_ids": [],
+  "dimensions": [
+    {
+      "dimension_id": "NORMAL_EARNINGS",
+      "evidence_status": "MODEL_UNCERTAIN",
+      "evidence_refs": [
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE"},
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 76", "field_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 76", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 80", "field_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 80", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"}
+      ],
+      "forecast_by_window": [
+        {"window_id": "ONE_YEAR", "baseline_reference": "FY2017 listed-consolidated operating-profit margin calculated from the cited FY2017 operating-profit and operating-revenue fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.55}, {"label": "STABLE", "probability": 0.25}, {"label": "IMPROVE", "probability": 0.2}]},
+        {"window_id": "THREE_YEAR", "baseline_reference": "FY2017 listed-consolidated operating-profit margin calculated from the cited FY2017 operating-profit and operating-revenue fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.5}, {"label": "STABLE", "probability": 0.3}, {"label": "IMPROVE", "probability": 0.2}]},
+        {"window_id": "FIVE_YEAR", "baseline_reference": "FY2017 listed-consolidated operating-profit margin calculated from the cited FY2017 operating-profit and operating-revenue fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.55}, {"label": "STABLE", "probability": 0.3}, {"label": "IMPROVE", "probability": 0.15}]}
+      ],
+      "rationale": "The permitted consolidated operating-profit-margin history rises from FY2015 through FY2017. With only those three annual observations and no permitted forward operating evidence, the distribution is deliberately broad and puts more probability on DETERIORATE than IMPROVE from the FY2017 baseline."
+    },
+    {
+      "dimension_id": "ROIC_OR_OPERATING_MARGIN",
+      "evidence_status": "MODEL_UNCERTAIN",
+      "evidence_refs": [
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE"},
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 76", "field_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 76", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 80", "field_id": "ISSUER_CONSOLIDATED_OPERATING_REVENUE"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 80", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"}
+      ],
+      "forecast_by_window": [
+        {"window_id": "ONE_YEAR", "baseline_reference": "FY2017 listed-consolidated operating-profit margin calculated from the cited FY2017 operating-profit and operating-revenue fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.5}, {"label": "STABLE", "probability": 0.3}, {"label": "IMPROVE", "probability": 0.2}]},
+        {"window_id": "THREE_YEAR", "baseline_reference": "FY2017 listed-consolidated operating-profit margin calculated from the cited FY2017 operating-profit and operating-revenue fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.45}, {"label": "STABLE", "probability": 0.35}, {"label": "IMPROVE", "probability": 0.2}]},
+        {"window_id": "FIVE_YEAR", "baseline_reference": "FY2017 listed-consolidated operating-profit margin calculated from the cited FY2017 operating-profit and operating-revenue fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.5}, {"label": "STABLE", "probability": 0.3}, {"label": "IMPROVE", "probability": 0.2}]}
+      ],
+      "rationale": "The frozen measurement contract defines this dimension with listed-consolidated operating-profit margin. The three permitted observations show a rising ratio into FY2017, but they supply neither a longer-cycle base nor forward operating fields; the stated probabilities therefore remain model-uncertain."
+    },
+    {
+      "dimension_id": "CASH_CONVERSION_AND_CAPEX_BURDEN",
+      "evidence_status": "MODEL_UNCERTAIN",
+      "evidence_refs": [
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 79", "field_id": "ISSUER_CONSOLIDATED_CASH_FLOW_FROM_OPERATING_ACTIVITIES"},
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 80", "field_id": "ISSUER_CONSOLIDATED_CASH_FLOW_FROM_OPERATING_ACTIVITIES"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 76", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 84", "field_id": "ISSUER_CONSOLIDATED_CASH_FLOW_FROM_OPERATING_ACTIVITIES"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 80", "field_id": "ISSUER_CONSOLIDATED_OPERATING_PROFIT"}
+      ],
+      "forecast_by_window": [
+        {"window_id": "ONE_YEAR", "baseline_reference": "FY2017 listed-consolidated cash flow from operating activities divided by operating profit, calculated from the cited FY2017 fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.25}, {"label": "STABLE", "probability": 0.45}, {"label": "IMPROVE", "probability": 0.3}]},
+        {"window_id": "THREE_YEAR", "baseline_reference": "FY2017 listed-consolidated cash flow from operating activities divided by operating profit, calculated from the cited FY2017 fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.3}, {"label": "STABLE", "probability": 0.4}, {"label": "IMPROVE", "probability": 0.3}]},
+        {"window_id": "FIVE_YEAR", "baseline_reference": "FY2017 listed-consolidated cash flow from operating activities divided by operating profit, calculated from the cited FY2017 fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.35}, {"label": "STABLE", "probability": 0.35}, {"label": "IMPROVE", "probability": 0.3}]}
+      ],
+      "rationale": "The cited operating-cash-flow-to-operating-profit ratio is above one in FY2015 and FY2016 and below one in FY2017. The permitted fields support a bounded three-observation distribution, but do not isolate capital-expenditure burden or provide forward cash-flow evidence."
+    },
+    {
+      "dimension_id": "LEVERAGE_AND_FINANCIAL_RESILIENCE",
+      "evidence_status": "MODEL_UNCERTAIN",
+      "evidence_refs": [
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 80", "field_id": "ISSUER_CONSOLIDATED_CASH_AND_CASH_EQUIVALENTS"},
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 70", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 81", "field_id": "ISSUER_CONSOLIDATED_CASH_AND_CASH_EQUIVALENTS"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 71", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 85", "field_id": "ISSUER_CONSOLIDATED_CASH_AND_CASH_EQUIVALENTS"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"}
+      ],
+      "forecast_by_window": [
+        {"window_id": "ONE_YEAR", "baseline_reference": "FY2017 listed-consolidated cash-and-cash-equivalents to current-liabilities ratio, calculated from the cited FY2017 fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.35}, {"label": "STABLE", "probability": 0.45}, {"label": "IMPROVE", "probability": 0.2}]},
+        {"window_id": "THREE_YEAR", "baseline_reference": "FY2017 listed-consolidated cash-and-cash-equivalents to current-liabilities ratio, calculated from the cited FY2017 fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.35}, {"label": "STABLE", "probability": 0.4}, {"label": "IMPROVE", "probability": 0.25}]},
+        {"window_id": "FIVE_YEAR", "baseline_reference": "FY2017 listed-consolidated cash-and-cash-equivalents to current-liabilities ratio, calculated from the cited FY2017 fields.", "probabilities": [{"label": "DETERIORATE", "probability": 0.4}, {"label": "STABLE", "probability": 0.35}, {"label": "IMPROVE", "probability": 0.25}]}
+      ],
+      "rationale": "The cited cash-to-current-liabilities ratio increases in each permitted year, reaching just below the measurement contract's 0.5 lower threshold in FY2017. The small historical sample and absence of forward balance-sheet evidence require a model-uncertain distribution."
+    },
+    {
+      "dimension_id": "COMPETITIVE_POSITION",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 21", "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 21", "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 22", "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME"}
+      ],
+      "forecast_by_window": [],
+      "rationale": "The permitted record contains aggregate issuer sales volume only. It supplies no permitted customer-market overlap, delivered-price, transport-radius, share, capacity, or peer-comparability field from which a competitive-position trajectory can be supported; no forecast is issued.",
+      "measurement_gaps": [
+        {"measurement_id": "MEASURE:CN:600585:COMPETITIVE_POSITION:ONE_YEAR", "reason": "Aggregate issuer sales volume is not sufficient permitted evidence for a competitive-position forecast.", "evidence_refs": [{"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 22", "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME"}]},
+        {"measurement_id": "MEASURE:CN:600585:COMPETITIVE_POSITION:THREE_YEAR", "reason": "Aggregate issuer sales volume is not sufficient permitted evidence for a competitive-position forecast.", "evidence_refs": [{"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 22", "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME"}]},
+        {"measurement_id": "MEASURE:CN:600585:COMPETITIVE_POSITION:FIVE_YEAR", "reason": "Aggregate issuer sales volume is not sufficient permitted evidence for a competitive-position forecast.", "evidence_refs": [{"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 22", "field_id": "ISSUER_CONSOLIDATED_CEMENT_AND_CLINKER_NET_SALES_VOLUME"}]}
+      ]
+    },
+    {
+      "dimension_id": "PERMANENT_LOSS_RISK",
+      "evidence_status": "EVIDENCE_INELIGIBLE",
+      "evidence_refs": [
+        {"source_id": "CNINFO:600585:ANN:20160324:1202069257", "published_at": "2016-03-24", "field_ref": "PDF p. 70", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"},
+        {"source_id": "CNINFO:600585:ANN:20170324:1203189438", "published_at": "2017-03-24", "field_ref": "PDF p. 71", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"},
+        {"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"}
+      ],
+      "forecast_by_window": [],
+      "rationale": "The permitted financial fields do not disclose the frozen contract's material listed-consolidated operating-continuity or consolidation-perimeter discontinuity event. Current-liabilities observations cannot establish that event risk, so no forecast is issued.",
+      "measurement_gaps": [
+        {"measurement_id": "MEASURE:CN:600585:PERMANENT_LOSS_RISK:ONE_YEAR", "reason": "No permitted field discloses the contract-defined material operating-continuity or consolidation-perimeter discontinuity event or its antecedents.", "evidence_refs": [{"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"}]},
+        {"measurement_id": "MEASURE:CN:600585:PERMANENT_LOSS_RISK:THREE_YEAR", "reason": "No permitted field discloses the contract-defined material operating-continuity or consolidation-perimeter discontinuity event or its antecedents.", "evidence_refs": [{"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"}]},
+        {"measurement_id": "MEASURE:CN:600585:PERMANENT_LOSS_RISK:FIVE_YEAR", "reason": "No permitted field discloses the contract-defined material operating-continuity or consolidation-perimeter discontinuity event or its antecedents.", "evidence_refs": [{"source_id": "CNINFO:600585:ANN:20180323:1204507132", "published_at": "2018-03-23", "field_ref": "PDF p. 75", "field_id": "ISSUER_CONSOLIDATED_CURRENT_LIABILITIES"}]}
+      ]
+    }
+  ],
+  "object_class": "PIT_COMPANY_STATE_FORECAST",
+  "claim_class": "PROSPECTIVE_STATE_TRAJECTORY",
+  "allowed_outputs": ["FORECAST_EVALUATION_ONLY", "RESEARCH_AGENDA"]
+}

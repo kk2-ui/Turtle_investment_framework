@@ -1,0 +1,41 @@
+{
+  "schema_version": "enterprise-judgment-round6-transfer-selection.v1",
+  "selection_id": "R6SEL:CN:CEMENT:600801:20160427:V1",
+  "selection": {
+    "selection_policy": "EARLIEST_UNCONSUMED_IMMUTABLE_ROSTER_ROW_FOR_DIFFERENT_SOURCE_LEARNING_COMPANY",
+    "source_roster_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+    "source_learning_company_id": "CN:600802",
+    "source_learning_completion_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+    "consumed_transition_ids": [
+      "CCR:000401:20170412:20180422",
+      "CCR:600425:20140416:20150415",
+      "CCR:600585:20170412:20180422",
+      "CCR:600801:20170412:20180422",
+      "CCR:600802:20140416:20150415",
+      "CCR:600802:20150415:20160427"
+    ],
+    "selected_rank": 1,
+    "transition_id": "CCR:600801:20160427:20170412",
+    "company_id": "CN:600801",
+    "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600801",
+    "cutoff_at": "2016-04-27T00:00:00+08:00",
+    "next_cutoff_at": "2017-04-12T00:00:00+08:00",
+    "selection_used_outcome": false,
+    "selection_used_source_convenience": false,
+    "method_unseen_on_target": true
+  },
+  "source_learning_ref": {
+    "completion_id": "R5COMP:CN:CEMENT:600802:20150415:FY2015:V1",
+    "artifact": "36_round5_real_feedback_completion_receipt.json",
+    "company_id": "CN:600802",
+    "cutoff_at": "2015-04-15T00:00:00+08:00",
+    "accepted_feedback_scope": "LOCAL_ISSUER_CONTROLLED_EXECUTION_SCOPE"
+  },
+  "selection_basis": "Frozen roster order after removing already consumed transitions and the Round 5 source-learning company; no outcome or source convenience was used.",
+  "object_class": "ENTERPRISE_JUDGMENT_TRANSFER_SELECTION",
+  "claim_class": "MECHANICAL_PRE_OUTCOME_SELECTION",
+  "allowed_outputs": [
+    "PAIRED_PREOUTCOME_RESEARCH",
+    "RESEARCH_AGENDA"
+  ]
+}

@@ -1,0 +1,818 @@
+{
+  "schema_version": "historical-outcome-custodian-settlement.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600549:20240501:FY2024",
+  "company_id": "CN:600549",
+  "custodian_id": "/root/cn600549_outcome_custodian",
+  "settlement_date": "2026-08-28",
+  "authorization_contract": "23_CN600549_OUTCOME_ACCESS_AUTHORIZATION.json",
+  "source_scope": {
+    "document_count": 1,
+    "authorized_url": "https://static.cninfo.com.cn/finalpage/2025-04-26/1223318066.PDF",
+    "period": "FY2024",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "official_document_title": "厦门钨业股份有限公司2024年年度报告",
+    "official_document_printed_pages": 373,
+    "identity_note": "The authorization company_id CN:600549 and the official PDF identify 厦门钨业股份有限公司. The task-label name 洛阳钼业 is not used to override the authorized security code or the official document identity.",
+    "browser_access": {
+      "tool": "ego-browser",
+      "task_space_id": 77,
+      "task_space_name": "cn600549 fy2024 outcome settlement",
+      "document_title_observed_in_browser": "厦门钨业股份有限公司2024年年度报告"
+    }
+  },
+  "scope_controls": {
+    "outcome_only": true,
+    "preoutcome_narrative_read": false,
+    "treatment_mapping_read": false,
+    "prices_returns_comparative_valuation_or_investment_conclusions_read": false,
+    "classification_authority": "Only the three valid_input_first_match arrays identified by the authorization contract were machine-extracted; no surrounding preoutcome narrative or treatment was read.",
+    "group_items_not_allocated_without_segment_evidence": true
+  },
+  "cells": [
+    {
+      "cell_id": "FY2024_TUNGSTEN_PROFIT_ENGINE_BRIDGE",
+      "raw_reported_values": [
+        {
+          "field": "FY2024_reportable_segment_revenue",
+          "reported_value": 17707952856.21,
+          "unit": "CNY",
+          "responsibility_boundary": "钨钼等有色金属制品报告分部，分部内抵销后",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 报告分部的财务信息, 营业收入（分部内抵销后）"
+        },
+        {
+          "field": "FY2024_reported_segment_operating_profit",
+          "reported_value": 2765068553.70,
+          "unit": "CNY",
+          "responsibility_boundary": "钨钼等有色金属制品报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 报告分部的财务信息, 营业利润/(亏损)"
+        },
+        {
+          "field": "FY2024_external_main_business_revenue",
+          "reported_value": 17084162202.67,
+          "unit": "CNY",
+          "responsibility_boundary": "钨钼等有色金属对合并范围外客户的主营业务",
+          "printed_page": 37,
+          "source_locator": "authorized annual report p.37, 主营业务分行业情况, 钨钼等有色金属"
+        },
+        {
+          "field": "FY2024_external_main_business_cost",
+          "reported_value": 12579756996.59,
+          "unit": "CNY",
+          "responsibility_boundary": "钨钼等有色金属对合并范围外客户的主营业务",
+          "printed_page": 37,
+          "source_locator": "authorized annual report p.37, 主营业务分行业情况, 钨钼等有色金属"
+        },
+        {
+          "field": "FY2024_external_main_business_gross_margin",
+          "reported_value": 0.2637,
+          "reported_display": "26.37%",
+          "unit": "ratio",
+          "responsibility_boundary": "钨钼等有色金属对合并范围外客户的主营业务",
+          "printed_page": 37,
+          "source_locator": "authorized annual report p.37, 主营业务分行业情况, 钨钼等有色金属"
+        },
+        {
+          "field": "FY2024_hard_alloy_external_sales_volume",
+          "reported_value": 7352,
+          "unit": "tonnes",
+          "reported_yoy_change": 0.0835,
+          "responsibility_boundary": "硬质合金，向公司合并范围外客户销售；定义含合金棒材、矿用合金、盾构合金、顶锤、辊环、数控刀片基体、耐磨零件和硬面材料",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①②"
+        },
+        {
+          "field": "FY2024_cutting_tool_external_sales_volume",
+          "reported_value": 5130,
+          "unit": "10k_pieces",
+          "reported_yoy_change": 0.0222,
+          "responsibility_boundary": "切削工具，向公司合并范围外客户销售；定义含整体刀具、可转位刀片、超硬刀具",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①②"
+        },
+        {
+          "field": "FY2024_fine_tungsten_wire_external_sales_volume",
+          "reported_value": 1354,
+          "unit": "100m_metres",
+          "reported_yoy_change": 0.5597,
+          "responsibility_boundary": "细钨丝，向公司合并范围外客户销售",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①"
+        },
+        {
+          "field": "FY2024_segment_capital_expenditure",
+          "reported_value": 1824472121.88,
+          "unit": "CNY",
+          "responsibility_boundary": "钨钼等有色金属制品报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息1.资本性支出"
+        },
+        {
+          "field": "FY2024_segment_depreciation_and_amortization",
+          "reported_value": 690325526.60,
+          "unit": "CNY",
+          "responsibility_boundary": "钨钼等有色金属制品报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息2.折旧和摊销费用"
+        },
+        {
+          "field": "FY2024_segment_asset_impairment_loss",
+          "reported_value": -76497448.65,
+          "normalized_burden_amount": 76497448.65,
+          "unit": "CNY",
+          "responsibility_boundary": "钨钼等有色金属制品报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息3.资产减值损失; report presents losses with a negative sign"
+        }
+      ],
+      "frozen_baseline_inputs": {
+        "FY2023_reported_and_adjusted_recurring_segment_profit_CNY": 2654306141.57,
+        "FY2023_segment_revenue_CNY": 16767154077.41,
+        "FY2023_adjusted_recurring_margin": 0.15830391545969544,
+        "FY2023_segment_capex_CNY": 1298646277.62,
+        "FY2023_depreciation_amortization_CNY": 648142396.80,
+        "FY2023_asset_impairment_CNY": 106537258.10,
+        "FY2023_external_main_business_gross_margin": 0.2873,
+        "source_locator": "authorization contract frozen_baseline; not re-read from any other outcome source"
+      },
+      "adjustment_bridge": {
+        "reported_segment_operating_profit_CNY": 2765068553.70,
+        "explicit_segment_attributed_adjustments_CNY": 0.0,
+        "unallocated_group_items_CNY": "NOT_ASSIGNED",
+        "adjusted_recurring_segment_profit_CNY": 2765068553.70,
+        "mechanical_boundary": "No group equity-method income, subsidy, disposal, impairment or other one-off was allocated. Zero means no permitted amount was assigned, not proof that no group item existed."
+      },
+      "derived_values": [
+        {
+          "field": "adjusted_recurring_segment_profit_change",
+          "formula": "2765068553.70 / 2654306141.57 - 1",
+          "value": 0.041729328201939975,
+          "display": "+4.17%",
+          "unit": "ratio"
+        },
+        {
+          "field": "FY2024_adjusted_recurring_segment_margin",
+          "formula": "2765068553.70 / 17707952856.21",
+          "value": 0.1561484027065454,
+          "display": "15.61%",
+          "unit": "ratio"
+        },
+        {
+          "field": "external_main_business_gross_margin_change",
+          "formula": "26.37% - 28.73%",
+          "value_percentage_points": -2.36,
+          "unit": "percentage_points"
+        },
+        {
+          "field": "segment_capex_change",
+          "formula": "1824472121.88 / 1298646277.62 - 1",
+          "value": 0.404903054297179,
+          "display": "+40.49%",
+          "unit": "ratio"
+        },
+        {
+          "field": "segment_depreciation_and_amortization_change",
+          "formula": "690325526.60 / 648142396.80 - 1",
+          "value": 0.06508312063562882,
+          "display": "+6.51%",
+          "unit": "ratio"
+        },
+        {
+          "field": "segment_asset_impairment_burden_change",
+          "formula": "76497448.65 / 106537258.10 - 1",
+          "value": -0.28196529538805535,
+          "display": "-28.20%",
+          "unit": "ratio"
+        }
+      ],
+      "capital_burden_observation": "COMPONENTS_MIXED: capex and depreciation/amortization increased while impairment burden declined; all three required reported inputs are present.",
+      "product_unit_economics": "UNKNOWN: the annual report does not disclose a core deep-processing product's recurring unit profit after persistent R&D, selling, administrative and capital burden. This does not erase the observable reportable-segment bridge.",
+      "first_match_trace": [
+        {
+          "position": 1,
+          "class_id": "LOCAL_UNKNOWN",
+          "matched": false,
+          "reason": "Comparable reportable-segment revenue/profit, all three frozen product sales volumes, external main-business gross margin and all three capital-burden inputs are disclosed. Missing product-level full unit economics is handled by a later class and is not a required input in this first condition."
+        },
+        {
+          "position": 2,
+          "class_id": "MEASUREMENT_MISMATCH",
+          "matched": false,
+          "reason": "The report identifies the reportable segment consistently and separately explains that other business-section presentations include headquarters; this settlement uses the reportable-segment table on both the frozen and outcome boundaries."
+        },
+        {
+          "position": 3,
+          "class_id": "FAVORABLE_FULL_EXECUTION_BRIDGE",
+          "matched": false,
+          "reason": "Adjusted recurring segment profit increased only 4.17%, external main-business gross margin was 26.37%, and product-level recurring unit economics was not disclosed."
+        },
+        {
+          "position": 4,
+          "class_id": "FAVORABLE_EARNINGS_BRIDGE_ONLY",
+          "matched": false,
+          "reason": "The at-least-10% profit-growth and at-least-27.73% gross-margin conditions both failed."
+        },
+        {
+          "position": 5,
+          "class_id": "ADVERSE_PROFIT_ENGINE_BREAK",
+          "matched": false,
+          "reason": "Adjusted recurring segment profit did not fall, gross margin remained above 24.70%, and none of the three core product sales volumes fell more than 10%."
+        },
+        {
+          "position": 6,
+          "class_id": "NEUTRAL_HOLD",
+          "matched": false,
+          "reason": "Profit was within the FY2023 plus-or-minus-5% band, but external main-business gross margin of 26.37% was below the required 27.73%-29.73% interval."
+        },
+        {
+          "position": 7,
+          "class_id": "MIXED_COMPLETE_RESIDUAL",
+          "matched": true,
+          "reason": "All classification inputs are observable and comparable, but the combination of +4.17% recurring segment profit, 26.37% gross margin, positive volumes and mixed capital-burden components satisfies none of the earlier numerical classes."
+        }
+      ],
+      "matched_class": {
+        "class_id": "MIXED_COMPLETE_RESIDUAL",
+        "economic_direction": "MIXED"
+      },
+      "localized_unknowns": [
+        "Core-product recurring unit economics after persistent R&D, selling, administrative and capital burden is not disclosed."
+      ]
+    },
+    {
+      "cell_id": "FY2024_BATTERY_RARE_EARTH_UNIT_ECONOMICS",
+      "raw_reported_values": [
+        {
+          "field": "FY2024_battery_materials_segment_revenue",
+          "reported_value": 13303441983.49,
+          "unit": "CNY",
+          "responsibility_boundary": "电池材料报告分部，分部内抵销后",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 报告分部的财务信息"
+        },
+        {
+          "field": "FY2024_battery_materials_reported_segment_operating_profit",
+          "reported_value": 513233262.76,
+          "unit": "CNY",
+          "responsibility_boundary": "电池材料报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 报告分部的财务信息"
+        },
+        {
+          "field": "FY2024_battery_materials_capital_expenditure",
+          "reported_value": 913127120.92,
+          "unit": "CNY",
+          "responsibility_boundary": "电池材料报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息1.资本性支出"
+        },
+        {
+          "field": "FY2024_battery_materials_depreciation_and_amortization",
+          "reported_value": 393309099.31,
+          "unit": "CNY",
+          "responsibility_boundary": "电池材料报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息2.折旧和摊销费用"
+        },
+        {
+          "field": "FY2024_battery_materials_asset_impairment_loss",
+          "reported_value": -133831257.09,
+          "normalized_burden_amount": 133831257.09,
+          "unit": "CNY",
+          "responsibility_boundary": "电池材料报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息3.资产减值损失"
+        },
+        {
+          "field": "FY2024_ternary_material_external_sales_volume",
+          "reported_value": 51411,
+          "unit": "tonnes",
+          "responsibility_boundary": "电池材料；向公司合并范围外客户销售",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①"
+        },
+        {
+          "field": "FY2024_lithium_cobalt_oxide_external_sales_volume",
+          "reported_value": 46184,
+          "unit": "tonnes",
+          "responsibility_boundary": "电池材料；向公司合并范围外客户销售",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①"
+        },
+        {
+          "field": "FY2024_rare_earth_segment_revenue",
+          "reported_value": 4467339722.79,
+          "unit": "CNY",
+          "responsibility_boundary": "稀土业务报告分部，分部内抵销后；FY2024已不含已转让的金龙稀土冶炼分离业务",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 报告分部的财务信息; perimeter event at p.357"
+        },
+        {
+          "field": "FY2024_rare_earth_reported_segment_operating_profit",
+          "reported_value": 245161334.95,
+          "unit": "CNY",
+          "responsibility_boundary": "稀土业务报告分部；reported profit cannot be converted to adjusted recurring profit because the separately attributable disposal gain amount is not disclosed",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 报告分部的财务信息"
+        },
+        {
+          "field": "FY2024_rare_earth_capital_expenditure",
+          "reported_value": 360173438.16,
+          "unit": "CNY",
+          "responsibility_boundary": "稀土业务报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息1.资本性支出"
+        },
+        {
+          "field": "FY2024_rare_earth_depreciation_and_amortization",
+          "reported_value": 112289395.42,
+          "unit": "CNY",
+          "responsibility_boundary": "稀土业务报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息2.折旧和摊销费用"
+        },
+        {
+          "field": "FY2024_rare_earth_asset_impairment_loss",
+          "reported_value": -43921661.25,
+          "normalized_burden_amount": 43921661.25,
+          "unit": "CNY",
+          "responsibility_boundary": "稀土业务报告分部",
+          "printed_page": 356,
+          "source_locator": "authorized annual report p.356, Note XVIII.6(2), 补充信息3.资产减值损失"
+        },
+        {
+          "field": "FY2024_rare_earth_oxide_external_sales_volume",
+          "reported_value": 3723,
+          "unit": "tonnes",
+          "reported_yoy_change": -0.1649,
+          "responsibility_boundary": "稀土业务；向公司合并范围外客户销售；FY2024不含已转让的原金龙稀土冶炼分离业务",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①③"
+        },
+        {
+          "field": "FY2024_rare_earth_metal_external_sales_volume",
+          "reported_value": 2859,
+          "unit": "tonnes",
+          "reported_yoy_change": 0.2190,
+          "responsibility_boundary": "稀土业务；向公司合并范围外客户销售",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①"
+        },
+        {
+          "field": "FY2024_magnetic_material_external_sales_volume",
+          "reported_value": 8867,
+          "unit": "tonnes",
+          "reported_yoy_change": 0.1625,
+          "responsibility_boundary": "稀土业务；向公司合并范围外客户销售",
+          "printed_page": 38,
+          "source_locator": "authorized annual report p.38, 产销量情况分析表及说明①"
+        },
+        {
+          "field": "rare_earth_business_transfer_consideration",
+          "reported_value": 483821390.64,
+          "unit": "CNY_including_tax",
+          "responsibility_boundary": "金龙稀土向中稀金龙转让稀土冶炼分离业务；this is consideration, not the disposal gain",
+          "printed_page": 348,
+          "source_locator": "authorized annual report p.348, Note XIV.5(6), 关联方资产转让"
+        },
+        {
+          "field": "group_disposal_gain_total",
+          "reported_value": 145658315.94,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group total across multiple long-term-equity disposals; no amount is assigned to rare earth",
+          "printed_page": 311,
+          "source_locator": "authorized annual report p.311, Note VII.68, 处置长期股权投资产生的投资收益; explanation identifies real-estate and rare-earth transactions without an amount split"
+        }
+      ],
+      "frozen_baseline_inputs": {
+        "battery_materials": {
+          "FY2023_adjusted_recurring_segment_profit_CNY": 560381772.08,
+          "FY2023_segment_revenue_CNY": 17310873278.22,
+          "FY2023_adjusted_recurring_margin": 0.032371663928997436,
+          "FY2023_segment_capex_CNY": 1415709683.04,
+          "FY2023_depreciation_amortization_CNY": 365598528.27,
+          "FY2023_asset_impairment_CNY": 102047848.46,
+          "FY2023_key_sales_volume_tonnes": 71994
+        },
+        "rare_earth": {
+          "FY2023_adjusted_recurring_segment_profit_CNY": 144351075.22,
+          "FY2023_segment_revenue_CNY": 5523438635.32,
+          "FY2023_adjusted_recurring_margin": 0.026134276987697002,
+          "FY2023_segment_capex_CNY": 334221638.07,
+          "FY2023_depreciation_amortization_CNY": 126779590.84,
+          "FY2023_asset_impairment_CNY": 93893369.60,
+          "FY2023_key_sales_volume_tonnes": 14431
+        },
+        "source_locator": "authorization contract frozen_baseline; not re-read from any other outcome source"
+      },
+      "separate_responsibility_bridges": {
+        "battery_materials": {
+          "reported_segment_operating_profit_CNY": 513233262.76,
+          "explicit_segment_attributed_adjustments_CNY": 0.0,
+          "adjusted_recurring_segment_profit_CNY": 513233262.76,
+          "key_sales_volume_formula": "ternary material 51411 tonnes + lithium cobalt oxide 46184 tonnes",
+          "key_sales_volume_tonnes": 97595,
+          "key_sales_volume_change_vs_frozen_baseline": 0.3555990777009195,
+          "boundary_note": "No group item was allocated to battery materials."
+        },
+        "rare_earth": {
+          "reported_segment_operating_profit_CNY": 245161334.95,
+          "explicit_segment_attributed_disposal_event": "YES",
+          "explicit_segment_attributed_disposal_gain_CNY": "UNKNOWN",
+          "adjusted_recurring_segment_profit_CNY": "UNKNOWN",
+          "key_sales_volume_formula": "rare-earth oxide 3723 tonnes + rare-earth metal 2859 tonnes + magnetic material 8867 tonnes",
+          "reported_key_sales_volume_tonnes": 15449,
+          "reported_key_sales_volume_change_vs_frozen_baseline": 0.07054258194165341,
+          "comparability": "NOT_CLOSED",
+          "boundary_note": "The report states that the original Jinlong rare-earth smelting/separation business was transferred and no longer consolidated. The transfer consideration is disclosed, but the transaction-specific disposal gain and a post-transfer-perimeter FY2023 restatement are not."
+        }
+      },
+      "reported_not_adjusted_diagnostics": [
+        {
+          "field": "reported_segment_profit_sum",
+          "formula": "513233262.76 + 245161334.95",
+          "value": 758394597.71,
+          "unit": "CNY",
+          "use_constraint": "Not an adjusted recurring profit; not used for class selection because rare-earth adjustment and perimeter comparability are open."
+        },
+        {
+          "field": "reported_segment_profit_sum_change_vs_frozen_adjusted_baseline",
+          "formula": "758394597.71 / (560381772.08 + 144351075.22) - 1",
+          "value": 0.07614481234355819,
+          "display": "+7.61%",
+          "unit": "ratio",
+          "use_constraint": "Measurement-mismatched diagnostic only."
+        },
+        {
+          "field": "reported_segment_profit_sum_margin",
+          "formula": "758394597.71 / (13303441983.49 + 4467339722.79)",
+          "value": 0.04267649055876882,
+          "display": "4.27%",
+          "unit": "ratio",
+          "use_constraint": "Measurement-mismatched diagnostic only."
+        }
+      ],
+      "first_match_trace": [
+        {
+          "position": 1,
+          "class_id": "LOCAL_UNKNOWN",
+          "matched": false,
+          "reason": "The condition requires no known un-restatable responsibility-boundary or definition conflict. Here the report explicitly identifies a rare-earth perimeter change, so the missing rare-earth disposal-gain amount is retained as a local unknown but this first class does not match."
+        },
+        {
+          "position": 2,
+          "class_id": "MEASUREMENT_MISMATCH",
+          "matched": true,
+          "reason": "The original Jinlong rare-earth smelting/separation business was transferred and no longer consolidated. The annual report provides neither the transaction-specific disposal gain needed to reconstruct rare-earth adjusted recurring segment profit nor a FY2023 restatement to the post-transfer perimeter. Battery materials remains separately observed and is not erased by this rare-earth-local mismatch."
+        }
+      ],
+      "matched_class": {
+        "class_id": "MEASUREMENT_MISMATCH",
+        "economic_direction": "MIXED"
+      },
+      "localized_unknowns": [
+        "Rare-earth transaction-specific disposal gain within the group disposal-gain total is UNKNOWN.",
+        "Rare-earth FY2023 profit, revenue and oxide-volume restatement to the post-transfer FY2024 perimeter is UNKNOWN.",
+        "Rare-earth adjusted recurring segment profit and the two-segment adjusted recurring aggregate are therefore UNKNOWN; battery-materials reported and adjusted bridge remains separately observable."
+      ]
+    },
+    {
+      "cell_id": "FY2024_GROUP_CASH_PROXY_AND_SEVERE_CARRIER",
+      "raw_reported_values": [
+        {
+          "field": "FY2024_consolidated_operating_cash_flow",
+          "reported_value": 3098647105.57,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group",
+          "printed_page": 185,
+          "source_locator": "authorized annual report p.185, consolidated cash flow statement, 经营活动产生的现金流量净额"
+        },
+        {
+          "field": "FY2023_consolidated_operating_cash_flow_comparative",
+          "reported_value": 4285779929.44,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group comparative column",
+          "printed_page": 185,
+          "source_locator": "authorized annual report p.185, consolidated cash flow statement"
+        },
+        {
+          "field": "FY2024_cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets",
+          "reported_value": 2114419846.45,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group cash capital expenditure",
+          "printed_page": 185,
+          "source_locator": "authorized annual report p.185, consolidated cash flow statement, investment cash outflows"
+        },
+        {
+          "field": "FY2023_cash_paid_to_acquire_fixed_intangible_and_other_long_term_assets_comparative",
+          "reported_value": 2103804546.38,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group comparative cash capital expenditure",
+          "printed_page": 185,
+          "source_locator": "authorized annual report p.185, consolidated cash flow statement"
+        },
+        {
+          "field": "FY2024_short_term_borrowings",
+          "reported_value": 2581287065.09,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated balance-sheet line; includes disclosed accrued interest and discounted-notes components within the line",
+          "printed_page": 287,
+          "source_locator": "authorized annual report p.287, Note VII.32, 短期借款"
+        },
+        {
+          "field": "FY2023_short_term_borrowings_comparative",
+          "reported_value": 2165595042.98,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated balance-sheet line comparative",
+          "printed_page": 287,
+          "source_locator": "authorized annual report p.287, Note VII.32, 短期借款"
+        },
+        {
+          "field": "FY2024_current_maturities_of_noncurrent_liabilities",
+          "reported_value": 3323917633.10,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated balance-sheet line; includes current long-term borrowing, bonds, long-term payable, lease liabilities and long-term borrowing interest",
+          "printed_page": 292,
+          "source_locator": "authorized annual report p.292, Note VII.43, 1年内到期的非流动负债"
+        },
+        {
+          "field": "FY2023_current_maturities_of_noncurrent_liabilities_comparative",
+          "reported_value": 1173131376.63,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated balance-sheet line comparative",
+          "printed_page": 292,
+          "source_locator": "authorized annual report p.292, Note VII.43"
+        },
+        {
+          "field": "FY2024_current_maturity_long_term_borrowing_principal",
+          "reported_value": 1623389654.30,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated interest-bearing debt principal component",
+          "printed_page": 293,
+          "source_locator": "authorized annual report p.293, Note VII.43(1)"
+        },
+        {
+          "field": "FY2023_current_maturity_long_term_borrowing_principal_comparative",
+          "reported_value": 525197960.59,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated interest-bearing debt principal component comparative",
+          "printed_page": 293,
+          "source_locator": "authorized annual report p.293, Note VII.43(1)"
+        },
+        {
+          "field": "FY2024_current_maturity_bonds_payable",
+          "reported_value": 1640962387.39,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated interest-bearing debt component",
+          "printed_page": 293,
+          "source_locator": "authorized annual report p.293, Note VII.43(2)"
+        },
+        {
+          "field": "FY2023_current_maturity_bonds_payable_comparative",
+          "reported_value": 608517767.67,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated interest-bearing debt component comparative",
+          "printed_page": 293,
+          "source_locator": "authorized annual report p.293, Note VII.43(2)"
+        },
+        {
+          "field": "FY2024_long_term_borrowings",
+          "reported_value": 5902256421.23,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated noncurrent balance after current maturities",
+          "printed_page": 294,
+          "source_locator": "authorized annual report p.294, Note VII.45"
+        },
+        {
+          "field": "FY2023_long_term_borrowings_comparative",
+          "reported_value": 7026588765.25,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated noncurrent balance comparative",
+          "printed_page": 294,
+          "source_locator": "authorized annual report p.294, Note VII.45"
+        },
+        {
+          "field": "FY2024_bonds_payable",
+          "reported_value": 0.0,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated noncurrent balance; all outstanding bonds are classified current at FY2024 end",
+          "printed_page": 295,
+          "source_locator": "authorized annual report p.295, Note VII.46(1)"
+        },
+        {
+          "field": "FY2023_bonds_payable_comparative",
+          "reported_value": 1638572226.00,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated noncurrent balance comparative",
+          "printed_page": 295,
+          "source_locator": "authorized annual report p.295, Note VII.46(1)"
+        },
+        {
+          "field": "FY2024_group_NCI_equity_claim",
+          "reported_value": 8448237771.79,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group, minority shareholders' equity claim",
+          "printed_page": 179,
+          "source_locator": "authorized annual report p.179, consolidated balance sheet, 少数股东权益"
+        },
+        {
+          "field": "FY2024_subsidiary_dividends_paid_to_NCI",
+          "reported_value": 582021622.71,
+          "unit": "CNY",
+          "responsibility_boundary": "consolidated group cash paid to minority shareholders",
+          "printed_page": 185,
+          "source_locator": "authorized annual report p.185, consolidated cash flow statement, 子公司支付给少数股东的股利、利润"
+        },
+        {
+          "field": "FY2024_parent_cash_received_from_investment_income",
+          "reported_value": 1236105505.36,
+          "unit": "CNY",
+          "responsibility_boundary": "listed parent cash flow; not reconciled by paying subsidiary or to subsidiary post-capex cash",
+          "printed_page": 186,
+          "source_locator": "authorized annual report p.186, parent cash flow statement, 取得投资收益收到的现金"
+        },
+        {
+          "field": "FY2024_parent_cost_method_investment_income",
+          "reported_value": 1196091505.36,
+          "unit": "CNY",
+          "responsibility_boundary": "listed parent, income from cost-accounted long-term equity investments; income recognition is not itself the four-step cash bridge",
+          "printed_page": 371,
+          "source_locator": "authorized annual report p.371, Note XIX.5, 成本法核算的长期股权投资收益"
+        },
+        {
+          "field": "FY2024_important_non_wholly_owned_subsidiary_cash_and_NCI_disclosure",
+          "reported_value": [
+            {
+              "subsidiary": "厦门金鹭特种合金有限公司",
+              "NCI_share": 0.30,
+              "profit_attributable_to_NCI_CNY": 141064232.04,
+              "dividend_declared_to_NCI_CNY": 2400000.00,
+              "operating_cash_flow_reported_CNY_10K": 24038.63
+            },
+            {
+              "subsidiary": "厦门虹鹭钨钼工业有限公司",
+              "NCI_share": 0.3943,
+              "profit_attributable_to_NCI_CNY": 370355319.53,
+              "dividend_declared_to_NCI_CNY": 326629979.67,
+              "operating_cash_flow_reported_CNY_10K": 63838.04
+            },
+            {
+              "subsidiary": "厦门厦钨新能源材料股份有限公司",
+              "NCI_share": 0.4974,
+              "profit_attributable_to_NCI_CNY": 239999607.33,
+              "dividend_declared_to_NCI_CNY": 145883026.80,
+              "operating_cash_flow_reported_CNY_10K": 175323.57
+            },
+            {
+              "subsidiary": "福建省金龙稀土股份有限公司",
+              "NCI_share": 0.348,
+              "profit_attributable_to_NCI_CNY": 81028074.85,
+              "dividend_declared_to_NCI_CNY": 8613000.00,
+              "operating_cash_flow_reported_CNY_10K": -22946.23
+            }
+          ],
+          "unit": "mixed_as_labeled",
+          "responsibility_boundary": "four individually disclosed important non-wholly-owned subsidiaries; subsidiary post-capex cash is not disclosed because subsidiary-level capex is absent",
+          "printed_page": "329-331",
+          "source_locator": "authorized annual report pp.329-331, Note X.1(2)-(4)"
+        },
+        {
+          "field": "group_asset_use_and_group_debt_settlement_material_restrictions",
+          "reported_value": "NONE_DISCLOSED",
+          "unit": "categorical",
+          "responsibility_boundary": "group use of assets and settlement of group debt; not equivalent to evidence that parent upstream access is unrestricted",
+          "printed_page": 331,
+          "source_locator": "authorized annual report p.331, Note X.1(4), 使用企业集团资产和清偿企业集团债务的重大限制: 不适用"
+        }
+      ],
+      "derived_values": [
+        {
+          "field": "FY2024_group_cash_proxy",
+          "formula": "3098647105.57 - 2114419846.45",
+          "value": 984227259.12,
+          "unit": "CNY"
+        },
+        {
+          "field": "FY2023_group_cash_proxy_comparative",
+          "formula": "4285779929.44 - 2103804546.38",
+          "value": 2181975383.06,
+          "unit": "CNY"
+        },
+        {
+          "field": "FY2023_FY2024_two_year_group_cash_proxy",
+          "formula": "2181975383.06 + 984227259.12",
+          "value": 3166202642.18,
+          "unit": "CNY"
+        },
+        {
+          "field": "FY2024_comparable_interest_bearing_debt_balance_sheet_line_definition",
+          "formula": "short-term borrowings 2581287065.09 + current maturities 3323917633.10 + long-term borrowings 5902256421.23 + bonds payable 0",
+          "value": 11807461119.42,
+          "unit": "CNY"
+        },
+        {
+          "field": "FY2023_comparable_interest_bearing_debt_balance_sheet_line_definition",
+          "formula": "short-term borrowings 2165595042.98 + current maturities 1173131376.63 + long-term borrowings 7026588765.25 + bonds payable 1638572226.00",
+          "value": 12003887410.86,
+          "unit": "CNY"
+        },
+        {
+          "field": "comparable_interest_bearing_debt_change_balance_sheet_line_definition",
+          "formula": "11807461119.42 / 12003887410.86 - 1",
+          "value": -0.016363556631020404,
+          "display": "-1.64%",
+          "unit": "ratio"
+        },
+        {
+          "field": "FY2024_comparable_interest_bearing_debt_principal_definition_for_severe_test",
+          "formula": "short-term borrowings 2581287065.09 + current long-term borrowing 1623389654.30 + current bonds 1640962387.39 + long-term borrowings 5902256421.23 + bonds payable 0",
+          "value": 11747895528.01,
+          "unit": "CNY"
+        },
+        {
+          "field": "FY2023_comparable_interest_bearing_debt_principal_definition_for_severe_test",
+          "formula": "short-term borrowings 2165595042.98 + current long-term borrowing 525197960.59 + current bonds 608517767.67 + long-term borrowings 7026588765.25 + bonds payable 1638572226.00",
+          "value": 11964471762.49,
+          "unit": "CNY"
+        },
+        {
+          "field": "comparable_interest_bearing_debt_change_principal_definition_for_severe_test",
+          "formula": "11747895528.01 / 11964471762.49 - 1",
+          "value": -0.018101612739727546,
+          "display": "-1.81%",
+          "unit": "ratio"
+        }
+      ],
+      "parent_cash_bridge": {
+        "group_cash_proxy_CNY": 984227259.12,
+        "material_non_wholly_owned_subsidiary_post_capex_cash_CNY": "UNKNOWN",
+        "NCI_scope": "OPEN",
+        "NCI_economic_claim_observed": true,
+        "required_retention_or_reinvestment_CNY": "UNKNOWN",
+        "actual_parent_investment_cash_receipts_CNY": 1236105505.36,
+        "recurring_parent_receipts_reconciled_by_subsidiary_CNY": "UNKNOWN",
+        "net_parent_cash_support_CNY": "UNKNOWN",
+        "parent_access": "UNKNOWN",
+        "structural_upstream_block": "NOT_EVIDENCED",
+        "parent_distributable_owner_cash_CNY": "UNKNOWN",
+        "boundary_note": "Observed parent investment cash receipts and the absence of a disclosed group-asset/debt restriction do not close subsidiary post-capex cash, NCI, required-retention and net-parent-support reconciliation. Disposal, borrowing and capital return are not counted."
+      },
+      "first_match_trace": [
+        {
+          "position": 1,
+          "class_id": "LOCAL_UNKNOWN",
+          "matched": false,
+          "reason": "Consolidated OCF, cash capital expenditure and all comparable debt components are disclosed. The open NCI/parent bridge is explicitly not sufficient for this class."
+        },
+        {
+          "position": 2,
+          "class_id": "MEASUREMENT_MISMATCH",
+          "matched": false,
+          "reason": "The authorized report supplies comparable FY2024/FY2023 consolidated cash-flow and debt line items; no disclosed cash-flow classification or debt-definition conflict prevents the frozen calculations."
+        },
+        {
+          "position": 3,
+          "class_id": "ADVERSE_STRUCTURAL_PARENT_ACCESS_BLOCK",
+          "matched": false,
+          "reason": "No legal, regulatory, minority-shareholder agreement or financing-contract evidence explicitly blocks upstream cash for at least 12 months. UNKNOWN parent access does not trigger this class."
+        },
+        {
+          "position": 4,
+          "class_id": "ADVERSE_SEVERE_PERSISTENT_CASH_CARRIER",
+          "matched": false,
+          "reason": "FY2024 group cash proxy is positive CNY984.23m, the two-year proxy is positive CNY3.166bn, and comparable debt declined rather than increasing at least 15%."
+        },
+        {
+          "position": 5,
+          "class_id": "FAVORABLE_PARENT_OWNER_CASH_CLOSED",
+          "matched": false,
+          "reason": "Although FY2024 and two-year group cash proxies pass the numerical thresholds and parent investment cash receipts are observed, subsidiary post-capex cash, NCI allocation, required retention/reinvestment, recurring upstream receipts by subsidiary and net parent support are not reconciled; parent distributable owner cash remains UNKNOWN."
+        },
+        {
+          "position": 6,
+          "class_id": "NEUTRAL_POSITIVE_GROUP_PROXY_SCOPE_OPEN",
+          "matched": true,
+          "reason": "FY2024 group cash proxy is non-negative and the two-year sum is positive, no severe condition matches, while NCI scope and the four-step parent distributable owner-cash bridge remain open."
+        }
+      ],
+      "matched_class": {
+        "class_id": "NEUTRAL_POSITIVE_GROUP_PROXY_SCOPE_OPEN",
+        "economic_direction": "NEUTRAL"
+      },
+      "localized_unknowns": [
+        "Material non-wholly-owned subsidiary post-capex cash is UNKNOWN because subsidiary-level capex is not disclosed with the disclosed subsidiary OCF.",
+        "Required subsidiary retention/reinvestment and recurring parent upstream receipts reconciled by subsidiary are UNKNOWN.",
+        "Net parent cash support and parent distributable owner cash are UNKNOWN.",
+        "These parent/NCI unknowns do not erase the observed positive FY2024 or two-year consolidated group cash proxy."
+      ]
+    }
+  ],
+  "settlement_summary": {
+    "FY2024_TUNGSTEN_PROFIT_ENGINE_BRIDGE": "MIXED_COMPLETE_RESIDUAL",
+    "FY2024_BATTERY_RARE_EARTH_UNIT_ECONOMICS": "MEASUREMENT_MISMATCH",
+    "FY2024_GROUP_CASH_PROXY_AND_SEVERE_CARRIER": "NEUTRAL_POSITIVE_GROUP_PROXY_SCOPE_OPEN"
+  },
+  "authority_boundary": "This artifact settles only the three authorized outcome cells. It makes no judgment about management quality, enterprise conclusions, training utility, comparative method performance, valuation, price, return or investment action."
+}

@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/investor_judgment_learning_read_model.schema.json",
+  "title": "Investor Judgment Learning Read Model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "as_of",
+    "manifest_ref",
+    "protocol_refs",
+    "purpose",
+    "current_ceiling",
+    "validation_ladder",
+    "evidence_inventory",
+    "evidence_counts",
+    "preserved_denominator",
+    "investor_readout",
+    "rights",
+    "aggregation_policy"
+  ],
+  "properties": {
+    "schema_version": {"const": "investor-judgment-learning-read-model.v1"},
+    "as_of": {"type": "string", "format": "date"},
+    "manifest_ref": {"type": "string"},
+    "protocol_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "purpose": {"type": "string", "minLength": 1},
+    "current_ceiling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strict_validation_level", "investor_statement", "next_unmet_level", "evidence_needed"],
+      "properties": {
+        "strict_validation_level": {"const": "L1"},
+        "investor_statement": {"type": "string", "minLength": 1},
+        "next_unmet_level": {"const": "L2"},
+        "evidence_needed": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "validation_ladder": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["level", "status", "definition", "basis"],
+        "properties": {
+          "level": {"enum": ["K0", "L0", "L1", "L2", "L3", "L4", "L5"]},
+          "status": {"type": "string", "minLength": 1},
+          "definition": {"type": "string", "minLength": 1},
+          "basis": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "evidence_inventory": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evidenceEntry"}
+    },
+    "evidence_counts": {"type": "object"},
+    "preserved_denominator": {"type": "object"},
+    "investor_readout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proved", "not_proved", "next_decisive_step"],
+      "properties": {
+        "proved": {"type": "array", "items": {"type": "string"}},
+        "not_proved": {"type": "array", "items": {"type": "string"}},
+        "next_decisive_step": {"type": "string", "minLength": 1}
+      }
+    },
+    "rights": {"$ref": "#/$defs/closedRights"},
+    "aggregation_policy": {"const": "COUNTS_AND_EVIDENCE_CLASSES_ONLY_NO_TOTAL_RANKING"}
+  },
+  "$defs": {
+    "closedRights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "directional_learning",
+        "enterprise_learning",
+        "comparative",
+        "method_transfer",
+        "cjo",
+        "valuation",
+        "report",
+        "buy_band",
+        "investment"
+      ],
+      "properties": {
+        "directional_learning": {"const": "NOT_AUTHORIZED"},
+        "enterprise_learning": {"const": "NOT_AUTHORIZED"},
+        "comparative": {"const": "NOT_AUTHORIZED"},
+        "method_transfer": {"const": "NOT_AUTHORIZED"},
+        "cjo": {"const": "NOT_AUTHORIZED"},
+        "valuation": {"const": "NOT_AUTHORIZED"},
+        "report": {"const": "NOT_AUTHORIZED"},
+        "buy_band": {"const": "NOT_AUTHORIZED"},
+        "investment": {"const": "NOT_AUTHORIZED"}
+      }
+    },
+    "evidenceClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "statement"],
+      "properties": {
+        "status": {"type": "string", "minLength": 1},
+        "statement": {"type": "string"}
+      }
+    },
+    "denominator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status_counts"],
+      "properties": {
+        "total_cells": {"type": "integer", "minimum": 0},
+        "total_findings": {"type": "integer", "minimum": 0},
+        "status_counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "evidenceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "round_id",
+        "projection_type",
+        "evidence_id",
+        "company_id",
+        "company_ids",
+        "cutoff_at",
+        "source_artifacts",
+        "independent_review_present",
+        "pipeline_proof",
+        "measurement_denominator",
+        "diagnostic_denominator",
+        "company_cutoff_counts",
+        "strict_level_ceiling",
+        "rights",
+        "company_finding",
+        "measurement_learning",
+        "method_utility",
+        "transfer_evidence",
+        "invalidated_evidence",
+        "what_remains_unproved",
+        "next_evidence"
+      ],
+      "properties": {
+        "round_id": {"type": "string", "minLength": 1},
+        "projection_type": {"type": "string", "minLength": 1},
+        "evidence_id": {"type": "string", "minLength": 1},
+        "company_id": {"type": ["string", "null"], "minLength": 1},
+        "company_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "cutoff_at": {"type": "string", "minLength": 1},
+        "source_artifacts": {"type": "object"},
+        "independent_review_present": {"type": "boolean"},
+        "pipeline_proof": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "strict_level", "statement"],
+          "properties": {
+            "status": {"const": "ACCEPTED"},
+            "strict_level": {"const": "L1"},
+            "statement": {"type": "string", "minLength": 1}
+          }
+        },
+        "measurement_denominator": {"$ref": "#/$defs/denominator"},
+        "diagnostic_denominator": {"$ref": "#/$defs/denominator"},
+        "company_cutoff_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["total", "with_mechanical_observation", "mismatch_only"],
+          "properties": {
+            "total": {"type": "integer", "minimum": 1},
+            "with_mechanical_observation": {"type": "integer", "minimum": 0},
+            "mismatch_only": {"type": "integer", "minimum": 0}
+          }
+        },
+        "strict_level_ceiling": {"const": "L1"},
+        "rights": {"$ref": "#/$defs/closedRights"},
+        "company_finding": {"$ref": "#/$defs/evidenceClass"},
+        "measurement_learning": {"$ref": "#/$defs/evidenceClass"},
+        "method_utility": {"$ref": "#/$defs/evidenceClass"},
+        "transfer_evidence": {"$ref": "#/$defs/evidenceClass"},
+        "invalidated_evidence": {"type": ["object", "null"]},
+        "what_remains_unproved": {"type": "array", "items": {"type": "string"}},
+        "next_evidence": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

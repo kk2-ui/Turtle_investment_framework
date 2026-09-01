@@ -1,0 +1,795 @@
+{
+  "schema_version": "historical-judgment-first-draft.v1",
+  "episode_id": "HIST:CN601598:20240501:FY2024",
+  "company_id": "CN:601598",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "outcome_state": "SEALED_NOT_IN_PACKET",
+  "enterprise_view": "截至封存时点，最合理的企业判断是：中国外运在海空运价从高位回落、收入由2021年的1,243.48亿元降至2023年的1,017.05亿元期间，仍维持了约34亿至35亿元扣非归母利润，三分部剔除投资收益后的报表利润由2021年的32.61亿元、2022年重述口径31.34亿元升至2023年的35.68亿元，因此“报表韧性”已经观察到；但2022至2023年分部利润仅增加4.34亿元，同期物流业财政补贴增加9.27亿元，且补贴无法按相同分部责任边界分配，所以不能把利润改善主要归因于单位经济性或管理执行，商业经济归因应判为混合。公司同时明显降债并维持净现金，中外运敦豪具有实业利润与分红支撑；故整体是低杠杆、报表盈利有韧性、但补贴前正常盈利与母公司owner cash需要保守折价的综合物流平台。局部归因未知不扩大为全公司未知。",
+  "most_important_enterprise_judgments": [
+    {
+      "judgment_id": "J1_CORE_OPERATING_RESILIENCE",
+      "current_judgment": "运价正常化期间报表盈利韧性已经观察到，但2023年分部利润改善的商业经济归因是混合的，不能据此断言单位经济性已经改善。",
+      "causal_mechanism": "代理收入会随海空运价机械缩放，网络密度、集中采购、多环节服务与合同物流解决方案理论上可以改善单位利润；同时物流财政补贴也会计入其他收益并进入相关经营表现。2022至2023年三分部利润增加4.34亿元，而物流业财政补贴增加9.27亿元，且现有披露不能把补贴和分部责任边界一一对齐。因此可确认收入下行时报告利润保持稳定，却只能把“商业能力、业务组合、补贴与成本变化”列为共同机制，不能从总量差额识别主因。",
+      "decisive_evidence": [
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 11,
+          "evidence": "2023年收入1,017.05亿元，同比下降6.94%，而归母净利润42.22亿元，同比增长3.50%；扣非归母净利润34.57亿元，同比仅下降2.21%。",
+          "why_decisive": "收入与利润方向背离，排除了仅以收入判断经营质量的做法。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 23,
+          "evidence": "专业物流收入275.22亿元、基本持平，分部利润10.61亿元、增长15.22%；合同物流业务量、收入和分部利润分别增长13.3%、3.94%和12.67%。",
+          "why_decisive": "较低周期敏感度的专业物流在竞争和运输降价环境下仍提升利润。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 24,
+          "evidence": "代理及相关业务收入619.19亿元、下降11.50%，但剔除投资收益后的分部利润23.08亿元、增长13.37%；公司称多环节业务占比增加且单位利润提升。",
+          "why_decisive": "直接验证了代理板块的报表利润韧性，但管理层归因尚需与补贴和持续费用同边界核对。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 25,
+          "evidence": "按FY2023报告的可比展示，三分部剔除投资收益利润由2022年的31.34亿元增至2023年的35.68亿元，增加4.34亿元。",
+          "why_decisive": "建立同一份报告中的可比报表韧性基线，但该表不分配财政补贴。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2021:1212728794",
+          "printed_page": 25,
+          "evidence": "2021年三分部利润合计32.61亿元；结合2022年31.34亿元和2023年35.68亿元，三年报表利润处于窄幅区间而非单向增长。",
+          "why_decisive": "三年同口径方向显示韧性，但不支持把2023年反弹外推为结构性改善。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 399,
+          "evidence": "物流业财政补贴由2022年的12.03亿元增至2023年的21.30亿元，增量9.27亿元，高于三分部利润4.34亿元增量。",
+          "why_decisive": "补贴与分部利润责任边界未对齐，数值不能直接相减，却足以否定“利润增量主要来自单位经济性”的确定归因。"
+        }
+      ],
+      "strongest_counterargument": "分部利润是公司定义口径，且2023年其他收益中的政府补助大增；空运代理、空运通道利润仍低于2022年，所以整体分部利润改善可能包含补贴和业务组合变化，未必代表所有核心产品的单位经济性都改善。",
+      "local_unknown": "报告未披露按分部、客户或产品通道分配的补贴前利润、单位贡献毛利与补贴对应成本，无法识别2023年利润增量中商业改善所占比例；该未知只冻结商业归因，不否定三年报表利润韧性。",
+      "investment_implication": "对报表韧性给予信用，对管理执行仅保留CONDITIONAL_CREDIT；对无法分配的补贴增量在normal earnings中局部haircut，valuation方向维持UNCHANGED，直至补贴前同责任边界利润证据出现。",
+      "flip_facts": [
+        "在可比口径下，三分部利润降至30亿元或以下且扣非归母利润低于28亿元，即使补贴未减少，也将推翻报表韧性判断。",
+        "三分部利润维持或增长但补贴强度继续上升、补贴前同边界利润下降，将保留报表韧性但把商业归因翻为负面并下移正常盈利。",
+        "三分部利润超过37亿元、扣非归母利润至少34亿元，且补贴按分部对齐后证明补贴强度不升、持续费用负担不恶化，将把商业归因翻为正面。"
+      ]
+    },
+    {
+      "judgment_id": "J2_EARNINGS_QUALITY_SPLIT",
+      "current_judgment": "可持续归母盈利的保守当前区间为28亿至34亿元，而非机械采用2023年42.22亿元或34.57亿元扣非利润；权益法收益有实业基础可条件保留，无法按责任边界分配的补贴增量则局部haircut。",
+      "causal_mechanism": "中外运敦豪具有独立收入、利润和现金分红能力，权益法利润并非纯会计重估，但公司不能单方控制且盈利受国际快递需求和竞争影响。集团主业长期获得物流财政补贴，补贴可能补偿真实公共通道或线路成本，也可能填补低回报业务；由于2023年补贴增量高于分部利润增量且无法同边界分配，不能全额剔除全部历史补贴，也不能把增量无条件资本化。以三年扣非归母利润33.89亿至35.35亿元为上层锚，对无法归因的2023年补贴增量施加0至全额税后影响的局部haircut，得到28亿至34亿元的保守区间。",
+      "decisive_evidence": [
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 11,
+          "evidence": "2021年至2023年扣非归母净利润分别为33.89亿元、35.35亿元和34.57亿元，三年窄幅稳定。",
+          "why_decisive": "跨完整运价周期的扣非利润区间是当前正常盈利最稳健的经验锚。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 399,
+          "evidence": "2023年权益法长期股权投资收益22.70亿元，投资收益合计23.26亿元；其他收益24.55亿元，其中物流业财政补贴21.30亿元。",
+          "why_decisive": "揭示了合并营业利润对权益法投资与政策补贴的高敏感度，不能把所有利润视为同质。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 335,
+          "evidence": "中外运敦豪2023年收入230.31亿元、净利润35.01亿元，公司持股50%；当年公司收到该合营企业股利18.96亿元。",
+          "why_decisive": "为主要权益法收益提供了底层经营与现金分配证据。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 338,
+          "evidence": "报告称合营或联营企业向集团转移资金的能力不存在重大限制。",
+          "why_decisive": "降低了权益法利润完全无法变现的担忧，但没有闭合母公司对所有集团现金的自由支配。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 14,
+          "evidence": "2023年明确列示的非经常性政府补助4.57亿元，非金融资产公允价值变动及处置损益3.37亿元。",
+          "why_decisive": "说明报告利润高于扣非锚的主要可排除组成。"
+        }
+      ],
+      "strongest_counterargument": "34亿至36亿元的扣非锚仍包含公司认定为与日常业务密切相关、持续享有的补贴；若这些补贴实质是对亏损线路的长期填补而非正常商业回报，扣非利润依然高估无补贴经济性。另一方面，中外运敦豪三年贡献较稳定且现金分红充分，完全按非控制折价又可能低估优质合营资产。",
+      "local_unknown": "缺少物流补贴对应的具体线路、补偿成本、政策期限和补贴前项目回报；也缺少中外运敦豪按产品与客户的利润桥。未知应局限在补贴与合营利润的持续性折扣，不把其写成集团整体盈利未知。",
+      "investment_implication": "正常盈利处理为LOWER：采用28亿至34亿元归母区间；明确非经常项目排除，权益法贡献条件计入并单独压力测试，历史经常补贴不一刀切剔除，但无法分配的2023年补贴增量不预先资本化。",
+      "flip_facts": [
+        "中外运敦豪净利润降至28亿元或以下，同时集团权益法收益降至18亿元或以下，且下降来自需求、份额或利润率恶化，将下移正常盈利带。",
+        "物流业财政补贴强度持续上升而同责任边界的补贴前利润下降，或补贴应收款出现实质回收障碍，将把正常盈利下移至区间下端以下并收紧永久损失约束。",
+        "中外运敦豪净利润恢复增长、权益法收益维持23.5亿元以上，同时核心分部利润在补贴强度不升的情况下超过37亿元，将上移正常盈利带。"
+      ]
+    },
+    {
+      "judgment_id": "J3_CASH_AND_PERMANENT_LOSS",
+      "current_judgment": "当前不存在资产负债表驱动的高永久损失风险，但利润到母公司可支配现金的桥尚未完全闭合；集团现金代理值应条件计入，不能直接等同母公司owner cash。",
+      "causal_mechanism": "货代业务存在客户收款与供应商付款时差，运价与结算周期变化会显著改变营运资金；仓储、物流节点和可控运力又需要持续资本开支。现金流量表实际购建固定资产、无形资产及其他长期资产现金支出，与分部报告资本性支出不是同一口径：前者观察实际现金流出，后者更接近当期资本投入，两种代理值必须并列、不得跨年切换或混算。NCI、母公司上划和维持/扩张拆分只限制owner cash归属；集团现金持续为负、信用损失持续和净现金收缩本身仍能更新permanent loss。",
+      "decisive_evidence": [
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 48,
+          "evidence": "2023年经营现金流净额38.37亿元，现金流量表实际购建长期资产支出16.11亿元，较2022年增加0.51亿元；公司将OCF下降归因于资金沉淀减少及部分结算周期延长。",
+          "why_decisive": "确认现金下降既有商业模式的可逆周转因素，也有需要持续观察的回款因素。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 427,
+          "evidence": "2023年分部资本性支出合计26.54亿元，2022年为23.95亿元；其与现金流量表实际购建现金支出16.11亿元和约15.60亿元明显不同。",
+          "why_decisive": "证明两种资本开支口径不能混用；分别计算时现金余量都为正但数额不同。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2021:1212728794",
+          "printed_page": 380,
+          "evidence": "2021年分部资本性支出22.65亿元；结合当年经营现金流41.65亿元，集团现金代理值约18.99亿元。",
+          "why_decisive": "三年均为正，降低单年现金偶然性的影响。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 480,
+          "evidence": "公司口径2023年净负债为负11.24亿元、杠杆率为负3%，并已计入租赁负债。",
+          "why_decisive": "显示即使现金转换放缓，资产负债表仍有缓冲，永久损失尚非主导结论。"
+        },
+        {
+          "source_id": "CNINFO:601598:FY2023:1219389524",
+          "printed_page": 128,
+          "evidence": "2023年度现金分红方案合计21.01亿元，占归母净利润49.77%；含回购后的总股东回报占比50.40%。",
+          "why_decisive": "表明母公司确有向股东分配现金的能力，也说明分红已高于当年集团现金代理值，持续性依赖存量现金和投资分红。"
+        }
+      ],
+      "strongest_counterargument": "现金和现金等价物足以覆盖公司定义的计息债务且主要合营企业分红充分，可能说明母公司现金访问已足够，不必大幅折价；反面则是集团代理值没有区分维持与扩张资本开支，可能低估真实owner cash。",
+      "local_unknown": "少数股东对经营现金与资本开支的归属、全部子公司上划能力、资本开支中维持与扩张部分尚未闭合。该未知只冻结owner cash计入强度；集团实际现金、信用损失、净现金方向与持续性仍可独立结算permanent loss。",
+      "investment_implication": "owner cash采用COUNT_CONDITIONALLY；永久损失当前采用MAINTAIN_CONSTRAINT。即使母公司上划仍UNKNOWN，只要观察到连续负集团现金、持续信用损失和净现金收缩，永久损失也必须转为TIGHTEN_CONSTRAINT，材料且不可逆时转为THESIS_BLOCKING。",
+      "flip_facts": [
+        "完整闭合少数股东、子公司上划和维持性资本开支后，连续三年母公司可支配owner cash显著高于20亿元，将转为COUNT_IN_PARENT_OWNER_CASH并可放松现金约束。",
+        "同一口径的集团现金代理值连续为负、信用损失持续且净现金收缩，即使母公司上划UNKNOWN，也将收紧或阻断永久损失；owner cash仍仅条件计入。",
+        "关键合营联营企业利润正常但连续停止分红，或出现明确资金转移限制，将证明会计利润不能顺畅转为母公司现金。"
+      ]
+    }
+  ],
+  "management_execution": {
+    "best_current_view": "给予有条件执行信用。管理层在运价快速回落期维持了三分部报表利润、控制销售和管理费用并显著降低长期借款与债券余额；但2023年物流财政补贴增量高于分部利润增量，责任边界无法对齐，故不能把报表改善主要归因于单位经济性或管理执行。",
+    "treatment_code": "CONDITIONAL_CREDIT",
+    "evidence": [
+      {
+        "source_id": "CNINFO:601598:FY2023:1219389524",
+        "printed_page": 21,
+        "evidence": "资产负债率降至47.13%、有息负债率降至24.16%，合同物流、空运通道和铁路代理业务量分别增长13.3%、15.5%和26.6%。"
+      },
+      {
+        "source_id": "CNINFO:601598:FY2023:1219389524",
+        "printed_page": 41,
+        "evidence": "收入下降6.94%时，销售费用增长0.86%、管理费用下降0.43%；经营现金流下降26.85%。"
+      }
+    ],
+    "condition_for_positive_credit": "可比分部利润在补贴按同责任边界分配后仍保持或增长，且补贴强度不升、持续费用负担不恶化。",
+    "condition_for_negative_credit": "业务量增长伴随单位利润和现金持续下降，且管理层依赖更高补贴或新增杠杆维持利润。"
+  },
+  "normal_earnings": {
+    "best_current_range_cny_billion": [
+      2.8,
+      3.4
+    ],
+    "basis": "以2021至2023年扣非归母净利润33.89亿、35.35亿和34.57亿元为报表上层锚；对2023年相对2022年增加9.27亿元、但无法与4.34亿元分部利润增量对齐的物流财政补贴，采用0至全额税后影响的局部haircut，形成28亿至34亿元保守区间。该区间不等于假定全部补贴无价值。",
+    "treatment_code": "LOWER",
+    "included_conditionally": [
+      "具有底层经营利润和历史现金分红支持的权益法收益，尤其是中外运敦豪贡献",
+      "有明确政策标准且能与相关运输成本和分部责任边界匹配的经常性物流补贴"
+    ],
+    "excluded_or_haircut": [
+      "明确列示的非经常性损益",
+      "金融资产公允价值波动及处置收益",
+      "无法证明政策持续性、成本匹配关系或分部归属的2023年增量补贴，按0至全额税后影响局部haircut",
+      "不能由可比底层利润支持的权益法收益上冲"
+    ],
+    "local_unknown": "补贴前线路利润和中外运敦豪产品级利润结构未披露；未知决定28亿至34亿元区间内的落点，不使正常盈利整体变为UNKNOWN。"
+  },
+  "owner_cash": {
+    "best_current_view": "集团层面的现金代理值连续为正，但2023年明显收窄；在少数股东归属、母公司上划和维持性资本开支未闭合前只条件计入。",
+    "treatment_code": "COUNT_CONDITIONALLY",
+    "segment_capex_group_cash_proxy_cny_billion": {
+      "FY2021": 1.9,
+      "FY2022_adjusted": 2.85,
+      "FY2023": 1.18
+    },
+    "cash_flow_statement_purchase_proxy_cny_billion": {
+      "FY2021": 2.72,
+      "FY2022_adjusted": 3.69,
+      "FY2023": 2.23
+    },
+    "formulas": {
+      "segment_capex_proxy": "consolidated operating cash flow minus disclosed segment capital expenditure",
+      "cash_flow_statement_purchase_proxy": "consolidated operating cash flow minus cash paid to acquire fixed assets, intangible assets and other long-term assets"
+    },
+    "scope_caveat": "两个代理值必须各自保持同口径比较，不得混用；两者都不是母公司owner cash。2022经营现金流使用FY2023报告的同一控制合并调整口径。",
+    "parent_access_evidence": "主要合营企业中外运敦豪2023年向集团分红18.96亿元，且报告称合营联营企业资金转移能力无重大限制；其余子公司和NCI边界仍未闭合。"
+  },
+  "permanent_loss": {
+    "best_current_view": "低杠杆、净现金和三年正集团现金代理值使融资性永久损失风险较低；当前更值得约束的是补贴依赖、合营利润集中、持续现金转换恶化及海外/信用风险。",
+    "treatment_code": "MAINTAIN_CONSTRAINT",
+    "current_risk_carriers": [
+      "物流补贴强度上升而补贴前项目回报下降",
+      "中外运敦豪利润或分红持续下降",
+      "结算周期延长演变为信用损失或长期营运资金占用",
+      "维持性资本开支长期高于经营现金流",
+      "海外资产或商誉继续发生材料减值"
+    ],
+    "not_currently_thesis_blocking_because": "2023年公司口径净负债为负、资产负债率下降，经营现金流与集团现金代理值仍为正，主要合营资产保持高盈利并支付现金股利。",
+    "severe_branch": "若同一口径的集团现金代理值连续为负、信用损失持续且净现金缓冲实质收缩，即使NCI或母公司上划仍UNKNOWN，也先收紧permanent loss；若载体材料、不可逆且预计或已经持续至少12个月，则转为THESIS_BLOCKING。"
+  },
+  "scenario_analysis": {
+    "optimistic": {
+      "operating_path": "合同物流和铁路/船代业务量继续增长，三分部利润超过37亿元；补贴能按同责任边界分配，证明补贴强度不升且补贴前利润改善；中外运敦豪净利润回升并维持高分红；两种集团现金代理值各自同口径改善，负债保持净现金。",
+      "investment_effect": "正常盈利带上移，管理执行转为POSITIVE_CREDIT，内在价值方向转为UP；owner cash只有在归属与上划闭合后才转为母公司口径计入。",
+      "discriminating_facts": [
+        "补贴按分部对齐后，合计分部利润与补贴前利润同时改善，销售管理研发费用负担不升",
+        "中外运敦豪底层净利润与实际股利共同增长",
+        "OCF减分部资本性支出与OCF减现金流量表实际购建支出分别同口径改善，且NCI和母公司访问边界闭合"
+      ]
+    },
+    "base": {
+      "operating_path": "收入维持约千亿元量级，三分部报表利润大致维持2023年水平，但补贴仍无法按同责任边界分配，商业归因继续为混合；中外运敦豪利润小幅波动；两种集团现金代理值各自保持正数但低于2022年高点。",
+      "investment_effect": "正常盈利维持28亿至34亿元，管理层保留CONDITIONAL_CREDIT，owner cash继续COUNT_CONDITIONALLY，永久损失维持约束，内在价值方向UNCHANGED。",
+      "discriminating_facts": [
+        "合计分部利润处于32亿至37亿元、扣非归母至少28亿元，但补贴前商业归因仍未证",
+        "权益法收益处于约20亿至25亿元且主要合营企业继续分红",
+        "两种集团现金代理值各自同口径为正、信用损失未持续扩大且净现金地位没有逆转"
+      ]
+    },
+    "pessimistic": {
+      "operating_path": "竞争和运力过剩使合同物流与代理业务同时出现量价或单位利润恶化，分部利润跌破30亿元；或报表利润仅靠更高补贴维持而扣非归母跌破28亿元；中外运敦豪利润和分红明显下降；同一口径集团现金连续转负、信用损失持续且净现金收缩。",
+      "investment_effect": "正常盈利下移、管理执行转为NEGATIVE_CREDIT、估值方向DOWN；若现金吞噬被证明持续且净现金缓冲消失，永久损失由维持约束升级为THESIS_BLOCKING。",
+      "discriminating_facts": [
+        "核心业务量增长但合计分部利润降至30亿元或以下，并观察到客户流失、降价或结构性成本载体",
+        "中外运敦豪净利润降至28亿元或以下且权益法收益降至18亿元或以下",
+        "任一同口径集团现金代理值连续转负、信用损失持续且净现金收缩；该事实不因母公司上划UNKNOWN而失效"
+      ]
+    }
+  },
+  "valuation_treatment": {
+    "treatment_code": "UNCHANGED",
+    "direction_only": true,
+    "reference_state": "相对于采用28亿至34亿元保守正常盈利、权益法贡献条件计入、owner cash条件计入并维持永久损失约束的封存时点参考状态。",
+    "rationale": "报表盈利韧性与降杠杆构成正面证据，但2023年补贴增量高于分部利润增量且责任边界未对齐，无法证明商业单位经济改善；正负证据在当前保守正常盈利区间内相抵，因此方向保持UNCHANGED。",
+    "prohibited_extrapolation": "该方向不使用市场价格，不给出价格目标或交易区间。"
+  },
+  "material_treatment_snapshot": {
+    "management_execution": {
+      "treatment_code": "CONDITIONAL_CREDIT",
+      "rationale": "运价下行期的报表利润韧性和降债值得信用，但补贴增量高于分部利润增量，商业经济归因仍为混合。"
+    },
+    "normal_earnings": {
+      "treatment_code": "LOWER",
+      "rationale": "相对2023年42.22亿元报告归母净利润，下调至28亿至34亿元；权益法收益条件保留，无法同边界分配的补贴增量局部haircut。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_CONDITIONALLY",
+      "rationale": "OCF减分部资本性支出与OCF减现金流量表实际购建支出均为正，但两者口径不同且NCI、母公司上划和维持/扩张拆分未闭合。"
+    },
+    "permanent_loss": {
+      "treatment_code": "MAINTAIN_CONSTRAINT",
+      "rationale": "净现金与正现金代理值阻止其成为当前阻断项，但现金转换、补贴与合营集中仍需约束。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UNCHANGED",
+      "rationale": "报表韧性与降杠杆被补贴归因未证和owner cash折价抵消，维持封存时点保守参考状态。"
+    },
+    "next_research_action": {
+      "rank": 1,
+      "action_family": "PARENT_OWNER_CASH_BRIDGE",
+      "target_scope": "母公司、主要经营子公司、中外运敦豪及其他材料合联营企业，并逐项闭合NCI归属",
+      "fact_or_metric": "取得母公司实际收到的子公司/合联营分红、其他上划现金、上划限制、少数股东分配、维持性与扩张性资本开支拆分，重建三年母公司可支配owner cash",
+      "decision_axis": "owner_cash；若识别持续维持性现金吞噬或结构性上划阻断，再联动permanent_loss",
+      "positive_effect": "若三年母公司可支配owner cash稳定且无材料上划限制，将owner_cash改为COUNT_IN_PARENT_OWNER_CASH，并可在持续性成立时放松永久损失约束。",
+      "negative_effect": "若集团正现金主要归少数股东、依赖资产处置/存量现金，或维持性资本开支吞噬经营现金，将owner_cash改为DO_NOT_COUNT；持续结构性载体则收紧或阻断永久损失处理。"
+    }
+  },
+  "outcome_cells": [
+    {
+      "cell_id": "FY2024_CORE_OPERATING_RESILIENCE",
+      "claim_settled": "分两层结算：先判断运价正常化后的报表盈利韧性是否延续，再判断该韧性能否归因于补贴前商业经济改善。",
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "management_execution": "报表韧性可给予条件信用；只有补贴按同责任边界对齐后仍有利润改善，才给予正面商业执行信用。",
+        "normal_earnings": "报表利润与扣非归母先确定上层锚，无法分配的补贴增量只在正常盈利轴局部haircut。",
+        "valuation_direction": "报表韧性但商业归因未证时维持UNCHANGED；只有补贴前改善被证实时才向UP。"
+      },
+      "preserved_axis_reasons": {
+        "owner_cash": "经营利润不等于现金，不能替代OCF、资本开支、NCI和母公司上划证据。",
+        "permanent_loss": "单年利润波动在低杠杆状态下不自动构成不可逆损失。",
+        "next_research_action": "该cell不闭合母公司现金访问，rank-1行动保持不变。"
+      },
+      "scope_localization_rule": "本cell不直接更新owner_cash或permanent_loss，因此NCI归属、母公司现金访问和资本开支归属均不是分类前提；这些现金边界的UNKNOWN仅由现金cell局部结算。",
+      "subclaim_layers": {
+        "reported_resilience": "用可比三分部利润与扣非归母利润结算；不要求补贴分部归属。",
+        "commercial_attribution": "用补贴按分部责任边界的分配、补贴前利润、持续费用与单位利润结算；无法对齐时标记归因未证，但不撤销reported_resilience结论。"
+      },
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "FY2024三大分部可比对外收入，以及合同物流、海运代理、空运通道、铁路代理等主要业务量",
+        "recurring_profit_metric": "三大分部按与FY2023一致定义、剔除投资收益后的分部利润合计，以及扣非归母净利润；FY2021至FY2023分部基准为32.61、31.34和35.68亿元",
+        "persistent_cost_burden_metrics": [
+          "销售费用、管理费用和费用化研发支出合计/营业收入",
+          "物流业财政补贴及其他经常政府补贴/营业收入，并在可得时按分部责任边界分配",
+          "补贴前分部利润/分部收入及主要产品单位利润",
+          "无法分配的补贴增量对归母利润的0至全额税后haircut"
+        ],
+        "nonrecurring_exclusions": [
+          "权益法及处置投资收益",
+          "金融资产公允价值变动",
+          "资产处置收益",
+          "明确列入非经常性损益的政府补助",
+          "并购重估、一次性减值转回或同一控制合并口径变化"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "仅当FY2024可比三分部利润或扣非归母利润本身缺失时使用；若只是补贴无法按分部对齐，仍结算reported_resilience并进入归因未证分支。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "将同一控制合并、分部重组、收入总额/净额法或分部利润定义变化重述为FY2023可比口径。"
+        }
+      },
+      "classification_order": "先用可比三分部利润和扣非归母利润结算reported_resilience；只有该层输入缺失或不可比时才使用LOCAL_UNKNOWN/MEASUREMENT_MISMATCH。补贴无法对齐不使整cell UNKNOWN，而进入commercial attribution未证分支。",
+      "valid_input_first_match": [
+        {
+          "class_id": "ADVERSE_STRUCTURAL_CORE_EROSION",
+          "economic_direction": "ADVERSE",
+          "condition": "三分部利润合计不高于30亿元且扣非归母利润低于28亿元，并观察到客户流失、持续降价、结构性成本上升或信用损失之一；该分支不要求先闭合补贴分部归属。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "客户流失或核心客户降量",
+            "合同续约降价导致单位利润下降",
+            "持续人工、采购、运力或网络成本无法转嫁",
+            "补贴强度上升仍不能维持分部利润"
+          ],
+          "axis_updates": {
+            "management_execution": "NEGATIVE_CREDIT",
+            "normal_earnings": "LOWER",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash与permanent_loss均为preserved_axes，故不门控本分支。"
+          }
+        },
+        {
+          "class_id": "FAVORABLE_SELF_FUNDED_IMPROVEMENT",
+          "economic_direction": "FAVORABLE",
+          "condition": "三分部利润合计至少37亿元、扣非归母利润至少34亿元，至少两个主要业务量不下降；且补贴已按同责任边界对齐，证明补贴强度不高于FY2023、销售管理研发费用负担不升、补贴前利润改善。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "POSITIVE_CREDIT",
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash与permanent_loss均为preserved_axes，故不门控本分支。"
+          }
+        },
+        {
+          "class_id": "MIXED_REPORTED_RESILIENCE_ATTRIBUTION_UNPROVEN",
+          "economic_direction": "MIXED",
+          "condition": "三分部利润合计处于32亿至37亿元且扣非归母利润至少28亿元，确认报表韧性；但补贴无法按同责任边界分配，或补贴强度上升而补贴前利润未披露，故商业归因未证。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "LOWER",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash与permanent_loss均为preserved_axes，故不门控本分支。"
+          }
+        },
+        {
+          "class_id": "MIXED_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "报表层输入完整可比但落在以上类别之外，例如分部利润增长而扣非归母下降，或补贴已对齐后显示补贴前利润与业务量方向相反。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "management_execution": "CONDITIONAL_CREDIT",
+            "normal_earnings": "LOWER",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash与permanent_loss均为preserved_axes，故不门控本分支。"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_KEY_JV_EARNINGS_DURABILITY",
+      "claim_settled": "中外运敦豪主导的权益法收益是否仍是有底层经营支持的正常盈利组成。",
+      "direct_axes": [
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "preserved_axes": [
+        "management_execution",
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "direct_axis_links": {
+        "normal_earnings": "中外运敦豪底层利润与集团权益法收益共同决定正常盈利中可保留的合营贡献。",
+        "valuation_direction": "主要合营资产的持续盈利改变内在价值方向，但不产生价格或交易区间。"
+      },
+      "preserved_axis_reasons": {
+        "management_execution": "合营企业由双方共同控制，不能把其单年表现直接归因于上市公司管理层。",
+        "owner_cash": "权益法利润不是现金；必须另看实际股利和母公司访问。",
+        "permanent_loss": "单年合营利润变化可逆，除非伴随资产减值或长期资金阻断。",
+        "next_research_action": "底层利润仍不能替代完整的母公司owner cash桥。"
+      },
+      "scope_localization_rule": "本cell只更新normal_earnings与valuation_direction；NCI归属和母公司现金访问不影响底层合营利润的可比分类，相关UNKNOWN仅限制owner_cash。",
+      "normal_earnings_bridge": {
+        "revenue_or_volume_metric": "中外运敦豪FY2024可比营业收入，FY2023基准230.31亿元",
+        "recurring_profit_metric": "中外运敦豪可比净利润及集团权益法投资收益；FY2023基准分别为35.01亿元和22.70亿元",
+        "persistent_cost_burden_metrics": [
+          "中外运敦豪净利率",
+          "中外运敦豪财务费用及经营费用负担（若披露）",
+          "集团权益法收益中中外运敦豪以外的集中损益"
+        ],
+        "nonrecurring_exclusions": [
+          "股权处置收益",
+          "并购或失去控制产生的重估",
+          "公允价值变动",
+          "一次性资产处置、减值转回和口径变更"
+        ]
+      },
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "取得中外运敦豪FY2024可比收入、净利润与集团权益法收益；缺少底层净利润时，不用集团投资收益单项推断经营恶化。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "排除持股比例变化、合营转子公司、会计政策或合并范围变化后重建可比值。"
+        }
+      },
+      "classification_order": "先结算LOCAL_UNKNOWN，再结算MEASUREMENT_MISMATCH；两者均不适用时，才按valid_input_first_match自上而下分类。",
+      "valid_input_first_match": [
+        {
+          "class_id": "ADVERSE_JV_ECONOMIC_DECLINE",
+          "economic_direction": "ADVERSE",
+          "condition": "中外运敦豪可比净利润不高于28亿元且集团权益法收益不高于18亿元，并观察到快递需求、市场份额、价格或持续成本恶化之一。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "国际快递需求持续下降",
+            "份额流失或价格竞争",
+            "网络或人工成本持续上升",
+            "资产减值或重大客户流失"
+          ],
+          "axis_updates": {
+            "normal_earnings": "LOWER",
+            "valuation_direction": "DOWN"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash为preserved_axis，故不门控合营企业底层盈利分类。"
+          }
+        },
+        {
+          "class_id": "FAVORABLE_JV_DURABILITY",
+          "economic_direction": "FAVORABLE",
+          "condition": "中外运敦豪可比净利润至少37亿元、集团权益法收益至少23.5亿元，且增长不来自上述非经常项目。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "normal_earnings": "RAISE",
+            "valuation_direction": "UP"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash为preserved_axis，故不门控合营企业底层盈利分类。"
+          }
+        },
+        {
+          "class_id": "NEUTRAL_JV_RANGE",
+          "economic_direction": "NEUTRAL",
+          "condition": "中外运敦豪可比净利润处于31.5亿至37亿元、集团权益法收益处于20.4亿至25亿元，且不存在明确结构性负面载体。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash为preserved_axis，故不门控合营企业底层盈利分类。"
+          }
+        },
+        {
+          "class_id": "MIXED_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "底层与集团输入完整可比但方向相反，或完整数值落在以上区间之外且没有明确负面经济载体。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "normal_earnings": "UNCHANGED",
+            "valuation_direction": "UNCHANGED"
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_CELL_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围值仅保留为owner-cash桥的接口约束；owner_cash为preserved_axis，故不门控合营企业底层盈利分类。"
+          }
+        }
+      ]
+    },
+    {
+      "cell_id": "FY2024_PARENT_OWNER_CASH_AND_SEVERE_BRANCH",
+      "claim_settled": "集团正现金余量能否归属并上划为母公司owner cash，以及现金波动是否已经形成持续永久损失载体。",
+      "direct_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "preserved_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "direct_axis_links": {
+        "owner_cash": "OCF、资本开支、NCI、合营分红和母公司上划共同闭合可支配现金。",
+        "permanent_loss": "同一口径集团现金连续为负、持续信用损失或维持性现金吞噬并伴随净现金收缩，即使NCI或母公司上划UNKNOWN，也可独立升级永久损失。",
+        "next_research_action": "现金桥一旦闭合，rank-1行动应转向剩余最大的企业决策未知；若未闭合则维持原行动。"
+      },
+      "preserved_axis_reasons": {
+        "management_execution": "现金结算时点可单年波动，不能独立判定全部经营执行。",
+        "normal_earnings": "现金波动不改变权责发生制正常盈利，除非另一cell观察到底层利润变化。",
+        "valuation_direction": "单轴现金改善或恶化不自动传播到价值方向；先完成持续性与归属判断。"
+      },
+      "owner_cash_bridge": {
+        "cash_proxy_scope": "GROUP",
+        "nci_scope": "OPEN",
+        "parent_access": "UNKNOWN",
+        "capex_treatment": "并列保留两套代理：(1) OCF减现金流量表实际购建固定资产、无形资产及其他长期资产现金支出；(2) OCF减分部报告资本性支出。每套只能与自身历史同口径比较，禁止跨期切换或把两者混算。维持/扩张拆分、NCI和上划未闭合时，owner_cash保持COUNT_CONDITIONALLY。"
+      },
+      "permanent_loss_bridge": {
+        "risk_carrier": "同一口径集团现金连续为负，且回款恶化形成持续信用损失或维持性现金需求持续超过OCF，并伴随净现金收缩",
+        "materiality_or_persistence_test": "任一套集团现金代理值必须连续两个可比期间为负且全程使用同一资本开支口径；同时观察到信用损失或维持性现金载体持续，并且净现金缓冲收缩。NCI、母公司上划与维持/扩张归属不构成permanent_loss结算前提。",
+        "reversibility_test": "仅由代理业务收支时间差、单笔扩张投资或可收回补贴应收款造成且下一周期可逆的现金下降，不升级永久损失。"
+      },
+      "axis_settlement_rule": "先结算可比集团现金、持续信用/维持性载体与净现金变化所对应的permanent_loss；再结算owner_cash归属。NCI、parent_access或维持/扩张拆分UNKNOWN时，owner_cash保持COUNT_CONDITIONALLY，但不得阻断permanent_loss的TIGHTEN_CONSTRAINT或THESIS_BLOCKING。",
+      "local_input_treatments": {
+        "LOCAL_UNKNOWN": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "仅当可比OCF、两套资本开支代理所需的现金流量表购建支出或分部资本性支出、持续信用/维持性载体、净现金变化本身缺失时使用。NCI、母公司上划或维持/扩张拆分UNKNOWN不得使整cell空更新，只令owner_cash保持COUNT_CONDITIONALLY。"
+        },
+        "MEASUREMENT_MISMATCH": {
+          "axis_updates": {},
+          "next_discriminating_evidence": "分别消除两套代理各自的合并范围或口径变化；不得用现金流量表购建支出补分部资本性支出的缺口，也不得反向替代。"
+        }
+      },
+      "classification_order": "先用每套代理自身的可比历史结算group cash方向，并结算持续信用/维持性载体与净现金变化；据此先更新permanent_loss。随后才用NCI、parent_access和资本开支性质结算owner_cash。只有集团层输入本身缺失或不可比时才使用LOCAL_UNKNOWN/MEASUREMENT_MISMATCH。",
+      "valid_input_first_match": [
+        {
+          "class_id": "SEVERE_STRUCTURAL_CASH_LOSS",
+          "economic_direction": "ADVERSE",
+          "condition": "任一套集团现金代理值在连续两个可比期间为负且始终采用同一资本开支口径，同时观察到持续信用损失或维持性现金吞噬，净现金缓冲材料收缩，且载体不可逆并预计或已经持续至少12个月。NCI或parent_access可以为UNKNOWN。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "维持性资本开支持续超过经营现金流",
+            "应收款恶化形成实际信用损失",
+            "净现金缓冲消失"
+          ],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "THESIS_BLOCKING",
+            "next_research_action": {
+              "action_family": "CASH_LOSS_CARRIER_REMEDIATION",
+              "target_scope": "已观察到的结构性现金损失载体",
+              "fact_or_metric": "按载体取得未来至少12个月的维持性现金需求、信用损失、资金阻断期限及可用净现金缓冲",
+              "decision_axis": "permanent_loss",
+              "positive_effect": "若载体可逆、现金需求可由持续经营现金覆盖且资金访问恢复，则由THESIS_BLOCKING降回TIGHTEN_CONSTRAINT或MAINTAIN_CONSTRAINT。",
+              "negative_effect": "若载体不可逆、继续消耗净现金且没有可执行修复，则维持THESIS_BLOCKING。"
+            }
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_PERMANENT_LOSS_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围要求只适用于把owner_cash从COUNT_CONDITIONALLY改为归母计入或不计入；不门控THESIS_BLOCKING。"
+          }
+        },
+        {
+          "class_id": "ADVERSE_CASH_ONLY",
+          "economic_direction": "ADVERSE",
+          "condition": "任一套集团现金代理值在连续两个可比期间为负且采用同一资本开支口径，同时观察到持续信用损失或维持性现金吞噬，净现金收缩，但未满足不可逆或至少12个月的severe条件。NCI或parent_access可以为UNKNOWN。",
+          "is_residual": false,
+          "observed_adverse_carriers": [
+            "持续信用损失",
+            "维持性现金吞噬",
+            "净现金收缩"
+          ],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "TIGHTEN_CONSTRAINT",
+            "next_research_action": {
+              "action_family": "CASH_CONVERSION_CAUSE",
+              "target_scope": "营运资金、维持性资本开支和信用损失",
+              "fact_or_metric": "拆分应收账款账龄与实际损失、营运资金延长天数、维持性资本开支及其未来承诺",
+              "decision_axis": "owner_cash_and_permanent_loss",
+              "positive_effect": "若现金下降由可逆结算时点或扩张投入造成，则恢复COUNT_CONDITIONALLY并将永久损失降回MAINTAIN_CONSTRAINT。",
+              "negative_effect": "若维持性投入或信用损失持续扩大，则进一步检验severe分支；若后续证明材料泄漏或上划受阻，则转为DO_NOT_COUNT。"
+            }
+          },
+          "scope_requirements": {
+            "applicability": "OWNER_CASH_ONLY_NOT_A_PERMANENT_LOSS_GATE",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "parent_access UNKNOWN时owner_cash保持COUNT_CONDITIONALLY；这些范围要求不门控TIGHTEN_CONSTRAINT。"
+          }
+        },
+        {
+          "class_id": "POSITIVE_GROUP_PROXY_OWNER_SCOPE_OPEN",
+          "economic_direction": "NEUTRAL",
+          "condition": "两套集团现金代理值均以各自同口径历史比较且方向为正，或在另一套输入局部缺失时所需的同口径代理值为正；没有持续信用损失、维持性现金吞噬或净现金收缩等负面载体，但NCI、parent_access或维持/扩张拆分任一仍为OPEN或UNKNOWN。本分支在完整的FAVORABLE_PARENT_CASH_CLOSED之前结算，不升级为母公司现金。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "next_research_action": {
+              "action_family": "PARENT_OWNER_CASH_BRIDGE",
+              "target_scope": "NCI现金归属、母公司上划及维持/扩张资本开支拆分中的未闭合项",
+              "fact_or_metric": "取得母公司实际收取的子公司及合联营分红、NCI分配、资金转移限制和维持性资本开支拆分",
+              "decision_axis": "owner_cash",
+              "positive_effect": "若范围完整闭合且母公司可支配现金满足门槛，则进入FAVORABLE_PARENT_CASH_CLOSED并转为COUNT_IN_PARENT_OWNER_CASH。",
+              "negative_effect": "若后续证明材料NCI泄漏、上划受阻或维持性现金吞噬，则降低owner cash计入强度并按对应负面分支处理。"
+            }
+          },
+          "scope_requirements": {
+            "applicability": "NOT_REQUIRED_WHILE_OWNER_CASH_REMAINS_CONDITIONAL",
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED",
+            "rationale": "这些范围要求只门控升级为COUNT_IN_PARENT_OWNER_CASH；在OPEN或UNKNOWN时本分支仍唯一结算为COUNT_CONDITIONALLY。"
+          }
+        },
+        {
+          "class_id": "FAVORABLE_PARENT_CASH_CLOSED",
+          "economic_direction": "FAVORABLE",
+          "condition": "NCI、母公司上划与资本开支性质完整闭合，FY2024母公司可支配owner cash至少20亿元，FY2022至FY2024累计母公司可支配owner cash为正且无材料资金转移限制。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_IN_PARENT_OWNER_CASH",
+            "permanent_loss": "RELAX_CONSTRAINT",
+            "next_research_action": {
+              "action_family": "SUBSIDY_UNIT_ECONOMICS",
+              "target_scope": "物流补贴对应线路与产品",
+              "fact_or_metric": "逐线路取得补贴前贡献利润、补贴标准与期限、补贴应收回款及无补贴情况下的单位经济性",
+              "decision_axis": "normal_earnings",
+              "positive_effect": "若补贴对应线路在可持续政策或无补贴口径下仍有合理回报，则保留或上移正常盈利。",
+              "negative_effect": "若补贴仅长期填补亏损且政策或收款不稳定，则下移正常盈利。"
+            }
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "NEUTRAL_POSITIVE_GROUP_PROXY",
+          "economic_direction": "NEUTRAL",
+          "condition": "归属和口径完整闭合后，FY2024集团现金代理值为正但母公司可支配owner cash低于20亿元，且没有明确持续性负面载体。",
+          "is_residual": false,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "next_research_action": {
+              "action_family": "PARENT_CASH_CONVERSION_CAUSE",
+              "target_scope": "范围已闭合但母公司owner cash低于20亿元的现金转换差额",
+              "fact_or_metric": "将集团OCF到母公司可支配现金的已闭合桥按营运资金、已识别maintenance、分红、税款、利息及其他经常现金流出逐项归因，并区分可逆时点与持续负担",
+              "decision_axis": "owner_cash",
+              "positive_effect": "若低于20亿元主要来自可逆营运资金时点或一次性税息/分配，且正常化母公司owner cash达到门槛，则转为COUNT_IN_PARENT_OWNER_CASH。",
+              "negative_effect": "若已识别maintenance、税、利息或其他经常现金负担持续压低母公司owner cash，则维持COUNT_CONDITIONALLY；若持续吞噬全部可支配余量，则转为DO_NOT_COUNT。"
+            }
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        },
+        {
+          "class_id": "MIXED_COMPLETE_RESIDUAL",
+          "economic_direction": "MIXED",
+          "condition": "输入完整可比但不满足以上类别，例如集团现金代理值改善而母公司上划减少，或单年现金转负但载体明确可逆。",
+          "is_residual": true,
+          "observed_adverse_carriers": [],
+          "axis_updates": {
+            "owner_cash": "COUNT_CONDITIONALLY",
+            "permanent_loss": "MAINTAIN_CONSTRAINT",
+            "next_research_action": {
+              "action_family": "PARENT_OWNER_CASH_BRIDGE",
+              "target_scope": "方向相反的现金桥组成",
+              "fact_or_metric": "逐项解释集团现金代理值、母公司实际收现、NCI分配和资本开支性质之间的方向差异",
+              "decision_axis": "owner_cash",
+              "positive_effect": "若差异来自可逆时点或扩张投入且母公司可持续收现，则提高owner cash计入强度。",
+              "negative_effect": "若差异来自持续上划不足、NCI泄漏或维持性现金吞噬，则降低owner cash计入强度。"
+            }
+          },
+          "scope_requirements": {
+            "required_nci_scope_at_settlement": [
+              "CLOSED",
+              "IMMATERIAL_WITH_EVIDENCE"
+            ],
+            "required_parent_access_at_settlement": "EVIDENCED"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "receipt_id": "TURTLE_COMPARATIVE_ACTION_SCOPE_RECEIPT_V1",
+  "freeze_status": "FROZEN_PRE_DISCOVERY",
+  "immutability_rule": "This receipt is immutable. Any scope change requires a new receipt identifier.",
+  "research_ranges": [
+    {
+      "range_id": "REGIONAL_CEMENT_PRICE_ZONE_2017",
+      "industry_arena_family": "REGIONAL_CEMENT_PRICE_ZONE",
+      "research_cutoff_at": "2017-12-31T00:00:00+08:00"
+    },
+    {
+      "range_id": "NATIONAL_CONSUMER_DURABLES_2018",
+      "industry_arena_family": "NATIONAL_CONSUMER_DURABLES",
+      "research_cutoff_at": "2018-12-31T00:00:00+08:00"
+    },
+    {
+      "range_id": "EXPORT_MANUFACTURING_CURRENCY_AND_INPUT_COSTS_2019",
+      "industry_arena_family": "EXPORT_MANUFACTURING_CURRENCY_AND_INPUT_COSTS",
+      "research_cutoff_at": "2019-12-31T00:00:00+08:00"
+    }
+  ],
+  "permitted_action_topologies": [
+    "CUSTOMER_RESPONSE",
+    "COST_RESTRUCTURING"
+  ],
+  "selection_method": "IMPLEMENTED_OPERATING_ACTIONS_ONLY",
+  "preoutcome_static_pdf_rule": {
+    "access": "PREDECLARED_CUTOFF_BEFORE_STATIC_PDF_PACKAGE_ONLY",
+    "strict_cutoff": "Every permitted PDF must be available strictly before the stated cutoff; DATE_ONLY material on the cutoff date is not cutoff-before.",
+    "package_mutability": "The package must be fixed before discovery begins."
+  },
+  "no_outcome_rule": "Outcome access is forbidden before selection freeze.",
+  "stop_conditions": [
+    "DYNAMIC_OR_NON_STATIC_PDF_ACCESS_REQUESTED",
+    "PDF_NOT_STRICTLY_BEFORE_CUTOFF",
+    "PREDECLARED_PDF_PACKAGE_NOT_FIXED",
+    "OUTCOME_ACCESS_REQUESTED",
+    "NOT_IMPLEMENTED_OPERATING_ACTION",
+    "SCOPE_MUTATION_REQUESTED"
+  ]
+}

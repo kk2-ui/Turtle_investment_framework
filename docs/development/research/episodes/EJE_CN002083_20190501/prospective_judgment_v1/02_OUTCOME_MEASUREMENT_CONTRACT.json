@@ -1,0 +1,77 @@
+{
+  "schema_version": "prospective-enterprise-judgment-outcome-contract.v1",
+  "contract_id": "PEJOC:CN002083:20190501:FY2019:V1",
+  "company_id": "CN:002083",
+  "issuer_id": "ISSUER:CN:002083",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:002083",
+  "cutoff_at": "2019-05-01T00:00:00+08:00",
+  "observation_window": {
+    "period_start": "2019-01-01",
+    "period_end": "2019-12-31",
+    "due_at": "2020-05-01T00:00:00+08:00"
+  },
+  "source_rule": {
+    "issuer_code": "002083",
+    "report_period": "FY2019",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "required_host": "static.cninfo.com.cn",
+    "required_form": "FULL_ANNUAL_REPORT_PDF",
+    "version_policy": "ORIGINAL_FULL_REPORT_IF_UNIQUELY_IDENTIFIED",
+    "mismatch_if_unresolved": "ANNUAL_REPORT_VERSION_FAMILY_UNRESOLVED"
+  },
+  "cells": [
+    {
+      "cell_id": "CELL:CN002083:FY2019:CUSTOMER_MARKET_RESPONSE",
+      "dimension": "CUSTOMER_COMPETITION_RESPONSE",
+      "fields": [
+        {"field_id": "EXPORT_TURNOVER_USD", "unit": "USD", "definition": "Issuer-disclosed completed export turnover for FY2019, on the same narrative definition if available."},
+        {"field_id": "EXTERNAL_SALES_REVENUE_RMB", "unit": "RMB", "definition": "Listed-consolidated external-sales regional revenue for FY2019."},
+        {"field_id": "TOWEL_SALES_VOLUME_TONNES", "unit": "TONNES", "definition": "FY2019 towel-series physical sales volume."},
+        {"field_id": "BEDDING_SALES_VOLUME_TONNES", "unit": "TONNES", "definition": "FY2019 bedding-series physical sales volume."},
+        {"field_id": "TOP5_CUSTOMER_SALES_SHARE_PCT", "unit": "PERCENT", "definition": "Top-five customers' share of annual sales."}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002083:FY2019:UNIT_ECONOMICS",
+      "dimension": "UNIT_ECONOMICS",
+      "fields": [
+        {"field_id": "EXTERNAL_SALES_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 gross margin for the annual-report external-sales regional row."},
+        {"field_id": "HOME_TEXTILE_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 gross margin for the home-textile industry row."},
+        {"field_id": "TOWEL_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 gross margin for towel-series products."},
+        {"field_id": "BEDDING_GROSS_MARGIN_PCT", "unit": "PERCENT", "definition": "FY2019 gross margin for bedding-series products."}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002083:FY2019:IMPLEMENTATION",
+      "dimension": "EXECUTION",
+      "fields": [
+        {"field_id": "AUTOMATION_PROJECT_STATUS_EVENT", "unit": "EVENT", "definition": "Cutoff-to-period-end disclosed commissioning or operating milestone for the high-end towel/bedding automated-production project."}
+      ]
+    },
+    {
+      "cell_id": "CELL:CN002083:FY2019:CASH_CAPITAL_LOSS",
+      "dimension": "WORKING_CAPITAL_CASH_CAPITAL",
+      "fields": [
+        {"field_id": "NET_OPERATING_CASH_RMB", "unit": "RMB", "definition": "FY2019 consolidated net cash from operating activities."},
+        {"field_id": "CASH_CAPEX_RMB", "unit": "RMB", "definition": "FY2019 consolidated cash paid for fixed, intangible and other long-term assets."},
+        {"field_id": "ACCOUNTS_RECEIVABLE_RMB", "unit": "RMB", "definition": "Listed-consolidated accounts receivable at 2019-12-31."},
+        {"field_id": "INVENTORY_RMB", "unit": "RMB", "definition": "Listed-consolidated inventory at 2019-12-31, with scope-change note if disclosed."},
+        {"field_id": "OTHER_RECEIVABLE_RMB", "unit": "RMB", "definition": "Listed-consolidated other receivables at 2019-12-31, including the property-disposal balance only if separately disclosed."},
+        {"field_id": "SHORT_TERM_BORROWINGS_RMB", "unit": "RMB", "definition": "Listed-consolidated short-term borrowings at 2019-12-31."},
+        {"field_id": "LONG_TERM_BORROWINGS_RMB", "unit": "RMB", "definition": "Listed-consolidated long-term borrowings at 2019-12-31."}
+      ]
+    }
+  ],
+  "field_resolution_states": ["OBSERVED", "UNKNOWN", "EVIDENCE_INELIGIBLE", "MEASUREMENT_MISMATCH", "NOT_APPLICABLE"],
+  "custodian_rules": [
+    "Do not receive or infer H-A, H-B, scenarios, valuation or investment treatment.",
+    "Extract only exact contract-matched FY2019 fields from the selected official full annual report.",
+    "Record page or section locator and a short exact quote for every observed field.",
+    "A missing field remains UNKNOWN; a definition or responsibility-boundary mismatch is local to that field or cell.",
+    "Do not infer customer loyalty, management-action effect, owner cash, permanent loss or investment usefulness from the fields."
+  ],
+  "outcome_access": "SEALED_UNTIL_PREOUTCOME_COMMIT",
+  "price_access": "PROHIBITED",
+  "comparative_access": "PROHIBITED",
+  "allowed_custodian_output": ["ATOMIC_FIELD_RECORDS", "LOCAL_MEASUREMENT_STATUS"]
+}

@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/epv_model_input.schema.json",
+  "title": "Turtle deterministic EPV source operands",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "model_id", "company_id", "cutoff_at", "basis", "earnings_evidence_status",
+    "period_facts", "maintenance_capex", "maintenance_working_capital",
+    "tax", "capitalization", "claims_bridge"
+  ],
+  "properties": {
+    "schema_version": {"const": "epv-model-input.v1"},
+    "model_id": {"$ref": "#/$defs/nonempty"},
+    "company_id": {"$ref": "#/$defs/nonempty"},
+    "cutoff_at": {"type": "string", "format": "date"},
+    "basis": {"$ref": "#/$defs/basis"},
+    "earnings_evidence_status": {"enum": ["AVAILABLE", "UNKNOWN"]},
+    "earnings_unknown_reason": {"$ref": "#/$defs/nonempty"},
+    "period_facts": {
+      "type": "array", "minItems": 1,
+      "items": {"$ref": "#/$defs/periodFact"}
+    },
+    "maintenance_capex": {"$ref": "#/$defs/cost"},
+    "maintenance_working_capital": {"$ref": "#/$defs/cost"},
+    "tax": {"$ref": "#/$defs/tax"},
+    "capitalization": {"$ref": "#/$defs/capitalization"},
+    "claims_bridge": {"$ref": "#/$defs/claimsBridge"}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "factIds": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^(OBS|CALC):"}
+    },
+    "basis": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "value_scope", "earnings_claim_scope", "economic_entity",
+        "operating_perimeter", "ordinary_share_claim_scope", "currency", "unit",
+        "as_of", "operating_cash_treatment", "operating_cash_component_ids"
+      ],
+      "properties": {
+        "value_scope": {"enum": ["enterprise", "equity"]},
+        "earnings_claim_scope": {"enum": ["ENTERPRISE_OPERATING", "ORDINARY_COMMON_EQUITY"]},
+        "economic_entity": {"$ref": "#/$defs/nonempty"},
+        "operating_perimeter": {"$ref": "#/$defs/nonempty"},
+        "ordinary_share_claim_scope": {"$ref": "#/$defs/nonempty"},
+        "currency": {"$ref": "#/$defs/nonempty"},
+        "unit": {"$ref": "#/$defs/nonempty"},
+        "as_of": {"type": "string", "format": "date"},
+        "operating_cash_treatment": {
+          "const": "REQUIRED_OPERATING_CASH_INCLUDED_NON_OPERATING_CASH_EXCLUDED"
+        },
+        "operating_cash_component_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        }
+      }
+    },
+    "adjustment": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "adjustment_id", "category", "direction", "amount", "tax_basis",
+        "source_fact_ids", "economic_reason"
+      ],
+      "properties": {
+        "adjustment_id": {"$ref": "#/$defs/nonempty"},
+        "category": {"enum": [
+          "NON_RECURRING_INCOME", "NON_RECURRING_EXPENSE",
+          "ACCOUNTING_DISTORTION", "NON_OPERATING_INCOME", "OTHER_NORMALIZATION"
+        ]},
+        "direction": {"enum": ["ADD", "SUBTRACT"]},
+        "amount": {"type": "number", "minimum": 0},
+        "tax_basis": {"enum": ["PRETAX", "AFTER_TAX"]},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"},
+        "economic_reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "periodFact": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "period_id", "period_start", "period_end", "metric", "basis_kind",
+        "tax_basis", "working_capital_application", "source_fact_ids",
+        "normalization_adjustments"
+      ],
+      "properties": {
+        "period_id": {"$ref": "#/$defs/nonempty"},
+        "period_start": {"type": "string", "format": "date"},
+        "period_end": {"type": "string", "format": "date"},
+        "metric": {"$ref": "#/$defs/nonempty"},
+        "basis_kind": {"enum": [
+          "PRE_MAINTENANCE_OWNER_EARNINGS_PRETAX",
+          "PRE_MAINTENANCE_OWNER_EARNINGS_AFTER_TAX",
+          "REPORTED_OCF_AFTER_TAX",
+          "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX"
+        ]},
+        "tax_basis": {"enum": ["PRETAX", "AFTER_TAX"]},
+        "amount": {"type": "number"},
+        "amount_range": {
+          "type": "object", "additionalProperties": false,
+          "required": ["range_low", "range_high"],
+          "properties": {
+            "range_low": {"type": "number"},
+            "range_high": {"type": "number"}
+          }
+        },
+        "working_capital_application": {"enum": [
+          "NOT_REFLECTED", "CURRENT_MOVEMENT_REFLECTED", "ALREADY_NORMALIZED"
+        ]},
+        "observed_working_capital_charge": {"type": "number"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"},
+        "normalization_adjustments": {
+          "type": "array", "items": {"$ref": "#/$defs/adjustment"}
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis_kind": {"const": "CANONICAL_NORMALIZED_OWNER_CASH_AFTER_TAX"}
+            }
+          },
+          "then": {
+            "required": ["amount_range"],
+            "not": {"required": ["amount"]}
+          },
+          "else": {
+            "required": ["amount"],
+            "not": {"required": ["amount_range"]}
+          }
+        }
+      ]
+    },
+    "cost": {
+      "description": "Maintenance owner-cash outflow. A bounded amount is after-tax cash and is deducted only after operating earnings tax.",
+      "type": "object", "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["BOUNDED", "UNKNOWN", "ALREADY_REFLECTED"]},
+        "range_low": {"type": "number", "minimum": 0},
+        "range_high": {"type": "number", "minimum": 0},
+        "tax_basis": {"const": "AFTER_TAX"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"},
+        "source_model_id": {"$ref": "#/$defs/nonempty"},
+        "reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "tax": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["BOUNDED", "ALREADY_REFLECTED", "UNKNOWN"]},
+        "rate_low": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+        "rate_high": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"},
+        "reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "capitalization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["BOUNDED", "UNKNOWN"]},
+        "rate_low": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
+        "rate_high": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"},
+        "reason": {"$ref": "#/$defs/nonempty"}
+      }
+    },
+    "range": {
+      "type": "object", "additionalProperties": false,
+      "required": ["range_low", "range_high", "source_fact_ids"],
+      "properties": {
+        "range_low": {"type": "number"},
+        "range_high": {"type": "number"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "component": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "component_id", "kind", "range_low", "range_high", "source_fact_ids"
+      ],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/nonempty"},
+        "kind": {"enum": ["NON_OPERATING_CASH", "OTHER_NON_OPERATING_ASSET"]},
+        "range_low": {"type": "number", "minimum": 0},
+        "range_high": {"type": "number", "minimum": 0},
+        "claim_ids": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonempty"}
+        },
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "shares": {
+      "type": "object", "additionalProperties": false,
+      "required": ["value", "source_fact_ids"],
+      "properties": {
+        "value": {"type": "number", "exclusiveMinimum": 0},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "claimsBridge": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["COMPLETE", "UNKNOWN"]},
+        "bridge_mode": {"enum": ["ENTERPRISE_TO_ORDINARY_COMMON", "DIRECT_ORDINARY_COMMON"]},
+        "non_operating_components": {
+          "type": "array", "items": {"$ref": "#/$defs/component"}
+        },
+        "debt": {"$ref": "#/$defs/range"},
+        "preferred_claims": {"$ref": "#/$defs/range"},
+        "minority_interest": {"$ref": "#/$defs/range"},
+        "other_adjustments": {"$ref": "#/$defs/range"},
+        "shares": {"$ref": "#/$defs/shares"},
+        "reason": {"$ref": "#/$defs/nonempty"}
+      }
+    }
+  }
+}

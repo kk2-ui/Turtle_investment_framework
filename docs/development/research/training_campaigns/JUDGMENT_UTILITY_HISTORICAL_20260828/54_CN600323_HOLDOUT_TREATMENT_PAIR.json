@@ -1,0 +1,84 @@
+{
+  "schema_version": "historical-holdout-treatment-pair.v1",
+  "pair_id": "PAIR:HIST:CN600323:20240501:V2",
+  "episode_id": "HIST:CN600323:20240501:FY2024",
+  "company_id": "CN:600323",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "baseline_forecaster_id": "/root/cn600323_holdout_baseline_forecaster",
+  "enhanced_forecaster_id": "/root/cn600323_holdout_enhanced_forecaster",
+  "method_pack_id": "METHOD_PACK:JUDGMENT_FIRST:BLIND_FEEDBACK:V2",
+  "method_version": "judgment-first-blind-feedback.v2",
+  "baseline_treatment_snapshot": {
+    "management_execution": {
+      "treatment_code": "CONDITIONAL_CREDIT",
+      "rationale": "固废工程收入大降时，剔除工程后的固废运营净利润仍约增长12%，焚烧量增长20.85%，且资本开支下降，支持运营与项目收尾能力；但吨垃圾效率下滑、应收继续增加，燃气利润主要由外部价差修复，不能给无条件正面信用。"
+    },
+    "normal_earnings": {
+      "treatment_code": "EXCLUDE_COMPONENT",
+      "rationale": "以剔除工程与装备后的固废运营利润及供排水经常利润为主要锚；排除低毛利工程收入的外推，并把2023年能源1.57亿元利润高于保守中周期水平的部分排除，直到同口径销量、价差、经常利润和持续费用共同证明其可持续。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_CONDITIONALLY",
+      "rationale": "2023年GROUP_CASH_PROXY转正，但含约11.88亿元集中回款，维护性与成长性资本开支未精确拆分；少数股东损益约占2.7%而相对不重大，但母公司上划能力没有闭合。故不能直接把合并现金当母公司所有者现金。"
+    },
+    "permanent_loss": {
+      "treatment_code": "TIGHTEN_CONSTRAINT",
+      "rationale": "2021—2023年应收账款加合同资产约翻倍至48.87亿元、估算净有息债务增至约137亿元，且约158亿元资产受限；稳定运营资产与资本开支退坡防止立即升级为THESIS_BLOCKING，但继续扩表不能被会计利润掩盖。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UNCHANGED",
+      "rationale": "这是相对共同FY2023参考状态的内在价值方向。截点没有FY2024结果可证明固废正常盈利、现金可得性或永久损失载体发生净变化；对能源高点和现金集中回收的保守处理已经冻结在参考状态内，不涉及市场价格或正式估值。"
+    },
+    "next_research_action": {
+      "action_family": "CASH_CONVERSION_AND_PARENT_ACCESS",
+      "target_scope": "FY2024集团与母公司同口径现金桥，含政府/电网/国补客户、项目公司、少数股东与母公司",
+      "fact_or_metric": "核对调整后集团经营现金流、公司披露的总资本开支、应收账款加合同资产、净有息债务、信用减值，以及子公司分红/集团资金调度进入母公司的金额；明确回收是否超过新增应收并覆盖资本开支与对外分配。",
+      "decision_axis": "owner_cash_and_permanent_loss",
+      "positive_effect": "若应收下降、调整后GROUP_CASH_PROXY为正、净债务下降且母公司取得现金路径有证据，则owner cash转为COUNT_IN_PARENT_OWNER_CASH并放松永久损失约束。",
+      "negative_effect": "若应收和净债务继续同步上升、现金代理持续为负或上划受阻，则owner cash转为DO_NOT_COUNT；出现持续融资压力时永久损失升级为THESIS_BLOCKING。"
+    }
+  },
+  "enhanced_treatment_snapshot": {
+    "management_execution": {
+      "treatment_code": "CONDITIONAL_CREDIT",
+      "rationale": "分轴后，垃圾焚烧产品/运营执行为正面，能源采购与价格协调从亏损恢复为正面但具有外部价格依赖；经营现金执行因大额存量回款而为条件信用；融资信用尚可但债务仍增；新增项目资本配置因单位回报和母公司现金桥未闭合而不加分。综合只能给条件信用，不能用最弱局部擦除已验证运营能力，也不能用核心运营替新增资本回报背书。"
+    },
+    "normal_earnings": {
+      "treatment_code": "EXCLUDE_COMPONENT",
+      "rationale": "保留FY2023已验证的固废/水务经常利润，只排除能源利润高于保守中周期的未经验证部分。能源FY2021、FY2022、FY2023净利润约0.36、-0.65、1.57亿元，FY2023改善主要由采购气价回落而非销量增长驱动；在采购价、终端售价、销量、经常利润和持续费用桥闭合前，不把单年高点完整正常化，也不制造精确中周期值。"
+    },
+    "owner_cash": {
+      "treatment_code": "COUNT_CONDITIONALLY",
+      "rationale": "剔除解释第14号后的集团经营现金流约27.38亿元减约23亿元资本性支出，仅构成约4.38亿元GROUP_CASH_PROXY，且含大额存量回款；NCI经济份额较小但母公司上划能力未证实，故最多条件计入。"
+    },
+    "permanent_loss": {
+      "treatment_code": "TIGHTEN_CONSTRAINT",
+      "rationale": "应收账款加合同资产从FY2021约21.93亿元升至FY2022约38.74亿元、FY2023约48.87亿元；FY2023约4.38亿元GROUP_CASH_PROXY扣除9.88亿元债权转让和约2亿元集中污水回款后为负，净有息债务仍上升。这些是已观察的集团风险载体，要求收紧约束；稳定市政需求、核心项目高利用率、64.13%的资产负债率和4.36倍利息保障使其尚未达到THESIS_BLOCKING。"
+    },
+    "valuation_direction": {
+      "treatment_code": "UNCHANGED",
+      "rationale": "相对共同FY2023参考状态，排除未经验证的能源高点并收紧现金/债务约束，是对参考状态内部质量的保守拆分而非观察到新的期后恶化；核心垃圾焚烧和水务经常盈利仍被保留。没有前推FY2024结果，也不使用价格或正式估值，因此内在价值方向维持不变。"
+    },
+    "next_research_action": {
+      "action_family": "CASH_CONVERSION_AND_PARENT_ACCESS",
+      "target_scope": "FY2024集团与母公司同口径现金桥，含政府/电网/国补客户、项目公司、少数股东与母公司",
+      "fact_or_metric": "核对调整后集团经营现金流、公司披露的总资本开支、应收账款加合同资产、净有息债务、信用减值，以及子公司分红/集团资金调度进入母公司的金额；明确回收是否超过新增应收并覆盖资本开支与对外分配。",
+      "decision_axis": "owner_cash_and_permanent_loss",
+      "positive_effect": "若应收下降、调整后GROUP_CASH_PROXY为正、净债务下降且母公司取得现金路径有证据，则owner cash转为COUNT_IN_PARENT_OWNER_CASH并放松永久损失约束。",
+      "negative_effect": "若应收和净债务继续同步上升、现金代理持续为负或上划受阻，则owner cash转为DO_NOT_COUNT；出现持续融资压力时永久损失升级为THESIS_BLOCKING。"
+    }
+  },
+  "material_preoutcome_differences": [],
+  "shared_outcome_cell_ids": [
+    "FY2024_BALANCE_SHEET_PERMANENT_LOSS",
+    "FY2024_GROUP_CASH_AND_BALANCE_SHEET_BURDEN",
+    "FY2024_OWNER_CASH_ACCESS",
+    "FY2024_PARENT_OWNER_CASH_ATTRIBUTION",
+    "FY2024_RECURRING_EARNINGS_QUALITY",
+    "FY2024_RESPONSIBILITY_MATCHED_RECURRING_ECONOMICS"
+  ],
+  "frozen_at": "2026-08-28T21:15:00+08:00",
+  "outcome_state": "SEALED_AFTER_BOTH_ARMS_FREEZE",
+  "artifact_status": "FROZEN",
+  "authority": "NONE"
+}

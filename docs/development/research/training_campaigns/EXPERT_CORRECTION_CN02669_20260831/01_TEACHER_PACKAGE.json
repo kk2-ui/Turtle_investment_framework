@@ -1,0 +1,695 @@
+{
+  "schema_version": "expert-correction-teacher-package.v1",
+  "package_id": "TEACHER:HK02669:EXPERT_CORRECTION:V1",
+  "case_identity": {
+    "company_id": "HK:02669",
+    "company_name": "中海物业",
+    "case_cutoff_at": "2026-08-11T23:59:59+08:00",
+    "teaching_identity": "RESULT_KNOWN_EXPERT_CORRECTED",
+    "outcome_access": "RESULT_KNOWN"
+  },
+  "source_artifacts": [
+    {
+      "artifact_id": "CN02669:TARGET_REPORT",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/01_CN02669_TARGET_REPORT.md",
+      "role": "TARGET_REPORT",
+      "review_state": "ACCEPT_WITH_DATA_LIMITED_TEACHING_PROVENANCE",
+      "teaching_use": "The user-selected target report form; preserved only as a result-known teacher snapshot."
+    },
+    {
+      "artifact_id": "CN02669:JUDGMENT_CONTENT_REVIEW",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/02_REVISION_JUDGMENT_CONTENT_REVIEW.md",
+      "role": "MATERIAL_REVIEW",
+      "review_state": "ACCEPTED_TEACHING_PROVENANCE",
+      "teaching_use": "Accepted economic-content review of the rebuilt judgment and model boundaries."
+    },
+    {
+      "artifact_id": "CN02669:SUBSTANTIVE_REVIEW",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/03_REBUILT_CANDIDATE_SUBSTANTIVE_REVIEW.md",
+      "role": "MATERIAL_REVIEW",
+      "review_state": "ACCEPT_WITH_DATA_LIMITED_TEACHING_PROVENANCE",
+      "teaching_use": "Independent reconstruction of business engines, owner cash, capital propagation and remaining data limits."
+    },
+    {
+      "artifact_id": "CN02669:THESIS_ACCEPTANCE",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/04_INVESTOR_THESIS_INDEPENDENT_ACCEPTANCE.md",
+      "role": "MATERIAL_REVIEW",
+      "review_state": "ACCEPT_WITH_DATA_LIMITED_TEACHING_PROVENANCE",
+      "teaching_use": "Independent investor-thesis review of growth proof, cash accessibility, value routes and price identity."
+    },
+    {
+      "artifact_id": "CN02669:READER_BINDING_REVIEW",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/05_READER_EVIDENCE_BINDING_REVIEW.md",
+      "role": "MATERIAL_REVIEW",
+      "review_state": "ACCEPTED_TEACHING_PROVENANCE",
+      "teaching_use": "Independent acceptance of nearby source binding after the limited writing repair."
+    },
+    {
+      "artifact_id": "CN02669:THESIS_CORRECTION_HANDOFF",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/06_INVESTOR_THESIS_CORRECTION_HANDOFF.md",
+      "role": "CORRECTION_HANDOFF",
+      "review_state": "ACCEPTED_TEACHING_PROVENANCE",
+      "teaching_use": "Before-to-after trace for the material action-price identity correction."
+    },
+    {
+      "artifact_id": "CN02669:READER_CORRECTION_HANDOFF",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/07_READER_BINDING_CORRECTION_HANDOFF.md",
+      "role": "CORRECTION_HANDOFF",
+      "review_state": "ACCEPTED_TEACHING_PROVENANCE",
+      "teaching_use": "Before-to-after trace for nearby evidence binding without model mutation."
+    },
+    {
+      "artifact_id": "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION",
+      "ref": "docs/development/research/training_campaigns/EXPERT_CORRECTION_CN02669_20260831/source_snapshots/08_PAIRED_REPORT_COMPARISON_CORRECTION.md",
+      "role": "CORRECTION_HANDOFF",
+      "review_state": "ACCEPTED_TEACHING_PROVENANCE",
+      "teaching_use": "Accepted user comparison that preserves the newer action hierarchy, restores the older derivation density, and treats zero cash recognition as a lower bound rather than a final estimate."
+    },
+    {
+      "artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "ref": "docs/value_investing_from_graham_to_buffett_notes.md",
+      "role": "PRINCIPLE_SOURCE",
+      "review_state": "ACCEPTED_TEACHING_PROVENANCE",
+      "teaching_use": "Principle source only; each principle is bounded by object, mechanism, evidence, misuse and countercondition."
+    }
+  ],
+  "correction_events": [
+    {
+      "event_id": "ECORR:NEW_GROWTH_IS_NOT_MATURE_RETURN",
+      "accepted_source_artifact_ids": [
+        "CN02669:SUBSTANTIVE_REVIEW",
+        "CN02669:THESIS_ACCEPTANCE"
+      ],
+      "before_error_pattern": "Project wins, managed-area growth and implementation progress were allowed to stand in for mature project return and owner cash.",
+      "root_cause_classes": ["DATA_COVERAGE", "REASONING"],
+      "economic_object": "new-service cohort economics",
+      "responsibility_boundary": "project acquisition and delivery versus mature cohort profit, collection and capital return",
+      "error_mechanism": "Implementation evidence was promoted through the customer, unit-economics and cash stages without responsibility-matched observations.",
+      "economic_impact": "Unproved growth could inflate normal earnings, owner cash and terminal value while hiding working-capital absorption.",
+      "prohibited_assumptions": [
+        "A contract win proves a mature margin.",
+        "Revenue growth proves project-level cash return.",
+        "A peer margin can replace target-company cohort economics."
+      ],
+      "correction": {
+        "best_current_judgment": "New city and project businesses demonstrate acquisition and delivery ability, but remain conditional until mature cohort margin, collection, renewal and cumulative cash are observed.",
+        "required_company_evidence": [
+          "cohort age and renewal",
+          "direct labor, subcontracting and start-up capital",
+          "acceptance, receivable ageing and cumulative collection",
+          "mature project profit and incremental return"
+        ],
+        "investor_consequence": "Exclude the unproved growth contribution from base owner cash and preserve it as a conditional component with promotion tests.",
+        "uncertainty_treatment": "Use a bounded scenario rather than either zero value or full mature economics.",
+        "countercondition": "A business with immediate prepaid cash, negligible start-up capital and contractually fixed economics may require a shorter proof chain.",
+        "reversal_observation": "Several mature cohorts show stable renewal, adequate collection and positive cumulative return after all capital absorption."
+      },
+      "transfer": {
+        "portable_rule": "Implementation proves implementation only; promote growth into base owner economics after customer adoption, unit economics and cash absorption close on the same responsibility unit.",
+        "applicable_when": "A company reports new projects, stores, capacity, acquisitions, products or service cohorts whose mature economics are not separately observable.",
+        "not_applicable_when": "The new activity has contractually fixed economics, immediate customer payment and immaterial incremental capital, with direct issuer evidence for each condition.",
+        "next_case_probe": "Reconstruct one mature cohort from customer acceptance through unit economics, working capital and cumulative cash before underwriting the portfolio."
+      },
+      "decision_surfaces": [
+        "BUSINESS_ENGINE",
+        "NORMAL_EARNINGS",
+        "OWNER_CASH",
+        "VALUE_ROUTE",
+        "REVERSAL_EVIDENCE"
+      ]
+    },
+    {
+      "event_id": "ECORR:CONSOLIDATED_CASH_IS_NOT_ORDINARY_SHAREHOLDER_CASH",
+      "accepted_source_artifact_ids": [
+        "CN02669:SUBSTANTIVE_REVIEW",
+        "CN02669:THESIS_ACCEPTANCE",
+        "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION"
+      ],
+      "before_error_pattern": "Consolidated cash was at risk of being treated as fully attributable, upstreamable and distributable to ordinary shareholders.",
+      "root_cause_classes": ["DATA_COVERAGE", "ACQUISITION_MODULE", "REASONING", "MODEL"],
+      "economic_object": "ordinary-shareholder cash accessibility",
+      "responsibility_boundary": "consolidated group cash versus legal-entity ownership, restrictions, non-controlling interests and upstream distribution",
+      "error_mechanism": "A balance-sheet amount crossed legal-entity and claim boundaries without a distribution bridge.",
+      "economic_impact": "Downside protection and owner value could be overstated, while a genuine but uncertain cash option could also be incorrectly erased.",
+      "prohibited_assumptions": [
+        "Every unit of consolidated cash is immediately distributable.",
+        "Small non-controlling profit proves full cash ownership.",
+        "Missing upstream detail means the cash has zero value."
+      ],
+      "correction": {
+        "best_current_judgment": "Separate consolidated cash, listed-parent cash, restrictions and ordinary-shareholder realization; use the evidenced accessible amount as the base lower bound and preserve the unresolved remainder as a conditional range rather than either an arbitrary percentage or permanent zero.",
+        "required_company_evidence": [
+          "cash-holding legal entities and ownership",
+          "restricted cash, reserves and tax friction",
+          "intercompany receivables and ageing",
+          "historical upstream distributions, dividends and cancellations",
+          "funding source and post-payment balance for special shareholder returns",
+          "project-batch collections reconciled without double counting ordinary distributions"
+        ],
+        "investor_consequence": "Use a cash-accessibility range, identify its evidenced lower bound, and do not add parent-only, consolidated, project-receipt or already-distributed cash twice.",
+        "uncertainty_treatment": "Keep exact accessibility unknown while bounding the economic realization range; zero recognition is a current base lower bound only when no positive accessible amount is evidenced.",
+        "countercondition": "A simple wholly owned structure with unrestricted cash and repeated distributions may justify near-full recognition.",
+        "reversal_observation": "Entity-level disclosures and repeated distributions demonstrate that ordinary shareholders can realize the cash without material leakage."
+      },
+      "transfer": {
+        "portable_rule": "Balance-sheet cash becomes ordinary-shareholder value only through a responsibility-matched ownership and realization bridge; uncertainty narrows recognition but does not automatically make the cash worthless.",
+        "applicable_when": "Material cash sits in subsidiaries, regulated entities, joint structures or groups with related-party balances and distribution frictions.",
+        "not_applicable_when": "The cash is held directly by the listed parent, unrestricted, wholly attributable and repeatedly distributed or deployed at observable adequate returns.",
+        "next_case_probe": "Map cash-holding entities, ownership, restrictions, taxes, upstream history, special-return funding, post-payment balances and project-batch collections; reconcile each source against ordinary distributions before assigning a cash range."
+      },
+      "decision_surfaces": ["OWNER_CASH", "PERMANENT_LOSS", "VALUE_ROUTE"]
+    },
+    {
+      "event_id": "ECORR:PARENT_SYSTEM_HAS_SUPPORT_AND_EXTRACTION_CHANNELS",
+      "accepted_source_artifact_ids": [
+        "CN02669:THESIS_ACCEPTANCE",
+        "CN02669:TARGET_REPORT"
+      ],
+      "before_error_pattern": "A parent or ecosystem relationship was narrated as a one-way source of projects, brand and credit support.",
+      "root_cause_classes": ["REASONING"],
+      "economic_object": "parent-system transmission to ordinary shareholders",
+      "responsibility_boundary": "operating support versus related-party claims, receivables, capital allocation and cash realization",
+      "error_mechanism": "Operating resource provision was netted against cash extraction and governance constraints instead of underwriting both channels separately.",
+      "economic_impact": "The thesis could overstate growth quality and cash protection or, in the opposite direction, ignore real customer and credit advantages.",
+      "prohibited_assumptions": [
+        "Related revenue is automatically high-quality owner value.",
+        "Parent support offsets receivable ageing or poor capital allocation.",
+        "A related-party relationship is automatically harmful."
+      ],
+      "correction": {
+        "best_current_judgment": "Underwrite the parent as two concurrent mechanisms: operating support and ordinary-shareholder extraction or constraint.",
+        "required_company_evidence": [
+          "project and customer contribution",
+          "related-party pricing and receivable collection",
+          "capital transactions and allocation decisions",
+          "actual distributions and cash realization"
+        ],
+        "investor_consequence": "Do not capitalize parent support until its net effect on unit economics, cash conversion and minority realization is supportable.",
+        "uncertainty_treatment": "Keep support and extraction as separate thesis legs with distinct reversal evidence.",
+        "countercondition": "A legally protected pass-through or arm's-length contract with short settlement can reduce, but not eliminate, the need for cash and governance checks.",
+        "reversal_observation": "Related operating benefits persist while collection, allocation and shareholder distribution remain economically fair."
+      },
+      "transfer": {
+        "portable_rule": "A parent system can improve customer access and financing while simultaneously constraining ordinary-shareholder cash; never net the two mechanisms before tracing each to owner economics.",
+        "applicable_when": "The issuer depends materially on a parent, platform, government network, franchise system or related customer group.",
+        "not_applicable_when": "Transactions are immaterial and the target has independent customers, financing, allocation and cash distribution.",
+        "next_case_probe": "Build two arrows from the relationship: one to operating advantage and one to cash or governance claims, then test both with separate evidence."
+      },
+      "decision_surfaces": [
+        "CENTRAL_THESIS",
+        "BUSINESS_ENGINE",
+        "MANAGEMENT_AND_CAPITAL_ALLOCATION",
+        "OWNER_CASH",
+        "STRONGEST_RIVAL"
+      ]
+    },
+    {
+      "event_id": "ECORR:AGGREGATE_PROXY_IS_NOT_COHORT_RETURN",
+      "accepted_source_artifact_ids": ["CN02669:THESIS_ACCEPTANCE"],
+      "before_error_pattern": "A company-level multi-year incremental return proxy was at risk of being labelled as the permanent return of a particular growth cohort.",
+      "root_cause_classes": ["DATA_COVERAGE", "REASONING", "MODEL"],
+      "economic_object": "incremental return attribution",
+      "responsibility_boundary": "whole-company change versus project, product or cohort capital and earnings",
+      "error_mechanism": "A conservative aggregate observation was promoted into a causal component parameter without matched numerator, denominator and period.",
+      "economic_impact": "A growth component could be either falsely condemned or falsely valued, changing normal earnings, retained-capital value and price treatment.",
+      "prohibited_assumptions": [
+        "An aggregate proxy identifies a project return.",
+        "A short window is a permanent return.",
+        "A peer margin can repair a responsibility mismatch."
+      ],
+      "correction": {
+        "best_current_judgment": "Use the aggregate proxy only as a conservative whole-company observation and keep component return conditional until matched cohort evidence exists.",
+        "required_company_evidence": [
+          "component capital employed",
+          "component after-tax earnings",
+          "matched start and maturity periods",
+          "cumulative working-capital and cash absorption"
+        ],
+        "investor_consequence": "Do not use the proxy as a permanent component return or as precise growth value.",
+        "uncertainty_treatment": "Bound the component and show whether the residual can change the overall thesis.",
+        "countercondition": "A genuinely single-engine company with stable definitions and immaterial portfolio change may make the aggregate proxy economically close to the component.",
+        "reversal_observation": "Matched component disclosures reconcile the proxy to mature cohort return over a sufficient window."
+      },
+      "transfer": {
+        "portable_rule": "A proxy inherits the responsibility unit, period and numerator-denominator definition from which it was calculated; never promote it to a narrower cohort without reconciliation.",
+        "applicable_when": "Only aggregate changes are disclosed while the thesis depends on a particular project, product, acquisition or segment return.",
+        "not_applicable_when": "The enterprise is economically single-engine and the disclosed capital and earnings map directly to the claimed unit across a mature period.",
+        "next_case_probe": "State the proxy's exact responsibility boundary and ask whether a different component or period could produce the same aggregate result."
+      },
+      "decision_surfaces": ["BUSINESS_ENGINE", "NORMAL_EARNINGS", "OWNER_CASH", "VALUE_ROUTE"]
+    },
+    {
+      "event_id": "ECORR:ARITHMETIC_PRICE_IS_NOT_ACTION_PRICE",
+      "accepted_source_artifact_ids": [
+        "CN02669:THESIS_CORRECTION_HANDOFF",
+        "CN02669:THESIS_ACCEPTANCE",
+        "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION"
+      ],
+      "before_error_pattern": "A correctly calculated reverse price under a fixed future market terminal was first treated as self-authorizing, then the correction overreached by leaving the primary action price unknown despite an available best-current business-value route.",
+      "root_cause_classes": ["MODEL", "REASONING", "WRITING"],
+      "economic_object": "valuation-route and price identity",
+      "responsibility_boundary": "operating value and cash receipt versus future market realization",
+      "error_mechanism": "The model oscillated between false certainty and route paralysis instead of choosing an explicit best-current economic terminal, exposing its assumptions, and preserving rival routes separately.",
+      "economic_impact": "An investor could either act on an exact number whose decisive return source is unproved or receive no usable research price even though a bounded route judgment is possible.",
+      "prohibited_assumptions": [
+        "A correct reverse calculation is automatically an action price.",
+        "A model-derived terminal is equivalent to a contractual receipt.",
+        "Different route prices can be averaged into a more reliable number.",
+        "Any unproved terminal assumption requires the primary research price to remain unknown."
+      ],
+      "correction": {
+        "best_current_judgment": "Choose the most defensible current economic terminal as the base route, state why it is preferred, publish the route-bound research price, and show pressure and conditional-confirmation rivals without presenting any route as contractual certainty.",
+        "required_company_evidence": [
+          "route-specific operating cash",
+          "shareholder distributions or contractual receipt",
+          "independent terminal or catalyst evidence",
+          "consistent treatment of entry and exit assumptions"
+        ],
+        "investor_consequence": "Use an explicit research price only inside its named route and required return; do not buy merely because the reverse calculation is precise or hide a supportable action judgment behind a global unknown.",
+        "uncertainty_treatment": "Preserve base, pressure and conditional-confirmation routes separately, disclose the terminal dependency, and do not average them.",
+        "countercondition": "If no economically defensible terminal or owner-cash route exists, the action price may remain unknown; a contractual tender, liquidation distribution or repeatable operating cash route can justify stronger identity.",
+        "reversal_observation": "New operating, distribution, contractual or market-structure evidence makes a rival terminal route more defensible than the selected base route."
+      },
+      "transfer": {
+        "portable_rule": "Arithmetic does not authorize a price, but uncertainty does not excuse route paralysis: select the best-current economic terminal, bind the research price to that route, and expose rival terminals and reversal evidence separately.",
+        "applicable_when": "A valuation depends materially on future market recognition, a chosen terminal multiple, a catalyst or an uncertain distribution route.",
+        "not_applicable_when": "The receipt is contractually fixed or liquidation-bound and needs no competing terminal judgment; if no economically defensible route can be bounded, do not invent one and keep the action price unknown.",
+        "next_case_probe": "For every quoted price, name the operating cash, shareholder receipt, terminal mechanism, required return and strongest rival route; explain why the selected base route is currently better."
+      },
+      "decision_surfaces": ["VALUE_ROUTE", "PRICE_IDENTITY", "REVERSAL_EVIDENCE"]
+    },
+    {
+      "event_id": "ECORR:ACTION_HIERARCHY_DOES_NOT_REPLACE_DERIVATION",
+      "accepted_source_artifact_ids": [
+        "CN02669:PAIRED_REPORT_COMPARISON_CORRECTION"
+      ],
+      "before_error_pattern": "A clearer value, terminal, return and action-price hierarchy moved the decision forward but compressed the operating-profit bridge, cash-realization logic and sensitivity attribution into model artifacts.",
+      "root_cause_classes": ["MODEL", "WRITING"],
+      "economic_object": "reader-challengeable operating-to-value derivation",
+      "responsibility_boundary": "deterministic model computation versus reader-facing economic explanation",
+      "error_mechanism": "The report preserved conclusions and major facts while removing the component bridges that let an investor challenge normalization, cash and route assumptions.",
+      "economic_impact": "A more executable action could still be weakly understood, making the selected value route appear arbitrary and hiding which operating or cash assumption controls the result.",
+      "prohibited_assumptions": [
+        "A correct model output is self-explanatory.",
+        "A clearer action table can replace the operating-profit and owner-cash bridge.",
+        "Sensitivity without contribution attribution tells the investor what changed the conclusion."
+      ],
+      "correction": {
+        "best_current_judgment": "Keep the explicit value, terminal, return and action hierarchy while restoring a concise component bridge from business engines through normal earnings and accessible cash to value, plus material sensitivity attribution.",
+        "required_company_evidence": [
+          "component-level normal-earnings bridge with responsibility boundaries",
+          "owner-cash accessibility and realization timetable",
+          "material sensitivity contribution and interaction explanation",
+          "reconciliation from operating and cash components to terminal, return and action price"
+        ],
+        "investor_consequence": "The reader can act on the selected route and independently challenge the few business, cash and terminal assumptions capable of changing it.",
+        "uncertainty_treatment": "Keep uncertain components as ranges or conditional bridges and show their maximum route effect; do not hide them in an appendix or fill them with precision.",
+        "countercondition": "A genuinely single-engine company with immaterial cash and component differences may use a compact local bridge if every material assumption and route reconciliation remains visible.",
+        "reversal_observation": "An independent reader can reconstruct the material operating-to-value path and identify which component or interaction changes the action treatment without opening hidden model files."
+      },
+      "transfer": {
+        "portable_rule": "An executable action hierarchy and a challengeable economic derivation are both required: keep a concise bridge from business components through normal earnings and accessible cash to value, return and action price.",
+        "applicable_when": "A report combines several business engines, normalization adjustments, cash-accessibility judgments, sensitivities or competing value routes.",
+        "not_applicable_when": "A compact single-engine bridge already exposes every material operating, cash, terminal and return assumption in the reader-facing report.",
+        "next_case_probe": "Ask a blind investor to reconstruct the material profit and cash bridge, identify the dominant sensitivity contribution, and reconcile the selected terminal to the action price without opening model artifacts."
+      },
+      "decision_surfaces": [
+        "BUSINESS_ENGINE",
+        "NORMAL_EARNINGS",
+        "OWNER_CASH",
+        "VALUE_ROUTE",
+        "PRICE_IDENTITY",
+        "SOURCE_BINDING"
+      ]
+    },
+    {
+      "event_id": "ECORR:LOCAL_UNKNOWN_DOES_NOT_ERASE_THE_ENTERPRISE",
+      "accepted_source_artifact_ids": [
+        "CN02669:SUBSTANTIVE_REVIEW",
+        "CN02669:THESIS_ACCEPTANCE"
+      ],
+      "before_error_pattern": "Missing project-level or legal-entity detail risked turning the whole company into an undifferentiated unknown.",
+      "root_cause_classes": ["REASONING", "MODEL"],
+      "economic_object": "local uncertainty propagation",
+      "responsibility_boundary": "unresolved component versus independently evidenced mature enterprise components",
+      "error_mechanism": "A missing field propagated beyond the claim and component that depended on it.",
+      "economic_impact": "The report could discard useful normal-earnings and permanent-loss judgments, or hide the unresolved component inside a false precise total.",
+      "prohibited_assumptions": [
+        "One material unknown makes every company judgment unknowable.",
+        "A bounded residual can be silently filled with a point estimate.",
+        "Exclusion from the base case means zero value or certain failure."
+      ],
+      "correction": {
+        "best_current_judgment": "Keep mature, independently evidenced engines underwritten; localize the unresolved project or cash-access component and test whether its bounded residual can change the thesis.",
+        "required_company_evidence": [
+          "component identity and responsibility",
+          "independent mature-engine economics",
+          "bounded residual or scenarios",
+          "promotion and invalidation observations"
+        ],
+        "investor_consequence": "Continue the enterprise judgment while withholding unsupported growth, cash or valuation contributions.",
+        "uncertainty_treatment": "Use component-level conditional or scenario treatment with a whole-company materiality check.",
+        "countercondition": "If the unresolved component dominates survival, financing or the value route, it can legitimately constrain the whole-case treatment.",
+        "reversal_observation": "The missing component becomes measurable or its bounded downside is shown to dominate the enterprise."
+      },
+      "transfer": {
+        "portable_rule": "Propagate an unknown only through the claims and components that depend on it; retain independent enterprise economics unless the residual can dominate survival, owner cash or value.",
+        "applicable_when": "A diversified or multi-engine company has one material but separable evidence gap.",
+        "not_applicable_when": "The missing item controls solvency, financing continuity, the dominant earnings engine or the only credible realization route.",
+        "next_case_probe": "Draw the unknown's dependency path and bound its maximum effect before deciding whether it is local or whole-company."
+      },
+      "decision_surfaces": [
+        "CENTRAL_THESIS",
+        "BUSINESS_ENGINE",
+        "NORMAL_EARNINGS",
+        "OWNER_CASH",
+        "PERMANENT_LOSS",
+        "VALUE_ROUTE"
+      ]
+    },
+    {
+      "event_id": "ECORR:PERMANENT_LOSS_CAN_BE_SLOW_VALUE_DESTRUCTION",
+      "accepted_source_artifact_ids": [
+        "CN02669:TARGET_REPORT",
+        "CN02669:THESIS_ACCEPTANCE"
+      ],
+      "before_error_pattern": "Low bankruptcy risk and continued dividends could be mistaken for low permanent-loss risk.",
+      "root_cause_classes": ["REASONING"],
+      "economic_object": "permanent loss",
+      "responsibility_boundary": "enterprise survival versus ordinary-share value per unit of retained capital",
+      "error_mechanism": "Solvency protection was allowed to override margin erosion, low-return reinvestment, cash inaccessibility and related allocation.",
+      "economic_impact": "A stable-looking company could slowly destroy per-share value while the report understates downside and overstates the benefit of waiting.",
+      "prohibited_assumptions": [
+        "Low bankruptcy probability means low permanent loss.",
+        "Any dividend proves retained capital creates value.",
+        "Accounting cash accumulation protects ordinary shareholders regardless of accessibility."
+      ],
+      "correction": {
+        "best_current_judgment": "Assess permanent loss through erosion of mature economics, cash absorption, low-return retention and shareholder realization, not only through insolvency.",
+        "required_company_evidence": [
+          "mature-margin persistence",
+          "incremental return on retained capital",
+          "working-capital and contract-asset absorption",
+          "ordinary-shareholder distributions and allocation"
+        ],
+        "investor_consequence": "Demand a larger value discount or withhold action when survival is strong but per-share value creation is unproved.",
+        "uncertainty_treatment": "Model slow erosion and opportunity-cost paths separately from bankruptcy.",
+        "countercondition": "A shrinking business that liquidates assets and distributes proceeds can preserve owner value despite weak operating growth.",
+        "reversal_observation": "Mature earnings stabilize and retained capital repeatedly converts into adequate per-share cash or value."
+      },
+      "transfer": {
+        "portable_rule": "Permanent loss includes slow per-share value destruction through margin erosion, cash absorption and low-return retention even when solvency and dividends remain intact.",
+        "applicable_when": "A mature, cash-rich or state-linked company appears financially safe but retains material capital or expands into weaker economics.",
+        "not_applicable_when": "The company is executing a credible liquidation or distribution path that returns capital despite operating contraction.",
+        "next_case_probe": "Separate survival from per-share owner value, then trace every retained unit into incremental return, accessible cash or irreversible loss."
+      },
+      "decision_surfaces": ["OWNER_CASH", "PERMANENT_LOSS", "STRONGEST_RIVAL"]
+    },
+    {
+      "event_id": "ECORR:EVIDENCE_MUST_BIND_NEAR_THE_DECISIVE_CLAIM",
+      "accepted_source_artifact_ids": [
+        "CN02669:THESIS_ACCEPTANCE",
+        "CN02669:READER_BINDING_REVIEW",
+        "CN02669:READER_CORRECTION_HANDOFF"
+      ],
+      "before_error_pattern": "The report had enough evidence and a closed model, but decisive cash, growth and permanent-loss claims were not bound to nearby primary-source locations.",
+      "root_cause_classes": ["WRITING"],
+      "economic_object": "reader-verifiable investment thesis",
+      "responsibility_boundary": "observed fact versus economic inference versus deterministic model output",
+      "error_mechanism": "A remote source table left the reader unable to tell which material premise was observed and which was inferred.",
+      "economic_impact": "A conditional price or group narrative could be mistaken for a disclosed fact, weakening the user's ability to audit the conclusion without changing the model itself.",
+      "prohibited_assumptions": [
+        "A bibliography at the end binds every material claim.",
+        "A model output can replace evidence for its economic premise.",
+        "A writing-only repair authorizes changes to operating inputs or price identity."
+      ],
+      "correction": {
+        "best_current_judgment": "Place concise primary-source anchors beside decisive observed facts while keeping inference and model output visibly separate.",
+        "required_company_evidence": [
+          "primary-source page or section for material premises",
+          "separate model-output reference for calculations",
+          "nearby wording that identifies inference and uncertainty"
+        ],
+        "investor_consequence": "The reader can verify the thesis without treating a condition, scenario or calculation as issuer evidence.",
+        "uncertainty_treatment": "Repair source propagation only; do not mutate accepted economics to satisfy a presentation issue.",
+        "countercondition": "A compact table can bind several adjacent claims when the mapping from each fact to its source remains unambiguous.",
+        "reversal_observation": "An independent reader can trace every decisive premise to the cited primary source and distinguish it from inference and model output."
+      },
+      "transfer": {
+        "portable_rule": "Bind primary evidence beside each decisive factual premise and keep inference and model output in separate language; a writing repair must not silently change economics.",
+        "applicable_when": "A report relies on cash accessibility, cohort economics, related-party transmission, permanent loss or route identity that a reader could otherwise mistake for disclosed fact.",
+        "not_applicable_when": "A compact local table already maps each decisive premise unambiguously to a primary source and clearly labels inference and calculation.",
+        "next_case_probe": "Ask a blind reader to trace the central thesis, strongest rival, owner cash, permanent loss and route premise directly to nearby primary evidence."
+      },
+      "decision_surfaces": ["SOURCE_BINDING", "CENTRAL_THESIS", "STRONGEST_RIVAL"]
+    }
+  ],
+  "conditional_principles": [
+    {
+      "principle_id": "CPRINCIPLE:SEPARATE_ASSET_EARNING_GROWTH_VALUE",
+      "title": "Separate current earning power from growth value",
+      "source_artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "principle_statement": "Value current assets and earning power separately from growth; growth enters only when incremental economics and owner realization are supportable.",
+      "economic_object": "asset value, earning-power value and growth value",
+      "applicable_when": "A thesis combines mature operations, excess assets and new growth components.",
+      "mechanism": "Mature earnings, distributable assets and reinvested capital reach owners through different cash and competitive mechanisms and therefore require separate evidence and routes.",
+      "target_company_evidence": [
+        "normalized mature earnings",
+        "asset ownership and realization",
+        "incremental return and capital absorption",
+        "ordinary-shareholder distribution or reinvestment path"
+      ],
+      "common_misuse": "Adding cash, current earnings and an assumed growth premium into one blended value without checking overlap or realization.",
+      "counterconditions": [
+        "A liquidation case may make asset realization primary and ongoing earnings secondary.",
+        "A young single-engine company may lack mature earning power and require a bounded option treatment rather than a false three-part precision."
+      ],
+      "downstream_use": "Assign each component to base, conditional, stress or excluded valuation routes without averaging incompatible price identities.",
+      "disconfirming_observation": "The supposedly separate components are economically inseparable or double count the same cash flow.",
+      "derived_from_event_ids": [
+        "ECORR:NEW_GROWTH_IS_NOT_MATURE_RETURN",
+        "ECORR:CONSOLIDATED_CASH_IS_NOT_ORDINARY_SHAREHOLDER_CASH",
+        "ECORR:ARITHMETIC_PRICE_IS_NOT_ACTION_PRICE"
+      ]
+    },
+    {
+      "principle_id": "CPRINCIPLE:RETENTION_VALUE_REQUIRES_INCREMENTAL_RETURN",
+      "title": "Retained capital is valuable only through incremental owner economics",
+      "source_artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "principle_statement": "Retained earnings are not automatically worth their accounting amount; their value depends on incremental return, cash conversion and ordinary-shareholder realization.",
+      "economic_object": "capital allocation and growth value",
+      "applicable_when": "A company retains material owner earnings, expands capacity, acquires businesses or builds new service cohorts.",
+      "mechanism": "Retention creates per-share value only when the resulting earnings and accessible cash exceed the relevant capital requirement after all absorption.",
+      "target_company_evidence": [
+        "retained-capital uses",
+        "matched incremental earnings",
+        "working-capital and integration absorption",
+        "per-share distribution or value realization"
+      ],
+      "common_misuse": "Treating every retained unit as additional value or using revenue growth as proof of adequate incremental return.",
+      "counterconditions": [
+        "Temporary defensive liquidity can preserve survival value without generating a normal growth return.",
+        "A regulated utility can require a rate-base and allowed-return analysis instead of a generic cohort test."
+      ],
+      "downstream_use": "Exclude unproved retention from base growth value, reflect current total capital absorption in financing pressure and specify promotion tests.",
+      "disconfirming_observation": "Mature investments repeatedly earn and distribute adequate incremental owner cash on matched capital.",
+      "derived_from_event_ids": [
+        "ECORR:NEW_GROWTH_IS_NOT_MATURE_RETURN",
+        "ECORR:AGGREGATE_PROXY_IS_NOT_COHORT_RETURN",
+        "ECORR:PERMANENT_LOSS_CAN_BE_SLOW_VALUE_DESTRUCTION"
+      ]
+    },
+    {
+      "principle_id": "CPRINCIPLE:CASH_REQUIRES_CLAIM_AND_REALIZATION",
+      "title": "Cash value follows the shareholder claim and realization path",
+      "source_artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "principle_statement": "Cash protects ordinary shareholders only to the extent that ownership, restrictions, allocation and distribution make it economically accessible.",
+      "economic_object": "ordinary-shareholder cash",
+      "applicable_when": "Material cash is held across subsidiaries, financial units, joint structures or related-party networks.",
+      "mechanism": "Legal-entity ownership, reserves, regulation, taxes, non-controlling claims, receivables and capital allocation determine whether consolidated cash becomes ordinary-shareholder value.",
+      "target_company_evidence": [
+        "cash-holding entities and ownership",
+        "restrictions and tax friction",
+        "related balances",
+        "historical distributions and capital allocation",
+        "special-return funding and post-payment balances",
+        "project-batch collections reconciled to ordinary distributions"
+      ],
+      "common_misuse": "Counting all consolidated cash at full value, counting parent and consolidated cash twice, or assigning zero because exact upstreamability is missing.",
+      "counterconditions": [
+        "Direct unrestricted parent cash with repeated distribution can justify high recognition.",
+        "Regulated or deposit-funded financial cash requires its own capital and liquidity boundary rather than an industrial cash formula."
+      ],
+      "downstream_use": "Use a cash-accessibility range in owner cash, permanent loss and value routes without allowing the range to become a legal-entitlement claim.",
+      "disconfirming_observation": "Actual entity disclosures or repeated distributions establish a materially different accessibility boundary.",
+      "derived_from_event_ids": [
+        "ECORR:CONSOLIDATED_CASH_IS_NOT_ORDINARY_SHAREHOLDER_CASH",
+        "ECORR:PARENT_SYSTEM_HAS_SUPPORT_AND_EXTRACTION_CHANNELS"
+      ]
+    },
+    {
+      "principle_id": "CPRINCIPLE:PRICE_IDENTITY_FOLLOWS_ECONOMIC_ROUTE",
+      "title": "Price identity follows the economic route",
+      "source_artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "principle_statement": "A price is meaningful only after identifying the owner-cash, asset-realization or market-terminal route that can deliver it.",
+      "economic_object": "valuation route and margin of safety",
+      "applicable_when": "Several reverse prices, value routes or terminal assumptions coexist.",
+      "mechanism": "Different routes answer different questions and bear different realization risks; numerical precision cannot reconcile incompatible mechanisms.",
+      "target_company_evidence": [
+        "route-specific cash flows",
+        "timing and terminal mechanism",
+        "realization evidence",
+        "consistent entry and exit assumptions"
+      ],
+      "common_misuse": "Averaging route prices, promoting a fixed-terminal reverse calculation to action status, or confusing a stress boundary with a base value.",
+      "counterconditions": [
+        "A contractually fixed receipt can make a reverse price directly executable within its terms.",
+        "A liquidation route can supersede operating EPV when the asset-distribution mechanism is actually underway."
+      ],
+      "downstream_use": "Keep route-specific prices separate, choose the best-current defensible route for the explicit research price, and leave the action price unresolved only when no route can be economically bounded.",
+      "disconfirming_observation": "New evidence makes a rival route more defensible or shows that no route can support an explicit research price.",
+      "derived_from_event_ids": ["ECORR:ARITHMETIC_PRICE_IS_NOT_ACTION_PRICE"]
+    },
+    {
+      "principle_id": "CPRINCIPLE:PERMANENT_LOSS_IS_NOT_BANKRUPTCY_ONLY",
+      "title": "Permanent loss includes slow per-share value destruction",
+      "source_artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "principle_statement": "Permanent loss is the impairment of owner purchasing power and per-share value, not merely insolvency or price volatility.",
+      "economic_object": "permanent loss",
+      "applicable_when": "A financially stable company retains capital, faces mature-margin pressure or expands into weaker economics.",
+      "mechanism": "Low-return retention, inaccessible cash, working-capital absorption and competitive erosion can destroy owner value while the enterprise survives.",
+      "target_company_evidence": [
+        "mature economic direction",
+        "retained-capital return",
+        "cash accessibility",
+        "per-share distribution and dilution"
+      ],
+      "common_misuse": "Equating survival, cash balance or continued dividends with low permanent-loss risk.",
+      "counterconditions": [
+        "A credible liquidation and distribution plan can preserve owner value during operating decline.",
+        "Temporary countercyclical retention can protect earning power if later release and returns are observable."
+      ],
+      "downstream_use": "Include slow erosion and opportunity-cost paths in downside treatment and required margin of safety.",
+      "disconfirming_observation": "Retained capital repeatedly converts into adequate per-share owner cash or durable earning power.",
+      "derived_from_event_ids": ["ECORR:PERMANENT_LOSS_CAN_BE_SLOW_VALUE_DESTRUCTION"]
+    },
+    {
+      "principle_id": "CPRINCIPLE:INDUSTRY_STRUCTURE_BOUNDS_MANAGEMENT",
+      "title": "Industry structure bounds management quality",
+      "source_artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "principle_statement": "Management skill matters through the strategic and capital-allocation choices available inside an industry's customer, competition and profit-pool structure.",
+      "economic_object": "industry future and company adaptation",
+      "applicable_when": "The thesis credits management, a parent platform or execution with overcoming price, customer or competitive pressure.",
+      "mechanism": "Strong execution can improve position and allocation, but cannot by itself repeal weak bargaining power, poor unit economics or structural capital absorption.",
+      "target_company_evidence": [
+        "customer job and bargaining power",
+        "competitive response",
+        "company-specific adaptation",
+        "unit economics and cash transmission"
+      ],
+      "common_misuse": "Using biographies, awards, project wins or parent reputation as direct evidence of durable economics.",
+      "counterconditions": [
+        "A demonstrable business-model change can alter the company's exposure to the old industry structure.",
+        "A legally protected franchise can make regulation rather than conventional competition the decisive bound."
+      ],
+      "downstream_use": "Make industry and management judgments meet in company-specific normal earnings, owner cash and reversal conditions.",
+      "disconfirming_observation": "The company sustains superior unit economics and cash through an adverse competitive period on a responsibility-matched basis.",
+      "derived_from_event_ids": [
+        "ECORR:NEW_GROWTH_IS_NOT_MATURE_RETURN",
+        "ECORR:PARENT_SYSTEM_HAS_SUPPORT_AND_EXTRACTION_CHANNELS"
+      ]
+    },
+    {
+      "principle_id": "CPRINCIPLE:LOCALIZE_UNCERTAINTY_AND_BIND_EVIDENCE",
+      "title": "Localize uncertainty and keep the reader able to verify the thesis",
+      "source_artifact_id": "PRINCIPLES:GRAHAM_TO_BUFFETT_NOTES",
+      "principle_statement": "A material unknown limits the claim that depends on it; the report must still make the remaining enterprise judgment and bind decisive facts near that judgment.",
+      "economic_object": "decision-useful research under uncertainty",
+      "applicable_when": "One component lacks exact economics or cash attribution while other enterprise mechanisms remain independently supportable.",
+      "mechanism": "Component boundaries prevent unsupported propagation, while nearby evidence lets the reader distinguish observation, inference and model output.",
+      "target_company_evidence": [
+        "dependency path from unknown to decision",
+        "bounded residual",
+        "primary-source anchors for decisive premises",
+        "clearly labelled inference and model output"
+      ],
+      "common_misuse": "Ending the whole case as unknown, filling the gap with precision, or hiding all sources in a remote bibliography.",
+      "counterconditions": [
+        "A missing solvency, financing or dominant-engine fact can legitimately block the whole treatment.",
+        "A concise local source table is sufficient when each claim-to-source mapping is unambiguous."
+      ],
+      "downstream_use": "Continue normal earnings, owner cash, permanent loss and value judgments that remain independent; downgrade only the affected route and state the reversal evidence.",
+      "disconfirming_observation": "The residual can dominate the whole enterprise or the cited source fails to support the decisive premise.",
+      "derived_from_event_ids": [
+        "ECORR:LOCAL_UNKNOWN_DOES_NOT_ERASE_THE_ENTERPRISE",
+        "ECORR:EVIDENCE_MUST_BIND_NEAR_THE_DECISIVE_CLAIM"
+      ]
+    }
+  ],
+  "cutoff_feedback_design": {
+    "status": "PREREGISTERED_NO_OUTCOME_VALUES",
+    "target_identity_rule": "Apply only to a different company or a later cutoff that was not used to author this teacher package; the target must remain outcome-sealed during judgment.",
+    "outcome_source_policy": "Predeclare responsibility-matched official result sources and open each clock only after the frozen date; the teacher report and training memory are never outcome sources.",
+    "forbidden_outcome_proxies": [
+      "share-price movement",
+      "retrospective management explanation without the frozen operating measure",
+      "a later acquisition, survival or narrative that does not settle the predeclared claim"
+    ],
+    "feedback_clocks": [
+      {
+        "clock_id": "CLOCK:IMPLEMENTATION_TO_CUSTOMER_ECONOMICS",
+        "horizon": "OPERATING_ADAPTATION",
+        "episode_claims": ["INDUSTRY_AND_SITUATION", "BUSINESS_POSITION_AND_ADAPTATION"],
+        "diagnostic_observation": "Customer adoption, utilization or renewal and unit economics are observed on the same new component after implementation.",
+        "supports_rule": "The frozen treatment kept implementation separate and correctly promoted or withheld the component using customer and unit-economics evidence.",
+        "refutes_rule": "The frozen treatment either capitalized implementation alone or excluded a mature observable component despite matched customer and unit-economics evidence.",
+        "mixed_rule": "Implementation or customer adoption improves while mature unit economics remain unavailable or responsibility-mismatched."
+      },
+      {
+        "clock_id": "CLOCK:OWNER_CASH_AND_CAPITAL_ABSORPTION",
+        "horizon": "NORMALIZATION_AND_CASH",
+        "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH", "SURVIVAL_AND_FINANCING"],
+        "diagnostic_observation": "Operating cash, maintenance needs, growth capital, working-capital absorption and shareholder accessibility are reconciled on the frozen responsibility units.",
+        "supports_rule": "The frozen owner-cash range and component roles anticipated the observed capital and accessibility pattern without using teacher facts as evidence.",
+        "refutes_rule": "The frozen treatment omitted a material cash absorber or withheld an evidenced accessible cash engine for an inapplicable teacher analogy.",
+        "mixed_rule": "Cash direction is observable but maintenance, growth, ownership or timing definitions do not match the frozen claim."
+      },
+      {
+        "clock_id": "CLOCK:PERMANENT_LOSS_AND_VALUE_ROUTE",
+        "horizon": "LONG_TERM_PERMANENT_LOSS",
+        "episode_claims": ["PERMANENT_LOSS", "VALUE_ROUTE"],
+        "diagnostic_observation": "Mature economics, incremental return, distributions and any claimed realization route persist long enough to test per-share value creation rather than enterprise survival alone.",
+        "supports_rule": "The frozen permanent-loss and route treatment correctly distinguished survival, per-share value and realization evidence.",
+        "refutes_rule": "The frozen treatment relied on an unsupported terminal or missed a durable owner-value route because the teacher boundary was applied mechanically.",
+        "mixed_rule": "The enterprise survives and distributes some cash, but retained-capital return or route realization remains non-diagnostic."
+      }
+    ],
+    "settlement_route": "Use the existing append-only judgment feedback and outcome-acquisition controls; do not create a second settlement control plane.",
+    "learning_route": "Only an independently accepted cutoff feedback card may create a judgment-learning note and later cross-company application receipt."
+  },
+  "transfer_acceptance": {
+    "baseline_policy": "Give Baseline only the common target cutoff source package and the current judgment-first enterprise contract.",
+    "enhanced_policy": "Give Enhanced the identical target evidence and budget plus only the compiled expert-correction training memory as TRAINING_MEMORY.",
+    "agent_isolation": "Run Baseline and Enhanced with separate fork_turns=none fresh agents; neither arm may read parent context, sibling output, teacher source snapshots or sealed outcome.",
+    "reviewer_blinding": "A third fresh reviewer reads anonymous arms before any outcome access and identifies concrete material decision deltas rather than scoring length or confidence.",
+    "decisive_surfaces": [
+      "INDUSTRY_FUTURE",
+      "CENTRAL_THESIS",
+      "BUSINESS_ENGINE",
+      "MANAGEMENT_AND_CAPITAL_ALLOCATION",
+      "NORMAL_EARNINGS",
+      "OWNER_CASH",
+      "PERMANENT_LOSS",
+      "VALUE_ROUTE",
+      "PRICE_IDENTITY",
+      "STRONGEST_RIVAL",
+      "REVERSAL_EVIDENCE",
+      "SOURCE_BINDING"
+    ],
+    "pass_rule": "Enhanced must avoid at least one material expert correction or produce a materially better treatment on a decisive surface, with no new material fact, reasoning, model, price-identity or evidence-binding error and no evidence-budget advantage.",
+    "failure_rule": "More prose, more fields, more caveats, more pessimism, an unchanged investment treatment, a clearer action table that hides the material operating-to-value derivation, or a teacher analogy unsupported by target-company evidence is not utility.",
+    "report_gate": "The first-pass report must have no OPEN MATERIAL finding under golden-report-review-return.v2 and must preserve a reader-reconstructable bridge from business components through normal earnings and accessible cash to value, return and action price; only non-material writing polish may remain before the human acts as final approver.",
+    "claim_limit": "This teacher package is TRAINING_READY only. One positive unseen result creates a TRANSFER_CANDIDATE; repeated different-company and company-and-time holdouts are required before METHOD_VALIDATED or report autonomy can be claimed."
+  },
+  "authority": "TRAINING_MEMORY_ONLY_NOT_CURRENT_INVESTMENT_EVIDENCE"
+}

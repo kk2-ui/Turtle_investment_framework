@@ -1,0 +1,262 @@
+{
+  "schema_version": "historical-independent-postoutcome-feedback-receipt.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600549:20240501:FY2024",
+  "company_id": "CN:600549",
+  "reviewer_id": "/root/cn600549_postoutcome_reviewer",
+  "review_status": "ACCEPT",
+  "input_scope": {
+    "authorized_artifact_count": 6,
+    "used_only_authorized_artifacts": true,
+    "artifacts": [
+      "19_CN601598_FEEDBACK_RECEIPT.json",
+      "20_CN600549_FORECASTER_EXECUTION_RECEIPT.json",
+      "21_CN600549_PREOUTCOME_JUDGMENT.json",
+      "22_CN600549_INDEPENDENT_PREOUTCOME_REVIEW.md",
+      "23_CN600549_OUTCOME_ACCESS_AUTHORIZATION.json",
+      "24_CN600549_CUSTODIAN_OUTCOME_SETTLEMENT.json"
+    ],
+    "internet_used": false,
+    "price_used": false,
+    "return_used": false,
+    "old_report_used": false,
+    "comparative_used": false,
+    "other_outcome_used": false,
+    "valuation_result_used": false
+  },
+  "real_feedback_turn": {
+    "status": "COMPLETE",
+    "completion_basis": [
+      "the accepted preoutcome judgment and six-axis treatment snapshot were frozen before outcome access",
+      "the custodian settled all three authorized cells in first-match order",
+      "the postoutcome enterprise judgment localizes rare-earth mismatch and parent-cash unknowns without withdrawing the company judgment",
+      "all six axes record treatment change, confidence or range change, or explicit non-change",
+      "the prior behavior was evaluated against a fair ordinary-research counterfactual and a next-case narrowing was specified"
+    ],
+    "completion_not_based_on": [
+      "field count",
+      "reviewer acceptance alone",
+      "bridge clarity alone",
+      "price or return",
+      "comparative method evidence"
+    ]
+  },
+  "settlement_consumption": [
+    {
+      "cell_id": "FY2024_TUNGSTEN_PROFIT_ENGINE_BRIDGE",
+      "matched_class": "MIXED_COMPLETE_RESIDUAL",
+      "economic_direction": "MIXED",
+      "direct_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "mechanical_axis_updates": {
+        "management_execution": "CONDITIONAL_CREDIT",
+        "normal_earnings": "UNCHANGED",
+        "valuation_direction": "UNCHANGED"
+      },
+      "preserved_axes": [
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "decisive_observation": "Adjusted recurring segment profit rose 4.17% and all three core product volumes rose, but external main-business gross margin fell 2.36 percentage points and capex rose 40.49%; product-level recurring unit economics remains locally unknown."
+    },
+    {
+      "cell_id": "FY2024_BATTERY_RARE_EARTH_UNIT_ECONOMICS",
+      "matched_class": "MEASUREMENT_MISMATCH",
+      "economic_direction": "MIXED",
+      "direct_axes": [
+        "normal_earnings",
+        "valuation_direction"
+      ],
+      "mechanical_axis_updates": {},
+      "preserved_axes": [
+        "management_execution",
+        "owner_cash",
+        "permanent_loss",
+        "next_research_action"
+      ],
+      "decisive_observation": "Battery key volume rose 35.56% while its adjusted recurring segment profit fell about 8.41%; the rare-earth transfer lacks a transaction-specific disposal gain and post-transfer FY2023 restatement, so only rare-earth comparability and the two-segment aggregate remain open."
+    },
+    {
+      "cell_id": "FY2024_GROUP_CASH_PROXY_AND_SEVERE_CARRIER",
+      "matched_class": "NEUTRAL_POSITIVE_GROUP_PROXY_SCOPE_OPEN",
+      "economic_direction": "NEUTRAL",
+      "direct_axes": [
+        "owner_cash",
+        "permanent_loss"
+      ],
+      "mechanical_axis_updates": {
+        "owner_cash": "COUNT_CONDITIONALLY",
+        "permanent_loss": "MAINTAIN_CONSTRAINT"
+      },
+      "preserved_axes": [
+        "management_execution",
+        "normal_earnings",
+        "valuation_direction",
+        "next_research_action"
+      ],
+      "decisive_observation": "FY2024 group cash proxy was positive CNY0.984bn, the FY2023-FY2024 sum was positive CNY3.166bn and comparable debt declined about 1.8%, while NCI scope and the parent-distributable owner-cash bridge remained open."
+    }
+  ],
+  "material_treatment_change": {
+    "status": "NO_MATERIAL_TREATMENT_CHANGE",
+    "changed_axis_count": 0,
+    "axis_count": 6,
+    "reason": "Every settlement result preserves the frozen category on its authorized axes. FY2024 lowers management-execution confidence and the credible upper part of the prior earnings uplift, and changes risk composition, but does not cross a treatment boundary."
+  },
+  "axis_feedback": [
+    {
+      "axis": "management_execution",
+      "preoutcome_treatment": "CONDITIONAL_CREDIT",
+      "postoutcome_treatment": "CONDITIONAL_CREDIT",
+      "change_class": "CONFIDENCE_CHANGE",
+      "material_treatment_change": false,
+      "confidence_direction": "LOWER",
+      "outcome_processing": "Tungsten-molybdenum volume and profit remained positive, but profit growth lagged revenue, gross margin fell and capex grew much faster than profit. Battery volume growth also failed to become profit growth. Credit stays local and conditional."
+    },
+    {
+      "axis": "normal_earnings",
+      "preoutcome_treatment": "RAISE",
+      "postoutcome_treatment": "RAISE",
+      "change_class": "RANGE_CONFIDENCE_CHANGE",
+      "material_treatment_change": false,
+      "reference_state": "FY2022",
+      "postoutcome_range_direction": "LOWER_HALF_OF_THE_PREOUTCOME_SMALL_RAISE",
+      "outcome_processing": "Tungsten-molybdenum recurring profit remained above FY2023 but did not meet a favorable bridge, battery profit fell despite volume growth, and rare-earth recurring comparability is locally open. No authorized outcome field permits a precise parent-level CNY normal-earnings range."
+    },
+    {
+      "axis": "owner_cash",
+      "preoutcome_treatment": "COUNT_CONDITIONALLY",
+      "postoutcome_treatment": "COUNT_CONDITIONALLY",
+      "change_class": "UNCHANGED_WITH_SCOPE_CONFIDENCE_UPDATE",
+      "material_treatment_change": false,
+      "confidence_direction": "HIGHER_FOR_POSITIVE_GROUP_CASH_ONLY",
+      "outcome_processing": "The group cash proxy and two-year sum were positive, but subsidiary post-capex cash, NCI claims, required retention, recurring parent receipts by source and net parent support were not reconciled."
+    },
+    {
+      "axis": "permanent_loss",
+      "preoutcome_treatment": "MAINTAIN_CONSTRAINT",
+      "postoutcome_treatment": "MAINTAIN_CONSTRAINT",
+      "change_class": "UNCHANGED_WITH_RISK_MIX_UPDATE",
+      "material_treatment_change": false,
+      "confidence_direction": "HIGHER_THAT_NEAR_TERM_FINANCING_LOSS_IS_NOT_WORSENING",
+      "outcome_processing": "Positive group cash and slightly lower comparable debt prevent tightening. Faster tungsten capex, higher battery impairment burden and the open parent bridge prevent loosening; no structural upstream block was evidenced."
+    },
+    {
+      "axis": "valuation_direction",
+      "preoutcome_treatment": "UP",
+      "postoutcome_treatment": "UP",
+      "change_class": "UNCHANGED_WITH_NARROWER_UPSIDE_CONFIDENCE",
+      "material_treatment_change": false,
+      "reference_state": "FY2022",
+      "price_or_target_used": false,
+      "outcome_processing": "The tungsten profit engine and positive group cash preserve the prior directional uplift, while weaker margin and capital conversion, battery volume-profit divergence and rare-earth mismatch prevent any further uplift."
+    },
+    {
+      "axis": "next_research_action",
+      "preoutcome_treatment": "RESPONSIBILITY_BOUNDARY_ECONOMIC_BRIDGE",
+      "postoutcome_treatment": "RESPONSIBILITY_BOUNDARY_ECONOMIC_BRIDGE",
+      "change_class": "NON_MATERIAL_SCOPE_REFINEMENT",
+      "material_treatment_change": false,
+      "outcome_processing": "Rank one remains core tungsten product recurring unit profit, utilization and maintenance-versus-growth capital burden. Rare-earth post-transfer FY2023 restatement and transaction-specific disposal gain are a second, local probe."
+    }
+  ],
+  "postoutcome_investor_judgment": {
+    "enterprise_view": "The tungsten-molybdenum profit engine remains intact but its FY2024 marginal economics weakened: broad volume growth produced only 4.17% recurring segment profit growth while gross margin fell and capex rose 40.49%. Battery materials again showed that volume is not economic profit, while rare-earth mismatch stays local. Positive group cash and stable debt protect against near-term financing loss but do not establish parent owner cash. Retain conditional management credit, a conservative small normal-earnings uplift versus FY2022, conditional owner cash, maintained permanent-loss constraint and an UP valuation direction versus FY2022 without adding scale value.",
+    "most_important_judgments": [
+      {
+        "rank": 1,
+        "judgment": "Tungsten-molybdenum remains the profit engine, but FY2024 did not prove stronger incremental returns.",
+        "confidence": "MEDIUM_HIGH",
+        "mechanism": "All three core volumes grew and recurring segment profit rose 4.17%, but gross margin fell 2.36 percentage points and capex rose 40.49%."
+      },
+      {
+        "rank": 2,
+        "judgment": "Battery scale did not convert to profit; rare-earth recovery remains locally unmeasurable rather than group-adverse.",
+        "confidence": "MEDIUM_HIGH_FOR_BATTERY_LOW_FOR_RARE_EARTH_RECURRING_PROFIT",
+        "mechanism": "Battery key volume rose 35.56% while adjusted recurring segment profit fell about 8.41%. A rare-earth business transfer prevents a comparable recurring-profit bridge, without erasing battery, tungsten or cash observations."
+      },
+      {
+        "rank": 3,
+        "judgment": "Group cash protection persists, but parent-distributable owner cash remains unclosed.",
+        "confidence": "HIGH_FOR_GROUP_CASH_LOW_FOR_PARENT_ATTRIBUTION",
+        "mechanism": "FY2024 and two-year group cash proxies were positive and comparable debt declined, while NCI, retention, upstream receipts by source and net parent support remain open."
+      }
+    ],
+    "strongest_counterargument": "The FY2024 margin and profit-conversion weakness may be cyclical or the temporary cost of high-return expansion: volumes rose broadly, tungsten profit stayed positive, battery capex fell and group cash remained positive with debt stable. Future utilization and mix improvement could therefore validate the capital program. This is plausible but not yet the base case because product-level recurring unit profit is absent, current profit growth did not cover tungsten capex growth, and battery profit moved opposite to volume.",
+    "management_execution": "CONDITIONAL_CREDIT_WITH_LOWER_CONFIDENCE",
+    "normal_earnings": {
+      "treatment": "RAISE",
+      "reference_state": "FY2022",
+      "range": "LOWER_HALF_OF_THE_PREOUTCOME_SMALL_RAISE",
+      "precise_parent_cny_range": "NOT_ESTIMATED_FROM_AUTHORIZED_OUTCOME_SCOPE"
+    },
+    "owner_cash": "COUNT_CONDITIONALLY_GROUP_SIGNAL_ONLY",
+    "permanent_loss": "MAINTAIN_CONSTRAINT",
+    "valuation_direction_without_price": "UP_VERSUS_FY2022_WITHOUT_FURTHER_UPLIFT",
+    "scenario_summary": {
+      "optimistic": "Tungsten recurring profit grows at least 10%, gross margin returns to at least 27.73%, capital burden does not deteriorate and product unit economics confirms conversion; battery profit catches volume, rare earth becomes comparable and positive, and the parent cash bridge reaches both material thresholds. Execution, earnings, valuation and owner cash can upgrade.",
+      "base": "Tungsten remains profitable with low-single-digit profit growth and mid-20s gross margin, battery remains high-volume and low-profit, rare-earth recovery stays outside the base until restated, group cash stays near breakeven or positive and debt remains stable. Current treatments remain.",
+      "pessimistic": "Tungsten meets the frozen profit-engine-break conditions, or comparable battery and rare-earth economics materially compress, while persistent negative group cash, non-declining capex and at least 15% debt growth or a material structural upstream block emerges. Earnings and valuation move down and permanent-loss constraints tighten."
+    },
+    "flip_facts": [
+      "Tungsten full-execution thresholds with product recurring unit economics would upgrade execution and valuation; the frozen profit-engine-break combination would reverse them downward.",
+      "Persistent battery volume growth with falling recurring profit and worsening depreciation, impairment or utilization would establish capital-return deterioration; matched unit profit, margin and capital-efficiency improvement would promote the recovery option.",
+      "A post-transfer FY2023 rare-earth restatement and transaction-specific disposal-gain bridge would either restore recurring profit contribution or establish a local adverse result; propagation to group earnings still requires an adverse aggregate direction.",
+      "A reconciled parent-distributable owner-cash amount of at least CNY0.5bn and at least 20% of positive group cash would upgrade owner cash; group cash or parent investment cash receipts alone will not.",
+      "Persistent negative group cash with a non-positive two-year sum, non-declining capex and at least 15% debt growth, or a material at-least-12-month structural upstream block with insufficient parent liquidity, would tighten permanent-loss constraints."
+    ]
+  },
+  "prior_behavior_change_evaluation": {
+    "behavior": "Before granting management-execution credit for business-volume or revenue growth, construct a same-responsibility-boundary bridge to recurring profit or unit economics. If unavailable, record scale growth but freeze execution attribution.",
+    "application_status": "APPLIED_IN_PREOUTCOME_RESEARCH",
+    "ruling": "NO_MATERIAL_TREATMENT_EFFECT",
+    "reason": "The behavior shaped the preoutcome bridge and correctly prevented volume from being narrated as return, but all six frozen treatment categories remained unchanged after settlement. A fair ordinary researcher would also observe segment profit, margin, capex and impairment in the same annual report and should not grant full execution or growth value from volume alone. With no same-cutoff same-budget control arm, this case cannot establish that a material counterfactual error was avoided.",
+    "counterfactual_without_behavior": "A weak volume-led review could have over-credited tungsten and battery growth. A fair ordinary-research baseline, however, would not be expected to ignore the disclosed profit, gross-margin and capital-burden facts, so a material treatment difference is not demonstrated.",
+    "credit_not_granted_for": [
+      "more fields",
+      "a clearer bridge",
+      "reviewer acceptance",
+      "single-arm outcome consistency"
+    ]
+  },
+  "method_utility": {
+    "status": "NOT_APPLICABLE",
+    "design": "SINGLE_ARM_BLIND",
+    "comparative_arm_present": false,
+    "method_validated": false,
+    "transfer_validated": false,
+    "transfer_validated_flag": 0,
+    "learned_rule": null,
+    "reason": "A single-arm blind case can complete a feedback turn but cannot estimate comparative method utility, calibration improvement, efficiency or investment effect."
+  },
+  "next_case_research_behavior_change": {
+    "status": "RETAIN_AND_NARROW",
+    "behavior": "For any responsibility boundary seeking execution or growth-value credit from volume or revenue expansion, record the recurring-profit-minus-revenue growth spread, gross-margin change, capex growth relative to recurring-profit growth, and impairment/depreciation direction. If profit growth lags revenue, gross margin falls, and capex grows faster than profit, freeze execution, normal-earnings and valuation upgrades until product recurring unit profit or utilization explains the incremental return. Keep any adjacent-segment measurement mismatch local.",
+    "outcome_trigger": "Tungsten volumes all rose while profit grew only 4.17%, gross margin fell 2.36 percentage points and capex rose 40.49%; battery volume rose 35.56% while profit fell about 8.41%.",
+    "decision_change_in_next_case": "A positive-profit but negative-conversion growth case will no longer receive an execution or growth-value upgrade merely because a recurring-profit bridge exists; matched conversion and controlled capital burden can still earn positive credit.",
+    "new_global_gate": false,
+    "generalization_claim": false,
+    "method_validation_claim": false,
+    "learned_rule_claim": false
+  },
+  "authority": {
+    "permissions": "NONE",
+    "transfer_validated": false,
+    "transfer_validated_flag": 0,
+    "cjo": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "report": false,
+    "investment_action": false,
+    "commit": false
+  },
+  "artifacts": [
+    "25_CN600549_INDEPENDENT_POSTOUTCOME_REVIEW.md",
+    "26_CN600549_INVESTOR_READOUT.md",
+    "27_CN600549_FEEDBACK_RECEIPT.json"
+  ]
+}

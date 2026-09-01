@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/document_manifest.schema.json",
+  "title": "Turtle Official Evidence Document Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "issuer", "code", "market", "documents", "manifest_hash", "validation"],
+  "properties": {
+    "schema_version": {"const": "document-manifest.v1"},
+    "report_id": {"type": "string", "minLength": 1},
+    "issuer": {"type": "string", "minLength": 1},
+    "code": {"type": "string", "minLength": 1},
+    "market": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string"},
+    "documents": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/document"}
+    },
+    "manifest_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "validation": {"$ref": "#/$defs/validation"}
+  },
+  "$defs": {
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["doc_id", "report_id", "issuer", "code", "market", "doc_type", "fiscal_period", "period_end", "authority", "source_url", "local_path", "sha256", "mime_type", "language", "acquisition_status"],
+      "properties": {
+        "doc_id": {"type": "string", "pattern": "^DOC:"},
+        "report_id": {"type": "string", "minLength": 1},
+        "issuer": {"type": "string", "minLength": 1},
+        "code": {"type": "string", "minLength": 1},
+        "market": {"type": "string", "minLength": 1},
+        "doc_type": {"enum": ["annual_report", "interim_report", "quarterly_report", "annual_report_text", "interim_report_text", "company_announcement", "company_circular", "exchange_announcement", "official_statistics", "other_official", "licensed_industry_data"]},
+        "fiscal_period": {"type": "string", "minLength": 1},
+        "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "published_at": {"type": ["string", "null"]},
+        "authority": {"enum": ["audited_filing", "company_filing", "official_statistics", "other_official", "industry_data", "derived"]},
+        "source_url": {"type": ["string", "null"]},
+        "local_path": {"type": "string", "minLength": 1},
+        "derived_text_path": {"type": ["string", "null"]},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "mime_type": {"type": "string", "minLength": 1},
+        "language": {"type": "string", "minLength": 1},
+        "acquisition_status": {"enum": ["CACHED", "DOWNLOADED", "DERIVED_ONLY", "FAILED", "PIT_LINKED_AFTER_ALLOW_READ"]},
+        "verification_mode": {"enum": ["PAGE_QUOTE", "STRUCTURED_DATA"]},
+        "source_id": {"type": "string", "minLength": 1},
+        "source_version": {"type": "string", "minLength": 1},
+        "revision_policy": {"type": "string", "minLength": 1},
+        "source_role_provenance": {"$ref": "#/$defs/source_role_provenance"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"doc_type": {"enum": ["quarterly_report", "company_announcement", "company_circular", "exchange_announcement", "official_statistics", "other_official", "licensed_industry_data"]}}},
+          "then": {
+            "required": ["verification_mode"],
+            "properties": {
+              "source_url": {"type": "string", "pattern": "^https?://\\S+$"},
+              "published_at": {"type": "string", "minLength": 10}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"doc_type": {"enum": ["quarterly_report", "company_announcement", "company_circular", "exchange_announcement"]}}},
+          "then": {"properties": {"authority": {"const": "company_filing"}, "verification_mode": {"const": "PAGE_QUOTE"}}}
+        },
+        {
+          "if": {"properties": {"doc_type": {"const": "official_statistics"}}},
+          "then": {"properties": {"authority": {"const": "official_statistics"}}}
+        },
+        {
+          "if": {"properties": {"doc_type": {"const": "other_official"}}},
+          "then": {"properties": {"authority": {"const": "other_official"}, "verification_mode": {"const": "PAGE_QUOTE"}}}
+        },
+        {
+          "if": {"properties": {"doc_type": {"const": "licensed_industry_data"}}},
+          "then": {"properties": {"authority": {"const": "industry_data"}}}
+        },
+        {
+          "if": {"required": ["verification_mode"], "properties": {"verification_mode": {"const": "PAGE_QUOTE"}}},
+          "then": {"properties": {"derived_text_path": {"type": "string", "minLength": 1}}}
+        }
+      ]
+    },
+    "entity_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_id", "legal_name", "entity_kind"],
+      "properties": {
+        "entity_id": {"type": "string", "pattern": "^(?:ENTITY|LEI|SEC_CIK|CN_UNIFIED|EXCHANGE_SECURITY|REGULATOR):[A-Za-z0-9._:-]+$"},
+        "legal_name": {"type": "string", "minLength": 1},
+        "entity_kind": {"enum": ["OPERATING_ENTITY", "REGULATOR"]}
+      }
+    },
+    "source_role_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "publisher_entity", "subject_entity", "relative_role", "scope", "role_basis"],
+      "properties": {
+        "schema_version": {"const": "phase10-source-role-provenance.v1"},
+        "publisher_entity": {"$ref": "#/$defs/entity_identity"},
+        "subject_entity": {"$ref": "#/$defs/entity_identity"},
+        "relative_role": {"enum": ["COMPETITOR_DISCLOSURE", "SUPPLIER_OR_CUSTOMER_DISCLOSURE", "REGULATORY_DISCLOSURE"]},
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope_id", "product_or_service", "geography", "period_start", "period_end"],
+          "properties": {
+            "scope_id": {"type": "string", "minLength": 1},
+            "product_or_service": {"type": "string", "minLength": 1},
+            "geography": {"type": "string", "minLength": 1},
+            "period_start": {"type": "string", "minLength": 4},
+            "period_end": {"type": "string", "minLength": 4}
+          }
+        },
+        "role_basis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_id", "locator", "basis_kind"],
+          "properties": {
+            "source_id": {"type": "string", "minLength": 1},
+            "locator": {"type": "string", "minLength": 1},
+            "basis_kind": {"enum": ["PUBLISHER_PRIMARY_DISCLOSURE", "OFFICIAL_REGISTRY_OR_FILING", "REGULATORY_PRIMARY_INSTRUMENT"]}
+          }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["state", "invalid_findings", "incomplete_findings", "warnings"],
+      "properties": {
+        "state": {"enum": ["INVALID", "INCOMPLETE", "REVIEWABLE"]},
+        "invalid_findings": {"type": "array", "items": {"type": "string"}},
+        "incomplete_findings": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

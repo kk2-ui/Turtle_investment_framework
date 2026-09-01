@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/judgment_selection_action_first_candidate_receipt.schema.json",
+  "title": "Turtle Action-First Comparative Candidate Receipt",
+  "description": "A closed A1 receipt for one cutoff-before materially implemented operating action. It grants only an action-blind comparator recruitment brief; it is not H2, a peer panel, an outcome, a method result, a CJO, a report, a valuation or an investment permission.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "receipt_id", "receipt_version", "candidate_id", "company_id", "issuer_id",
+    "responsibility_unit_id", "perimeter_id", "cutoff_at", "arena_family", "mechanism_topology",
+    "action", "hypotheses", "static_sources", "allowed_outputs", "method_transfer_rights"
+  ],
+  "properties": {
+    "schema_version": {"const": "judgment-selection-action-first-candidate-receipt.v1"},
+    "receipt_id": {"$ref": "#/$defs/nonempty"},
+    "receipt_version": {"type": "integer", "minimum": 1},
+    "candidate_id": {"$ref": "#/$defs/nonempty"},
+    "company_id": {"$ref": "#/$defs/nonempty"},
+    "issuer_id": {"$ref": "#/$defs/nonempty"},
+    "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
+    "perimeter_id": {"$ref": "#/$defs/nonempty"},
+    "cutoff_at": {"type": "string", "format": "date-time"},
+    "arena_family": {"$ref": "#/$defs/nonempty"},
+    "mechanism_topology": {"enum": ["CUSTOMER_RESPONSE", "COST_RESTRUCTURING"]},
+    "action": {"$ref": "#/$defs/action"},
+    "hypotheses": {"$ref": "#/$defs/hypotheses"},
+    "static_sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/static_source"}},
+    "allowed_outputs": {"const": ["COMPARATOR_RECRUITMENT_BRIEF"]},
+    "method_transfer_rights": {"const": "NO_METHOD_TRANSFER_RIGHTS"}
+  },
+  "$defs": {
+    "nonempty": {"type": "string", "minLength": 1},
+    "source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonempty"}},
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action_id", "implemented_at", "implementation_status", "implemented_material_action", "responsibility_unit_id", "perimeter_id", "source_ids"],
+      "properties": {
+        "action_id": {"$ref": "#/$defs/nonempty"},
+        "implemented_at": {"type": "string", "format": "date-time"},
+        "implementation_status": {"const": "IMPLEMENTED_MATERIAL"},
+        "implemented_material_action": {"$ref": "#/$defs/nonempty"},
+        "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
+        "perimeter_id": {"$ref": "#/$defs/nonempty"},
+        "source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis_id", "mechanism", "source_ids"],
+      "properties": {
+        "hypothesis_id": {"$ref": "#/$defs/nonempty"},
+        "mechanism": {"$ref": "#/$defs/nonempty"},
+        "source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "strongest_rival": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis_id", "explanation", "source_ids"],
+      "properties": {
+        "hypothesis_id": {"$ref": "#/$defs/nonempty"},
+        "explanation": {"$ref": "#/$defs/nonempty"},
+        "source_ids": {"$ref": "#/$defs/source_ids"}
+      }
+    },
+    "hypotheses": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["h_a", "h_b", "strongest_rival"],
+      "properties": {
+        "h_a": {"$ref": "#/$defs/hypothesis"},
+        "h_b": {"$ref": "#/$defs/hypothesis"},
+        "strongest_rival": {"$ref": "#/$defs/strongest_rival"}
+      }
+    },
+    "static_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "official_artifact_id", "source_url", "source_type", "availability_precision", "published_at", "issuer_id", "responsibility_unit_id", "perimeter_id", "page", "supports"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty"},
+        "official_artifact_id": {"$ref": "#/$defs/nonempty"},
+        "source_url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/[0-9]{4}-[0-9]{2}-[0-9]{2}/[^/?#\\s]+\\.PDF$"},
+        "source_type": {"const": "OFFICIAL_STATIC_FINALPAGE_PDF"},
+        "availability_precision": {"enum": ["TIMESTAMP", "DATE_ONLY"]},
+        "published_at": {"type": "string"},
+        "issuer_id": {"$ref": "#/$defs/nonempty"},
+        "responsibility_unit_id": {"$ref": "#/$defs/nonempty"},
+        "perimeter_id": {"$ref": "#/$defs/nonempty"},
+        "page": {"type": "integer", "minimum": 1},
+        "supports": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["IMPLEMENTATION", "MATERIALITY", "HYPOTHESIS", "RIVAL"]}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"availability_precision": {"const": "TIMESTAMP"}}},
+          "then": {"properties": {"published_at": {"type": "string", "format": "date-time"}}}
+        },
+        {
+          "if": {"properties": {"availability_precision": {"const": "DATE_ONLY"}}},
+          "then": {"properties": {"published_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}}}
+        }
+      ]
+    }
+  }
+}

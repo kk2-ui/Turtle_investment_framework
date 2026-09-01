@@ -1,0 +1,44 @@
+{
+  "schema_version": "enterprise-judgment-feedback-settlement.v1",
+  "settlement_id": "FBS:600585:20170412:002",
+  "block_id": "ILB:CN:CEMENT_LISTED:2014_2018:V1",
+  "pre_outcome_freeze_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+  "frozen_transition_rank": 2,
+  "transition_id": "TRN:600585:20170412:20180422:CASH",
+  "company_id": "CN:600585",
+  "cutoff_at": "2017-04-12T00:00:00+08:00",
+  "outcome_custodian_id": "ROLE:CEMENT:OUTCOME_CUSTODIAN",
+  "source_receipt": {
+    "source_ref": "CNINFO:600585:ANN:20180323:1204507132",
+    "published_on": "2018-03-23",
+    "official_url": "https://static.cninfo.com.cn/finalpage/2018-03-23/1204507132.PDF",
+    "source_type": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "custodian_access": "OUTCOME_ONLY",
+    "availability_precision": "DATE"
+  },
+  "observations": [
+    {
+      "outcome_cell_id": "CELL:600585:20170412:CASH",
+      "status": "OBSERVED",
+      "reported_value": "RMB 17,363,026,840",
+      "summary": "The FY2017 audited consolidated cash-flow statement reports net cash flows from operating activities of RMB 17,363,026,840 (p. 84).",
+      "source_ref": "CNINFO:600585:ANN:20180323:1204507132"
+    }
+  ],
+  "next_cutoff_agenda_delta": [
+    {
+      "target_cutoff_at": "2018-04-22T00:00:00+08:00",
+      "change_id": "AGENDA:600585:20180422:CHANGE_EVIDENCE_ORDER:CONSOLIDATED_CASH",
+      "change_type": "CHANGE_EVIDENCE_ORDER",
+      "statement": "At the 2018-04-22 cutoff, examine the audited listed-consolidated cash-flow statement before any non-consolidated cash disclosure for the operating-cash cell.",
+      "reason": "The FY2017 source provides a directly reported operating-cash measurement at the listed-consolidated-issuer boundary."
+    }
+  ],
+  "original_episode_immutable": true,
+  "object_class": "ENTERPRISE_JUDGMENT_FEEDBACK_SETTLEMENT",
+  "claim_class": "CONTRACT_MATCHED_PREQUENTIAL_FEEDBACK",
+  "allowed_outputs": [
+    "FEEDBACK_READ_MODEL",
+    "RESEARCH_AGENDA"
+  ]
+}

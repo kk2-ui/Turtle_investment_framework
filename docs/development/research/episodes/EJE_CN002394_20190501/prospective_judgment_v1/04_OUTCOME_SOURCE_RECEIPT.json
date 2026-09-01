@@ -1,0 +1,24 @@
+{
+  "schema_version": "prospective-enterprise-judgment-source-receipt.v1",
+  "receipt_id": "PEJSR:CN002394:FY2019:1207558653",
+  "resolved_after_authorization_commit": "9ddf38a",
+  "issuer_code": "002394",
+  "company_name": "联发股份",
+  "official_query_scope": {
+    "host": "www.cninfo.com.cn",
+    "category": "ANNUAL_REPORT",
+    "start_on": "2019-01-01",
+    "end_on": "2020-05-01"
+  },
+  "eligible_report": {
+    "announcement_id": "1207558653",
+    "title": "2019年年度报告",
+    "published_on": "2020-04-23",
+    "url": "https://static.cninfo.com.cn/finalpage/2020-04-23/1207558653.PDF",
+    "form": "FULL_ANNUAL_REPORT_PDF",
+    "page_count": 231
+  },
+  "version_resolution": "UNIQUE_ORIGINAL_FULL_FY2019_REPORT_WITHIN_DUE_DATE",
+  "custodian_input": "ONLY_02_OUTCOME_MEASUREMENT_CONTRACT_AND_THIS_PDF",
+  "price_access": "PROHIBITED"
+}

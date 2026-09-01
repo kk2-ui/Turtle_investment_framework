@@ -1,0 +1,19 @@
+{
+  "schema_version": "enterprise-judgment-round3-transfer-review.v1",
+  "review_id": "R3TRR:CN:CEMENT:600425:20140416:V1",
+  "application_ref": "TAR:CN:CEMENT:PERIMETER_FIRST:600425:20140416:R3:V1",
+  "feedback_ref": "R3FBS:600425:20140416:V1",
+  "prior_review_ref": "TRR:CN:CEMENT:PERIMETER_FIRST:000401:20170412:V1",
+  "reviewer_id": "ROLE:CEMENT:ROUND3_TRANSFER_REVIEWER",
+  "review_scope": "SECOND_CROSS_COMPANY_RESEARCH_ORDER_CHANGE_ONLY",
+  "verdict": "SECOND_CROSS_COMPANY_RESEARCH_ORDER_CHANGE_CONFIRMED",
+  "research_order_changed": true,
+  "rule_unchanged": true,
+  "materiality_statement": "Round 3 preserves the same perimeter-first measurement rule and only instantiates it for CN:600425, the 2014-04-16 cutoff and the same operating/cash field identities. The rule changed research order on a second unseen company: select mechanically, inspect perimeter first, stop on an unbridged change and do not read the frozen values. This is a method-order finding, not enterprise-performance or causal inference.",
+  "prohibited_conclusion": "NO_ENTERPRISE_PERFORMANCE_ACTION_CAUSALITY_CJO_VALUATION_REPORT_OR_INVESTMENT_CONCLUSION",
+  "object_class": "ENTERPRISE_JUDGMENT_ROUND3_TRANSFER_REVIEW",
+  "claim_class": "INDEPENDENT_RESEARCH_ORDER_ADJUDICATION",
+  "allowed_outputs": [
+    "METHOD_TRANSFER_REVIEW_ONLY"
+  ]
+}

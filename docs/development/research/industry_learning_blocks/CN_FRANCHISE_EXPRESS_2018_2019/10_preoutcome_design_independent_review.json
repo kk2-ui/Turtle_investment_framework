@@ -1,0 +1,75 @@
+{
+  "schema_version": "enterprise-judgment-round8-preoutcome-design-review.v1",
+  "review_id": "R8REVIEW:PREOUTCOME:CN002120:20190501:V1",
+  "package_ref": "R8:CN:FRANCHISE_EXPRESS:CN002120:20190501:V1",
+  "reviewer_id": "ROLE:ROUND8:INDEPENDENT_PREOUTCOME_REVIEWER",
+  "reviewed_at": "2026-08-27T13:40:06+08:00",
+  "review_status": "MATERIAL_REVISION_REQUIRED",
+  "findings": [
+    {
+      "finding_id": "R8-F1-MIXED-CLOCK-CAUSAL-CREDIT",
+      "severity": "HIGH",
+      "root_cause": [
+        "MODEL",
+        "REASONING"
+      ],
+      "economic_impact": "FY2019 flows include January-April before the cutoff and could overstate post-cutoff management execution if later evaluation treats them as causal.",
+      "missing_fact_or_control": "Machine-readable measurement-use and causal-credit eligibility linked from settlement cells to utility findings.",
+      "prohibited_assumption": "Full-year volume, share, margin or cash improvement was caused by a post-cutoff management action.",
+      "required_remediation": "Assign mixed-clock cells descriptive or error-avoidance use only with causal_credit NONE, and require future utility findings to cite eligible cell IDs.",
+      "acceptance_criterion": "Changing any mixed-clock cell to positive causal credit must fail validation.",
+      "disposition": "ACCEPTED_ROUND8_DOWNGRADED_AND_POSTOUTCOME_OVERLAY_ADDED",
+      "resolution_ref": "R8ADJ:CN002120:20190501:FY2019:V1"
+    },
+    {
+      "finding_id": "R8-F2-INDUSTRY-ISSUER-BOUNDARY",
+      "severity": "HIGH",
+      "root_cause": [
+        "MODEL",
+        "DATA_COVERAGE"
+      ],
+      "economic_impact": "National parcel growth or issuer-minus-industry spread could be mistaken for company capability even though price, platform traffic and a correctly bounded industry reference remain unresolved.",
+      "missing_fact_or_control": "An independent industry responsibility perimeter and separately bound industry source fields.",
+      "prohibited_assumption": "Growth spread, share gain or complaint improvement alone proves customer preference, execution or moat.",
+      "required_remediation": "Keep the frozen contract unchanged, settle the affected Round 8 cells as local MEASUREMENT_MISMATCH, and require a separate industry perimeter in the next unseen episode.",
+      "acceptance_criterion": "Future validators reject national industry fields bound to an issuer-consolidated perimeter.",
+      "disposition": "ACCEPTED_AFFECTED_CELLS_LOCALLY_MISMATCHED_AND_TRANSFER_NOT_VALIDATED",
+      "resolution_ref": "R8SETTLE:CN002120:20190501:FY2019:V1"
+    },
+    {
+      "finding_id": "R8-F3-PREDECLARED-OUTCOME-SOURCE-IDENTITY",
+      "severity": "MEDIUM",
+      "root_cause": [
+        "ACQUISITION_MODULE",
+        "MODEL"
+      ],
+      "economic_impact": "A role that ignores the procedural boundary could manually open the predeclared outcome PDF before freeze.",
+      "missing_fact_or_control": "Adversarial isolation of source content from the research role.",
+      "prohibited_assumption": "The SEALED label is a security boundary.",
+      "required_remediation": "Reviewer proposed hiding the exact source identity until post-freeze custody.",
+      "acceptance_criterion": "Reviewer proposed rejecting exact post-cutoff URLs in pre-outcome packages.",
+      "disposition": "NON_BLOCKING_NOT_ADOPTED",
+      "disposition_reason": "This local collaborator system intentionally predeclares exact source identity to prevent result-based source selection. Content isolation is recorded as procedural, not adversarial; hiding source identity would move source choice after freeze and weaken the sampling contract."
+    }
+  ],
+  "passed_controls": [
+    "Baseline and Enhanced use the same evidence-locator union.",
+    "The Baseline contains material caveats and is not intentionally weakened.",
+    "The eight dimensions are a no-score judgment skeleton, not eight global gates.",
+    "No FY2019 realized value or direction label appears in the frozen pre-outcome package."
+  ],
+  "overall_disposition": "EIGHT_DIMENSION_SKELETON_SUPPORTED_ARCHITECTURE_REVISION_REQUIRED",
+  "rights": {
+    "method_transfer": "NOT_AUTHORIZED",
+    "cjo": "NOT_AUTHORIZED",
+    "valuation": "NOT_AUTHORIZED",
+    "report": "NOT_AUTHORIZED",
+    "investment": "NOT_AUTHORIZED"
+  },
+  "object_class": "INDEPENDENT_PREOUTCOME_DESIGN_REVIEW",
+  "claim_class": "MATERIAL_ARCHITECTURE_REVIEW",
+  "allowed_outputs": [
+    "ARCHITECTURE_REVISION",
+    "RESEARCH_AGENDA"
+  ]
+}

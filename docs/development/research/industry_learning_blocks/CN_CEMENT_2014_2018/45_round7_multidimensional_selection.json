@@ -1,0 +1,32 @@
+{
+  "schema_version": "enterprise-judgment-round7-selection.v1",
+  "selection_id": "R7SEL:CN:CEMENT:600585:20140416:V1",
+  "selection": {
+    "selection_policy": "EARLIEST_UNCONSUMED_IMMUTABLE_COMPANY_CUTOFF_TRANSITION",
+    "source_roster_ref": "EJPF:CN:CEMENT:2014_2018:PRE_OUTCOME:V1",
+    "consumed_transition_ids": [
+      "CCR:000401:20170412:20180422",
+      "CCR:600425:20140416:20150415",
+      "CCR:600585:20170412:20180422",
+      "CCR:600801:20160427:20170412",
+      "CCR:600801:20170412:20180422",
+      "CCR:600802:20140416:20150415",
+      "CCR:600802:20150415:20160427"
+    ],
+    "selected_rank": 3,
+    "transition_id": "CCR:600585:20140416:20150415",
+    "company_id": "CN:600585",
+    "company_cluster_id": "COMPANY_CLUSTER:CN:CEMENT_LISTED:600585",
+    "cutoff_at": "2014-04-16T00:00:00+08:00",
+    "next_cutoff_at": "2015-04-15T00:00:00+08:00",
+    "selection_used_outcome": false,
+    "selection_used_source_convenience": false
+  },
+  "selection_basis": "Frozen roster order after formal prior receipts, including Round 6 completion; outcome and source convenience were not used.",
+  "object_class": "ENTERPRISE_JUDGMENT_MULTIDIMENSIONAL_SELECTION",
+  "claim_class": "MECHANICAL_PRE_OUTCOME_SELECTION",
+  "allowed_outputs": [
+    "MULTIDIMENSIONAL_PAIRED_PREOUTCOME_RESEARCH",
+    "RESEARCH_AGENDA"
+  ]
+}

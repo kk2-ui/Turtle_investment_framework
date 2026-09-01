@@ -1,0 +1,123 @@
+{
+  "schema_version": "judgment-outcome-acquisition-contract.v1",
+  "case_id": "SELECTIONCASE:R-104:chongqing-beer-network-pruning-unit-economics-20160430",
+  "company_id": "CN:600132",
+  "responsibility_unit_id": "ISSUER_CONSOLIDATED:CN:600132",
+  "cutoff_at": "2016-04-30T23:59:59+08:00",
+  "outcome_access": "PIT_OUTCOME_SEALED",
+  "contract_status": "FROZEN_PENDING_INDEPENDENT_REVIEW",
+  "custodian_role_required": true,
+  "selector_visibility": "OPAQUE_PACKAGE_IDS_AND_DUE_DATES_ONLY",
+  "enumeration_policy": {
+    "provider": "CNINFO",
+    "endpoint": "https://www.cninfo.com.cn/new/hisAnnouncement/query",
+    "security_code": "600132",
+    "rule": "Only a separately assigned outcome custodian may enumerate the complete post-cutoff official inventory after an independent pre-outcome receipt accepts this exact packet. The selector must not see post-cutoff titles, filenames, snippets, bodies or securities prices."
+  },
+  "pre_admission_identity_contract": {
+    "state": "PASS_CUTOFF_BEFORE_RECURRING_IDENTITY",
+    "evidence_ref": "00_cohort_screen_and_source_selection.json#pre_admission_recurring_disclosure_gate",
+    "rule": "The legal consolidated issuer and each central metric identity recur in FY2013-FY2015 annual reports. This is the admission basis; no post-cutoff report existence or value has been checked."
+  },
+  "optional_product_volume_layer": {
+    "state": "UNKNOWN_NOT_ENUMERATED_NOT_A_CLAIM",
+    "rule": "D3_PRODUCT_VOLUME is optional under the five-layer product contract. R-104 has no recurring cutoff-before whole-issuer production-throughput identity, so outcome acquisition must not enumerate or impute it and it cannot vote."
+  },
+  "clocks": [
+    {
+      "claim_id": "R-104:D1-TERMINAL",
+      "stage_id": "D1_IMPLEMENTATION",
+      "observation_window": {
+        "start": "2016-05-01",
+        "end": "2016-12-31"
+      },
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "source_query_window": {
+        "begin_date": "2016-05-01",
+        "end_date": "2017-05-31"
+      },
+      "allowed_source_types": [
+        "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "CNINFO_OFFICIAL_PLANT_CLOSURE_REOPENING_OR_CAPACITY_ANNOUNCEMENT"
+      ],
+      "selection_rule": "Use the earliest original official source that states implementation, reversal, equivalent capacity rebuild, material supply interruption or transition burden inside the same listed-group perimeter. A plan or target is not implementation.",
+      "settlement_version_policy": "INITIAL_DISCLOSURE"
+    },
+    {
+      "claim_id": "R-104:D2-TERMINAL",
+      "stage_id": "D2_CUSTOMER_ABSORPTION",
+      "observation_window": {
+        "start": "2016-01-01",
+        "end": "2016-12-31"
+      },
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "source_query_window": {
+        "begin_date": "2016-05-01",
+        "end_date": "2017-05-31"
+      },
+      "allowed_source_types": [
+        "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "selection_rule": "Extract the recurring annual headline beer sales volume and consolidated operating revenue. If only the product table is disclosed, subtract separately quantified commissioned processing only with an issuer-provided bridge; otherwise preserve MEASUREMENT_MISMATCH.",
+      "settlement_version_policy": "INITIAL_DISCLOSURE"
+    },
+    {
+      "claim_id": "R-104:D3-TERMINAL",
+      "stage_id": "D3_UNIT_ECONOMICS",
+      "observation_window": {
+        "start": "2016-01-01",
+        "end": "2016-12-31"
+      },
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "source_query_window": {
+        "begin_date": "2016-05-01",
+        "end_date": "2017-05-31"
+      },
+      "allowed_source_types": [
+        "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "selection_rule": "Extract whole-issuer operating revenue, operating cost, taxes and surcharges, selling expense and administrative expense, then compute the frozen whole-issuer RMB amount. Beer-only volume, standalone gross margin, net profit, adjusted EBITDA or a brand margin cannot substitute.",
+      "settlement_version_policy": "INITIAL_DISCLOSURE"
+    },
+    {
+      "claim_id": "R-104:D4-CASH",
+      "stage_id": "D4_WORKING_CAPITAL_AND_CASH",
+      "observation_window": {
+        "start": "2016-01-01",
+        "end": "2016-12-31"
+      },
+      "eligible_at": "2017-05-01T00:00:00+08:00",
+      "source_query_window": {
+        "begin_date": "2016-05-01",
+        "end_date": "2017-05-31"
+      },
+      "allowed_source_types": [
+        "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT"
+      ],
+      "selection_rule": "Extract consolidated OCF, cash paid to acquire fixed/intangible/other long-term assets, and opening/ending accounts receivable, prepayments, inventory, accounts payable and customer advances at the legal issuer perimeter. Compute owner_cash_ex_working_capital_release_rmb = OCF - long-term-asset acquisition cash - max(opening cash working capital - ending cash working capital, 0). Opening and ending working capital are required formula inputs, but settlement compares only this scalar. Parent-only cash flow, net income, debt reduction, unadjusted OCF less capex or a maintenance-capex estimate are prohibited substitutes.",
+      "settlement_version_policy": "INITIAL_DISCLOSURE"
+    },
+    {
+      "claim_id": "R-104:D5-CAPITAL",
+      "stage_id": "D5_CAPITAL_RETURN",
+      "observation_window": {
+        "start": "2016-01-01",
+        "end": "2018-12-31"
+      },
+      "eligible_at": "2019-05-01T00:00:00+08:00",
+      "source_query_window": {
+        "begin_date": "2016-05-01",
+        "end_date": "2019-05-31"
+      },
+      "allowed_source_types": [
+        "CNINFO_OFFICIAL_AUDITED_ANNUAL_REPORT",
+        "CNINFO_OFFICIAL_ASSET_DISPOSAL_OR_IMPAIRMENT_ANNOUNCEMENT"
+      ],
+      "selection_rule": "Build a continuous FY2016-FY2018 owner-cash and capital bridge at the consolidated issuer: OCF, maintenance-oriented capital expenditure, working-capital change, closure-related permanent loss or disposal proceeds, and opening/average operating capital. Do not turn this layer into a binary selection verdict.",
+      "settlement_version_policy": "INITIAL_DISCLOSURE"
+    }
+  ],
+  "release_gate": "CLOSED_PENDING_ACCEPTED_INDEPENDENT_PRE_OUTCOME_RECEIPT",
+  "execution_authorized": false,
+  "registration_status": "NOT_REGISTERED"
+}

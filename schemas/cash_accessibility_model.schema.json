@@ -1,0 +1,603 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/cash_accessibility_model.schema.json",
+  "title": "Turtle canonical cash accessibility model",
+  "description": "A source-referenced model that separates legal cash access, realization of existing excess cash, realization of future retained cash, and related-party receivable recovery.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model_id",
+    "company_id",
+    "cutoff_at",
+    "position_as_of",
+    "as_of",
+    "currency",
+    "unit",
+    "input_fact_ids",
+    "legal_cash_accessibility",
+    "existing_excess_cash_realization",
+    "future_retained_cash_realization",
+    "related_party_receivable_realization",
+    "valuation_destination_ledger",
+    "unresolved_facts",
+    "economic_conclusion",
+    "reader_conclusions"
+  ],
+  "properties": {
+    "schema_version": {"const": "cash-accessibility-model.v1"},
+    "model_id": {"type": "string", "minLength": 1},
+    "company_id": {"type": "string", "minLength": 1},
+    "cutoff_at": {"type": "string", "minLength": 1},
+    "position_as_of": {"type": "string", "minLength": 1},
+    "as_of": {"type": "string", "minLength": 1},
+    "currency": {"type": "string", "minLength": 1},
+    "unit": {"type": "string", "minLength": 1},
+    "input_fact_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonemptyString"}
+    },
+    "legal_cash_accessibility": {"$ref": "#/$defs/legalCashAccessibility"},
+    "existing_excess_cash_realization": {"$ref": "#/$defs/existingExcessCashRealization"},
+    "future_retained_cash_realization": {"$ref": "#/$defs/futureRetainedCashRealization"},
+    "related_party_receivable_realization": {"$ref": "#/$defs/relatedPartyReceivableRealization"},
+    "valuation_destination_ledger": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/destinationLedgerEntry"}
+    },
+    "unresolved_facts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonemptyString"}
+    },
+    "economic_conclusion": {"$ref": "#/$defs/nonemptyString"},
+    "reader_conclusions": {
+      "type": "array",
+      "minItems": 4,
+      "items": {"$ref": "#/$defs/nonemptyString"}
+    }
+  },
+  "$defs": {
+    "nonemptyString": {"type": "string", "minLength": 1},
+    "nonnegativeNumber": {"type": "number", "minimum": 0},
+    "rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "factIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonemptyString"}
+    },
+    "amountRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["low", "base", "high"],
+      "properties": {
+        "low": {"$ref": "#/$defs/nonnegativeNumber"},
+        "base": {"$ref": "#/$defs/nonnegativeNumber"},
+        "high": {"$ref": "#/$defs/nonnegativeNumber"}
+      }
+    },
+    "rateRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["low", "base", "high"],
+      "properties": {
+        "low": {"$ref": "#/$defs/rate"},
+        "base": {"$ref": "#/$defs/rate"},
+        "high": {"$ref": "#/$defs/rate"}
+      }
+    },
+    "nullableRateRange": {
+      "oneOf": [
+        {"$ref": "#/$defs/rateRange"},
+        {"type": "null"}
+      ]
+    },
+    "nullableAmountRange": {
+      "oneOf": [
+        {"$ref": "#/$defs/amountRange"},
+        {"type": "null"}
+      ]
+    },
+    "evidenceState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supporting_fact_ids",
+        "invalidating_fact_ids",
+        "unresolved_conditions"
+      ],
+      "properties": {
+        "supporting_fact_ids": {"$ref": "#/$defs/optionalFactIds"},
+        "invalidating_fact_ids": {"$ref": "#/$defs/optionalFactIds"},
+        "unresolved_conditions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonemptyString"}
+        }
+      }
+    },
+    "optionalFactIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonemptyString"}
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status", "conditions", "source_fact_ids", "source_fact_bindings",
+        "supporting_fact_ids", "invalidating_fact_ids", "unresolved_conditions"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["EVIDENCE_BACKED", "UNKNOWN", "DISCONTINUITY_IDENTIFIED"]
+        },
+        "conditions": {
+          "type": "object",
+          "additionalProperties": {"type": ["boolean", "null"]},
+          "minProperties": 3
+        },
+        "source_fact_ids": {"$ref": "#/$defs/optionalFactIds"},
+        "source_fact_bindings": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/nonemptyString"}
+        },
+        "supporting_fact_ids": {"$ref": "#/$defs/optionalFactIds"},
+        "invalidating_fact_ids": {"$ref": "#/$defs/optionalFactIds"},
+        "unresolved_conditions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonemptyString"}
+        }
+      }
+    },
+    "legalCashRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity_id",
+        "entity_kind",
+        "gross_cash",
+        "restricted_or_regulatory_cash",
+        "operating_liquidity_requirement",
+        "excess_cash_before_ownership",
+        "ordinary_share_economic_interest",
+        "ordinary_share_attributable_before_friction",
+        "transfer_tax_friction_rate",
+        "transfer_tax_friction_amount",
+        "legal_accessible_cash",
+        "aggregation_role",
+        "cash_perimeter_id",
+        "included_in_additive_leaf_total",
+        "source_fact_ids"
+      ],
+      "properties": {
+        "entity_id": {"$ref": "#/$defs/nonemptyString"},
+        "entity_kind": {
+          "enum": [
+            "parent",
+            "wholly_owned_subsidiary",
+            "partially_owned_subsidiary",
+            "joint_venture",
+            "other"
+          ]
+        },
+        "gross_cash": {"$ref": "#/$defs/nonnegativeNumber"},
+        "restricted_or_regulatory_cash": {"$ref": "#/$defs/nonnegativeNumber"},
+        "operating_liquidity_requirement": {"$ref": "#/$defs/nonnegativeNumber"},
+        "excess_cash_before_ownership": {"$ref": "#/$defs/nonnegativeNumber"},
+        "ordinary_share_economic_interest": {"$ref": "#/$defs/rate"},
+        "ordinary_share_attributable_before_friction": {"$ref": "#/$defs/nonnegativeNumber"},
+        "transfer_tax_friction_rate": {"$ref": "#/$defs/rate"},
+        "transfer_tax_friction_amount": {"$ref": "#/$defs/nonnegativeNumber"},
+        "legal_accessible_cash": {"$ref": "#/$defs/nonnegativeNumber"},
+        "aggregation_role": {"enum": ["ADDITIVE_LEAF", "DIAGNOSTIC_TOTAL"]},
+        "cash_perimeter_id": {"$ref": "#/$defs/nonemptyString"},
+        "included_in_additive_leaf_total": {"type": "boolean"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "legalCashAccessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "economic_identity",
+        "rows",
+        "additive_leaf_total",
+        "diagnostic_total_ceiling",
+        "amount_range",
+        "adopted_value",
+        "adoption_policy",
+        "valuation_destination"
+      ],
+      "properties": {
+        "economic_identity": {"$ref": "#/$defs/nonemptyString"},
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/legalCashRow"}
+        },
+        "additive_leaf_total": {"$ref": "#/$defs/nonnegativeNumber"},
+        "diagnostic_total_ceiling": {"$ref": "#/$defs/nonnegativeNumber"},
+        "amount_range": {"$ref": "#/$defs/amountRange"},
+        "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
+        "adoption_policy": {
+          "const": "additive_leaf_total_only_diagnostic_unrecognized"
+        },
+        "valuation_destination": {"const": "legal_accessibility_ceiling_only"}
+      }
+    },
+    "extraordinaryEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "event_date",
+        "observed_at",
+        "amount",
+        "funding_source_identity",
+        "eligible_for_existing_excess_cash_calibration",
+        "source_fact_ids"
+      ],
+      "properties": {
+        "event_type": {"enum": ["special_dividend", "cancellative_net_buyback"]},
+        "event_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "observed_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "amount": {"$ref": "#/$defs/nonnegativeNumber"},
+        "funding_source_identity": {
+          "enum": ["existing_excess_cash", "future_retained_cash", "debt_funded", "unknown"]
+        },
+        "cash_flow_id": {"$ref": "#/$defs/nonemptyString"},
+        "cash_disposition": {
+          "enum": ["special_dividend", "cancellative_net_buyback"]
+        },
+        "eligible_for_existing_excess_cash_calibration": {"type": "boolean"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "realizationPeriod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "period_id",
+        "period_start",
+        "period_end",
+        "opening_position_as_of",
+        "comparable",
+        "opening_existing_excess_cash",
+        "retained_cash_generated",
+        "ordinary_dividend",
+        "eligible_extraordinary_realization",
+        "existing_cash_calibration_qualified",
+        "existing_cash_realization_rate",
+        "future_retained_cash_calibration_qualified",
+        "ordinary_distribution_rate",
+        "extraordinary_events",
+        "source_fact_ids"
+      ],
+      "properties": {
+        "period_id": {"$ref": "#/$defs/nonemptyString"},
+        "period_start": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "opening_position_as_of": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "comparable": {"type": "boolean"},
+        "opening_existing_excess_cash": {"$ref": "#/$defs/nonnegativeNumber"},
+        "retained_cash_generated": {"$ref": "#/$defs/nonnegativeNumber"},
+        "ordinary_dividend": {"$ref": "#/$defs/nonnegativeNumber"},
+        "ordinary_dividend_cash_flow_id": {"$ref": "#/$defs/nonemptyString"},
+        "ordinary_dividend_funding_source_identity": {
+          "enum": ["existing_excess_cash", "future_retained_cash", "debt_funded", "unknown"]
+        },
+        "ordinary_dividend_disposition": {"const": "ordinary_dividend"},
+        "eligible_extraordinary_realization": {"$ref": "#/$defs/nonnegativeNumber"},
+        "existing_cash_calibration_qualified": {"type": "boolean"},
+        "existing_cash_realization_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
+        "future_retained_cash_calibration_qualified": {"type": "boolean"},
+        "ordinary_distribution_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
+        "extraordinary_events": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/extraordinaryEvent"}
+        },
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "existingExcessCashRealization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "legal_upper_bound",
+        "qualifying_period_count",
+        "required_period_count",
+        "calibration_method",
+        "historical_observed_rate_range",
+        "prospective_applicability",
+        "realization_rate_range",
+        "amount_range",
+        "evidenced_lower_bound",
+        "conditional_amount_range",
+        "unrecognized_remainder",
+        "evidence_state",
+        "adopted_realization_rate",
+        "adopted_value",
+        "adoption_policy",
+        "valuation_destination",
+        "history"
+      ],
+      "properties": {
+        "legal_upper_bound": {"$ref": "#/$defs/nonnegativeNumber"},
+        "qualifying_period_count": {"type": "integer", "minimum": 0},
+        "required_period_count": {"const": 3},
+        "calibration_method": {
+          "enum": ["insufficient_comparable_history", "observed_min_median_max"]
+        },
+        "historical_observed_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "prospective_applicability": {"$ref": "#/$defs/applicability"},
+        "realization_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "amount_range": {"$ref": "#/$defs/amountRange"},
+        "evidenced_lower_bound": {"$ref": "#/$defs/nonnegativeNumber"},
+        "conditional_amount_range": {"$ref": "#/$defs/nullableAmountRange"},
+        "unrecognized_remainder": {"$ref": "#/$defs/nonnegativeNumber"},
+        "evidence_state": {"$ref": "#/$defs/evidenceState"},
+        "adopted_realization_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
+        "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
+        "adoption_policy": {
+          "enum": [
+            "zero_recognized_until_history_and_continuity_are_evidence_backed",
+            "evidence_backed_historical_rate_range"
+          ]
+        },
+        "valuation_destination": {"const": "equity_value_existing_excess_cash"},
+        "history": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/realizationPeriod"}
+        }
+      }
+    },
+    "futureRetainedCashRealization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projected_retained_cash",
+        "legal_upper_bound_rate",
+        "qualifying_period_count",
+        "required_period_count",
+        "calibration_method",
+        "historical_observed_rate_range",
+        "prospective_applicability",
+        "realization_rate_range",
+        "amount_range",
+        "evidenced_lower_bound",
+        "conditional_amount_range",
+        "unrecognized_remainder",
+        "evidence_state",
+        "adopted_realization_rate",
+        "adopted_value",
+        "adoption_policy",
+        "valuation_destination",
+        "source_fact_ids"
+      ],
+      "properties": {
+        "projected_retained_cash": {"$ref": "#/$defs/nonnegativeNumber"},
+        "legal_upper_bound_rate": {"$ref": "#/$defs/rate"},
+        "qualifying_period_count": {"type": "integer", "minimum": 0},
+        "required_period_count": {"const": 3},
+        "calibration_method": {
+          "enum": ["insufficient_comparable_history", "observed_min_median_max"]
+        },
+        "historical_observed_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "prospective_applicability": {"$ref": "#/$defs/applicability"},
+        "realization_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "amount_range": {"$ref": "#/$defs/amountRange"},
+        "evidenced_lower_bound": {"$ref": "#/$defs/nonnegativeNumber"},
+        "conditional_amount_range": {"$ref": "#/$defs/nullableAmountRange"},
+        "unrecognized_remainder": {"$ref": "#/$defs/nonnegativeNumber"},
+        "evidence_state": {"$ref": "#/$defs/evidenceState"},
+        "adopted_realization_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
+        "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
+        "adoption_policy": {
+          "enum": [
+            "zero_recognized_until_history_and_continuity_are_evidence_backed",
+            "evidence_backed_historical_rate_range"
+          ]
+        },
+        "valuation_destination": {"const": "operating_value_future_retained_cash"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "recoveryCohort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cohort_id",
+        "recovery_mechanism_id",
+        "period_start",
+        "period_end",
+        "maturity_status",
+        "opening_gross_exposure",
+        "opening_ecl_allowance",
+        "opening_net_exposure",
+        "cash_collections",
+        "noncash_settlements",
+        "writeoffs",
+        "realized_recovery_rate",
+        "source_fact_ids"
+      ],
+      "properties": {
+        "cohort_id": {"$ref": "#/$defs/nonemptyString"},
+        "recovery_mechanism_id": {"$ref": "#/$defs/nonemptyString"},
+        "period_start": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "period_end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "maturity_status": {"enum": ["MATURED", "OPEN"]},
+        "opening_gross_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "opening_ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
+        "opening_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "cash_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "noncash_settlements": {"$ref": "#/$defs/nonnegativeNumber"},
+        "writeoffs": {"$ref": "#/$defs/nonnegativeNumber"},
+        "realized_recovery_rate": {
+          "oneOf": [{"$ref": "#/$defs/rate"}, {"type": "null"}]
+        },
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "receivableRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receivable_id",
+        "gross_amount",
+        "ecl_allowance",
+        "post_position_collections",
+        "aging_bucket",
+        "recovery_mechanism_id",
+        "uncollected_net_exposure",
+        "unrecognized_net_exposure",
+        "mature_cohort_count",
+        "required_mature_cohort_count",
+        "historical_observed_recovery_rate_range",
+        "prospective_applicability",
+        "uncollected_recovery_rate_range",
+        "recovery_status",
+        "recovery_cohorts",
+        "amount_range",
+        "evidenced_lower_bound",
+        "conditional_amount_range",
+        "evidence_state",
+        "adopted_value",
+        "source_fact_ids"
+      ],
+      "properties": {
+        "receivable_id": {"$ref": "#/$defs/nonemptyString"},
+        "gross_amount": {"$ref": "#/$defs/nonnegativeNumber"},
+        "ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
+        "post_position_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "post_position_collection_cash_flow_id": {"$ref": "#/$defs/nonemptyString"},
+        "post_position_collection_funding_source_identity": {
+          "const": "related_party_receivable"
+        },
+        "post_position_collection_disposition": {"const": "receivable_collection"},
+        "aging_bucket": {
+          "enum": [
+            "current",
+            "less_than_one_year",
+            "one_to_two_years",
+            "two_to_three_years",
+            "over_three_years",
+            "unknown"
+          ]
+        },
+        "recovery_mechanism_id": {"$ref": "#/$defs/nonemptyString"},
+        "uncollected_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "unrecognized_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "mature_cohort_count": {"type": "integer", "minimum": 0},
+        "required_mature_cohort_count": {"const": 3},
+        "historical_observed_recovery_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "prospective_applicability": {"$ref": "#/$defs/applicability"},
+        "uncollected_recovery_rate_range": {"$ref": "#/$defs/nullableRateRange"},
+        "recovery_status": {
+          "enum": ["EVIDENCE_BACKED", "UNKNOWN", "FULLY_COLLECTED_OR_ALLOWED"]
+        },
+        "recovery_cohorts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/recoveryCohort"}
+        },
+        "amount_range": {"$ref": "#/$defs/amountRange"},
+        "evidenced_lower_bound": {"$ref": "#/$defs/nonnegativeNumber"},
+        "conditional_amount_range": {"$ref": "#/$defs/nullableAmountRange"},
+        "evidence_state": {"$ref": "#/$defs/evidenceState"},
+        "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
+        "source_fact_ids": {"$ref": "#/$defs/factIds"}
+      }
+    },
+    "relatedPartyReceivableRealization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rows",
+        "gross_receivables",
+        "ecl_allowance",
+        "post_position_collections",
+        "uncollected_net_exposure",
+        "unrecognized_net_exposure",
+        "recovery_status",
+        "amount_range",
+        "evidenced_lower_bound",
+        "conditional_amount_range",
+        "unrecognized_remainder",
+        "evidence_state",
+        "adopted_value",
+        "adoption_policy",
+        "valuation_destination"
+      ],
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/receivableRow"}
+        },
+        "gross_receivables": {"$ref": "#/$defs/nonnegativeNumber"},
+        "ecl_allowance": {"$ref": "#/$defs/nonnegativeNumber"},
+        "post_position_collections": {"$ref": "#/$defs/nonnegativeNumber"},
+        "uncollected_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "unrecognized_net_exposure": {"$ref": "#/$defs/nonnegativeNumber"},
+        "recovery_status": {
+          "enum": [
+            "EVIDENCE_BACKED",
+            "PARTIAL_EVIDENCE",
+            "UNKNOWN",
+            "FULLY_COLLECTED_OR_ALLOWED"
+          ]
+        },
+        "amount_range": {"$ref": "#/$defs/amountRange"},
+        "evidenced_lower_bound": {"$ref": "#/$defs/nonnegativeNumber"},
+        "conditional_amount_range": {"$ref": "#/$defs/nullableAmountRange"},
+        "unrecognized_remainder": {"$ref": "#/$defs/nonnegativeNumber"},
+        "evidence_state": {"$ref": "#/$defs/evidenceState"},
+        "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"},
+        "adoption_policy": {
+          "const": "collections_plus_evidence_backed_same_mechanism_mature_cohorts_only"
+        },
+        "valuation_destination": {"const": "equity_value_related_party_receivable"}
+      }
+    },
+    "destinationLedgerEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component_id", "valuation_destination", "inclusion_mode", "adopted_value"],
+      "properties": {
+        "component_id": {
+          "enum": [
+            "legal_cash_accessibility",
+            "existing_excess_cash_realization",
+            "future_retained_cash_realization",
+            "related_party_receivable_realization"
+          ]
+        },
+        "valuation_destination": {
+          "enum": [
+            "legal_accessibility_ceiling_only",
+            "equity_value_existing_excess_cash",
+            "operating_value_future_retained_cash",
+            "equity_value_related_party_receivable"
+          ]
+        },
+        "inclusion_mode": {
+          "enum": ["BOUND_ONLY", "ADDITIVE_EQUITY_BRIDGE", "OPERATING_VALUE_ADJUSTMENT"]
+        },
+        "adopted_value": {"$ref": "#/$defs/nonnegativeNumber"}
+      }
+    }
+  }
+}

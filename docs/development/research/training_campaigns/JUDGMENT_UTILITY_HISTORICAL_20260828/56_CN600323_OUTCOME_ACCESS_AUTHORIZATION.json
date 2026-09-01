@@ -1,0 +1,119 @@
+{
+  "schema_version": "historical-outcome-access-authorization.v1",
+  "campaign_id": "JUDGMENT_UTILITY_HISTORICAL_20260828",
+  "episode_id": "HIST:CN600323:20240501:FY2024",
+  "roster_role": "TRANSFER_2_PAIRED_HOLDOUT",
+  "company_id": "CN:600323",
+  "cutoff_at": "2024-05-01T00:00:00+08:00",
+  "preoutcome_freeze_commit": "303b0e0",
+  "pair_packet_ref": "49_CN600323_HOLDOUT_PAIR_PACKET.json",
+  "baseline_judgment_ref": "51_CN600323_BASELINE_PREOUTCOME_JUDGMENT.json",
+  "enhanced_judgment_ref": "53_CN600323_ENHANCED_PREOUTCOME_JUDGMENT.json",
+  "treatment_pair_ref": "54_CN600323_HOLDOUT_TREATMENT_PAIR.json",
+  "preoutcome_review_ref": "55_CN600323_INDEPENDENT_PREOUTCOME_PAIR_REVIEW.md",
+  "custodian_id": "/root/cn600323_holdout_outcome_custodian",
+  "authorized_source": {
+    "period": "FY2024",
+    "source_id": "CNINFO:600323:FY2024:1223057340",
+    "source_class": "ISSUER_OFFICIAL_FULL_ANNUAL_REPORT",
+    "url": "https://static.cninfo.com.cn/finalpage/2025-04-11/1223057340.PDF",
+    "maximum_documents": 1
+  },
+  "authorization": "FY2024_PAIRED_HOLDOUT_OUTCOME_FACT_EXTRACTION_AND_CELL_SETTLEMENT",
+  "shared_cell_union": [
+    {
+      "cell_id": "FY2024_RECURRING_EARNINGS_QUALITY",
+      "arm": "BASELINE",
+      "allowed_fields": [
+        "FY2024 and FY2023-comparable consolidated revenue and recurring profit after explicit nonrecurring exclusions",
+        "solid-waste segment revenue and profit with engineering and equipment separated",
+        "energy segment sales volume, procurement-price and regulated-sale-price bridge, recurring profit and persistent costs",
+        "finance cost, impairment, investment income, disposal, fair-value, government-grant and perimeter items needed for the frozen bridge"
+      ],
+      "first_match_ref": "51_CN600323_BASELINE_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_RECURRING_EARNINGS_QUALITY"
+    },
+    {
+      "cell_id": "FY2024_RESPONSIBILITY_MATCHED_RECURRING_ECONOMICS",
+      "arm": "ENHANCED",
+      "allowed_fields": [
+        "same-boundary waste-incineration utilization, processing volume, operating revenue, recurring profit and gross margin",
+        "energy sales volume, procurement price, regulated sale price, executable pass-through or supply-structure evidence and recurring profit",
+        "group recurring profit after persistent operating and finance costs and explicit nonrecurring exclusions",
+        "responsibility-matched evidence of controllable operating, procurement, pricing or cost failure"
+      ],
+      "first_match_ref": "53_CN600323_ENHANCED_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_RESPONSIBILITY_MATCHED_RECURRING_ECONOMICS"
+    },
+    {
+      "cell_id": "FY2024_OWNER_CASH_ACCESS",
+      "arm": "BASELINE",
+      "allowed_fields": [
+        "consolidated operating cash flow reconciled for accounting-classification and identified concentrated or transferred receivable collections",
+        "cash paid for fixed, intangible and other long-term assets and disclosed total capital expenditure",
+        "receivables plus contract assets, credit impairment, interest-bearing debt and unrestricted or restricted cash",
+        "NCI claims and actual non-financing cash upstreamed to the listed-company parent where disclosed"
+      ],
+      "first_match_ref": "51_CN600323_BASELINE_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_OWNER_CASH_ACCESS"
+    },
+    {
+      "cell_id": "FY2024_PARENT_OWNER_CASH_ATTRIBUTION",
+      "arm": "ENHANCED",
+      "allowed_fields": [
+        "the same group cash-flow, capex, receivable, debt and impairment facts supplied to the Baseline arm",
+        "material subsidiary post-capex cash, NCI claims, required retention and distributions where disclosed",
+        "actual non-financing parent receipts, net parent support, parent liquidity and legal or financing restrictions on upstream cash"
+      ],
+      "first_match_ref": "53_CN600323_ENHANCED_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_PARENT_OWNER_CASH_ATTRIBUTION"
+    },
+    {
+      "cell_id": "FY2024_BALANCE_SHEET_PERMANENT_LOSS",
+      "arm": "BASELINE",
+      "allowed_fields": [
+        "receivables plus contract assets, credit impairment, adjusted group post-capex cash and net interest-bearing debt",
+        "restricted assets and cash, short-term and one-to-two-year debt, refinancing or covenant events and disclosed funding coverage",
+        "material asset impairment, forced disposal or structural upstream-cash blockage"
+      ],
+      "first_match_ref": "51_CN600323_BASELINE_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_BALANCE_SHEET_PERMANENT_LOSS"
+    },
+    {
+      "cell_id": "FY2024_GROUP_CASH_AND_BALANCE_SHEET_BURDEN",
+      "arm": "ENHANCED",
+      "allowed_fields": [
+        "the same receivable, contract-asset, impairment, cash, capex, debt, restricted-liquidity and maturity facts supplied to the Baseline arm",
+        "evidence distinguishing external government-payment delay from controllable collection, capital-allocation or financing execution failure",
+        "identified acquisitions, project capex or financing actions that materially changed the group cash burden"
+      ],
+      "first_match_ref": "53_CN600323_ENHANCED_PREOUTCOME_JUDGMENT.json#outcome_cells/FY2024_GROUP_CASH_AND_BALANCE_SHEET_BURDEN"
+    }
+  ],
+  "output_requirements": [
+    "Extract one shared union of raw facts and supply identical facts to both arms; do not create an Enhanced-only factual budget.",
+    "Record value, unit, responsibility boundary, printed page and source locator before any derived bridge or classification.",
+    "Apply each arm's frozen first-match in order and report the unique matched class; keep unavailable fields local.",
+    "Do not infer management failure from external gas-price or regulated-price movement, or from government payment delay without a controllable execution carrier.",
+    "Do not use core waste-incineration performance to erase group receivable, debt, capital-burden or parent-access risk.",
+    "Do not infer method utility. The pair froze no material current-treatment or rank-one action difference, so wording, cell design, classification precision and extra evidence cannot create positive utility."
+  ],
+  "forbidden_inputs": [
+    "prices or returns",
+    "old derived company research or prior settlement",
+    "any source other than the single authorized official FY2024 annual report",
+    "the Method Pack as evidence about FY2024",
+    "Comparative, CJO, formal valuation, BuyBand, report or investment action"
+  ],
+  "predeclared_utility_boundary": {
+    "material_preoutcome_differences": [],
+    "maximum_positive_method_utility": "NO_MATERIAL_UTILITY",
+    "reason": "Both arms froze identical five-axis treatment codes and the same economic rank-one action before outcome access. Contingent rule structure may be reviewed as a method-design lesson but cannot be counted as paired treatment utility in this episode."
+  },
+  "permissions": {
+    "training_utility": "NONE_PENDING_SETTLEMENT",
+    "transfer_validated": false,
+    "method_validated": false,
+    "comparative": false,
+    "cjo": false,
+    "formal_valuation": false,
+    "buy_band": false,
+    "report": false,
+    "investment_action": false
+  }
+}

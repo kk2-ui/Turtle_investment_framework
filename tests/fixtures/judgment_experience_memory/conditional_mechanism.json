@@ -1,0 +1,8 @@
+{
+  "conditional_mechanism_synthesis": [
+    {
+      "synthesis_id": "CMS:SOURCE:1",
+      "evidence_ceiling": "MECHANISM_CANDIDATE"
+    }
+  ]
+}

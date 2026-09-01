@@ -1,0 +1,343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://turtle.local/schemas/historical_training_control.schema.json",
+  "title": "Turtle claim-specific historical-training control artifacts",
+  "description": "Offline controls for universe, lifecycle, carrier registry and claim admission. They do not replace the closed V5 selection root.",
+  "oneOf": [
+    {"$ref": "#/$defs/universe"},
+    {"$ref": "#/$defs/history_series"},
+    {"$ref": "#/$defs/lifecycle"},
+    {"$ref": "#/$defs/teaching_case"},
+    {"$ref": "#/$defs/boundary_teaching_case"},
+    {"$ref": "#/$defs/carrier_registry"},
+    {"$ref": "#/$defs/claim_admission"},
+    {"$ref": "#/$defs/peer_recruitment_batch"}
+  ],
+  "$defs": {
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_id", "receipt_version"],
+      "properties": {
+        "receipt_id": {"type": "string", "minLength": 1},
+        "receipt_version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "allowed_outputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "admission_fields": {
+      "type": "object",
+      "required": ["object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "object_class": {
+          "enum": ["INDUSTRY_UNIVERSE", "EVIDENCE_CARRIER", "TEACHING_CASE", "LIFECYCLE_CASE", "COMPARATIVE_EPISODE", "LEARNING_EPISODE"]
+        },
+        "claim_class": {
+          "enum": ["DESCRIPTIVE_STRUCTURE", "WITHIN_CASE_MECHANISM", "LIFECYCLE_TRANSITION", "RELATIVE_CAUSAL", "METHOD_GENERALIZATION", "INVESTMENT_DECISION_UTILITY"]
+        },
+        "allowed_outputs": {"$ref": "#/$defs/allowed_outputs"}
+      }
+    },
+    "competitive_arena": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["competitive_arena_id", "geography_requirement"],
+      "properties": {
+        "competitive_arena_id": {"type": "string", "minLength": 1},
+        "geography_requirement": {"enum": ["REQUIRED_EQUAL", "REQUIRED_OVERLAP", "REQUIRED_EXPOSURE", "NOT_REQUIRED"]}
+      }
+    },
+    "universe_member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "company_id", "issuer_id", "control_group_id", "responsibility_unit_id", "perimeter_id", "observation_entry_at", "risk_start_at", "risk_status", "coverage_status", "source_packet_refs"],
+      "properties": {
+        "subject_id": {"type": "string", "minLength": 1},
+        "company_id": {"type": "string", "minLength": 1},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "control_group_id": {"type": "string", "minLength": 1},
+        "responsibility_unit_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"type": "string", "minLength": 1},
+        "observation_entry_at": {"type": "string", "format": "date-time"},
+        "risk_start_at": {"type": "string", "format": "date-time"},
+        "risk_status": {"enum": ["IN_RISK_SET", "EXITED", "CENSORED", "UNKNOWN"]},
+        "coverage_status": {"enum": ["ENUMERATED", "BOUNDED_PARTIAL", "UNKNOWN_COVERAGE"]},
+        "source_packet_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reference"}}
+      }
+    },
+    "universe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "universe_id", "industry_id", "cutoff_at", "coverage_status", "competitive_arena", "membership_rule", "object_class", "claim_class", "allowed_outputs", "members", "source_packet_refs"],
+      "properties": {
+        "schema_version": {"const": "turtle-industry-history-universe.v1"},
+        "universe_id": {"type": "string", "minLength": 1},
+        "industry_id": {"type": "string", "minLength": 1},
+        "cutoff_at": {"type": "string", "format": "date-time"},
+        "coverage_status": {"enum": ["ENUMERATED", "BOUNDED_PARTIAL", "UNKNOWN_COVERAGE"]},
+        "competitive_arena": {"$ref": "#/$defs/competitive_arena"},
+        "membership_rule": {"type": "string", "minLength": 1},
+        "object_class": {"const": "INDUSTRY_UNIVERSE"},
+        "claim_class": {"const": "DESCRIPTIVE_STRUCTURE"},
+        "allowed_outputs": {"$ref": "#/$defs/allowed_outputs"},
+        "members": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/universe_member"}},
+        "source_packet_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reference"}}
+      }
+    },
+    "history_series": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "series_id", "industry_id", "h1_receipt_ref", "cutoffs", "snapshots", "lifecycle_events"],
+      "properties": {
+        "schema_version": {"const": "turtle-industry-history-series.v1"},
+        "series_id": {"type": "string", "minLength": 1},
+        "industry_id": {"type": "string", "minLength": 1},
+        "h1_receipt_ref": {"$ref": "#/$defs/reference"},
+        "cutoffs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "format": "date-time"}},
+        "snapshots": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/universe"}},
+        "lifecycle_events": {"type": "array", "items": {"$ref": "#/$defs/lifecycle"}}
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "lifecycle_event_id", "subject_id", "event_type", "effective_at", "known_at", "source_available_at", "source", "information_role", "observation_status", "absorbing_for", "identity_mappings", "time_origin", "observation_entry_at", "risk_start_at", "interval_start", "interval_stop", "covariate_as_of", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-lifecycle-event.v1"},
+        "lifecycle_event_id": {"type": "string", "minLength": 1},
+        "subject_id": {"type": "string", "minLength": 1},
+        "event_type": {"enum": ["SURVIVED", "ACQUIRED", "MERGED_OR_PERIMETER_TRANSFERRED", "DELISTED_BUT_OPERATING", "BANKRUPTCY_FILED", "REORGANIZING", "EMERGED_FROM_REORGANIZATION", "RESTRUCTURING_FAILED", "LIQUIDATED", "EXITED_BUSINESS", "DATA_CENSORED", "PERIMETER_CONTINUITY_UNRESOLVED"]},
+        "effective_at": {"type": "string", "format": "date-time"},
+        "known_at": {"type": "string", "format": "date-time"},
+        "source_available_at": {"type": "string", "format": "date-time"},
+        "source": {"$ref": "#/$defs/lifecycle_source"},
+        "information_role": {"enum": ["CUTOFF_VISIBLE", "POST_CUTOFF_CONTEXT", "OUTCOME"]},
+        "observation_status": {"enum": ["OBSERVED", "CENSORED", "COMPETING_EVENT_OBSERVED", "UNKNOWN", "NOT_DIAGNOSTIC", "MEASUREMENT_MISMATCH"]},
+        "absorbing_for": {"type": "array", "uniqueItems": true, "items": {"enum": ["LISTED_SECURITY", "INDEPENDENT_CONTROL", "ECONOMIC_ENTITY", "REPORTING_PERIMETER", "OPERATING_BUSINESS"]}},
+        "successor_subject_id": {"type": "string", "minLength": 1},
+        "identity_mappings": {"type": "array", "minItems": 4, "items": {"$ref": "#/$defs/identity_mapping"}},
+        "time_origin": {"type": "string", "format": "date-time"},
+        "observation_entry_at": {"type": "string", "format": "date-time"},
+        "risk_start_at": {"type": "string", "format": "date-time"},
+        "interval_start": {"type": "string", "format": "date-time"},
+        "interval_stop": {"type": "string", "format": "date-time"},
+        "covariate_as_of": {"type": "string", "format": "date-time"},
+        "object_class": {"const": "LIFECYCLE_CASE"},
+        "claim_class": {"const": "LIFECYCLE_TRANSITION"},
+        "allowed_outputs": {"$ref": "#/$defs/allowed_outputs"}
+      }
+    },
+    "lifecycle_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_type", "url", "published_at", "field_ref", "source_subject_id"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "source_type": {"enum": ["OFFICIAL_AUDITED_ANNUAL_REPORT", "OFFICIAL_COMPANY_DISCLOSURE", "OFFICIAL_EXCHANGE_DISCLOSURE"]},
+        "url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/.+\\.PDF$"},
+        "published_at": {"type": "string", "format": "date-time"},
+        "field_ref": {"type": "string", "minLength": 1},
+        "source_subject_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "teaching_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "teaching_case_id", "subject_id", "lifecycle_event", "source_packet_refs", "teaching_question", "mechanism_hypothesis", "prohibited_substitutes", "outcome_knowledge_role", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-lifecycle-teaching-case.v1"},
+        "teaching_case_id": {"type": "string", "minLength": 1},
+        "subject_id": {"type": "string", "minLength": 1},
+        "lifecycle_event": {"$ref": "#/$defs/lifecycle"},
+        "source_packet_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reference"}},
+        "teaching_question": {"type": "string", "minLength": 1},
+        "mechanism_hypothesis": {"type": "string", "minLength": 1},
+        "prohibited_substitutes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "outcome_knowledge_role": {"enum": ["HISTORICAL_OUTCOME_KNOWN", "OUTCOME_NOT_YET_KNOWN"]},
+        "object_class": {"const": "TEACHING_CASE"},
+        "claim_class": {"const": "WITHIN_CASE_MECHANISM"},
+        "allowed_outputs": {"$ref": "#/$defs/allowed_outputs"}
+      }
+    },
+    "boundary_teaching_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "teaching_case_id", "case_id", "freeze_id", "settlement_id", "subject_id", "source_artifact_refs", "teaching_question", "mechanism_hypothesis", "prohibited_substitutes", "boundary_disposition", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-boundary-teaching-case.v1"},
+        "teaching_case_id": {"type": "string", "minLength": 1},
+        "case_id": {"type": "string", "minLength": 1},
+        "freeze_id": {"type": "string", "minLength": 1},
+        "settlement_id": {"type": "string", "minLength": 1},
+        "subject_id": {"type": "string", "minLength": 1},
+        "source_artifact_refs": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/boundary_artifact_ref"}},
+        "teaching_question": {"type": "string", "minLength": 1},
+        "mechanism_hypothesis": {"type": "string", "minLength": 1},
+        "prohibited_substitutes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "boundary_disposition": {"const": "MIXED_MECHANISM_BOUNDARY"},
+        "object_class": {"const": "TEACHING_CASE"},
+        "claim_class": {"const": "WITHIN_CASE_MECHANISM"},
+        "allowed_outputs": {"$ref": "#/$defs/allowed_outputs"}
+      }
+    },
+    "boundary_artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "artifact_ref"],
+      "properties": {
+        "role": {"enum": ["FROZEN_CASE", "INDEPENDENT_POST_OUTCOME_REVIEW", "BOUNDARY_NOTE"]},
+        "artifact_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "identity_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity_kind", "identity_id", "effective_from", "effective_through"],
+      "properties": {
+        "identity_kind": {"enum": ["ECONOMIC_ENTITY", "LEGAL_ENTITY", "LISTED_SECURITY", "REPORTING_PERIMETER", "SUCCESSOR_ENTITY"]},
+        "identity_id": {"type": "string", "minLength": 1},
+        "effective_from": {"type": "string", "format": "date-time"},
+        "effective_through": {"type": "string", "format": "date-time"}
+      }
+    },
+    "predicate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["predicate_id", "frozen_at", "action_screen_receipt_ref", "mechanism_topology", "competitive_arena_id", "source_cutoff_at", "selection_rule", "requires_independent_control", "excludes_break_dispositions", "outcome_access_prohibited", "peer_recruitment_population"],
+      "properties": {
+        "predicate_id": {"type": "string", "minLength": 1},
+        "frozen_at": {"type": "string", "format": "date-time"},
+        "action_screen_receipt_ref": {"$ref": "#/$defs/reference"},
+        "mechanism_topology": {"type": "string", "minLength": 1},
+        "competitive_arena_id": {"type": "string", "minLength": 1},
+        "source_cutoff_at": {"type": "string", "format": "date-time"},
+        "selection_rule": {"const": "ALL_MATCHING_PREDECLARED_ROSTER"},
+        "requires_independent_control": {"const": true},
+        "excludes_break_dispositions": {"const": ["KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK"]},
+        "outcome_access_prohibited": {"const": true},
+        "peer_recruitment_population": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/eligibility_roster_member"}}
+      }
+    },
+    "carrier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["carrier_id", "batch_id", "company_id", "issuer_id", "control_group_id", "responsibility_unit_id", "perimeter_id", "unit", "disposition", "source_packet_ref", "static_source_ids", "eligibility_predicate_id", "seed_disposition"],
+      "properties": {
+        "carrier_id": {"type": "string", "minLength": 1},
+        "batch_id": {"type": "string", "minLength": 1},
+        "company_id": {"type": "string", "minLength": 1},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "control_group_id": {"type": "string", "minLength": 1},
+        "responsibility_unit_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "disposition": {"enum": ["PENDING_ACTION_WINDOW_REVIEW", "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK", "ELIGIBLE_FOR_COMPARATIVE", "EXCLUDED_BY_ELIGIBILITY_PREDICATE"]},
+        "source_packet_ref": {"$ref": "#/$defs/reference"},
+        "static_source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "eligibility_predicate_id": {"type": ["string", "null"], "minLength": 1},
+        "seed_disposition": {"type": ["string", "null"], "enum": ["PENDING_ACTION_WINDOW_REVIEW", "KNOWN_MATERIAL_SCOPE_OR_CONTROL_BREAK", null]}
+      }
+    },
+    "static_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "url", "published_at", "source_type", "issuer_id", "responsibility_unit_id", "perimeter_id", "unit", "period_end", "field_refs"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "pattern": "^https://static\\.cninfo\\.com\\.cn/finalpage/.+\\.PDF$"},
+        "published_at": {"type": "string", "format": "date-time"},
+        "source_type": {"const": "OFFICIAL_AUDITED_ANNUAL_REPORT"},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "responsibility_unit_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "period_end": {"type": "string", "format": "date"},
+        "field_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "carrier_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "registry_id", "universe_id", "industry_id", "competitive_arena_id", "mechanism_topology", "state", "object_class", "claim_class", "allowed_outputs", "seed_receipt_refs", "peer_recruitment_predicate", "static_peer_batches", "carriers"],
+      "properties": {
+        "schema_version": {"const": "turtle-evidence-carrier-registry.v1"},
+        "registry_id": {"type": "string", "minLength": 1},
+        "universe_id": {"type": "string", "minLength": 1},
+        "industry_id": {"type": "string", "minLength": 1},
+        "competitive_arena_id": {"type": "string", "minLength": 1},
+        "mechanism_topology": {"type": "string", "minLength": 1},
+        "state": {"enum": ["OPEN", "FROZEN"]},
+        "object_class": {"const": "EVIDENCE_CARRIER"},
+        "claim_class": {"const": "RELATIVE_CAUSAL"},
+        "allowed_outputs": {"$ref": "#/$defs/allowed_outputs"},
+        "seed_receipt_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/reference"}},
+        "peer_recruitment_predicate": {"oneOf": [{"$ref": "#/$defs/predicate"}, {"type": "null"}]},
+        "static_peer_batches": {"type": "array", "items": {"$ref": "#/$defs/peer_recruitment_batch"}},
+        "carriers": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/carrier"}}
+      }
+    },
+    "claim_admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "artifact_id", "object_class", "claim_class", "allowed_outputs"],
+      "properties": {
+        "schema_version": {"const": "turtle-claim-specific-admission.v1"},
+        "artifact_id": {"type": "string", "minLength": 1},
+        "object_class": {"enum": ["INDUSTRY_UNIVERSE", "EVIDENCE_CARRIER", "TEACHING_CASE", "LIFECYCLE_CASE", "COMPARATIVE_EPISODE", "LEARNING_EPISODE"]},
+        "claim_class": {"enum": ["DESCRIPTIVE_STRUCTURE", "WITHIN_CASE_MECHANISM", "LIFECYCLE_TRANSITION", "RELATIVE_CAUSAL", "METHOD_GENERALIZATION", "INVESTMENT_DECISION_UTILITY"]},
+        "allowed_outputs": {"$ref": "#/$defs/allowed_outputs"},
+        "registry_id": {"type": "string", "minLength": 1},
+        "target_company_id": {"type": "string", "minLength": 1},
+        "comparator_company_ids": {"type": "array", "minItems": 3, "maxItems": 7, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "peer_recruitment_batch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "batch_id", "source_packet_ref", "eligibility_predicate_id", "received_at", "curator_id", "static_sources", "carrier_static_coverage", "eligibility_population", "carriers"],
+      "properties": {
+        "schema_version": {"const": "turtle-evidence-carrier-registry.v1"},
+        "batch_id": {"type": "string", "minLength": 1},
+        "source_packet_ref": {"$ref": "#/$defs/reference"},
+        "eligibility_predicate_id": {"type": "string", "minLength": 1},
+        "received_at": {"type": "string", "format": "date-time"},
+        "curator_id": {"type": "string", "minLength": 1},
+        "static_sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/static_source"}},
+        "carrier_static_coverage": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/carrier_static_coverage"}},
+        "eligibility_population": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/eligibility_roster_member"}},
+        "carriers": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/carrier"}}
+      }
+    },
+    "carrier_static_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["carrier_id", "period_end", "field_id", "source_id", "field_ref"],
+      "properties": {
+        "carrier_id": {"type": "string", "minLength": 1},
+        "period_end": {"type": "string", "format": "date"},
+        "field_id": {"type": "string", "minLength": 1},
+        "source_id": {"type": "string", "minLength": 1},
+        "field_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "eligibility_roster_member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["company_id", "issuer_id", "control_group_id", "responsibility_unit_id", "perimeter_id", "unit", "eligibility_decision", "exclusion_reason"],
+      "properties": {
+        "company_id": {"type": "string", "minLength": 1},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "control_group_id": {"type": "string", "minLength": 1},
+        "responsibility_unit_id": {"type": "string", "minLength": 1},
+        "perimeter_id": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "eligibility_decision": {"enum": ["ELIGIBLE", "EXCLUDED"]},
+        "exclusion_reason": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
