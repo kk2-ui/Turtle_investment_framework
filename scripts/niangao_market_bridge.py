@@ -16,10 +16,14 @@ import sqlite3
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 
 SCHEMA_VERSION = "niangao-market-snapshot.v1"
 DEFAULT_DB_PATH = Path(__file__).resolve().parents[2] / "_niangao" / "portfolio.db"
+# Niangao persists provider timestamps without an offset.  Its CN/HK markets
+# use the same local clock, so decoding must not inherit the CI runner's zone.
+MARKET_TIMEZONE = ZoneInfo("Asia/Shanghai")
 
 
 def _now_text() -> str:
@@ -38,7 +42,7 @@ def _parse_local_time(value: object) -> datetime | None:
         except ValueError:
             return None
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=datetime.now().astimezone().tzinfo)
+        parsed = parsed.replace(tzinfo=MARKET_TIMEZONE)
     return parsed
 
 
@@ -138,10 +142,12 @@ def read_niangao_snapshot(
     fetched = _parse_local_time(row["live_fetched_at"])
     if fetched is None:
         raise ValueError(f"niangao_fetched_at_invalid:{normalized}")
-    current = now or datetime.now().astimezone()
+    current = now or datetime.now(MARKET_TIMEZONE)
     if current.tzinfo is None:
-        current = current.replace(tzinfo=datetime.now().astimezone().tzinfo)
-    age_seconds = int((current.astimezone() - fetched.astimezone()).total_seconds())
+        current = current.replace(tzinfo=MARKET_TIMEZONE)
+    age_seconds = int((
+        current.astimezone(MARKET_TIMEZONE) - fetched.astimezone(MARKET_TIMEZONE)
+    ).total_seconds())
     if age_seconds < -300:
         raise ValueError(f"niangao_snapshot_from_future:{normalized}")
     if age_seconds > max(0, int(max_age_minutes)) * 60:
