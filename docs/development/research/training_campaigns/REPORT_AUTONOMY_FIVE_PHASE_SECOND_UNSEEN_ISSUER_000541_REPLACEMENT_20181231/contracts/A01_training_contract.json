@@ -1,0 +1,21 @@
+{
+  "allowed_sources": [
+    {"available_at": "2018-03-30T23:59:59+08:00", "source_id": "SRC:PRE_CUTOFF_PACKAGE:CN000541", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_SECOND_UNSEEN_ISSUER_000541_REPLACEMENT_20181231/sources/01_CN000541_PRE_CUTOFF_SOURCE_PACKAGE.md", "time_role": "PRE_CUTOFF"},
+    {"available_at": "2026-09-01T00:00:00+08:00", "source_id": "MEMORY:INDUSTRY_DECISION:CN_APPLIANCE_2017_2018", "source_ref": "docs/development/research/industry_learning_blocks/CN_APPLIANCE_2017_2018/09_compact_industry_decision_memory_v1.md", "time_role": "TRAINING_MEMORY"}
+  ],
+  "authority": "RESEARCH_TRAINING_ONLY_NO_PRICE_VALUATION_OR_INVESTMENT_AUTHORITY",
+  "company_id": "CN:000541",
+  "company_name": "佛山电器照明股份有限公司",
+  "component_decision_interface": {"completion_basis": "EXPLICIT_EFFECT_FOR_EACH_COMPONENT", "schema_version": "enterprise-underwriting-component-decision-interface.v1"},
+  "contract_id": "UWTRAIN:APPLIANCE:000541:20181231:STAGE6:A01:V2",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "feedback_clocks": [
+    {"clock_id": "CLOCK:EARLY_SIGNAL", "discriminating_observation": "Post-cutoff official annual-report observation after the gate opens.", "episode_claims": ["INDUSTRY_AND_SITUATION"], "horizon": "EARLY_SIGNAL", "opens_at": "2019-12-31T23:59:59+08:00"},
+    {"clock_id": "CLOCK:NORMALIZATION_AND_CASH", "discriminating_observation": "Later post-cutoff official annual-report observation after the gate opens.", "episode_claims": ["NORMAL_EARNINGS", "OWNER_CASH"], "horizon": "NORMALIZATION_AND_CASH", "opens_at": "2020-12-31T23:59:59+08:00"}
+  ],
+  "outcome_access": "SEALED",
+  "primary_training_product": {"completion_basis": "COMPLETE_EPISODE_VALIDATION_ONLY", "object_type": "EnterpriseUnderwritingEpisode", "schema_version": "enterprise-underwriting-episode.v2"},
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-training-contract.v2",
+  "training_track": "BLIND_REPLAY"
+}

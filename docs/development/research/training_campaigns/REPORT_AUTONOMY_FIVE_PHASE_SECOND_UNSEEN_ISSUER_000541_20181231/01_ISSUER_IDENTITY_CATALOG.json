@@ -1,0 +1,18 @@
+{
+  "schema_version": "issuer-identity-catalog.v1",
+  "catalog_id": "ISSUER_IDENTITY:CN:APPLIANCE:000541:2018-12-31:V1",
+  "industry_id": "CN_APPLIANCE_CONSUMER_DURABLES",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "entries": [
+    {
+      "company_id": "CN:000541",
+      "security_code": "000541",
+      "issuer_legal_name": "佛山电器照明股份有限公司",
+      "exact_name_quote": "佛山电器照明股份有限公司",
+      "source_id": "CNINFO:000541:ANN:20160328:1202082322",
+      "publication_date": "2016-03-28",
+      "pdf_page_ref": "PDF p.1 cover; PDF p.5 securities information; organisation code 91440000190352575W",
+      "aliases": ["佛山照明", "粤照明B", "FOSHAN ELECTRICAL AND LIGHTING CO.,LTD.", "FSL", "200541"]
+    }
+  ]
+}
