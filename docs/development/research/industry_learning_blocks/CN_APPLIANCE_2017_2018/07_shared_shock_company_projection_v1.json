@@ -1,0 +1,130 @@
+{
+  "schema_version": "industry-shared-shock-company-projection.v1",
+  "projection_id": "APPLIANCE:SHARED_CONTEXT:COMPANY_PROJECTION:2018-12-31:V1",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "revision": {
+    "prior_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_PACK_SEED_SOURCE_AUDIT.md",
+    "correction_ref": "docs/development/research/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_IDENTITY_RECURATION_AUDIT.md",
+    "change": "Turns a source-coverage seed into a four-issuer cutoff-safe transmission comparison; it records responsibility boundaries and unresolved verification questions, not company outcomes."
+  },
+  "companies": [
+    {
+      "company_id": "CN:000651",
+      "issuer_identity": {
+        "company_id": "CN:000651",
+        "security_code": "000651",
+        "issuer_legal_name": "珠海格力电器股份有限公司",
+        "exact_name_quote": "珠海格力电器股份有限公司",
+        "source_id": "CNINFO:000651:ANN:20170427:1203403930",
+        "publication_date": "2017-04-27",
+        "pdf_page_ref": "PDF p.1 cover; PDF p.5 securities information"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "The registered FY2016 statutory-report packet records a room-air-conditioner, channel, component and manufacturing-system research boundary; the packet does not establish product sell-through, inventory or owner-cash conversion.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000651:ANN:20170427:1203403930",
+              "publication_date": "2017-04-27",
+              "pdf_page_ref": "PDF p.1 cover; PDF p.5 securities information",
+              "field_ref": "Official FY2016 annual-report identity cover and securities information; registered pack-side room-air-conditioner/channel/component/manufacturing boundary."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": "CN:000333",
+      "issuer_identity": {
+        "company_id": "CN:000333",
+        "security_code": "000333",
+        "issuer_legal_name": "美的集团股份有限公司",
+        "exact_name_quote": "美的集团股份有限公司",
+        "source_id": "CNINFO:000333:ANN:20160326:1202084987",
+        "publication_date": "2016-03-26",
+        "pdf_page_ref": "PDF p.1 cover; PDF p.8 securities information"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "The registered FY2016–FY2017 statutory-report packets record room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a competing explanation.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000333:ANN:20160326:1202084987",
+              "publication_date": "2016-03-26",
+              "pdf_page_ref": "PDF p.1 cover; PDF p.8 securities information",
+              "field_ref": "Official FY2015 annual-report identity cover and securities information."
+            },
+            {
+              "source_id": "CNINFO:000333:ANN:20180330:1204557296",
+              "publication_date": "2018-03-30",
+              "pdf_page_ref": "PDF pp.21–23",
+              "field_ref": "Registered FY2017 annual-report packet for the multi-category channel/supply-chain and perimeter research boundary."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": "CN:600690",
+      "issuer_identity": {
+        "company_id": "CN:600690",
+        "security_code": "600690",
+        "issuer_legal_name": "青岛海尔股份有限公司",
+        "exact_name_quote": "青岛海尔股份有限公司",
+        "source_id": "CNINFO:600690:ANN:20180426:1204797433",
+        "publication_date": "2018-04-26",
+        "pdf_page_ref": "PDF p.1 cover/header; PDF p.6 securities information"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "The registered FY2016–FY2017 statutory-report packets record refrigeration/washing, service and logistics mechanisms at a listed-consolidated boundary; global-acquisition and financing effects remain outside a domestic-appliance owner-cash conclusion.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:600690:ANN:20180426:1204797433",
+              "publication_date": "2018-04-26",
+              "pdf_page_ref": "PDF p.1 cover/header; PDF p.6 securities information; PDF pp.13,24–25",
+              "field_ref": "Official FY2017 annual-report identity and registered refrigeration/washing, service/logistics and listed-consolidated boundary packet."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": "CN:000921",
+      "issuer_identity": {
+        "company_id": "CN:000921",
+        "security_code": "000921",
+        "issuer_legal_name": "海信科龙电器股份有限公司",
+        "exact_name_quote": "海信科龙电器股份有限公司",
+        "source_id": "CNINFO:000921:ANN:20170330:1203223381",
+        "publication_date": "2017-03-30",
+        "pdf_page_ref": "PDF p.1 cover; PDF p.5 securities information"
+      },
+      "verified_cutoff_state": [
+        {
+          "statement": "The registered FY2016–FY2017 statutory-report packets record room-air-conditioner and refrigeration/washing product, cost and inventory research threads; they do not establish a same-boundary financing-stress or owner-cash conclusion.",
+          "evidence": [
+            {
+              "source_id": "CNINFO:000921:ANN:20170330:1203223381",
+              "publication_date": "2017-03-30",
+              "pdf_page_ref": "PDF p.1 cover; PDF p.5 securities information",
+              "field_ref": "Official FY2016 annual-report identity cover and securities information."
+            },
+            {
+              "source_id": "CNINFO:000921:ANN:20180330:1204544098",
+              "publication_date": "2018-03-30",
+              "pdf_page_ref": "PDF pp.9,11–13,18",
+              "field_ref": "Registered FY2017 annual-report packet for product, cost, inventory and unresolved financing-transmission research threads."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "boundary": {
+    "purpose": "CUTOFF_SAFE_SHARED_CONTEXT_TRANSMISSION_COMPARISON",
+    "creates_target_company_fact_store": false,
+    "grants_valuation_or_investment_authority": false,
+    "proves_agent_capability": false
+  }
+}

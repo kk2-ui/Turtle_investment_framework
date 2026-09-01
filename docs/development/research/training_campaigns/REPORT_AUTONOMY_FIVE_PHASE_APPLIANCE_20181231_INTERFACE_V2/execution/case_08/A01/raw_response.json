@@ -1,0 +1,115 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:603355:20181231:STAGE5:A01:EPISODE",
+  "company_id": "CN:603355",
+  "company_name": "莱克电气股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-outcome underwriting of operating durability, cash conversion, financing resilience and permanent-loss paths using FY2015-FY2017 disclosures only.",
+  "underwriting_route": "Underwrite a mature core with conditional brand/channel and working-capital transmission; isolate unresolved growth-capital and customer-concentration risks.",
+  "situation_model": {
+    "summary": "Industry evidence supports category and channel divergence, while company disclosures show revenue growth but declining FY2017 earnings and operating cash.",
+    "industry_future_thesis": {
+      "horizon": "2018-12-31 forward, pre-outcome",
+      "most_likely_regime": "Broad appliance growth with heterogeneous category, channel and supply-chain outcomes.",
+      "profit_pool_transmission": "Demand and channel shifts reach profit pools through product mix, pricing, costs, inventory and working capital; aggregate growth alone cannot settle company economics.",
+      "company_exposure": "莱克 combines domestic branded sales, online/offline distribution and overseas ODM across cleaning appliances and garden tools.",
+      "adaptation": "Use brand high-end positioning and ODM product development while monitoring raw-material, FX and channel execution effects.",
+      "normal_economics": "FY2015-FY2017 operating results are positive but volatile; FY2017 margin and cash deterioration require normalization rather than a single-point extrapolation.",
+      "permanent_loss": "Permanent loss could arise from sustained input-cost/FX pressure, weak customer absorption, inventory build or refinancing needs; current evidence does not establish an irreversible impairment.",
+      "valuation_treatment": "Use a base range for demonstrated core earnings, conditional ranges for mix and working-capital effects, and scenario or unresolved routes for concentration and growth-capital returns.",
+      "strongest_rival": "广义行业增长可能主要反映合计口径、出口、类别组合或渠道迁移，未必转化为公司实现价格、库存质量、资本效率或 owner cash 的改善。",
+      "reversal_observations": [
+        "公司同口径披露显示类别或渠道暴露与官方共同环境不一致，或全国聚合口径无法进入其目标产品市场。",
+        "产销率变化由出口、季节性、会计口径或库存挪移解释，不能作为公司需求或现金传导证据。",
+        "并购、合并范围、融资或产品边界使跨期盈利、营运资本和资本开支不可比。",
+        "公司验证发现实现价格、单位成本、客户吸收或现金回收与候选主路径相反。"
+      ]
+    }
+  },
+  "business_position": "莱克以高速整流子电机为核心，覆盖吸尘器、空气净化器、净水机及园林工具；国内代理加直营并发展线上，海外以ODM为主，前五客户占比由48.25%降至39.81%但客户名称未披露。",
+  "survival_case": "期末现金约19.5亿元且未披露受限现金；短期借款在FY2016升至6.8亿元，FY2017披露一年内到期长期借款3亿元，融资压力取决于现金回收、库存和借款续作。",
+  "adaptation_case": "品牌高端化和多渠道布局可能提升组合，但FY2017原材料价格上涨、汇兑影响及薪酬和货款支付增加显示适应能力尚未由现金结果确认。",
+  "normalization_case": "以FY2015-FY2017扣非归母净利润3.46、4.66、3.41亿元为参考区间；FY2017下降和现金流降至2.14亿元使正常盈利与现金采用区间并保留条件项。",
+  "permanent_loss_map": "若客户吸收、实现价格、单位成本或现金回收持续恶化，或借款续作受阻，可能形成永久损失；目前仅将其作为条件/压力路径，未见不可逆资产减值事实。",
+  "value_route": {
+    "primary_routes": ["ROUTE:CORE_NORMAL_EARNINGS", "ROUTE:MIX_CONDITIONAL", "ROUTE:OWNER_CASH_CONDITIONAL"],
+    "excluded_routes": ["ROUTE:GROWTH_CAPITAL_UNRESOLVED", "ROUTE:CUSTOMER_CONCENTRATION_SCENARIO"],
+    "route_reasoning": "Core disclosed earnings support a base operating route; mix and working-capital effects require conditional treatment, while growth-capital return and named-customer concentration lack sufficient resolution.",
+    "valuation_model_roles": {
+      "primary": ["ROUTE:CORE_NORMAL_EARNINGS"],
+      "corroborative": ["ROUTE:MIX_CONDITIONAL", "ROUTE:OWNER_CASH_CONDITIONAL"],
+      "stress": []
+    },
+    "route_component_requirements": [
+      {"route_id":"ROUTE:CORE_NORMAL_EARNINGS","required_component_ids":["core_operations"],"optional_component_ids":[]},
+      {"route_id":"ROUTE:MIX_CONDITIONAL","required_component_ids":["brand_odm_mix"],"optional_component_ids":["core_operations"]},
+      {"route_id":"ROUTE:OWNER_CASH_CONDITIONAL","required_component_ids":["working_capital"],"optional_component_ids":["core_operations"]},
+      {"route_id":"ROUTE:GROWTH_CAPITAL_UNRESOLVED","required_component_ids":["growth_capital"],"optional_component_ids":[]},
+      {"route_id":"ROUTE:CUSTOMER_CONCENTRATION_SCENARIO","required_component_ids":["customer_concentration"],"optional_component_ids":[]}
+    ]
+  },
+  "strongest_rival": "广义行业增长可能主要反映合计口径、出口、类别组合或渠道迁移，未必转化为公司实现价格、库存质量、资本效率或 owner cash 的改善。",
+  "reversal_observations": [
+    "公司同口径披露显示类别或渠道暴露与官方共同环境不一致，或全国聚合口径无法进入其目标产品市场。",
+    "产销率变化由出口、季节性、会计口径或库存挪移解释，不能作为公司需求或现金传导证据。",
+    "并购、合并范围、融资或产品边界使跨期盈利、营运资本和资本开支不可比。",
+    "公司验证发现实现价格、单位成本、客户吸收或现金回收与候选主路径相反。"
+  ],
+  "component_treatments": [
+    {"component_id":"core_operations","treatment":"UNDERWRITE","reason":"Three-year disclosed revenue,扣非利润 and operating cash establish a continuing operating core, though FY2017 weakened.","investment_consequence":"Forms the base earnings route without assuming post-cutoff outcomes.","promotion_or_resolution_condition":"Confirm same-perimeter product and channel margins and cash conversion in later reports.","evidence_ids":["E_CORE_2015_17"]},
+    {"component_id":"brand_odm_mix","treatment":"CONDITIONALLY_UNDERWRITE","reason":"Brand and ODM mix is described, but no segment profit or cash split is disclosed.","investment_consequence":"Can change normalized margin and resilience; retain conditional range.","promotion_or_resolution_condition":"Obtain product/channel-level price, volume and margin evidence.","evidence_ids":["E_MIX_DISCLOSURE"]},
+    {"component_id":"working_capital","treatment":"CONDITIONALLY_UNDERWRITE","reason":"Receivables and inventory rose materially through FY2017 while operating cash fell; collection quality is not split by channel.","investment_consequence":"Creates conditional owner-cash and financing pressure.","promotion_or_resolution_condition":"Verify ageing, sell-through and cash recovery by customer/channel.","evidence_ids":["E_WC_BALANCES","E_OCF_DECLINE"]},
+    {"component_id":"growth_capital","treatment":"CANNOT_BOUND","reason":"Long-lived-asset spending rose to 2.24亿元 in FY2017, but maintenance versus growth and subsequent returns are not identified.","investment_consequence":"Keep growth-capital return unresolved and avoid inventing owner-cash points.","promotion_or_resolution_condition":"Separate maintenance from growth spending and document returns on growth projects.","evidence_ids":["E_CAPEX_SERIES"]},
+    {"component_id":"customer_concentration","treatment":"EXCLUDE_FROM_BASE","reason":"Top-five customers remain 39.81%-48.25% of revenue, yet names and customer-level economics are undisclosed.","investment_consequence":"Use only a concentration stress path; do not underwrite customer durability in base.","promotion_or_resolution_condition":"Resolve customer identities, renewal/absorption and receivable performance.","evidence_ids":["E_CUSTOMER_CONC"]}
+  ],
+  "component_decisions": [
+    {"component_id":"core_operations","economic_scope":"MATURE_CORE_NORMAL_EARNINGS","normal_earnings_use":"BASE_RANGE","owner_cash_use":"BASE_RANGE","financing_pressure_effect":"NEUTRAL","permanent_loss_use":"BASE_PATH","valuation_use":"PRIMARY_INPUT","valuation_route_bindings":[{"route_id":"ROUTE:CORE_NORMAL_EARNINGS","use":"PRIMARY_INPUT"},{"route_id":"ROUTE:MIX_CONDITIONAL","use":"CORROBORATIVE_INPUT"},{"route_id":"ROUTE:OWNER_CASH_CONDITIONAL","use":"CORROBORATIVE_INPUT"}],"promotion_test":"Stable same-perimeter earnings and cash conversion across subsequent reports.","invalidation_test":"Persistent margin, volume or cash deterioration unexplained by temporary factors."},
+    {"component_id":"brand_odm_mix","economic_scope":"OTHER_MATERIAL_COMPONENT","normal_earnings_use":"CONDITIONAL_RANGE","owner_cash_use":"CONDITIONAL_RANGE","financing_pressure_effect":"CONDITIONAL","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"CONDITIONAL_PRIMARY_INPUT","valuation_route_bindings":[{"route_id":"ROUTE:MIX_CONDITIONAL","use":"CONDITIONAL_PRIMARY_INPUT"}],"promotion_test":"Segment evidence links mix to realized price and margin.","invalidation_test":"Mix shift accompanies lower realized price, margin or cash conversion."},
+    {"component_id":"working_capital","economic_scope":"ORDINARY_SHARE_OWNER_CASH","normal_earnings_use":"NOT_APPLICABLE","owner_cash_use":"CONDITIONAL_RANGE","financing_pressure_effect":"INCREASES","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"CONDITIONAL_PRIMARY_INPUT","valuation_route_bindings":[{"route_id":"ROUTE:OWNER_CASH_CONDITIONAL","use":"CONDITIONAL_PRIMARY_INPUT"}] ,"promotion_test":"Receivable and inventory turns normalize with cash collection.","invalidation_test":"Aging, inventory or customer absorption worsens and requires recurrent borrowing."},
+    {"component_id":"growth_capital","economic_scope":"GROWTH_CAPITAL_RETURN","normal_earnings_use":"NOT_APPLICABLE","owner_cash_use":"NOT_APPLICABLE","financing_pressure_effect":"CONDITIONAL","permanent_loss_use":"STRESS_ONLY","valuation_use":"UNRESOLVED","valuation_route_bindings":[{"route_id":"ROUTE:GROWTH_CAPITAL_UNRESOLVED","use":"UNRESOLVED"}],"promotion_test":"Disclose maintenance/growth split and realized project returns.","invalidation_test":"Spending remains elevated without measurable incremental earnings or cash."},
+    {"component_id":"customer_concentration","economic_scope":"SURVIVAL_FINANCING","normal_earnings_use":"SCENARIO_ONLY","owner_cash_use":"SCENARIO_ONLY","financing_pressure_effect":"CONDITIONAL","permanent_loss_use":"STRESS_ONLY","valuation_use":"SCENARIO_ONLY","valuation_route_bindings":[{"route_id":"ROUTE:CUSTOMER_CONCENTRATION_SCENARIO","use":"SCENARIO_ONLY"}],"promotion_test":"Named-customer retention and diversification are evidenced.","invalidation_test":"Loss or weakening of a major customer reduces volume, price or collection."}
+  ],
+  "evidence_trace": [
+    {"evidence_id":"E_CORE_2015_17","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 p.5; FY2016 p.5; FY2017 p.6","scope":"FY2015-FY2017 consolidated revenue,扣非归母净利润 and operating cash","used_for":"core earnings baseline and trend"},
+    {"evidence_id":"E_MIX_DISCLOSURE","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 p.8; FY2016 p.9; FY2017 pp.9-12","scope":"Brand, ODM, product and channel descriptions","used_for":"conditional mix economics"},
+    {"evidence_id":"E_WC_BALANCES","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 pp.51-52; FY2016 pp.62-63; FY2017 pp.66-67","scope":"Receivables, inventory and payables balances","used_for":"working-capital pressure"},
+    {"evidence_id":"E_OCF_DECLINE","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2017 pp.16,20","scope":"Operating cash decline and raw-material, FX, wage and payment explanations","used_for":"cash conversion and financing sensitivity"},
+    {"evidence_id":"E_CAPEX_SERIES","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 pp.57-59; FY2016 pp.68-70; FY2017 pp.73-75","scope":"Long-lived-asset cash spending","used_for":"unresolved growth-capital route"},
+    {"evidence_id":"E_CUSTOMER_CONC","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 p.11; FY2016 p.14; FY2017 p.16","scope":"Top-five customer revenue concentration and undisclosed names","used_for":"customer concentration scenario"},
+    {"evidence_id":"E_SENS_MIX","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 pp.9-11; FY2016 pp.11-14; FY2017 pp.16,20","scope":"Revenue, profit, product mix and cost/FX observations","used_for":"mix sensitivity input"},
+    {"evidence_id":"E_SENS_WC","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015-FY2017 balance-sheet and cash-flow tables","scope":"Working-capital and operating-cash observations","used_for":"working-capital sensitivity input"},
+    {"evidence_id":"E_SENS_FIN","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2016 pp.5,18,103; FY2017 p.20","scope":"Borrowing increase and repayment disclosures","used_for":"financing sensitivity input"}
+  ],
+  "existing_object_refs": [
+    {"kind":"SOURCE_PACKAGE","ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN603355_PRE_CUTOFF_SOURCE_PACKAGE.md","role":"primary pre-cutoff company evidence"}
+  ],
+  "underwriting_thesis": {
+    "thesis_id":"THESIS:603355:20181231:A01",
+    "central_path":"A durable but cyclical appliance operating core can be underwritten conditionally while cash conversion, mix and financing evidence are monitored.",
+    "normal_earnings_treatment":"Base-range on disclosed core earnings; brand/ODM mix remains conditional because segment economics are not disclosed.",
+    "owner_cash_treatment":"Use operating cash less economic maintenance capital conceptually; working-capital and capital-spending effects remain conditional or unresolved.",
+    "permanent_loss_treatment":"Stress customer concentration, input-cost/FX and refinancing paths; no irreversible loss is established at cutoff.",
+    "value_route_treatment":"Primary route is core normal earnings; conditional corroboration uses mix and owner-cash routes, with unresolved growth-capital and customer concentration stress routes.",
+    "economic_directions":{"normal_earnings":"MIXED","owner_cash":"DETERIORATES","permanent_loss":"UNKNOWN"},
+    "strongest_rival":"广义行业增长可能主要反映合计口径、出口、类别组合或渠道迁移，未必转化为公司实现价格、库存质量、资本效率或 owner cash 的改善。",
+    "monitoring":"Track same-perimeter realized price, unit cost, customer absorption, receivable/inventory turns, borrowing and maintenance-versus-growth capital disclosures at feedback clocks."
+  },
+  "investment_treatment":"Training-only underwriting conclusion: retain a base operating range with explicit conditional and unresolved components; no price, return or investment action is authorized.",
+  "economic_derivation": {
+    "schema_version":"enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis":{"metric":"扣除非经常性损益后归母净利润","currency":"CNY","unit":"CNY per fiscal year","tax_basis":"AFTER_TAX","earnings_claim_scope":"ORDINARY_COMMON_EQUITY","operating_perimeter":"Consolidated 莱克电气 reporting perimeter","as_of":"2017-12-31"},
+      "rows":[
+        {"row_id":"ROW:REFERENCE","component_id":"core_operations","row_role":"REFERENCE_EARNINGS","direction":"ADD","quantification":{"status":"BOUNDED","range_low":341024566.26,"range_high":465753815.72},"evidence_ids":["E_CORE_2015_17"],"economic_reason":"FY2015-FY2017扣非归母净利润 provides the only observed core earnings band; FY2017 decline prevents point extrapolation."},
+        {"row_id":"ROW:MIX","component_id":"brand_odm_mix","row_role":"NORMALIZATION_ADJUSTMENT","direction":"ADD","quantification":{"status":"UNKNOWN","reason":"No segment profit, price or volume split by brand versus ODM is disclosed.","conservative_treatment":"Keep mix impact outside the base point and carry as conditional range."},"evidence_ids":["E_MIX_DISCLOSURE"],"economic_reason":"Mix may alter realized price and margin but cannot be quantified from supplied disclosures."},
+        {"row_id":"ROW:CONCENTRATION","component_id":"customer_concentration","row_role":"NORMALIZATION_ADJUSTMENT","direction":"SUBTRACT","quantification":{"status":"UNKNOWN","reason":"Customer names and customer-level economics are absent.","conservative_treatment":"Do not subtract a point estimate; retain a separate stress path."},"evidence_ids":["E_CUSTOMER_CONC"],"economic_reason":"Concentration can create downside but no bounded loss magnitude is evidenced."}
+      ]
+    },
+    "driver_sensitivity_specs":[
+      {"sensitivity_id":"SENS:MIX_PRICE_COST","component_ids":["brand_odm_mix"],"metric":"realized price and input-cost mix","unit":"CNY per unit, direction only","horizon":"FY2019-EARLY_SIGNAL","input_cases":{"mode":"LOW_BASE_HIGH","low":{"value_or_range":{"value":-1},"basis":"Adverse mix and raw-material pressure described in FY2017","evidence_ids":["E_SENS_MIX"]},"base":{"value_or_range":{"value":0},"basis":"No segment-level change quantified","evidence_ids":["E_SENS_MIX"]},"high":{"value_or_range":{"value":1},"basis":"Favorable high-end brand/ODM mix hypothesis","evidence_ids":["E_SENS_MIX"]}},"transmission":{"normal_earnings":{"status":"UNKNOWN","basis":"Segment economics are not disclosed; direction cannot be bounded.","delta":{"status":"UNKNOWN","reason":"No same-product realized price and unit-cost bridge.","conservative_treatment":"Retain conditional treatment."}},"owner_cash":{"status":"UNKNOWN","basis":"Mix-to-cash conversion is not disclosed.","delta":{"status":"UNKNOWN","reason":"No channel cash collection split.","conservative_treatment":"Retain conditional treatment."}},"valuation_route_ids":["ROUTE:MIX_CONDITIONAL"]},"reversal_observation_refs":["#/reversal_observations/3"],"responsibility_boundary":"Company-level brand and ODM mix only; excludes industry aggregate effects."},
+      {"sensitivity_id":"SENS:WORKING_CAPITAL","component_ids":["working_capital"],"metric":"receivables and inventory turnover","unit":"CNY balance and cash conversion","horizon":"FY2020-NORMALIZATION_AND_CASH","input_cases":{"mode":"BOUNDED_RANGE","range":{"value_or_range":{"range_low":-1,"range_high":1},"basis":"Receivables and inventory rose while operating cash fell","evidence_ids":["E_SENS_WC"]}},"transmission":{"normal_earnings":{"status":"PRESERVED","basis":"Working capital affects cash timing, not reported earnings absent write-offs.","delta":{"status":"BOUNDED","range_low":0,"range_high":0,"unit":"CNY earnings"}},"owner_cash":{"status":"UNKNOWN","basis":"Collection and sell-through by customer are not disclosed.","delta":{"status":"UNKNOWN","reason":"No ageing or sell-through evidence.","conservative_treatment":"Retain conditional owner-cash range."}},"valuation_route_ids":["ROUTE:OWNER_CASH_CONDITIONAL"]},"reversal_observation_refs":["#/reversal_observations/3"],"responsibility_boundary":"Consolidated receivables, inventory and payables; excludes financing policy."},
+      {"sensitivity_id":"SENS:FINANCING","component_ids":["growth_capital"],"metric":"borrowing and long-lived-asset spending","unit":"CNY per fiscal year","horizon":"FY2020-NORMALIZATION_AND_CASH","input_cases":{"mode":"LOW_BASE_HIGH","low":{"value_or_range":{"value":-1},"basis":"Loan repayment and elevated spending pressure","evidence_ids":["E_SENS_FIN"]},"base":{"value_or_range":{"value":0},"basis":"Financing and spending mix unresolved","evidence_ids":["E_SENS_FIN"]},"high":{"value_or_range":{"value":1},"basis":"Renewed borrowing capacity hypothesis","evidence_ids":["E_SENS_FIN"]}},"transmission":{"normal_earnings":{"status":"UNKNOWN","basis":"Maintenance versus growth spending and financing cost effects are not separated.","delta":{"status":"UNKNOWN","reason":"No project return or maintenance split.","conservative_treatment":"Leave growth-capital impact unresolved."}},"owner_cash":{"status":"UNKNOWN","basis":"Total long-lived-asset spending and financing needs are not fully allocable.","delta":{"status":"UNKNOWN","reason":"No maintenance-capital or growth-return evidence.","conservative_treatment":"Do not estimate owner-cash point impact."}},"valuation_route_ids":["ROUTE:GROWTH_CAPITAL_UNRESOLVED"]},"reversal_observation_refs":["#/reversal_observations/2"],"responsibility_boundary":"Company financing and capital allocation only; excludes market valuation."}
+    ]
+  }
+}

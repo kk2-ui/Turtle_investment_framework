@@ -1,0 +1,13 @@
+{
+  "arm_id": "A10",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:04",
+  "failure": "training_agent_episode_invalid:episode:value_route.excluded_route_unbound_or_ineligible:R_FINANCING_STRESS,episode:value_route.excluded_route_required_component_ineligible:R_FINANCING_STRESS:C_WORKING_CAPITAL_CAPEX,episode:value_route.route_cannot_be_active_and_excluded:R_FINANCING_STRESS,episode:economic_derivation.schema_version_invalid,episode:economic_derivation.normal_earnings_bridge.fields_invalid,episode:economic_derivation.normal_earnings_bridge.basis.fields_invalid,episode:economic_derivation.normal_earnings_bridge.basis.as_of_missing,episode:economic_derivation.normal_earnings_bridge.basis.currency_missing,episode:economic_derivation.normal_earnings_bridge.basis.operating_perimeter_missing,episode:economic_derivation.normal_earnings_bridge.basis.unit_missing,episode:economic_derivation.normal_earnings_bridge.basis.metric_missing,episode:economic_derivation.normal_earnings_bridge.basis.tax_basis_invalid,episode:economic_derivation.normal_earnings_bridge.basis.earnings_claim_scope_invalid,episode:economic_derivation.normal_earnings_bridge.rows_missing,episode:economic_derivation.normal_earnings_bridge.requires_exactly_one_reference_earnings_row,episode:economic_derivation.normal_earnings_bridge.must_cover_each_normal_earnings_component,episode:economic_derivation.driver_sensitivity_specs[0].input_cases.low.value_or_range_invalid,episode:economic_derivation.driver_sensitivity_specs[0].input_cases.base.value_or_range_invalid,episode:economic_derivation.driver_sensitivity_specs[0].input_cases.high.value_or_range_invalid",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}

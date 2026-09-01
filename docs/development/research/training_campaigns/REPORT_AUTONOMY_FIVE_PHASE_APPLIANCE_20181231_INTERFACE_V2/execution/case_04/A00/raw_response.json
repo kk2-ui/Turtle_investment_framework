@@ -1,0 +1,532 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:002543:20181231:STAGE5:A00:EPISODE",
+  "company_id": "CN:002543",
+  "company_name": "广东万和新电气股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-outcome underwriting at the 2018-12-31 cutoff using only FY2015-FY2017 official disclosures; price, valuation result, return and action are intentionally absent.",
+  "underwriting_route": "Underwrite the mature gas-appliance core, conditionally underwrite boiler growth and working-capital normalization, and leave project financing unresolved.",
+  "situation_model": {
+    "summary": "Vanward is a gas-appliance-led manufacturer expanding into boilers, kitchen appliances and broad domestic/export channels; consolidated growth coexists with rising inventory, receivables and short-term borrowing.",
+    "industry_future_thesis": {
+      "horizon": "2018-2023",
+      "most_likely_regime": "Gas water-heater leadership persists while boilers, kitchen appliances and omnichannel distribution reshape the profit pool; scale and product adaptation matter.",
+      "profit_pool_transmission": "Profit pools shift toward efficient heating solutions, branded product breadth and channel execution; growth captures value only if margins and cash conversion follow.",
+      "company_exposure": "Core gas water-heater franchise is established, with exposure to boilers, kitchen extensions, exports, OEM/ODM and multi-channel retail.",
+      "adaptation": "Use product extensions, Bosch-linked ventures and omnichannel coverage to adapt, while monitoring working capital and project spending.",
+      "normal_economics": "Base economics are anchored in consolidated attributable profit and operating cash; component margins and maintenance-capex splits are partly undisclosed.",
+      "permanent_loss": "Permanent loss could arise from core demand erosion, uneconomic growth projects, inventory/receivable deterioration or financing strain.",
+      "valuation_treatment": "Use only price-free route definitions: primary core earnings and owner-cash routes, conditional growth route, and unresolved/excluded routes for unbound components.",
+      "strongest_rival": "A.O. Smith and Haier ecosystem brands combining water-heater technology with broad channels",
+      "reversal_observations": [
+        "If subsequent official reports show sustained profit-pool shift away from gas appliances without successful product adaptation, revisit the industry regime and core earnings authority.",
+        "If later annual reports disclose persistent working-capital expansion, weak operating cash conversion, or materially higher debt tied to projects, revisit owner-cash and financing-pressure treatment."
+      ]
+    }
+  },
+  "business_position": "Established gas-water-heater core with nationwide channels, OEM/ODM and export relationships, plus expanding boiler and kitchen-appliance offerings; component profitability remains undisclosed.",
+  "survival_case": "FY2015-FY2017 operating cash flow was positive and near 0.68-0.88bn yuan, but FY2017 short-term borrowing rose to 201m yuan and 265m yuan of cash/notes were restricted; liquidity resilience therefore depends on working-capital discipline and project funding.",
+  "adaptation_case": "Boiler growth, Bosch ventures and omnichannel formats provide adaptation avenues, yet no component-level return evidence establishes that growth creates durable economics.",
+  "normalization_case": "Normalize around a conservative FY2015-FY2017 attributable-profit band while retaining unknown adjustments for boiler mix, working capital, capex allocation and noncore investments.",
+  "permanent_loss_map": "Base path assumes the core gas-appliance franchise remains viable; conditional paths cover boiler execution and working-capital drag; unresolved project financing and excluded investments are monitored for impairment or liquidity-driven loss.",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE_CORE_EARNINGS",
+      "ROUTE_OWNER_CASH",
+      "ROUTE_GROWTH_OPTION"
+    ],
+    "excluded_routes": [
+      "ROUTE_CAPEX_UNRESOLVED",
+      "ROUTE_NONCORE_EXCLUDED"
+    ],
+    "route_reasoning": "Primary routes are limited to components with explicit base or conditional authority. Capital-project and noncore routes remain unresolved or excluded because supplied disclosures do not support attribution.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE_CORE_EARNINGS",
+        "ROUTE_OWNER_CASH",
+        "ROUTE_GROWTH_OPTION"
+      ],
+      "corroborative": [],
+      "stress": []
+    },
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE_CORE_EARNINGS",
+        "required_component_ids": [
+          "core_gas_business"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE_OWNER_CASH",
+        "required_component_ids": [
+          "core_gas_business"
+        ],
+        "optional_component_ids": [
+          "channel_working_capital"
+        ]
+      },
+      {
+        "route_id": "ROUTE_GROWTH_OPTION",
+        "required_component_ids": [
+          "wall_hung_boiler_growth"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE_CAPEX_UNRESOLVED",
+        "required_component_ids": [
+          "capex_and_financing_pressure"
+        ],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE_NONCORE_EXCLUDED",
+        "required_component_ids": [
+          "noncore_investments"
+        ],
+        "optional_component_ids": []
+      }
+    ]
+  },
+  "strongest_rival": "A.O. Smith and Haier ecosystem brands combining water-heater technology with broad channels",
+  "reversal_observations": [
+    "If subsequent official reports show sustained profit-pool shift away from gas appliances without successful product adaptation, revisit the industry regime and core earnings authority.",
+    "If later annual reports disclose persistent working-capital expansion, weak operating cash conversion, or materially higher debt tied to projects, revisit owner-cash and financing-pressure treatment."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "core_gas_business",
+      "treatment": "UNDERWRITE",
+      "reason": "Gas water-heaters are the stated core of the gas-appliance business and operations remained materially unchanged through FY2017.",
+      "investment_consequence": "Use as the base operating earnings perimeter, subject to normal product and channel competition.",
+      "promotion_or_resolution_condition": "Continue only while core gas-appliance demand, margins and channel reach remain supported by official reports.",
+      "evidence_ids": [
+        "e1",
+        "e2"
+      ]
+    },
+    {
+      "component_id": "wall_hung_boiler_growth",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Wall-hung boiler revenue grew rapidly, but the source does not disclose component profit, cash flow or capital returns.",
+      "investment_consequence": "Treat as a conditional growth contribution rather than established base earnings.",
+      "promotion_or_resolution_condition": "Promote when audited disclosures provide sustained segment profitability, cash conversion and growth-capital returns.",
+      "evidence_ids": [
+        "e3"
+      ]
+    },
+    {
+      "component_id": "channel_working_capital",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Inventory rose to 1.458bn yuan and receivables to 625m yuan alongside broad multi-channel expansion; component-level economics are not disclosed.",
+      "investment_consequence": "Carry a conditional owner-cash and financing drag until turnover and terms are evidenced.",
+      "promotion_or_resolution_condition": "Resolve with segment/channel working-capital turns, aging and customer terms in later filings.",
+      "evidence_ids": [
+        "e4",
+        "e5"
+      ]
+    },
+    {
+      "component_id": "capex_and_financing_pressure",
+      "treatment": "CANNOT_BOUND",
+      "reason": "Long-lived-asset spending, project transfers, restricted assets and rising short-term borrowing are disclosed only on a consolidated basis.",
+      "investment_consequence": "Keep project return and financing pressure unresolved; do not convert total spending into maintenance capex or a point owner-cash estimate.",
+      "promotion_or_resolution_condition": "Bound when project-level spending, maintenance versus growth split, commitments and financing balances are disclosed.",
+      "evidence_ids": [
+        "e5",
+        "e6",
+        "e7"
+      ]
+    },
+    {
+      "component_id": "noncore_investments",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "Fund and investment holdings are mentioned without attributable earnings, cash flows or carrying-value detail by asset.",
+      "investment_consequence": "Exclude from base operating earnings and primary routes; monitor only for material impairment or liquidity effects.",
+      "promotion_or_resolution_condition": "Include only after audited asset-level value, distributions and impairment evidence become available.",
+      "evidence_ids": [
+        "e8"
+      ]
+    }
+  ],
+  "component_decisions": [
+    {
+      "component_id": "core_gas_business",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "BASE_RANGE",
+      "owner_cash_use": "BASE_RANGE",
+      "financing_pressure_effect": "NEUTRAL",
+      "permanent_loss_use": "BASE_PATH",
+      "valuation_use": "PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE_CORE_EARNINGS",
+          "use": "PRIMARY_INPUT"
+        },
+        {
+          "route_id": "ROUTE_OWNER_CASH",
+          "use": "PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Verify continued core gas-appliance demand and stable consolidated profitability in official filings.",
+      "invalidation_test": "A sustained collapse in core demand or disclosed margin impairment would invalidate the base path."
+    },
+    {
+      "component_id": "wall_hung_boiler_growth",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE_GROWTH_OPTION",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Require segment profit, cash conversion and return on growth capital evidence.",
+      "invalidation_test": "Growth without durable margin or cash conversion would invalidate its conditional contribution."
+    },
+    {
+      "component_id": "channel_working_capital",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "normal_earnings_use": "CONDITIONAL_RANGE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE_OWNER_CASH",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        }
+      ],
+      "promotion_test": "Confirm inventory turns, receivable aging and channel terms support cash conversion.",
+      "invalidation_test": "Persistent inventory build, receivable aging or channel concessions would worsen owner cash and financing pressure."
+    },
+    {
+      "component_id": "capex_and_financing_pressure",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "normal_earnings_use": "UNRESOLVED",
+      "owner_cash_use": "UNRESOLVED",
+      "financing_pressure_effect": "UNRESOLVED",
+      "permanent_loss_use": "UNRESOLVED",
+      "valuation_use": "UNRESOLVED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE_CAPEX_UNRESOLVED",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "promotion_test": "Obtain project-level capex, maintenance split, commitments and debt schedules.",
+      "invalidation_test": "Evidence of uneconomic projects or refinancing stress would raise permanent-loss risk."
+    },
+    {
+      "component_id": "noncore_investments",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "normal_earnings_use": "EXCLUDED",
+      "owner_cash_use": "EXCLUDED",
+      "financing_pressure_effect": "NEUTRAL",
+      "permanent_loss_use": "EXCLUDED",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE_NONCORE_EXCLUDED",
+          "use": "EXCLUDED"
+        }
+      ],
+      "promotion_test": "Require audited asset-level earnings, distributions and carrying values.",
+      "invalidation_test": "Material impairment or liquidity calls would require a separate stress route."
+    }
+  ],
+  "evidence_trace": [
+    {
+      "evidence_id": "e1",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report p.9",
+      "scope": "Business model and gas-appliance core",
+      "used_for": "core business and operating perimeter"
+    },
+    {
+      "evidence_id": "e2",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports FY summary p.6-7",
+      "scope": "Three-year revenue and net-profit history",
+      "used_for": "reference earnings baseline and normalization"
+    },
+    {
+      "evidence_id": "e3",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report p.14",
+      "scope": "Wall-hung boiler revenue 680.0359m, +165.51%",
+      "used_for": "growth component and sensitivity input"
+    },
+    {
+      "evidence_id": "e4",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2016-FY2017 annual reports balance-sheet p.23-24",
+      "scope": "Receivables and inventory balances",
+      "used_for": "working-capital component and sensitivity input"
+    },
+    {
+      "evidence_id": "e5",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2015-FY2017 annual reports cash-flow p.86,89-90",
+      "scope": "Operating cash flow and long-lived-asset spending",
+      "used_for": "owner cash and financing context"
+    },
+    {
+      "evidence_id": "e6",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report p.11",
+      "scope": "Yanghe Phase II and Wanhe Thermal plant transferred to fixed assets",
+      "used_for": "capital-project financing uncertainty"
+    },
+    {
+      "evidence_id": "e7",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report p.24,89",
+      "scope": "Restricted cash/pledged notes and borrowing proceeds",
+      "used_for": "financing pressure and permanent-loss stress"
+    },
+    {
+      "evidence_id": "e8",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "locator": "FY2017 annual report p.11,24",
+      "scope": "Rui Can and Qianhai fund investments; consolidated investment disclosure",
+      "used_for": "noncore asset exclusion"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "SOURCE_DOCUMENT",
+      "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002543_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "Pre-cutoff official CNINFO annual-report source package"
+    }
+  ],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS_CN002543_A00",
+    "central_path": "A durable gas-appliance core can support normalized economics while boiler growth and channel working capital remain conditional and project financing unresolved.",
+    "normal_earnings_treatment": "Use the consolidated FY2015-FY2017 attributable-profit band as a base reference; do not quantify undisclosed component adjustments.",
+    "owner_cash_treatment": "Operating cash generation is evidenced, but maintenance versus growth spending and channel working-capital attribution are unresolved; carry conditional ranges only.",
+    "permanent_loss_treatment": "Monitor core franchise erosion, working-capital deterioration, uneconomic projects and restricted-asset/refinancing stress as distinct loss paths.",
+    "value_route_treatment": "Primary and conditional route definitions are component-bound and price-free; unresolved and excluded components cannot authorize primary value inputs.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "MIXED",
+      "permanent_loss": "MIXED"
+    },
+    "strongest_rival": "A.O. Smith and Haier ecosystem brands combining water-heater technology with broad channels",
+    "monitoring": "Track official disclosures for product-level margins, boiler cash returns, inventory and receivable turns, capex split, debt and restricted assets."
+  },
+  "investment_treatment": "Training-only underwriting treatment; no valuation result, expected return or investment action is provided.",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {
+        "metric": "attributable net profit",
+        "currency": "CNY",
+        "unit": "yuan per fiscal year",
+        "tax_basis": "AFTER_TAX",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "operating_perimeter": "Consolidated Guangdong Vanward New Electric Co., Ltd. and disclosed subsidiaries",
+        "as_of": "2017-12-31"
+      },
+      "rows": [
+        {
+          "row_id": "r0",
+          "component_id": "reference_earnings_baseline",
+          "row_role": "REFERENCE_EARNINGS",
+          "direction": "ADD",
+          "quantification": {
+            "status": "BOUNDED",
+            "range_low": 363707381.25,
+            "range_high": 413400528.25
+          },
+          "evidence_ids": [
+            "e2"
+          ],
+          "economic_reason": "FY2015-FY2017 reported attributable profits define a conservative after-tax reference band."
+        },
+        {
+          "row_id": "r1",
+          "component_id": "core_gas_business",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Component-level magnitude is not disclosed in supplied pre-cutoff sources.",
+            "conservative_treatment": "Keep as unknown/conditional; do not assign a point estimate."
+          },
+          "evidence_ids": [
+            "e1"
+          ],
+          "economic_reason": "Core business is retained in the operating perimeter; no separate adjustment is quantified."
+        },
+        {
+          "row_id": "r2",
+          "component_id": "wall_hung_boiler_growth",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Component-level magnitude is not disclosed in supplied pre-cutoff sources.",
+            "conservative_treatment": "Keep as unknown/conditional; do not assign a point estimate."
+          },
+          "evidence_ids": [
+            "e3"
+          ],
+          "economic_reason": "Rapid boiler growth lacks component profit and cash-return disclosure, so its adjustment remains unknown and conditional."
+        },
+        {
+          "row_id": "r3",
+          "component_id": "channel_working_capital",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Component-level magnitude is not disclosed in supplied pre-cutoff sources.",
+            "conservative_treatment": "Keep as unknown/conditional; do not assign a point estimate."
+          },
+          "evidence_ids": [
+            "e4"
+          ],
+          "economic_reason": "Working-capital intensity may absorb cash despite revenue growth; magnitude is not attributable by component."
+        },
+        {
+          "row_id": "r4",
+          "component_id": "capex_and_financing_pressure",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "SUBTRACT",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Component-level magnitude is not disclosed in supplied pre-cutoff sources.",
+            "conservative_treatment": "Keep as unknown/conditional; do not assign a point estimate."
+          },
+          "evidence_ids": [
+            "e5"
+          ],
+          "economic_reason": "Total long-lived-asset spending cannot be split into maintenance and growth or assigned by component."
+        },
+        {
+          "row_id": "r5",
+          "component_id": "noncore_investments",
+          "row_role": "NORMALIZATION_ADJUSTMENT",
+          "direction": "ADD",
+          "quantification": {
+            "status": "UNKNOWN",
+            "reason": "Component-level magnitude is not disclosed in supplied pre-cutoff sources.",
+            "conservative_treatment": "Keep as unknown/conditional; do not assign a point estimate."
+          },
+          "evidence_ids": [
+            "e8"
+          ],
+          "economic_reason": "Noncore investments lack attributable recurring earnings and are excluded from the operating bridge."
+        }
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS_BOILER_MIX",
+        "component_ids": [
+          "wall_hung_boiler_growth"
+        ],
+        "metric": "wall-hung-boiler revenue share",
+        "unit": "fraction of consolidated revenue",
+        "horizon": "3 fiscal years",
+        "input_cases": {
+          "mode": "BOUNDED_RANGE",
+          "range": {
+            "value_or_range": {
+              "range_low": 0,
+              "range_high": 1
+            },
+            "basis": "Boiler revenue was disclosed as 680.0359m yuan and +165.51% in FY2017, but no profit or cash split is provided.",
+            "evidence_ids": [
+              "e3"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "Boiler revenue was disclosed as 680.0359m yuan and +165.51% in FY2017, but no profit or cash split is provided.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level earnings sensitivity is disclosed.",
+              "conservative_treatment": "Keep transmission unknown pending later official disclosure; do not assign a numeric delta."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "Boiler revenue was disclosed as 680.0359m yuan and +165.51% in FY2017, but no profit or cash split is provided.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level owner-cash sensitivity is disclosed.",
+              "conservative_treatment": "Keep transmission unknown pending later official disclosure; do not assign a numeric delta."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE_GROWTH_OPTION"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/0"
+        ],
+        "responsibility_boundary": "Consolidated company disclosure does not allocate this driver by product or channel; attribution remains bounded to the named component."
+      },
+      {
+        "sensitivity_id": "SENS_WORKING_CAPITAL",
+        "component_ids": [
+          "channel_working_capital"
+        ],
+        "metric": "inventory and receivables intensity",
+        "unit": "yuan",
+        "horizon": "1 fiscal year",
+        "input_cases": {
+          "mode": "BOUNDED_RANGE",
+          "range": {
+            "value_or_range": {
+              "range_low": 0,
+              "range_high": 1
+            },
+            "basis": "Inventory and receivables balances are disclosed at consolidated level while channel terms and aging are not.",
+            "evidence_ids": [
+              "e4"
+            ]
+          }
+        },
+        "transmission": {
+          "normal_earnings": {
+            "status": "UNKNOWN",
+            "basis": "Inventory and receivables balances are disclosed at consolidated level while channel terms and aging are not.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level earnings sensitivity is disclosed.",
+              "conservative_treatment": "Keep transmission unknown pending later official disclosure; do not assign a numeric delta."
+            }
+          },
+          "owner_cash": {
+            "status": "UNKNOWN",
+            "basis": "Inventory and receivables balances are disclosed at consolidated level while channel terms and aging are not.",
+            "delta": {
+              "status": "UNKNOWN",
+              "reason": "No component-level owner-cash sensitivity is disclosed.",
+              "conservative_treatment": "Keep transmission unknown pending later official disclosure; do not assign a numeric delta."
+            }
+          },
+          "valuation_route_ids": [
+            "ROUTE_OWNER_CASH"
+          ]
+        },
+        "reversal_observation_refs": [
+          "#/reversal_observations/1"
+        ],
+        "responsibility_boundary": "Consolidated company disclosure does not allocate this driver by product or channel; attribution remains bounded to the named component."
+      }
+    ]
+  }
+}

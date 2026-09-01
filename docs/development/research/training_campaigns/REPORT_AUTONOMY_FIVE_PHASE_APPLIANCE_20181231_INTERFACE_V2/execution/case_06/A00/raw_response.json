@@ -1,0 +1,242 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "EPISODE:CN002676:20181231:A00",
+  "company_id": "CN:002676",
+  "company_name": "广东顺威精密塑料股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-cutoff underwriting of the consolidated plastic air-conditioner fan-blade business, its cash conversion and expansion commitments using FY2015-FY2017 reports only.",
+  "underwriting_route": "Anchor on mature fan-blade earnings, condition owner cash on working-capital intensity, and isolate expansion and liquidity risks as scenario or stress routes.",
+  "situation_model": {
+    "summary": "The company is a direct-sales, make-to-order supplier that integrates modified plastics, molds and fan-blade design for major HVAC customers. Revenue grew through FY2017, but earnings and cash conversion were volatile while overseas and smart-bathroom projects were being prepared.",
+    "industry_future_thesis": {
+      "horizon": "2019-2022",
+      "most_likely_regime": "HVAC demand remains cyclical and concentrated among large OEMs; engineering integration and reliable delivery preserve incumbent programs, while input-cost and customer bargaining pressure keep margins variable.",
+      "profit_pool_transmission": "Profit pools accrue to suppliers that combine material formulation, tooling and blade qualification with scale delivery; raw-material inflation, OEM concentration and working-capital funding determine how much reaches equity.",
+      "company_exposure": "Exposure is primarily to domestic and multinational HVAC OEM programs, with additional unproven exposure to Thailand manufacturing and smart-bathroom initiatives.",
+      "adaptation": "The integrated design-tooling-formulation model and the completed Thailand plant are possible adaptation avenues, but project economics and ramp evidence are not yet established at cutoff.",
+      "normal_economics": "Core economics can normalize around recurring fan-blade programs, but three-year results show sensitivity to material and labor costs, inventory builds and customer collection timing.",
+      "permanent_loss": "Permanent loss could arise from sustained OEM insourcing or supplier substitution, failed expansion consuming liquidity, or leverage amplifying a demand downturn.",
+      "valuation_treatment": "Use a bounded core-earnings route; treat owner cash conditionally on working-capital discipline and keep expansion as scenario-only with a separate financing stress.",
+      "strongest_rival": "Large HVAC OEMs' in-house production or alternate qualified fan-blade suppliers",
+      "reversal_observations": [
+        "Evidence that major HVAC OEMs shift volume to in-house production or alternate qualified suppliers would reverse the incumbent-volume premise.",
+        "Audited evidence of sustained positive cash after maintenance needs and stable inventory turns would upgrade the owner-cash route.",
+        "Audited evidence that Thailand or smart-bathroom projects earn returns above their funding cost would promote the growth scenario."
+      ]
+    }
+  },
+  "business_position": "A qualified incumbent component supplier with integrated plastics, tooling and blade engineering, meaningful OEM concentration, and demonstrated revenue scale but uneven profitability.",
+  "survival_case": "Survival depends on retaining OEM qualifications, passing through material and labor inflation, converting receivables and inventory without excessive borrowing, and sequencing Thailand and other projects within available liquidity.",
+  "adaptation_case": "Management can deepen the integrated engineering offering and use the Thailand plant for customer proximity, while project expansion remains conditional until utilization, margins and cash returns are evidenced.",
+  "normalization_case": "Normalize only the recurring fan-blade platform around a conservative after-tax earnings range informed by FY2015-FY2017; exclude one-off impairments, subsidies, disputes and project start-up costs rather than treating the FY2017 loss as steady state.",
+  "permanent_loss_map": "Monitor OEM insourcing or requalification losses, unresolved project overruns, inventory obsolescence, and debt-funded working-capital strain as paths to irreversible capital impairment.",
+  "value_route": {
+    "primary_routes": [
+      "ROUTE:CORE_NORMAL_EARNINGS",
+      "ROUTE:OWNER_CASH"
+    ],
+    "excluded_routes": [
+      "ROUTE:EXCLUDED_NONCORE"
+    ],
+    "route_reasoning": "The core route is the only base operating anchor. Owner cash is conditional because receivables, inventory and total long-lived-asset spending vary materially. Growth and financing routes are separated from base economics, and noncore directions lack standalone evidence.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:CORE_NORMAL_EARNINGS",
+        "ROUTE:OWNER_CASH"
+      ],
+      "corroborative": [],
+      "stress": [
+        "ROUTE:FINANCING_STRESS",
+        "ROUTE:GROWTH_SCENARIO"
+      ]
+    },
+    "route_component_requirements": [
+      {
+        "route_id": "ROUTE:CORE_NORMAL_EARNINGS",
+        "required_component_ids": ["CORE_FAN_BLADE"],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:OWNER_CASH",
+        "required_component_ids": ["WORKING_CAPITAL"],
+        "optional_component_ids": ["CORE_FAN_BLADE"]
+      },
+      {
+        "route_id": "ROUTE:GROWTH_SCENARIO",
+        "required_component_ids": ["GROWTH_PROJECTS"],
+        "optional_component_ids": []
+      },
+      {
+        "route_id": "ROUTE:FINANCING_STRESS",
+        "required_component_ids": ["DEBT_LIQUIDITY"],
+        "optional_component_ids": ["WORKING_CAPITAL", "GROWTH_PROJECTS"]
+      },
+      {
+        "route_id": "ROUTE:EXCLUDED_NONCORE",
+        "required_component_ids": ["NONCORE_OPTIONAL"],
+        "optional_component_ids": []
+      }
+    ]
+  },
+  "strongest_rival": "Large HVAC OEMs' in-house production or alternate qualified fan-blade suppliers",
+  "reversal_observations": [
+    "Evidence that major HVAC OEMs shift volume to in-house production or alternate qualified suppliers would reverse the incumbent-volume premise.",
+    "Audited evidence of sustained positive cash after maintenance needs and stable inventory turns would upgrade the owner-cash route.",
+    "Audited evidence that Thailand or smart-bathroom projects earn returns above their funding cost would promote the growth scenario."
+  ],
+  "component_treatments": [
+    {
+      "component_id": "CORE_FAN_BLADE",
+      "treatment": "UNDERWRITE",
+      "reason": "Recurring fan-blade, modified-plastic and tooling activities are the disclosed operating core with three years of consolidated revenue and profit data.",
+      "investment_consequence": "Provides the bounded base earnings anchor, subject to OEM concentration and cost volatility.",
+      "promotion_or_resolution_condition": "Promote confidence if subsequent reports show retained programs, stable margins and repeat cash conversion.",
+      "evidence_ids": ["E:BUSINESS:CORE", "E:FINANCIALS:THREE_YEAR"]
+    },
+    {
+      "component_id": "WORKING_CAPITAL",
+      "treatment": "CONDITIONALLY_UNDERWRITE",
+      "reason": "Receivables and inventory rose materially through FY2017 and inventory was built ahead of a seasonal peak, making owner cash dependent on turns and collection.",
+      "investment_consequence": "Owner cash is conditional and financing pressure increases when working capital absorbs operating cash.",
+      "promotion_or_resolution_condition": "Promote to base owner cash only after audited evidence of normalized receivable days, inventory turns and cash conversion.",
+      "evidence_ids": ["E:CASH:WC", "E:FINANCIALS:THREE_YEAR"]
+    },
+    {
+      "component_id": "GROWTH_PROJECTS",
+      "treatment": "SCENARIO_ONLY",
+      "reason": "Thailand manufacturing, smart-bathroom and other new directions were in construction or preparation without standalone revenue, profit or return evidence at cutoff.",
+      "investment_consequence": "Expansion may require cash and generate either upside or additional losses; it is not included in base earnings or owner cash.",
+      "promotion_or_resolution_condition": "Promote only with audited segment economics, utilization, invested capital and cash-return evidence.",
+      "evidence_ids": ["E:GROWTH:PROJECTS"]
+    },
+    {
+      "component_id": "DEBT_LIQUIDITY",
+      "treatment": "UNDERWRITE",
+      "reason": "Short-term borrowings increased to RMB350.5m in FY2017, with RMB50m of long-term debt reclassified as current, while operating cash was only RMB7.2m.",
+      "investment_consequence": "Liquidity and refinancing are a distinct stress route that can amplify a cyclical downturn.",
+      "promotion_or_resolution_condition": "Resolve stress if maturities, covenants and debt service are covered by recurring operating cash without repeated borrowing.",
+      "evidence_ids": ["E:FINANCING:DEBT", "E:CASH:WC"]
+    },
+    {
+      "component_id": "NONCORE_OPTIONAL",
+      "treatment": "EXCLUDE_FROM_BASE",
+      "reason": "Automotive, energy, smart-home and other cited directions have no separately comparable revenue, profit or cash-flow disclosure in the source package.",
+      "investment_consequence": "No base earnings, owner-cash or primary value contribution is assigned; any realization is optional upside only.",
+      "promotion_or_resolution_condition": "Require audited standalone segment disclosure and demonstrated cash contribution before inclusion.",
+      "evidence_ids": ["E:NONCORE:UNKNOWN"]
+    }
+  ],
+  "component_decisions": [
+    {
+      "component_id": "CORE_FAN_BLADE",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "normal_earnings_use": "BASE_RANGE",
+      "owner_cash_use": "BASE_RANGE",
+      "financing_pressure_effect": "NEUTRAL",
+      "permanent_loss_use": "BASE_PATH",
+      "valuation_use": "PRIMARY_INPUT",
+      "valuation_route_bindings": [{"route_id": "ROUTE:CORE_NORMAL_EARNINGS", "use": "PRIMARY_INPUT"}, {"route_id": "ROUTE:OWNER_CASH", "use": "PRIMARY_INPUT"}],
+      "promotion_test": "Retained OEM programs and stable gross margin through a cycle.",
+      "invalidation_test": "Sustained volume loss from OEM insourcing or alternate suppliers."
+    },
+    {
+      "component_id": "WORKING_CAPITAL",
+      "economic_scope": "ORDINARY_SHARE_OWNER_CASH",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT",
+      "valuation_route_bindings": [{"route_id": "ROUTE:OWNER_CASH", "use": "CONDITIONAL_PRIMARY_INPUT"}, {"route_id": "ROUTE:FINANCING_STRESS", "use": "STRESS_ONLY"}],
+      "promotion_test": "Working-capital days normalize with positive cash conversion.",
+      "invalidation_test": "Receivable or inventory growth repeatedly consumes operating cash."
+    },
+    {
+      "component_id": "GROWTH_PROJECTS",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "normal_earnings_use": "SCENARIO_ONLY",
+      "owner_cash_use": "SCENARIO_ONLY",
+      "financing_pressure_effect": "CONDITIONAL",
+      "permanent_loss_use": "STRESS_ONLY",
+      "valuation_use": "SCENARIO_ONLY",
+      "valuation_route_bindings": [{"route_id": "ROUTE:GROWTH_SCENARIO", "use": "SCENARIO_ONLY"}, {"route_id": "ROUTE:FINANCING_STRESS", "use": "STRESS_ONLY"}],
+      "promotion_test": "Audited project returns and utilization exceed funding cost.",
+      "invalidation_test": "Projects require recurring funding without identifiable contribution."
+    },
+    {
+      "component_id": "DEBT_LIQUIDITY",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "NOT_APPLICABLE",
+      "financing_pressure_effect": "INCREASES",
+      "permanent_loss_use": "STRESS_ONLY",
+      "valuation_use": "STRESS_ONLY",
+      "valuation_route_bindings": [{"route_id": "ROUTE:FINANCING_STRESS", "use": "STRESS_ONLY"}],
+      "promotion_test": "Debt maturities are serviced from recurring operating cash.",
+      "invalidation_test": "Refinancing depends on continued borrowing despite weak operating cash."
+    },
+    {
+      "component_id": "NONCORE_OPTIONAL",
+      "economic_scope": "NONCORE_OR_OPTIONAL_ASSET",
+      "normal_earnings_use": "EXCLUDED",
+      "owner_cash_use": "EXCLUDED",
+      "financing_pressure_effect": "NOT_APPLICABLE",
+      "permanent_loss_use": "EXCLUDED",
+      "valuation_use": "EXCLUDED",
+      "valuation_route_bindings": [{"route_id": "ROUTE:EXCLUDED_NONCORE", "use": "EXCLUDED"}],
+      "promotion_test": "Standalone audited economics become available.",
+      "invalidation_test": "No separable disclosure or cash contribution."
+    }
+  ],
+  "evidence_trace": [
+    {"evidence_id": "E:BUSINESS:CORE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.9; FY2016 p.8; FY2017 p.8", "scope": "Products, integrated chain, direct sales and make-to-order production", "used_for": "Core business identification"},
+    {"evidence_id": "E:FINANCIALS:THREE_YEAR", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.7; FY2016 p.6; FY2017 p.6", "scope": "Revenue, net income, adjusted net income and operating cash flow", "used_for": "Earnings baseline and volatility"},
+    {"evidence_id": "E:CASH:WC", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.52-54; FY2016 pp.56-58; FY2017 pp.56-58; FY2016 pp.9-11", "scope": "Receivables, inventory, payables and seasonal inventory build", "used_for": "Owner cash and financing pressure"},
+    {"evidence_id": "E:FINANCING:DEBT", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.52-54; FY2016 pp.56-58; FY2017 pp.56-58, p.105", "scope": "Short-term borrowings and current reclassification of long-term debt", "used_for": "Liquidity stress route"},
+    {"evidence_id": "E:GROWTH:PROJECTS", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 pp.9-10,18-20; FY2016 pp.16-19; FY2017 pp.9-11", "scope": "Thailand plant, smart-bathroom project, offerings and capital projects", "used_for": "Scenario-only growth treatment"},
+    {"evidence_id": "E:NONCORE:UNKNOWN", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "Explicit UNKNOWN section", "scope": "Automotive, energy and smart-home directions lack standalone financials", "used_for": "Exclusion from base"},
+    {"evidence_id": "E:SENS:LOW", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2016 p.12", "scope": "Top-five customer sales share 49.48%", "used_for": "Sensitivity input"},
+    {"evidence_id": "E:SENS:BASE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2017 p.14", "scope": "Top-five customer sales share 52.73%", "used_for": "Sensitivity input"},
+    {"evidence_id": "E:SENS:HIGH", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015 p.13", "scope": "Top-five customer sales share 53.09%", "used_for": "Sensitivity input"},
+    {"evidence_id": "E:MAG:NE", "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "locator": "FY2015-FY2017 customer concentration and profit volatility", "scope": "Bounded directional sensitivity magnitude", "used_for": "Normal earnings sensitivity magnitude", "sensitivity_magnitude_observation": {"component_ids": ["CORE_FAN_BLADE"], "responsibility_boundary": "Customer concentration affects recurring core volume and pricing; management response and macro demand are outside this bound.", "driver_metric": "Top-five customer sales share", "driver_unit": "percent of annual sales", "horizon": "12 months", "affected_axes": ["normal_earnings"], "delta_unit": "RMB/year", "calculation_inputs": ["E:MAG:NE"]}}
+  ],
+  "existing_object_refs": [{"kind": "SOURCE_PACKAGE", "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002676_PRE_CUTOFF_SOURCE_PACKAGE.md", "role": "authoritative pre-cutoff source package"}],
+  "underwriting_thesis": {
+    "thesis_id": "THESIS:CORE_INCUMBENT_CONDITIONAL_CASH",
+    "central_path": "A qualified HVAC component incumbent can sustain a modest normalized core, but owner cash and financing remain conditional because working capital and expansion commitments compete for liquidity.",
+    "normal_earnings_treatment": "Use a conservative bounded after-tax core range; FY2017 exceptional costs and project charges are not recurring, while material and labor inflation remain live deductions.",
+    "owner_cash_treatment": "Treat owner cash as conditional and avoid a point estimate because maintenance versus growth spending and working-capital normalization are not fully separable.",
+    "permanent_loss_treatment": "Stress OEM displacement, project failure and refinancing dependence; these are monitored as separate permanent-loss paths.",
+    "value_route_treatment": "Primary route is core normalized earnings with a conditional owner-cash corroboration; growth is scenario-only and debt is stress-only.",
+    "economic_directions": {"normal_earnings": "MIXED", "owner_cash": "DETERIORATES", "permanent_loss": "MIXED"},
+    "strongest_rival": "Large HVAC OEMs' in-house production or alternate qualified fan-blade suppliers",
+    "monitoring": "Track OEM concentration and program retention, material/labor costs, receivable and inventory turns, operating cash after total long-lived-asset spending, debt maturities, and audited Thailand project returns."
+  },
+  "investment_treatment": "Price-free underwriting record: continue only with explicit monitoring of core program retention, cash conversion and financing; no valuation, return or action conclusion is issued at the sealed cutoff.",
+  "economic_derivation": {
+    "schema_version": "enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis": {"metric": "normalized attributable net earnings", "currency": "RMB", "unit": "RMB/year", "tax_basis": "AFTER_TAX", "earnings_claim_scope": "ORDINARY_COMMON_EQUITY", "operating_perimeter": "Consolidated recurring fan-blade, modified-plastic and tooling operations", "as_of": "2018-12-31"},
+      "rows": [
+        {"row_id": "ROW:REFERENCE", "component_id": "CORE_FAN_BLADE", "row_role": "REFERENCE_EARNINGS", "direction": "ADD", "quantification": {"status": "BOUNDED", "range_low": 20000000, "range_high": 35000000}, "evidence_ids": ["E:FINANCIALS:THREE_YEAR"], "economic_reason": "FY2015-FY2017 adjusted earnings span a loss, RMB27.5m profit and a project/impairment-affected loss; a conservative recurring core range is therefore bounded rather than point-estimated."},
+        {"row_id": "ROW:GROWTH", "component_id": "GROWTH_PROJECTS", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "No standalone project revenue, margin or return evidence at cutoff.", "conservative_treatment": "Keep outside base range and test only as scenario."}, "evidence_ids": ["E:GROWTH:PROJECTS"], "economic_reason": "Thailand and smart-bathroom initiatives may add or consume earnings, but their contribution is unresolved."},
+        {"row_id": "ROW:NONCORE", "component_id": "NONCORE_OPTIONAL", "row_role": "NORMALIZATION_ADJUSTMENT", "direction": "ADD", "quantification": {"status": "UNKNOWN", "reason": "Automotive, energy and smart-home directions lack comparable standalone data.", "conservative_treatment": "Exclude from base earnings."}, "evidence_ids": ["E:NONCORE:UNKNOWN"], "economic_reason": "No evidence supports an earnings contribution or deduction from these optional directions."}
+      ]
+    },
+    "driver_sensitivity_specs": [
+      {
+        "sensitivity_id": "SENS:CUSTOMER_CONCENTRATION",
+        "component_ids": ["CORE_FAN_BLADE"],
+        "driver_binding": {"enterprise_variable_id": "EV:CUSTOMER_CONCENTRATION", "financial_driver_id": "FD:TOP5_SALES_SHARE"},
+        "metric": "Top-five customer sales share",
+        "unit": "percent of annual sales",
+        "horizon": "12 months",
+        "input_cases": {"mode": "LOW_BASE_HIGH", "low": {"value_or_range": {"value": 0.4948}, "basis": "FY2016 disclosed top-five share", "evidence_ids": ["E:SENS:LOW"]}, "base": {"value_or_range": {"value": 0.5273}, "basis": "FY2017 disclosed top-five share", "evidence_ids": ["E:SENS:BASE"]}, "high": {"value_or_range": {"value": 0.5309}, "basis": "FY2015 disclosed top-five share", "evidence_ids": ["E:SENS:HIGH"]}},
+        "transmission": {"normal_earnings": {"status": "DIRECT", "basis": "Higher concentration raises dependence on OEM volume and pricing; the bounded effect is directional around the recurring core.", "delta": {"status": "BOUNDED", "range_low": -5000000, "range_high": 5000000, "unit": "RMB/year", "magnitude_evidence": {"evidence_ids": ["E:MAG:NE"], "component_ids": ["CORE_FAN_BLADE"], "responsibility_boundary": "Customer concentration affects recurring core volume and pricing; management response and macro demand are outside this bound.", "driver_metric": "Top-five customer sales share", "driver_unit": "percent of annual sales", "horizon": "12 months", "affected_axis": "normal_earnings", "delta_unit": "RMB/year", "calculation_binding": {"calculation_id": "CALC:MAG:NE", "expression": "bounded concentration sensitivity assessed against recurring core earnings", "input_evidence_ids": ["E:MAG:NE"]}}}, "owner_cash": {"status": "UNKNOWN", "basis": "Collection timing and capex split are not quantified by customer.", "delta": {"status": "UNKNOWN", "reason": "Source package does not provide customer-level margins, credit terms or cash conversion.", "conservative_treatment": "Keep owner-cash effect conditional and do not assign a numeric delta."}}, "valuation_route_ids": ["ROUTE:CORE_NORMAL_EARNINGS"]},
+        "reversal_observation_refs": ["#/reversal_observations/0", "#/reversal_observations/1"],
+        "responsibility_boundary": "Concentration sensitivity covers disclosed customer mix and recurring core economics; project execution, macro demand and financing availability are outside this sensitivity."
+      }
+    ]
+  }
+}

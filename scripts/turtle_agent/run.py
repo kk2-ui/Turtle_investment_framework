@@ -527,6 +527,7 @@ def _load_episode_bound_current_company_judgment(
     *,
     company_code: str,
     cutoff_at: str,
+    enterprise_underwriting_episode: str = "",
 ) -> dict[str, Any]:
     """Load the current Episode-first predecessor for investment production.
 
@@ -594,7 +595,7 @@ def _load_episode_bound_current_company_judgment(
         or binding.get("underwriting_thesis_id") != projection.get("underwriting_thesis_id")
     ):
         raise RuntimeError("Current-company admission is not bound to this underwriting Episode")
-    return {
+    result = {
         "frozen_cjo_path": str(frozen_path),
         "current_company_cjo_admission_path": str(receipt_path),
         "company_id": str(frozen.get("company_id") or ""),
@@ -603,6 +604,36 @@ def _load_episode_bound_current_company_judgment(
         "underwriting_thesis_id": str(projection.get("underwriting_thesis_id") or ""),
         "sample_identity": str(projection.get("sample_identity") or ""),
     }
+    episode_ref = str(enterprise_underwriting_episode or "").strip()
+    if not episode_ref:
+        return result
+    episode_path = Path(episode_ref).expanduser().resolve()
+    episode = _load_json_file(str(episode_path))
+    try:
+        from scripts.enterprise_underwriting_episode import (
+            validate_enterprise_underwriting_episode,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct script fallback
+        from enterprise_underwriting_episode import (  # type: ignore[no-redef]
+            validate_enterprise_underwriting_episode,
+        )
+    if validate_enterprise_underwriting_episode(episode).get("state") != "REVIEWABLE":
+        raise RuntimeError("EnterpriseUnderwritingEpisode for report bridge is invalid")
+    thesis = episode.get("underwriting_thesis") if isinstance(
+        episode.get("underwriting_thesis"), dict
+    ) else {}
+    if (
+        episode.get("episode_id") != projection.get("episode_id")
+        or thesis.get("thesis_id") != projection.get("underwriting_thesis_id")
+    ):
+        raise RuntimeError("EnterpriseUnderwritingEpisode does not match the Frozen CJO identity")
+    if (
+        episode.get("company_id") != projection.get("company_id")
+        or episode.get("cutoff_at") != projection.get("cutoff_at")
+    ):
+        raise RuntimeError("EnterpriseUnderwritingEpisode does not match the Frozen CJO company/cutoff")
+    result["enterprise_underwriting_episode_path"] = str(episode_path)
+    return result
 
 
 def _company_identity_matches(company_id: Any, production_code: Any) -> bool:
@@ -1959,6 +1990,27 @@ def _initialize_pit_production_output(
                 "current_company_cjo_admission_path"
             ),
         }
+        episode_ref = str(binding.get("enterprise_underwriting_episode_path") or "").strip()
+        if episode_ref:
+            try:
+                from scripts.report_autonomy_bridge import (
+                    DEFAULT_OUTPUT_NAME,
+                    compile_component_reader_bridge,
+                )
+            except ModuleNotFoundError:  # pragma: no cover - direct script fallback
+                from report_autonomy_bridge import (  # type: ignore[no-redef]
+                    DEFAULT_OUTPUT_NAME,
+                    compile_component_reader_bridge,
+                )
+            episode = _load_json_file(episode_ref)
+            bridge = compile_component_reader_bridge(
+                episode, episode_ref=episode_ref,
+            )
+            bridge_path = Path(output_dir) / DEFAULT_OUTPUT_NAME
+            _write_json_file(str(bridge_path), bridge)
+            contract["canonical_judgment_refs"][
+                "enterprise_underwriting_component_reader_bridge_ref"
+            ] = DEFAULT_OUTPUT_NAME
     elif analysis_purpose == "INVESTMENT_DECISION":
         predecessor_path = Path(output_dir) / "company_judgment_predecessor.json"
         _write_json_file(str(predecessor_path), company_judgment_predecessor or {})
@@ -2268,6 +2320,7 @@ def run_full_pipeline(
     review_return: str = "",
     frozen_cjo: str = "",
     current_company_cjo_admission: str = "",
+    enterprise_underwriting_episode: str = "",
 ) -> str:
     """运行完整分析管线。
 
@@ -2481,11 +2534,17 @@ def run_full_pipeline(
         diagnostics["pit_framework_root_class"] = "REPOSITORY_STATIC"
         if pit_production_freeze and analysis_purpose == "INVESTMENT_DECISION":
             if str(frozen_cjo or "").strip() or str(current_company_cjo_admission or "").strip():
+                if not str(enterprise_underwriting_episode or "").strip():
+                    raise RuntimeError(
+                        "Episode-bound investment production requires "
+                        "--enterprise-underwriting-episode for the component reader bridge"
+                    )
                 canonical_judgment_binding = _load_episode_bound_current_company_judgment(
                     frozen_cjo,
                     current_company_cjo_admission,
                     company_code=code,
                     cutoff_at=str(pit_runner.cutoff_at),
+                    enterprise_underwriting_episode=enterprise_underwriting_episode,
                 )
                 diagnostics["enterprise_underwriting_binding"] = {
                     key: value
@@ -4157,6 +4216,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="Episode-first investment production: source-bound, independently frozen current-company CJO")
     ap.add_argument("--current-company-cjo-admission", default="",
                     help="Episode-first investment production: PRIMARY_ADMITTED receipt bound to --frozen-cjo")
+    ap.add_argument("--enterprise-underwriting-episode", default="",
+                    help="Episode-first investment production: exact full Episode underlying --frozen-cjo; used to bind the reader component bridge before the first writer read")
     args = ap.parse_args(argv)
     try:
         repair_chapters = tuple(
@@ -4207,6 +4268,7 @@ def main(argv: list[str] | None = None) -> int:
             review_return=args.review_return,
             frozen_cjo=args.frozen_cjo,
             current_company_cjo_admission=args.current_company_cjo_admission,
+            enterprise_underwriting_episode=args.enterprise_underwriting_episode,
         )
         print(f"\n📄 {report_path}")
         return 0

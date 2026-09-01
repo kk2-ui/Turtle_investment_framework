@@ -1,0 +1,107 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:002705:20181231:A10",
+  "company_id": "CN:002705",
+  "company_name": "广东新宝电器股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "At the 2018-12-31 cutoff, assess whether the appliance export platform can sustain normalized earnings and convert them into ordinary-shareholder cash while financing expansion without permanent per-share value erosion.",
+  "underwriting_route": "Evidence-led enterprise underwriting: mature earning power is primary; owner-cash accessibility and growth-capital returns are conditional and kept on separate routes.",
+  "situation_model": {
+    "summary": "The company is a diversified small-appliance designer, manufacturer and exporter. Revenue and adjusted profit grew through 2017, but raw-material inflation, FX exposure, working-capital absorption and rising long-lived-asset spending create a mixed cash-normalization picture.",
+    "industry_future_thesis": {
+      "horizon": "2019-2022 operating cycle",
+      "most_likely_regime": "Competitive global appliance sourcing remains scale-driven with customer bargaining power and input-cost/FX pass-through pressure; innovation and automation can defend share but do not assure returns.",
+      "profit_pool_transmission": "Profit pools accrue to suppliers that combine design, certification, tooling and reliable mass production; bargaining power and material-cost changes transmit quickly to margins, while export concentration transmits FX and demand risk.",
+      "company_exposure": "New Bao derives 88.06% of FY2015 sales internationally and nearly all revenue from small appliances, exposing the enterprise to overseas demand, currency and customer concentration; the FY2015 top-five customers were 38.21% of sales, while later percentages are unknown.",
+      "adaptation": "The disclosed adaptation is broader product lines, innovation mix, automation and integrated market/design/tooling/certification/production services. These support position, but cohort-level economics and cash absorption are not separately disclosed.",
+      "normal_economics": "Mature economics are evidenced by positive adjusted net profit of RMB272m, RMB412m and RMB382m in FY2015-2017 and strong but volatile operating cash flow; a conservative base therefore uses a bounded mature range, with growth returns conditional.",
+      "permanent_loss": "Permanent loss can arise from sustained input/FX margin pressure, working-capital or capex absorption, inaccessible subsidiary cash and low-return retention even if solvency remains intact.",
+      "valuation_treatment": "Use a price-free mature owner-cash route as primary. Keep growth-capital return and cash-accessibility effects conditional or scenario-only until matched return and distribution evidence is available; do not combine routes.",
+      "strongest_rival": "A scaled appliance OEM rival with comparable design and manufacturing capability but more diversified geographies, customers and lower capital absorption could retain the same profit pool with less FX, concentration and financing risk.",
+      "reversal_observations": [
+        "Post-cutoff reports show stable or improving gross margin despite raw-material inflation and FX movement, with operating cash tracking adjusted earnings.",
+        "Disclosures reconcile subsidiary ownership, restrictions and repeated upstream distributions so consolidated cash accessibility to ordinary shareholders is evidenced.",
+        "Growth projects or acquisitions disclose matched customer adoption, unit economics, working-capital absorption and cumulative cash returns on the same responsibility unit."
+      ]
+    }
+  },
+  "business_position": "Scale, integrated engineering and manufacturing capabilities, broad product coverage and export relationships provide a credible position, but the disclosed evidence does not isolate customer-level pricing power or product-cohort returns.",
+  "survival_case": "Positive operating cash flow in each disclosed year, substantial cash balances and access to public financing support near-term survival. Restricted cash, working-capital requirements and long-lived-asset spending remain financing considerations; undisclosed debt detail is not assumed to be zero.",
+  "adaptation_case": "Product-line expansion, innovation, automation and bundled design-to-production services are plausible defenses of the profit pool. They are underwritten as capability and position evidence, not as proof of incremental return without cohort-level adoption and cash data.",
+  "normalization_case": "Use FY2015-2017 attributable adjusted profit (RMB272.4m, RMB412.4m, RMB382.1m) as the observed mature anchor and retain a bounded RMB300m-RMB430m normal-earnings range. FY2017 margin pressure from raw materials and FX, and volatile operating cash, argue against a single-point estimate.",
+  "permanent_loss_map": "Principal paths are durable margin erosion from materials/FX and customer bargaining, cash absorption by inventory/receivables and long-lived assets, low-return retention in new projects or acquisitions, and incomplete evidence of ordinary-shareholder access to consolidated cash. These are conditional paths rather than insolvency claims.",
+  "value_route": {
+    "primary_routes": ["ROUTE:CORE_OWNER_CASH"],
+    "excluded_routes": ["ROUTE:GROWTH_OPTION", "ROUTE:LIQUIDATION"],
+    "route_reasoning": "The mature operating franchise and its owner-cash conversion are the only currently supportable primary route. Growth-option and liquidation routes lack matched incremental-return or realization evidence and remain excluded/scenario routes.",
+    "valuation_model_roles": {
+      "primary": ["ROUTE:CORE_OWNER_CASH"],
+      "corroborative": [],
+      "stress": []
+    },
+    "route_component_requirements": [
+      {"route_id":"ROUTE:CORE_OWNER_CASH","required_component_ids":["CORE_MATURE"],"optional_component_ids":["CASH_ACCESSIBILITY","FINANCING_PRESSURE"]},
+      {"route_id":"ROUTE:GROWTH_OPTION","required_component_ids":["GROWTH_CAPITAL"],"optional_component_ids":[]},
+      {"route_id":"ROUTE:LIQUIDATION","required_component_ids":["CASH_ACCESSIBILITY"],"optional_component_ids":[]}
+    ]
+  },
+  "strongest_rival": "A scaled appliance OEM rival with comparable design and manufacturing capability but more diversified geographies, customers and lower capital absorption could retain the same profit pool with less FX, concentration and financing risk.",
+  "reversal_observations": [
+    "Post-cutoff reports show stable or improving gross margin despite raw-material inflation and FX movement, with operating cash tracking adjusted earnings.",
+    "Disclosures reconcile subsidiary ownership, restrictions and repeated upstream distributions so consolidated cash accessibility to ordinary shareholders is evidenced.",
+    "Growth projects or acquisitions disclose matched customer adoption, unit economics, working-capital absorption and cumulative cash returns on the same responsibility unit."
+  ],
+  "component_treatments": [
+    {"component_id":"CORE_MATURE","treatment":"UNDERWRITE","reason":"Three years of adjusted profit and operating cash establish an observable mature appliance manufacturing engine, though cyclicality remains.","investment_consequence":"Forms the base normal-earnings and primary owner-cash route; retain a range rather than a point estimate.","promotion_or_resolution_condition":"Maintain base status while audited adjusted earnings and operating cash remain positive through a cycle.","evidence_ids":["E1","E2","E3"]},
+    {"component_id":"GROWTH_CAPITAL","treatment":"CONDITIONALLY_UNDERWRITE","reason":"Automation, product expansion, technical projects and the 2017 acquisition are disclosed, but matched cohort returns and full capital absorption are not.","investment_consequence":"Conditional normal-earnings/owner-cash contribution only; growth option route excluded from base.","promotion_or_resolution_condition":"Promote only after same-unit customer adoption, unit economics, working-capital absorption and cumulative cash return are disclosed.","evidence_ids":["E4","E5"]},
+    {"component_id":"CASH_ACCESSIBILITY","treatment":"CONDITIONALLY_UNDERWRITE","reason":"Consolidated cash is material, but restrictions, subsidiary ownership changes and upstream realization are not fully mapped.","investment_consequence":"Conditional owner-cash and permanent-loss factor; do not count consolidated cash as fully accessible.","promotion_or_resolution_condition":"Resolve with entity-level ownership, restrictions, taxes and repeated ordinary-shareholder distributions.","evidence_ids":["E6","E7"]},
+    {"component_id":"FINANCING_PRESSURE","treatment":"UNDERWRITE","reason":"Long-lived-asset spending, working capital and restricted cash are directly disclosed and affect current financing pressure even though debt balances are incomplete.","investment_consequence":"Raises monitoring of cash conversion and financing needs; not a normal-earnings input.","promotion_or_resolution_condition":"Reassess when total debt, maturities and post-spend operating cash are disclosed across a full cycle.","evidence_ids":["E8","E9"]}
+  ],
+  "evidence_trace": [
+    {"evidence_id":"E1","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015-FY2017 p.6 tables","scope":"Consolidated revenue, attributable net profit and adjusted net profit","used_for":"CORE_MATURE normalized earnings baseline"},
+    {"evidence_id":"E2","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015-FY2017 p.6 tables","scope":"Operating cash flow across three years","used_for":"CORE_MATURE cash conversion and volatility"},
+    {"evidence_id":"E3","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 pp.10-11; FY2016 pp.9-10; FY2017 p.9","scope":"Product mix, export exposure and integrated OEM capabilities","used_for":"Business position and industry exposure"},
+    {"evidence_id":"E4","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2016 p.10; FY2017 p.10","scope":"Innovation, automation, product-line expansion and input/FX explanations","used_for":"Growth adaptation and margin risk"},
+    {"evidence_id":"E5","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 pp.18-20; FY2017 pp.21-23,96,163-165","scope":"Technical projects, non-public financing and acquisition cash payment","used_for":"GROWTH_CAPITAL conditional treatment"},
+    {"evidence_id":"E6","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015-FY2017 pp.87-96","scope":"Cash balances and long-lived-asset spending","used_for":"Cash accessibility and financing context"},
+    {"evidence_id":"E7","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015-FY2017 pp.116,121,125; FY2015 pp.151-154; FY2016 p.159; FY2017 pp.164-166","scope":"Restricted cash and subsidiary ownership/consolidation changes","used_for":"CASH_ACCESSIBILITY ownership and restriction uncertainty"},
+    {"evidence_id":"E8","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015-FY2017 pp.78-96","scope":"Receivables, inventory, payables and capital spending","used_for":"FINANCING_PRESSURE working-capital and capex load"},
+    {"evidence_id":"E9","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015 p.13; FY2016/FY2017 customer fields","scope":"Customer concentration evidence and later unknown fields","used_for":"Concentration risk sensitivity input"},
+    {"evidence_id":"E10","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2017 p.10","scope":"Management attribution of raw-material and FX pressure","used_for":"Sensitivity magnitude observation","sensitivity_magnitude_observation":{"component_ids":["CORE_MATURE"],"responsibility_boundary":"Consolidated mature appliance manufacturing perimeter FY2017","driver_metric":"raw-material and FX pressure","driver_unit":"qualitative margin pressure","horizon":"one fiscal year","affected_axes":["normal_earnings","owner_cash"],"delta_unit":"RMB","calculation_inputs":["E10"]}}
+  ],
+  "existing_object_refs": [
+    {"kind":"SOURCE_PACKAGE","ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002705_PRE_CUTOFF_SOURCE_PACKAGE.md","role":"Cutoff primary source package"}
+  ],
+  "underwriting_thesis": {
+    "thesis_id":"THESIS:CN002705:A10",
+    "central_path":"A scaled, integrated export appliance platform supports a bounded mature earnings base, but owner cash and growth value depend on unresolved accessibility and incremental-return evidence; input/FX and working-capital pressure are the main permanent-loss paths.",
+    "normal_earnings_treatment":"BASE_RANGE for CORE_MATURE using a conservative FY2015-2017 adjusted-profit range; growth contributions remain conditional.",
+    "owner_cash_treatment":"Base owner cash follows operating cash less economic maintenance needs conceptually, with total long-lived-asset spending and cash accessibility treated separately and conditionally.",
+    "permanent_loss_treatment":"Monitor slow value destruction from margin erosion, cash absorption, inaccessible cash and low-return retention; survival alone does not clear these paths.",
+    "value_route_treatment":"Primary route is mature core owner cash. Growth-option and liquidation routes are excluded until their realization mechanisms are evidenced.",
+    "economic_directions":{"normal_earnings":"MIXED","owner_cash":"MIXED","permanent_loss":"MIXED"},
+    "strongest_rival":"A scaled appliance OEM rival with comparable design and manufacturing capability but more diversified geographies, customers and lower capital absorption could retain the same profit pool with less FX, concentration and financing risk.",
+    "monitoring":"Track gross margin versus raw materials and FX, operating cash versus adjusted earnings, receivable/inventory absorption, restricted-cash and subsidiary distributions, and matched returns on automation, projects and acquisitions."
+  },
+  "investment_treatment":"Research-only pre-outcome treatment: underwrite mature core economics in a bounded range; conditionally underwrite cash accessibility and growth returns; keep action, price and return outputs absent.",
+  "component_decisions":[
+    {"component_id":"CORE_MATURE","economic_scope":"MATURE_CORE_NORMAL_EARNINGS","normal_earnings_use":"BASE_RANGE","owner_cash_use":"BASE_RANGE","financing_pressure_effect":"NEUTRAL","permanent_loss_use":"BASE_PATH","valuation_use":"PRIMARY_INPUT","valuation_route_bindings":[{"route_id":"ROUTE:CORE_OWNER_CASH","use":"PRIMARY_INPUT"}],"promotion_test":"Sustain positive adjusted earnings and operating cash through adverse input and FX periods.","invalidation_test":"Multi-year deterioration in mature margins or cash conversion not explained by temporary working capital."},
+    {"component_id":"GROWTH_CAPITAL","economic_scope":"GROWTH_CAPITAL_RETURN","normal_earnings_use":"CONDITIONAL_RANGE","owner_cash_use":"CONDITIONAL_RANGE","financing_pressure_effect":"INCREASES","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"SCENARIO_ONLY","valuation_route_bindings":[{"route_id":"ROUTE:GROWTH_OPTION","use":"SCENARIO_ONLY"}],"promotion_test":"Disclose matched cohort adoption, unit economics, capital absorption and cumulative cash return.","invalidation_test":"Projects or acquisitions consume capital without responsibility-matched earnings or cash evidence."},
+    {"component_id":"CASH_ACCESSIBILITY","economic_scope":"ORDINARY_SHARE_OWNER_CASH","normal_earnings_use":"NOT_APPLICABLE","owner_cash_use":"CONDITIONAL_RANGE","financing_pressure_effect":"CONDITIONAL","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"CORROBORATIVE_INPUT","valuation_route_bindings":[{"route_id":"ROUTE:CORE_OWNER_CASH","use":"CORROBORATIVE_INPUT"},{"route_id":"ROUTE:LIQUIDATION","use":"EXCLUDED"}],"promotion_test":"Entity-level ownership, restrictions, taxes and repeated distributions reconcile consolidated cash to ordinary shareholders.","invalidation_test":"Restrictions, minority claims or non-distribution persist such that accessibility cannot be bounded."},
+    {"component_id":"FINANCING_PRESSURE","economic_scope":"SURVIVAL_FINANCING","normal_earnings_use":"NOT_APPLICABLE","owner_cash_use":"NOT_APPLICABLE","financing_pressure_effect":"INCREASES","permanent_loss_use":"STRESS_ONLY","valuation_use":"CORROBORATIVE_INPUT","valuation_route_bindings":[{"route_id":"ROUTE:CORE_OWNER_CASH","use":"CORROBORATIVE_INPUT"}],"promotion_test":"Debt maturities, total spending and post-investment cash conversion are disclosed and remain manageable.","invalidation_test":"Unfunded working-capital or capex needs force dilution, distress financing or impairment of the core engine."}
+  ],
+  "economic_derivation": {
+    "schema_version":"enterprise-underwriting-economic-derivation.v1",
+    "normal_earnings_bridge": {
+      "basis":{"metric":"attributable adjusted net profit","currency":"RMB","unit":"RMB million","tax_basis":"after tax attributable","earnings_claim_scope":"Consolidated mature appliance operations","operating_perimeter":"FY2015-FY2017 disclosed consolidated perimeter","as_of":"2018-12-31"},
+      "rows":[
+        {"row_id":"ROW:REFERENCE_CORE","component_id":"CORE_MATURE","row_role":"REFERENCE_EARNINGS","direction":"ADD","quantification":{"status":"BOUNDED","range_low":300,"range_high":430},"evidence_ids":["E1"],"economic_reason":"Observed adjusted profits span RMB272m-RMB412m; range is widened conservatively for cyclical input and FX effects."},
+        {"row_id":"ROW:GROWTH_CONDITIONAL","component_id":"GROWTH_CAPITAL","row_role":"NORMALIZATION_ADJUSTMENT","direction":"ADD","quantification":{"status":"UNKNOWN","reason":"Project and acquisition-level incremental earnings are not separately disclosed.","conservative_treatment":"Exclude from base range; assess only as a conditional scenario after matched return evidence."},"evidence_ids":["E4","E5"],"economic_reason":"Implementation and financing prove activity, not mature economic return."}
+      ]
+    },
+    "driver_sensitivity_specs":[
+      {"sensitivity_id":"SENS:RAW_MATERIAL_FX","component_ids":["CORE_MATURE"],"metric":"raw-material and FX pressure","unit":"qualitative margin pressure","horizon":"one fiscal year","input_cases":{"mode":"LOW_BASE_HIGH","low":{"value_or_range":{"value":-1},"basis":"Lower pressure case; management attributes FY2017 cost and FX effects.","evidence_ids":["E10"]},"base":{"value_or_range":{"value":0},"basis":"No incremental pressure assumption.","evidence_ids":["E10"]},"high":{"value_or_range":{"value":1},"basis":"Higher pressure case consistent with disclosed FY2017 headwinds.","evidence_ids":["E10"]}},"transmission":{"normal_earnings":{"status":"UNKNOWN","basis":"The reports identify raw-material and FX headwinds but do not quantify responsibility-matched margin deltas.","delta":{"status":"UNKNOWN","reason":"No quantified margin bridge by product/customer is disclosed.","conservative_treatment":"Do not assign a numeric earnings adjustment; retain bounded base range."}},"owner_cash":{"status":"UNKNOWN","basis":"Input and FX effects transmit through earnings and working capital, but cash magnitude is not disclosed.","delta":{"status":"UNKNOWN","reason":"No quantified cash conversion delta is disclosed.","conservative_treatment":"Keep owner-cash effect conditional and monitor operating cash conversion."}},"valuation_route_ids":["ROUTE:CORE_OWNER_CASH"]},"reversal_observation_refs":["#/reversal_observations/0"],"responsibility_boundary":"Consolidated mature appliance manufacturing perimeter; FY2017 raw-material and FX exposure."}
+    ]
+  }
+}

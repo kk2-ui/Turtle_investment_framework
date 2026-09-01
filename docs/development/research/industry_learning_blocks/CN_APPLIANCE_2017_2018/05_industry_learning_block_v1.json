@@ -1,0 +1,210 @@
+{
+  "schema_version": "industry-learning-block.v1",
+  "block_id": "ILB:CN:APPLIANCE_CONSUMER_DURABLES:2017_2018:V1",
+  "industry_id": "CN_APPLIANCE_CONSUMER_DURABLES",
+  "competitive_arena_id": "ARENA:CN:APPLIANCE:WHITE_GOODS_AND_CHANNEL_SYSTEM",
+  "history_series_ref": {
+    "series_id": "HISTORY_SERIES:CN:APPLIANCE:2017_2018:CUTOFF_SAFE:V1",
+    "h1_receipt_ref": {
+      "receipt_id": "SOURCE_REGISTER:CN:APPLIANCE:NATIONAL:V1",
+      "receipt_version": 1
+    }
+  },
+  "cutoffs": [
+    "2017-04-30T23:59:59+08:00",
+    "2018-09-30T23:59:59+08:00"
+  ],
+  "industry_epoch_map": [
+    {
+      "epoch_id": "EPOCH:CN:APPLIANCE:FY2016_DISCLOSURE:C1",
+      "cutoff_at": "2017-04-30T23:59:59+08:00",
+      "statement": "The initial cutoff-safe panel contains four listed-consolidated issuers with recorded FY2016 statutory reports spanning room air conditioning, refrigeration/washing and multi-category appliance systems; this is a source-coverage state, not a peer-performance ranking.",
+      "status": "OBSERVED",
+      "evidence_refs": [
+        "CNINFO:000651:ANN:20170427:1203403930",
+        "CNINFO:000333:ANN:20170330:1203240657",
+        "CNINFO:600690:ANN:20170429:1203428901",
+        "CNINFO:000921:ANN:20170330:1203223381"
+      ]
+    },
+    {
+      "epoch_id": "EPOCH:CN:APPLIANCE:FY2017_DISCLOSURE:C2",
+      "cutoff_at": "2018-09-30T23:59:59+08:00",
+      "statement": "At the later cutoff, FY2017 statutory reports remain available for the diversified appliance, refrigeration/washing and dual white-goods issuer boundaries; cross-company comparison still requires product, customer, channel and accounting-boundary matching.",
+      "status": "OBSERVED",
+      "evidence_refs": [
+        "CNINFO:000333:ANN:20180330:1204557296",
+        "CNINFO:600690:ANN:20180426:1204797433",
+        "CNINFO:000921:ANN:20180330:1204544098"
+      ]
+    }
+  ],
+  "company_cluster_map": [
+    {"company_id": "CN:000333", "company_cluster_id": "COMPANY_CLUSTER:CN:APPLIANCE:000333"},
+    {"company_id": "CN:000651", "company_cluster_id": "COMPANY_CLUSTER:CN:APPLIANCE:000651"},
+    {"company_id": "CN:600690", "company_cluster_id": "COMPANY_CLUSTER:CN:APPLIANCE:600690"},
+    {"company_id": "CN:000921", "company_cluster_id": "COMPANY_CLUSTER:CN:APPLIANCE:000921"}
+  ],
+  "e1_selection_rule": {
+    "selection_rule_id": "SEL:CN:APPLIANCE:PACK_SIDE:V1",
+    "criterion": "CUTOFF_VISIBLE_MULTI_ARENA_REFERENCE_CLASS_WITH_EXPLICIT_BOUNDARY_LIMITS",
+    "prohibited_selection_inputs": "POST_CUTOFF_RESULTS_OR_EASE_OF_PASSING"
+  },
+  "model_memory_status": "PACK_SIDE_CONTEXT_ONLY",
+  "mechanism_arenas": [
+    {
+      "arena_id": "ARENA:CN:APPLIANCE:ROOM_AIR_CONDITIONING",
+      "mechanism": "Seasonal room-air-conditioner demand reaches manufacturers through product mix, manufacturing, channel and installation interfaces.",
+      "economic_scope": "NATIONAL_CATEGORY_WITH_CHANNEL_AND_REGIONAL_VARIATION",
+      "customer_task": "Household cooling and replacement demand served through distributors, retail and installation systems.",
+      "value_driver": "Product/category exposure, channel absorption, realised price/mix, unit cost and working-capital conversion.",
+      "failure_mode": "Industry production or broad retail growth can diverge from company sell-out, inventory, price capture and cash conversion.",
+      "profit_pool_direction": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+      "evidence_refs": ["CNINFO:000651:ANN:20170427:1203403930", "CNINFO:000921:ANN:20170330:1203223381"]
+    },
+    {
+      "arena_id": "ARENA:CN:APPLIANCE:REFRIGERATION_AND_WASHING",
+      "mechanism": "Replacement-oriented refrigeration and washing demand is mediated by product freshness, channel/service execution, manufacturing cost and broader portfolio perimeter.",
+      "economic_scope": "NATIONAL_WHITE_GOODS_WITH_PRODUCT_AND_CHANNEL_HETEROGENEITY",
+      "customer_task": "Household storage and laundry needs served by product, distribution, delivery and after-sales systems.",
+      "value_driver": "Category mix, product-cycle fit, service/logistics performance, cost and reinvestment requirements.",
+      "failure_mode": "A consolidated issuer's reported movement may reflect multi-business scope or acquisition/perimeter changes rather than a common white-goods mechanism.",
+      "profit_pool_direction": "REQUIRES_COMPANY_TRANSMISSION_VERIFICATION",
+      "evidence_refs": ["CNINFO:000333:ANN:20180330:1204557296", "CNINFO:600690:ANN:20180426:1204797433", "CNINFO:000921:ANN:20180330:1204544098"]
+    },
+    {
+      "arena_id": "ARENA:CN:APPLIANCE:MULTI_CATEGORY_AND_PERIMETER",
+      "mechanism": "Multi-category product, channel, service and consolidation boundaries can alter consolidated profit and cash independently of any single appliance category.",
+      "economic_scope": "LISTED_CONSOLIDATED_ISSUER_WITH_PRODUCT_BOUNDARY_REQUIRED",
+      "customer_task": "Not a homogeneous product-market claim; it records why issuer-level results need product and perimeter bridges.",
+      "value_driver": "Comparable responsibility boundary before inferring normal earnings, capital needs or owner-cash transmission.",
+      "failure_mode": "Group cash, revenue or margin can be misattributed to a white-goods category without a product/perimeter bridge.",
+      "profit_pool_direction": "BOUNDARY_QUALIFIED",
+      "evidence_refs": ["CNINFO:000333:ANN:20180330:1204557296", "CNINFO:600690:ANN:20180426:1204797433"]
+    }
+  ],
+  "company_archetype_map": [
+    {
+      "company_id": "CN:000651",
+      "company_name": "格力电器",
+      "archetype_id": "ARCHETYPE:ROOM_AC_CHANNEL_COMPONENT_MANUFACTURING_SYSTEM",
+      "condition": "The registered FY2016 issuer packet identifies a room-air-conditioner, channel, component and manufacturing-system research boundary; product sell-through, inventory and owner-cash conversion are not established by the block.",
+      "evidence_refs": ["CNINFO:000651:ANN:20170427:1203403930"],
+      "boundary_status": "PRODUCT_AND_CASH_TRANSMISSION_PENDING"
+    },
+    {
+      "company_id": "CN:000333",
+      "company_name": "美的集团",
+      "archetype_id": "ARCHETYPE:MULTI_CATEGORY_CHANNEL_AND_SUPPLY_CHAIN_SYSTEM",
+      "condition": "The registered FY2016–FY2017 issuer packets identify room air conditioning, refrigeration/washing and a multi-category channel/supply-chain boundary; acquisition and group-perimeter effects remain a required competing explanation.",
+      "evidence_refs": ["CNINFO:000333:ANN:20170330:1203240657", "CNINFO:000333:ANN:20180330:1204557296"],
+      "boundary_status": "MULTI_BUSINESS_AND_ACQUISITION_SCOPE_QUALIFIED"
+    },
+    {
+      "company_id": "CN:600690",
+      "company_name": "青岛海尔",
+      "archetype_id": "ARCHETYPE:REFRIGERATION_WASHING_SERVICE_AND_LOGISTICS_SYSTEM",
+      "condition": "The registered FY2016–FY2017 issuer packets identify refrigeration/washing, service and logistics mechanisms at the listed-consolidated boundary; global-acquisition and financing effects remain outside a domestic-appliance owner-cash conclusion.",
+      "evidence_refs": ["CNINFO:600690:ANN:20170429:1203428901", "CNINFO:600690:ANN:20180426:1204797433"],
+      "boundary_status": "GLOBAL_AND_LISTED_CONSOLIDATED_SCOPE_QUALIFIED"
+    },
+    {
+      "company_id": "CN:000921",
+      "company_name": "海信科龙",
+      "archetype_id": "ARCHETYPE:DUAL_WHITE_GOODS_PRODUCT_COST_AND_INVENTORY_SYSTEM",
+      "condition": "The registered FY2016–FY2017 issuer packets identify room-air-conditioner and refrigeration/washing product, cost and inventory research threads; the block does not establish a same-boundary financing stress or owner-cash conclusion.",
+      "evidence_refs": ["CNINFO:000921:ANN:20170330:1203223381", "CNINFO:000921:ANN:20180330:1204544098"],
+      "boundary_status": "PRODUCT_AND_FINANCING_TRANSMISSION_PENDING"
+    }
+  ],
+  "decision_heterogeneity_matrix": [
+    {
+      "company_id": "CN:000651",
+      "company_conditions": "Room-air-conditioner exposure is recorded with channel, component and manufacturing interfaces.",
+      "feasible_alternatives": "Aggregate production can be absorbed differently across company channels and inventory positions.",
+      "decision_state": "MECHANISM_CANDIDATE_ONLY",
+      "execution_state": "UNRESOLVED",
+      "adaptation_state": "UNRESOLVED",
+      "external_conditions": "A national room-air-conditioner supply expansion is common context, not evidence of company sell-out or cash conversion.",
+      "evidence_ceiling": "CONTEXT_ONLY"
+    },
+    {
+      "company_id": "CN:000333",
+      "company_conditions": "A diversified appliance and supply-chain boundary is recorded across multiple white-goods arenas.",
+      "feasible_alternatives": "Portfolio/acquisition scope can explain consolidated change without a common product-market advantage.",
+      "decision_state": "MECHANISM_CANDIDATE_ONLY",
+      "execution_state": "UNRESOLVED",
+      "adaptation_state": "UNRESOLVED",
+      "external_conditions": "Broad retail growth does not settle category or channel capture at a multi-business issuer.",
+      "evidence_ceiling": "CONTEXT_ONLY"
+    },
+    {
+      "company_id": "CN:600690",
+      "company_conditions": "Refrigeration/washing, service and logistics interfaces are recorded at a global listed-consolidated boundary.",
+      "feasible_alternatives": "Global acquisition and financing effects can alter reported results independently of domestic white-goods transmission.",
+      "decision_state": "MECHANISM_CANDIDATE_ONLY",
+      "execution_state": "UNRESOLVED",
+      "adaptation_state": "UNRESOLVED",
+      "external_conditions": "Industry profit-pool growth may reach service/logistics systems differently from manufacturing-only exposure.",
+      "evidence_ceiling": "CONTEXT_ONLY"
+    },
+    {
+      "company_id": "CN:000921",
+      "company_conditions": "Dual white-goods product, cost and inventory research threads are recorded at the issuer boundary.",
+      "feasible_alternatives": "Reported category context cannot distinguish product/customer absorption from inventory or cost transmission.",
+      "decision_state": "MECHANISM_CANDIDATE_ONLY",
+      "execution_state": "UNRESOLVED",
+      "adaptation_state": "UNRESOLVED",
+      "external_conditions": "A common supply/retail environment can create category exposure without a common cash or permanent-loss path.",
+      "evidence_ceiling": "CONTEXT_ONLY"
+    }
+  ],
+  "conditional_mechanism_synthesis": [
+    {
+      "synthesis_id": "SYN:CN:APPLIANCE:COMMON_ENVIRONMENT_DIFFERENT_TRANSMISSION",
+      "when": "Official context records broad retail growth, differing category production growth and aggregate industry profit-pool expansion before the Pack cutoff.",
+      "decision": "Industry context may frame a future thesis, but no issuer receives a common performance conclusion.",
+      "mechanism": "Broad retail, category production and aggregate profitability enter companies through different product portfolios, channels, service systems, cost/inventory positions and responsibility boundaries.",
+      "observed_as": "A source-backed research agenda for company-specific demand, price/mix, cost, working-capital, capital and owner-cash verification.",
+      "unless": "A same-period, same-product and same-responsibility-boundary company bridge establishes the required transmission.",
+      "counterexamples": "Industry production, retail, revenue or profit growth may coexist with weak company sell-through, channel absorption, cash conversion or product-boundary comparability.",
+      "evidence_ceiling": "CONTEXT_ONLY",
+      "evidence_refs": [
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_PRODUCTION",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL",
+        "INDCTXOBS:CN:APPLIANCE:2018_1_11_RETAIL_AND_ONLINE"
+      ]
+    }
+  ],
+  "unresolved_questions": [
+    {
+      "question_id": "AGENDA:CN:APPLIANCE:COMPANY_TRANSMISSION",
+      "question": "Which product/category, channel, realised-price or mix, unit-cost and working-capital fields show whether the official common environment enters this issuer's normal earnings and owner-cash path?",
+      "materiality": "Without a same-boundary bridge, industry context cannot change normal earnings, owner cash, permanent-loss or valuation treatment.",
+      "next_evidence": "Cutoff-safe annual-report or official disclosure locators for product/category exposure, customer/channel interface, operating/cash flow and capital/perimeter bridge.",
+      "status": "OPEN",
+      "evidence_refs": ["INDCTXOBS:CN:APPLIANCE:2018_1_9_SALES_RATE_AND_PROFIT_POOL"]
+    },
+    {
+      "question_id": "AGENDA:CN:APPLIANCE:PRODUCT_AND_PERIMETER_COMPARABILITY",
+      "question": "Can the company product arena and responsibility boundary be held constant across the relevant period, especially for diversified or globally consolidated issuers?",
+      "materiality": "A scope break can turn group movement into a false company or industry transmission signal.",
+      "next_evidence": "Product/segment disclosure, acquisition/control bridge and same-boundary cash/capital fields.",
+      "status": "OPEN",
+      "evidence_refs": ["CNINFO:000333:ANN:20180330:1204557296", "CNINFO:600690:ANN:20180426:1204797433"]
+    }
+  ],
+  "next_sampling_decision": {
+    "decision": "Use a later test issuer only after the Pack stays separated from its identity and the target packet can answer the same company-transmission and boundary questions without importing Pack-side facts.",
+    "rationale": "The next case must discriminate whether the common environment changes a new company's economic treatment, rather than reward source familiarity or generic industry prose.",
+    "next_company_cutoff_refs": ["CN:APPLIANCE:UNSEEN_ISSUER@2018-12-31", "INDUSTRY:CN_APPLIANCE_CONSUMER_DURABLES@POST_2018_TIME_HOLDOUT"]
+  },
+  "roles": {
+    "judgment_owner_id": "ROLE:CN:APPLIANCE:PACK_JUDGMENT_OWNER",
+    "independent_challenger_id": "ROLE:CN:APPLIANCE:PACK_INDEPENDENT_CHALLENGER",
+    "outcome_custodian_id": "ROLE:CN:APPLIANCE:PACK_OUTCOME_CUSTODIAN"
+  },
+  "object_class": "INDUSTRY_LEARNING_BLOCK",
+  "claim_class": "CONDITIONAL_INDUSTRY_CONTEXT_AND_RESEARCH_AGENDA",
+  "allowed_outputs": ["INDUSTRY_CONTEXT", "TEACHING_ONLY", "MECHANISM_CANDIDATE", "RESEARCH_AGENDA"]
+}

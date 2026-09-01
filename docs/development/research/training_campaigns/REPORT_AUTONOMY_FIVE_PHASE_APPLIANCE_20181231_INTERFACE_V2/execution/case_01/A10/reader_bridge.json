@@ -1,0 +1,81 @@
+{
+  "bridge_id": "EUCRB:UWEP:CN000016:20181231:A10",
+  "component_anchors": [
+    {
+      "anchor_id": "COMPONENT:1",
+      "text": "The package identifies the operating businesses and reports consolidated adjusted attributable losses, but it does not allocate earnings, operating cash flow, working capital, capital spending, or debt across the continuing components. 因此，Continuing operations can support only a conditional route and cannot supply a base numerical normal-earnings range. 需要重估这一处理的条件是：Official responsibility-matched disclosures show sustained component earnings and cash conversion through a normal operating cycle. 该组件的权威经济去向为：正常盈利只进入条件范围；普通股现金只进入条件范围；对融资压力的影响取决于条件；永久损失进入基准永久损失路径；估值只作为条件性主要估值输入。晋级检验：Disclose and demonstrate responsibility-matched recurring earnings and cash conversion for the continuing operating perimeter. 失效检验：Continuing operations remain loss-making or consume cash after responsibility-matched working-capital movements over a normal cycle."
+    },
+    {
+      "anchor_id": "COMPONENT:2",
+      "text": "Consolidated operating cash flow deteriorated to a FY2017 outflow that the report attributes to higher receivables and unexpired notes; inventory and short-term borrowing also rose across the reported periods. 因此，This component is a conditional owner-cash and financing-pressure input to the continuing-operations route, rather than proof of a normalized owner-cash amount. 需要重估这一处理的条件是：Official disclosures reconcile continuing-component receivables, inventory, debt, and operating cash through a sustained cash-conversion period. 该组件的权威经济去向为：正常盈利不适用；普通股现金只进入条件范围；增加融资压力；永久损失进入基准永久损失路径；估值只作为条件性主要估值输入。晋级检验：Reconcile receivables, inventory, financing, and operating cash to continuing components and demonstrate sustained conversion without debt dependence. 失效检验：Receivable or inventory absorption and refinancing needs continue to rise relative to continuing operating cash generation."
+    },
+    {
+      "anchor_id": "COMPONENT:3",
+      "text": "FY2017 investment income of RMB 6.5878 billion from disposal of 70% of 康侨佳城 was identified in the annual report as non-sustainable, while disposal cash is a transaction-specific cash-flow fact. 因此，The disposal is removed from recurring earnings and owner-cash treatment; it may be monitored only as a nonrecurring liquidity event. 需要重估这一处理的条件是：A separate, disclosed recurring operating claim replaces the disposed-item gain without relying on sale proceeds. 该组件的权威经济去向为：正常盈利排除；普通股现金排除；对融资压力的影响取决于条件；永久损失进入条件性永久损失路径；估值排除。晋级检验：A separately evidenced recurring economic stream, rather than the sale proceeds, establishes a continuing owner-cash claim. 失效检验：The case uses the disposal gain or disposal cash as recurring earnings or recurring owner cash."
+    },
+    {
+      "anchor_id": "COMPONENT:4",
+      "text": "The annual report names property and industrial-park projects and certain group investment amounts, but does not attribute project cash spending, financing, incremental earnings, or owner cash to the television/display or other operating components. 因此，Growth retention cannot enter normal earnings, owner cash, or a primary route until matched capital-and-return evidence exists. 需要重估这一处理的条件是：Official project reporting matches invested capital and financing to subsequent incremental earnings, cash conversion, and ordinary-share owner cash by responsibility boundary. 该组件的权威经济去向为：正常盈利尚未形成可承保范围；普通股现金尚未形成可承保范围；对融资压力的影响取决于条件；永久损失进入条件性永久损失路径；估值尚未形成可承保范围。晋级检验：Match project-by-project capital, financing, incremental earnings, and ordinary-share owner cash within a disclosed responsibility boundary. 失效检验：Material project capital remains unmatched to subsequent incremental earnings or cash while financing pressure persists."
+    }
+  ],
+  "economic_section_anchors": [
+    {
+      "anchor_id": "正常盈利组件桥:1",
+      "heading": "正常盈利组件桥",
+      "text": "口径：Consolidated attributable profit after nonrecurring items as the continuing-operations reference；Consolidated continuing operating perimeter; component cash and earnings attribution is not disclosed；截至 2017-12-31；单位 CNY。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:2",
+      "heading": "正常盈利组件桥",
+      "text": "The disclosed consolidated adjusted result is the available reference, but it cannot independently prove sustainable earnings for the mixed continuing perimeter.；数值未知：The package reports adjusted attributable losses for FY2015-FY2017 but does not establish a component-normal earnings cycle or allocate the loss to the continuing operating engines.；保守处理：Do not translate the narrowing adjusted loss into a numerical normal-earnings input; retain only the conditional route.；组件权限：只进入条件范围。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:3",
+      "heading": "正常盈利组件桥",
+      "text": "该组件未获授权进入读者正常盈利数值桥；组件权限：排除。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:4",
+      "heading": "正常盈利组件桥",
+      "text": "该组件未获授权进入读者正常盈利数值桥；组件权限：尚未形成可承保范围。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:5",
+      "heading": "正常盈利组件桥",
+      "text": "基准范围没有获授权的组件。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:6",
+      "heading": "正常盈利组件桥",
+      "text": "含条件项范围仍为未知，因为至少一个纳入项尚不能界定；不得按零补齐。"
+    },
+    {
+      "anchor_id": "关键敏感性与翻转条件:1",
+      "heading": "关键敏感性与翻转条件",
+      "text": "驱动：Consolidated operating cash flow（FY2015-FY2017 historical observations，单位 CNY）；低 -4.31426e+09（FY2017 reported operating cash flow），基准 -9.72136e+08（FY2016 reported operating cash flow），高 1.2896e+09（FY2015 reported operating cash flow）。正常盈利传导（权限：只进入条件范围、不适用）：影响未知：No responsibility-matched earnings, receivable, inventory, or capital data connects the historical consolidated cash cases to a continuing-operations normal-earnings delta.；保守处理：Keep the normal-earnings effect unknown and do not convert the reported cash-flow history into a numerical earnings adjustment.。普通股现金传导（权限：只进入条件范围）：影响未知：The historical cash observations cannot determine the normalized ordinary-share owner-cash range for the required components.；保守处理：Retain conditional owner-cash treatment and require responsibility-matched cash-conversion evidence before assigning a numerical delta.。价值路线权限：只进入条件性价值路线；不在此生成价值、回报或行动数值。翻转证据：Official reporting that shows a responsibility-matched, sustained positive operating-cash conversion for continuing operations after receivable and inventory movements.；Official segment disclosures that allocate continuing earnings, working capital, capital spending, and debt to multimedia, supply-chain, park, and other components."
+    }
+  ],
+  "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_01/A10/enterprise_underwriting_episode.json",
+  "identity": {
+    "company_id": "CN:000016",
+    "cutoff_at": "2018-12-31T23:59:59+08:00",
+    "episode_id": "UWEP:CN000016:20181231:A10",
+    "underwriting_thesis_id": "THESIS:CN000016:CONDITIONAL_CONTINUING_OWNER_CASH"
+  },
+  "reader_requirements": {
+    "all_anchors_must_appear_once": true,
+    "requirement": "The existing report writer must retain every supplied reader-safe anchor once. It may add company-specific explanation but may not promote conditional, excluded, scenario-only, or unresolved component treatment.",
+    "technical_and_reader_surface": true
+  },
+  "schema_version": "enterprise-underwriting-component-reader-bridge.v1",
+  "use_policy": {
+    "cannot_establish": [
+      "NEW_COMPANY_FACT",
+      "VALUATION_PARAMETER",
+      "PRICE",
+      "INVESTMENT_ACTION"
+    ],
+    "episode_remains_authoritative": true,
+    "mode": "READER_REPORT_COMPONENT_ECONOMIC_CONSTRAINT"
+  }
+}

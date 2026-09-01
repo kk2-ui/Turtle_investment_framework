@@ -922,7 +922,7 @@ def test_compile_reader_brief_is_a_one_way_validated_episode_projection(
     assert brief["central_judgment"] == episode["underwriting_thesis"]["central_path"]
 
 
-def test_fresh_task_embeds_one_frozen_episode_schema_for_every_arm() -> None:
+def test_fresh_task_embeds_contract_bound_schema_for_v2_derivation() -> None:
     frozen_schema = json.loads(
         (ROOT / "schemas/enterprise_underwriting_episode_v1.schema.json").read_text(
             encoding="utf-8"
@@ -938,10 +938,14 @@ def test_fresh_task_embeds_one_frozen_episode_schema_for_every_arm() -> None:
             )
         tasks.append(build_fresh_subagent_task(contract))
 
-    delivered_schemas = [
-        task["response_contract"]["episode_json_schema"] for task in tasks
-    ]
-    assert delivered_schemas == [frozen_schema] * 4
+    delivered_schemas = [task["response_contract"]["episode_json_schema"] for task in tasks]
+    assert delivered_schemas[:2] == [frozen_schema] * 2
+    for schema in delivered_schemas[2:]:
+        assert schema["$defs"]["driver_sensitivity_spec"]["required"] == [
+            "sensitivity_id", "component_ids", "metric", "unit", "horizon",
+            "input_cases", "transmission", "reversal_observation_refs",
+            "responsibility_boundary",
+        ]
     assert frozen_schema["properties"]["schema_version"]["const"] == (
         "enterprise-underwriting-episode.v2"
     )
@@ -1003,10 +1007,10 @@ def test_fresh_task_embeds_one_frozen_episode_schema_for_every_arm() -> None:
         "required"
     ]
 
-    response_contract = tasks[0]["response_contract"]
+    response_contract = tasks[2]["response_contract"]
     requirements = "\n".join(response_contract["schema_requirements"])
     assert response_contract["schema_authority"] == (
-        "FROZEN_COMPLETE_EPISODE_JSON_SCHEMA"
+        "CONTRACT_BOUND_EXECUTION_EPISODE_JSON_SCHEMA"
     )
     assert "required" in requirements
     assert "enum and const" in requirements
@@ -1028,11 +1032,43 @@ def test_fresh_task_embeds_one_frozen_episode_schema_for_every_arm() -> None:
         semantic_requirements
     )
     assert "binding uses match route roles" in semantic_requirements
+    assert "Every driver sensitivity itself must include" in tasks[2]["messages"][0]["content"]
     assert "only derives" in semantic_requirements
     assert "does not supply economics" in semantic_requirements
     assert "response_contract.episode_json_schema" in tasks[0]["messages"][0][
         "content"
     ]
+
+
+def test_v2_fresh_task_boundary_requirement_matches_binding_validator() -> None:
+    contract = _blind_contract()
+    contract["economic_derivation_interface"] = deepcopy(
+        ECONOMIC_DERIVATION_INTERFACE
+    )
+    task = build_fresh_subagent_task(contract)
+    required = task["response_contract"]["episode_json_schema"]["$defs"][
+        "driver_sensitivity_spec"
+    ]["required"]
+    assert "responsibility_boundary" in required
+
+    episode = _episode_with_derivation()
+    del episode["economic_derivation"]["driver_sensitivity_specs"][0][
+        "responsibility_boundary"
+    ]
+    missing_boundary = validate_training_episode(contract, episode)["findings"]
+    assert any(
+        item.endswith("responsibility_boundary_required_by_interface_v2")
+        for item in missing_boundary
+    )
+
+    episode["economic_derivation"]["driver_sensitivity_specs"][0][
+        "responsibility_boundary"
+    ] = "Domestic mature cement operations"
+    present_boundary = validate_training_episode(contract, episode)["findings"]
+    assert not any(
+        item.endswith("responsibility_boundary_required_by_interface_v2")
+        for item in present_boundary
+    )
 
 
 def test_schema_conforming_mock_response_passes_existing_fresh_binding(

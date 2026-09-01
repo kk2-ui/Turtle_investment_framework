@@ -1,0 +1,123 @@
+{
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "episode_id": "UWTRAIN:APPLIANCE:000404:20181231:STAGE5:A00:EPISODE",
+  "company_id": "CN:000404",
+  "company_name": "华意压缩机股份有限公司",
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "sample_identity": "BLIND_REPLAY",
+  "decision_frame": "Pre-cutoff enterprise underwriting of operating resilience, financing needs, owner cash and permanent-loss paths; no market price or return assumptions.",
+  "underwriting_route": "Underwrite the established compressor franchise as the reference business, while conditioning non-core acquisitions and unresolved working-capital and financing transmission on later evidence.",
+  "situation_model": {
+    "summary": "Demand spans household and commercial refrigeration, while 2017 profitability fell as raw-material prices rose and inventory and short-term borrowing increased.",
+    "industry_future_thesis": {
+      "horizon": "2018-2023 pre-outcome horizon",
+      "most_likely_regime": "Mature, competitive compressor manufacturing with cyclical input-cost pressure and selective diversification.",
+      "profit_pool_transmission": "Profit pools remain with scaled, reliable compressor suppliers; input inflation and customer mix determine pass-through and margins.",
+      "company_exposure": "The company is a global supplier with HUAYI, JIAXIPERA and CUBIGEL brands, concentrated in compressor production and sales.",
+      "adaptation": "Management is adding efficient/commercial lines, R&D capability and optional businesses (auto parts and cleaning robots), but their economics are not yet separable.",
+      "normal_economics": "Core earnings are exposed to steel and other raw-material costs, volume, mix and working-capital intensity; three-year reported profits provide a noisy reference.",
+      "permanent_loss": "Permanent loss could arise from sustained input-cost non-pass-through, leverage and liquidity stress, or value-destructive diversification and integration.",
+      "valuation_treatment": "Use a price-free primary route anchored to core operating earnings; treat optional businesses and unresolved cash conversion as conditional or scenario inputs.",
+      "strongest_rival": "Scaled global and regional refrigerator-compressor manufacturers with comparable brands, cost positions and customer qualification relationships.",
+      "reversal_observations": [
+        "Post-cutoff official annual reports show whether compressor margins and profit recover despite raw-material costs.",
+        "Post-cutoff official annual reports show whether operating cash conversion, inventory and short-term borrowing normalize."
+      ]
+    }
+  },
+  "business_position": "Design-plus-production-plus-sales model; important supplier to global refrigerator companies with three compressor brands and broad European, American, Southeast Asian and domestic customer coverage.",
+  "survival_case": "2017 operating cash flow was negative while short-term borrowings reached RMB2.021bn and restricted assets were material; survival depends on bank access, inventory discipline and timely customer collections.",
+  "adaptation_case": "Funded projects target R&D, capacity upgrades and efficient/commercial compressor lines; Shanghai V?ile (automotive parts) and Gelanbo (cleaning robots) broaden options but remain small and unallocated by segment.",
+  "normalization_case": "Reference normalized economics to FY2017 attributable net profit after extraordinary items (RMB60.29m) as a bounded baseline, with raw-material pass-through, mix and cash conversion kept conditional.",
+  "permanent_loss_map": "Base path is competitive core manufacturing; conditional loss paths are prolonged cost inflation without pass-through, refinancing/liquidity strain, and failed diversification or integration.",
+  "value_route": {
+    "primary_routes": ["ROUTE:CORE_NORMAL_EARNINGS"],
+    "excluded_routes": ["ROUTE:TRADE_TECH_EXCLUDED"],
+    "route_reasoning": "Only the established compressor franchise has a directly evidenced earnings baseline; optional businesses and unresolved cash commitments cannot authorize a primary value range.",
+    "valuation_model_roles": {
+      "primary": ["ROUTE:CORE_NORMAL_EARNINGS"],
+      "corroborative": [],
+      "stress": ["ROUTE:LIQUIDITY_STRESS"]
+    },
+    "route_component_requirements": [
+      {"route_id": "ROUTE:CORE_NORMAL_EARNINGS", "required_component_ids": ["COMP:CORE_COMPRESSOR"], "optional_component_ids": []},
+      {"route_id": "ROUTE:LIQUIDITY_STRESS", "required_component_ids": ["COMP:WORKING_CAPITAL", "COMP:FINANCING"], "optional_component_ids": []},
+      {"route_id": "ROUTE:TRADE_TECH_EXCLUDED", "required_component_ids": ["COMP:TRADE_TECH"], "optional_component_ids": []},
+      {"route_id": "ROUTE:OPTIONAL_DIVERSIFICATION", "required_component_ids": ["COMP:AUTO_AC", "COMP:CLEANING_ROBOT"], "optional_component_ids": []}
+    ]
+  },
+  "strongest_rival": "Scaled global and regional refrigerator-compressor manufacturers with comparable brands, cost positions and customer qualification relationships.",
+  "reversal_observations": [
+    "Post-cutoff official annual reports show whether compressor margins and profit recover despite raw-material costs.",
+    "Post-cutoff official annual reports show whether operating cash conversion, inventory and short-term borrowing normalize."
+  ],
+  "component_treatments": [
+    {"component_id":"COMP:CORE_COMPRESSOR","treatment":"UNDERWRITE","reason":"Established refrigerator and commercial compressor operations are the disclosed principal business and profit source.","investment_consequence":"Forms the primary earnings route; monitor margin pass-through and volume.","promotion_or_resolution_condition":"Retain when subsequent reports continue to disclose durable compressor profitability and customer demand.","evidence_ids":["E1","E2","E3"]},
+    {"component_id":"COMP:AUTO_AC","treatment":"SCENARIO_ONLY","reason":"Shanghai V?ile automotive-parts acquisition is disclosed but segment economics are not separately reported.","investment_consequence":"No base earnings or owner-cash credit; option value only in a scenario.","promotion_or_resolution_condition":"Promote only with segment revenue, margin, cash flow and integration disclosures.","evidence_ids":["E4"]},
+    {"component_id":"COMP:CLEANING_ROBOT","treatment":"SCENARIO_ONLY","reason":"Gelanbo cleaning-robot acquisition is disclosed without allocated operating or cash data.","investment_consequence":"Keep outside base underwriting; test for incremental capital and integration burden.","promotion_or_resolution_condition":"Promote only after audited segment economics and cash returns are disclosed.","evidence_ids":["E4"]},
+    {"component_id":"COMP:TRADE_TECH","treatment":"EXCLUDE_FROM_BASE","reason":"Trade and technical services are identified as small new businesses with no segment cash or balance-sheet allocation.","investment_consequence":"Exclude from base earnings and value route.","promotion_or_resolution_condition":"Include only when recurring scale and standalone economics become evidenced.","evidence_ids":["E2"]},
+    {"component_id":"COMP:WORKING_CAPITAL","treatment":"CANNOT_BOUND","reason":"Group inventory rose to RMB1.379bn and operating cash flow turned negative, but component-level cash allocation is unavailable.","investment_consequence":"Creates unresolved owner-cash and liquidity pressure; no invented point estimate.","promotion_or_resolution_condition":"Resolve with segment working-capital, cash-conversion and inventory ageing disclosures.","evidence_ids":["E5","E6"]},
+    {"component_id":"COMP:FINANCING","treatment":"CANNOT_BOUND","reason":"Short-term borrowings increased to RMB2.021bn and restricted assets are material, with debt not allocated by component.","investment_consequence":"Treat refinancing and collateral dependence as unresolved stress, not a base value input.","promotion_or_resolution_condition":"Resolve with maturity, covenant, collateral and component-level debt disclosures.","evidence_ids":["E6","E7"]}
+  ],
+  "component_decisions": [
+    {"component_id":"COMP:CORE_COMPRESSOR","economic_scope":"MATURE_CORE_NORMAL_EARNINGS","normal_earnings_use":"BASE_RANGE","owner_cash_use":"CONDITIONAL_RANGE","financing_pressure_effect":"NEUTRAL","permanent_loss_use":"BASE_PATH","valuation_use":"PRIMARY_INPUT","valuation_route_bindings":[{"route_id":"ROUTE:CORE_NORMAL_EARNINGS","use":"PRIMARY_INPUT"}],"promotion_test":"Evidence of stable compressor margins and demand in later reports.","invalidation_test":"Sustained margin erosion or customer loss without cost pass-through."},
+    {"component_id":"COMP:AUTO_AC","economic_scope":"NONCORE_OR_OPTIONAL_ASSET","normal_earnings_use":"SCENARIO_ONLY","owner_cash_use":"SCENARIO_ONLY","financing_pressure_effect":"CONDITIONAL","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"SCENARIO_ONLY","valuation_route_bindings":[{"route_id":"ROUTE:OPTIONAL_DIVERSIFICATION","use":"SCENARIO_ONLY"}],"promotion_test":"Audited segment earnings and cash returns emerge.","invalidation_test":"Integration losses or persistent cash consumption."},
+    {"component_id":"COMP:CLEANING_ROBOT","economic_scope":"NONCORE_OR_OPTIONAL_ASSET","normal_earnings_use":"SCENARIO_ONLY","owner_cash_use":"SCENARIO_ONLY","financing_pressure_effect":"CONDITIONAL","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"SCENARIO_ONLY","valuation_route_bindings":[{"route_id":"ROUTE:OPTIONAL_DIVERSIFICATION","use":"SCENARIO_ONLY"}],"promotion_test":"Audited segment earnings and cash returns emerge.","invalidation_test":"Integration losses or persistent cash consumption."},
+    {"component_id":"COMP:TRADE_TECH","economic_scope":"NONCORE_OR_OPTIONAL_ASSET","normal_earnings_use":"EXCLUDED","owner_cash_use":"EXCLUDED","financing_pressure_effect":"NEUTRAL","permanent_loss_use":"EXCLUDED","valuation_use":"EXCLUDED","valuation_route_bindings":[{"route_id":"ROUTE:TRADE_TECH_EXCLUDED","use":"EXCLUDED"}],"promotion_test":"Recurring material scale with standalone economics.","invalidation_test":"Remains immaterial or lacks disclosed economics."},
+    {"component_id":"COMP:WORKING_CAPITAL","economic_scope":"ORDINARY_SHARE_OWNER_CASH","normal_earnings_use":"NOT_APPLICABLE","owner_cash_use":"UNRESOLVED","financing_pressure_effect":"INCREASES","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"NOT_APPLICABLE","valuation_route_bindings":[],"promotion_test":"Segment cash conversion and inventory ageing are disclosed.","invalidation_test":"Cash remains structurally absorbed by inventory and receivables."},
+    {"component_id":"COMP:FINANCING","economic_scope":"SURVIVAL_FINANCING","normal_earnings_use":"NOT_APPLICABLE","owner_cash_use":"UNRESOLVED","financing_pressure_effect":"UNRESOLVED","permanent_loss_use":"CONDITIONAL_PATH","valuation_use":"NOT_APPLICABLE","valuation_route_bindings":[],"promotion_test":"Debt maturities, covenants and collateral capacity are evidenced.","invalidation_test":"Refinancing access tightens or collateral becomes encumbered."}
+  ],
+  "evidence_trace": [
+    {"evidence_id":"E1","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2017 annual report PDF p.6-7","scope":"FY2015-FY2017 revenue and attributable profits","used_for":["reference earnings baseline","core trend"]},
+    {"evidence_id":"E2","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2017 annual report PDF p.9-11","scope":"business lines, brands, customers and small new businesses","used_for":["core scope","trade/technology exclusion","rival context"]},
+    {"evidence_id":"E3","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2017 annual report PDF p.19-20","scope":"raw-material price pressure and uncertain investment/derivative items","used_for":["normalization risk","input-cost sensitivity"]},
+    {"evidence_id":"E4","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2017 annual report PDF p.22","scope":"Shanghai V?ile and Gelanbo acquisitions","used_for":["optional components"]},
+    {"evidence_id":"E5","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2015-2017 annual reports PDF p.84,91,94 and p.20","scope":"operating cash flow, inventory and receivables","used_for":["owner cash","working-capital sensitivity"]},
+    {"evidence_id":"E6","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2017 annual report PDF p.19-21","scope":"cash-flow drivers and restricted assets","used_for":["liquidity stress","working capital"]},
+    {"evidence_id":"E7","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"FY2016-2017 annual reports PDF p.20,25","scope":"short- and long-term borrowings","used_for":["financing pressure"]},
+    {"evidence_id":"E8","source_ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","locator":"Explicit UNKNOWN section","scope":"lack of segment-level cash, capex, working capital and debt allocation","used_for":["unknown boundaries"]}
+  ],
+  "existing_object_refs": [
+    {"kind":"SOURCE_PACKAGE","ref":"docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN000404_PRE_CUTOFF_SOURCE_PACKAGE.md","role":"PRIMARY_PRE_CUTOFF_SOURCE"}
+  ],
+  "underwriting_thesis": {
+    "thesis_id":"THESIS:CN000404:20181231",
+    "central_path":"Underwrite the scaled compressor franchise cautiously; preserve optionality while requiring evidence before crediting diversification or cash conversion.",
+    "normal_earnings_treatment":"Use FY2017 after-tax attributable profit excluding extraordinary items as a bounded reference; keep cost pass-through and mix effects conditional.",
+    "owner_cash_treatment":"Owner cash is conditional and unresolved because operating cash flow was negative and segment working-capital and total spending are not allocated.",
+    "permanent_loss_treatment":"Monitor cost non-pass-through, leverage/liquidity and diversification failure as the principal permanent-loss paths.",
+    "value_route_treatment":"Primary route is core normal earnings; optional businesses are scenario-only and trade/technical services excluded.",
+    "economic_directions":{"normal_earnings":"DETERIORATES","owner_cash":"UNKNOWN","permanent_loss":"MIXED"},
+    "strongest_rival":"Scaled global and regional refrigerator-compressor manufacturers with comparable brands, cost positions and customer qualification relationships.",
+    "monitoring":"Track raw-material prices and margin, compressor volumes/mix, inventory and receivable days, operating cash flow, short-term debt and disclosures for acquired businesses."
+  },
+  "investment_treatment":"Pre-outcome underwriting only: no price, valuation result, expected return or action; retain a conditional stance pending cash and segment evidence.",
+  "economic_derivation": {
+    "schema_version":"enterprise-underwriting-economic-derivation-interface.v2",
+    "normal_earnings_bridge": {
+      "basis":{"metric":"attributable net profit excluding non-recurring items","currency":"CNY","unit":"RMB","tax_basis":"AFTER_TAX","earnings_claim_scope":"ORDINARY_COMMON_EQUITY","operating_perimeter":"Consolidated company and subsidiaries","as_of":"2017-12-31"},
+      "rows":[
+        {"row_id":"ROW:REFERENCE","component_id":"REFERENCE_EARNINGS","row_role":"REFERENCE_EARNINGS","direction":"ADD","quantification":{"status":"BOUNDED","range_low":60290327.88,"range_high":60290327.88},"evidence_ids":["E1"],"economic_reason":"FY2017 attributable net profit excluding non-recurring items is the disclosed reference baseline."},
+        {"row_id":"ROW:AUTO","component_id":"COMP:AUTO_AC","row_role":"NORMALIZATION_ADJUSTMENT","direction":"ADD","quantification":{"status":"UNKNOWN","reason":"No separate segment earnings disclosure.","conservative_treatment":"Do not add to base; retain scenario-only."},"evidence_ids":["E4"],"economic_reason":"Automotive-parts acquisition economics are unallocated."},
+        {"row_id":"ROW:ROBOT","component_id":"COMP:CLEANING_ROBOT","row_role":"NORMALIZATION_ADJUSTMENT","direction":"ADD","quantification":{"status":"UNKNOWN","reason":"No separate segment earnings disclosure.","conservative_treatment":"Do not add to base; retain scenario-only."},"evidence_ids":["E4"],"economic_reason":"Cleaning-robot acquisition economics are unallocated."},
+        {"row_id":"ROW:TRADE","component_id":"COMP:TRADE_TECH","row_role":"NORMALIZATION_ADJUSTMENT","direction":"ADD","quantification":{"status":"UNKNOWN","reason":"Trade and technical services are described as small without segment profit data.","conservative_treatment":"Exclude from base earnings."},"evidence_ids":["E2"],"economic_reason":"No evidence supports a recurring material contribution."}
+      ]
+    },
+    "driver_sensitivity_specs":[
+      {"sensitivity_id":"SENS:RAW_MATERIAL","component_ids":["COMP:CORE_COMPRESSOR"],"metric":"raw-material price pressure","unit":"qualitative index","horizon":"2018-2023","input_cases":{"mode":"LOW_BASE_HIGH","low":{"value_or_range":{"value":-1},"basis":"Lower input-cost pressure case","evidence_ids":["E3"]},"base":{"value_or_range":{"value":0},"basis":"2017 observed pressure reference","evidence_ids":["E3"]},"high":{"value_or_range":{"value":1},"basis":"Higher input-cost pressure case","evidence_ids":["E3"]}},"transmission":{"normal_earnings":{"status":"UNKNOWN","basis":"Pass-through and mix are not quantified by segment.","delta":{"status":"UNKNOWN","reason":"No margin sensitivity disclosure.","conservative_treatment":"Do not assign numeric earnings change."}},"owner_cash":{"status":"UNKNOWN","basis":"Input costs affect inventory funding and payables, but segment cash effect is unallocated.","delta":{"status":"UNKNOWN","reason":"No cash sensitivity disclosure.","conservative_treatment":"Keep owner-cash effect unresolved."}},"valuation_route_ids":["ROUTE:CORE_NORMAL_EARNINGS"]},"reversal_observation_refs":["#/reversal_observations/0"],"responsibility_boundary":"Consolidated compressor operations; excludes unallocated acquisitions."}
+    ]
+  },
+  "component_decision_summary": {
+    "schema_version":"enterprise-underwriting-component-decision-summary.v1",
+    "normal_earnings":{"range_authority":"BASE_RANGE","components_by_use":{"BASE_RANGE":["COMP:CORE_COMPRESSOR"],"CONDITIONAL_RANGE":[],"SCENARIO_ONLY":["COMP:AUTO_AC","COMP:CLEANING_ROBOT"],"EXCLUDED":["COMP:TRADE_TECH"],"UNRESOLVED":[],"NOT_APPLICABLE":["COMP:WORKING_CAPITAL","COMP:FINANCING"]}},
+    "owner_cash":{"range_authority":"CONDITIONAL_RANGE","components_by_use":{"BASE_RANGE":[],"CONDITIONAL_RANGE":["COMP:CORE_COMPRESSOR"],"SCENARIO_ONLY":["COMP:AUTO_AC","COMP:CLEANING_ROBOT"],"EXCLUDED":["COMP:TRADE_TECH"],"UNRESOLVED":["COMP:WORKING_CAPITAL","COMP:FINANCING"],"NOT_APPLICABLE":[]}},
+    "financing_pressure":{"active_effects":["INCREASES","CONDITIONAL","UNRESOLVED"],"components_by_effect":{"REDUCES":[],"NEUTRAL":["COMP:CORE_COMPRESSOR","COMP:TRADE_TECH"],"INCREASES":["COMP:WORKING_CAPITAL"],"CONDITIONAL":["COMP:AUTO_AC","COMP:CLEANING_ROBOT"],"UNRESOLVED":["COMP:FINANCING"],"NOT_APPLICABLE":[]}},
+    "permanent_loss":{"path_authority":"CONDITIONAL_PATH","components_by_use":{"BASE_PATH":["COMP:CORE_COMPRESSOR"],"CONDITIONAL_PATH":["COMP:AUTO_AC","COMP:CLEANING_ROBOT","COMP:WORKING_CAPITAL","COMP:FINANCING"],"STRESS_ONLY":[],"EXCLUDED":["COMP:TRADE_TECH"],"UNRESOLVED":[],"NOT_APPLICABLE":[]}},
+    "valuation":{"route_authority":"PRIMARY_INPUT","components_by_use":{"PRIMARY_INPUT":["COMP:CORE_COMPRESSOR"],"CONDITIONAL_PRIMARY_INPUT":[],"CORROBORATIVE_INPUT":[],"SCENARIO_ONLY":["COMP:AUTO_AC","COMP:CLEANING_ROBOT"],"STRESS_ONLY":[],"EXCLUDED":["COMP:TRADE_TECH"],"UNRESOLVED":[],"NOT_APPLICABLE":["COMP:WORKING_CAPITAL","COMP:FINANCING"]},"route_component_bindings":[{"route_id":"ROUTE:CORE_NORMAL_EARNINGS","components_by_use":{"PRIMARY_INPUT":["COMP:CORE_COMPRESSOR"],"CONDITIONAL_PRIMARY_INPUT":[],"CORROBORATIVE_INPUT":[],"SCENARIO_ONLY":[],"STRESS_ONLY":[],"EXCLUDED":[],"UNRESOLVED":[],"NOT_APPLICABLE":[]}},{"route_id":"ROUTE:OPTIONAL_DIVERSIFICATION","components_by_use":{"PRIMARY_INPUT":[],"CONDITIONAL_PRIMARY_INPUT":[],"CORROBORATIVE_INPUT":[],"SCENARIO_ONLY":["COMP:AUTO_AC","COMP:CLEANING_ROBOT"],"STRESS_ONLY":[],"EXCLUDED":[],"UNRESOLVED":[],"NOT_APPLICABLE":[]}},{"route_id":"ROUTE:TRADE_TECH_EXCLUDED","components_by_use":{"PRIMARY_INPUT":[],"CONDITIONAL_PRIMARY_INPUT":[],"CORROBORATIVE_INPUT":[],"SCENARIO_ONLY":[],"STRESS_ONLY":[],"EXCLUDED":["COMP:TRADE_TECH"],"UNRESOLVED":[],"NOT_APPLICABLE":[]}},{"route_id":"ROUTE:LIQUIDITY_STRESS","components_by_use":{"PRIMARY_INPUT":[],"CONDITIONAL_PRIMARY_INPUT":[],"CORROBORATIVE_INPUT":[],"SCENARIO_ONLY":[],"STRESS_ONLY":[],"EXCLUDED":[],"UNRESOLVED":[],"NOT_APPLICABLE":["COMP:WORKING_CAPITAL","COMP:FINANCING"]}}]}
+  },
+  "economic_derivation_summary": {
+    "schema_version":"enterprise-underwriting-economic-derivation-summary.v1",
+    "normal_earnings_bridge":{"basis":"See economic_derivation.normal_earnings_bridge; compiler summary of reference and adjustments."},
+    "driver_sensitivities":[{"sensitivity_id":"SENS:RAW_MATERIAL","status":"UNKNOWN"},{"sensitivity_id":"SENS:WORKING_CAPITAL","status":"UNKNOWN"}]
+  }
+}

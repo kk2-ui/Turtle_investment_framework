@@ -1,0 +1,13 @@
+{
+  "arm_id": "A10",
+  "attempts": {
+    "episode": 1,
+    "reader_report": 0
+  },
+  "authority": "PREOUTCOME_EXECUTION_CONTROL_PLANE_ONLY",
+  "case_id": "CASE:03",
+  "failure": "training_agent_episode_invalid:episode:economic_derivation.normal_earnings_bridge.conditional_range_requires_conditional_reference_earnings,episode:economic_derivation.driver_sensitivity_specs[0].responsibility_boundary_required_by_interface_v2,episode:economic_derivation.driver_sensitivity_specs[1].responsibility_boundary_required_by_interface_v2",
+  "retry_policy": "NO_RETRY_OR_REWRITE",
+  "schema_version": "report-autonomy-cohort-execution-receipt.v1",
+  "state": "EPISODE_INVALID"
+}

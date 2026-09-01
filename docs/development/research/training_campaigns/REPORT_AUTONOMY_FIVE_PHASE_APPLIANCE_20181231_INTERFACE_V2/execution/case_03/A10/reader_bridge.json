@@ -1,0 +1,81 @@
+{
+  "bridge_id": "EUCRB:UWTRAIN:APPLIANCE:002403:20181231:STAGE5:A10:V2",
+  "component_anchors": [
+    {
+      "anchor_id": "COMPONENT:1",
+      "text": "FY2017 attributable net profit excluding non-recurring gains and losses is a disclosed after-tax consolidated reference, and the disclosed product mix is cookware-heavy. The figure is a consolidated reference only and does not establish component margins or cash conversion. 因此，Use the reported after-tax recurring-earnings reference in the base normal-earnings bridge, while keeping its route conditional on separately evidenced owner cash and financing pressure. 需要重估这一处理的条件是：Retain the reference while it remains disclosed; promote its interpretation beyond a consolidated reference only if component revenue, profit and cash data establish the consumer-products contribution and durability. 该组件的权威经济去向为：正常盈利进入基准范围；普通股现金不适用；不改变融资压力；永久损失进入基准永久损失路径；估值作为主要估值输入。晋级检验：Component-level consumer-products profit and cash disclosures confirm that the consolidated recurring reference is supported by durable operating economics rather than an unobserved component mix. 失效检验：Official reports show that the disclosed recurring-earnings reference no longer represents a continuing consolidated earning base or that the unobserved components dominate it adversely."
+    },
+    {
+      "anchor_id": "COMPONENT:2",
+      "text": "Receivables and inventory increased through FY2017, while operating cash flow fell to RMB 107.13 million and all disclosed purchases of fixed, intangible and other long-lived assets were RMB 187.33 million. The source does not identify maintenance spending, growth spending or component cash allocation. 因此，Do not turn operating cash less all long-lived-asset spending into a maintenance-capital owner-cash point estimate; treat ordinary-share owner cash and the active route as conditional on later evidence separating economic maintenance, growth capital and working-capital needs. 需要重估这一处理的条件是：Resolve with component and consolidated disclosures that reconcile operating cash, working-capital movement, maintenance capital, growth capital and resulting owner cash over a comparable period. 该组件的权威经济去向为：正常盈利不适用；普通股现金只进入条件范围；增加融资压力；永久损失进入基准永久损失路径；估值只作为条件性主要估值输入。晋级检验：Comparable disclosures separate maintenance capital from growth capital and reconcile cash conversion, receivables, inventory and capital spending to an ordinary-share owner-cash range. 失效检验：Official reports show persistent cash absorption or growing working-capital and capital requirements without evidence of adequate return or financing coverage."
+    },
+    {
+      "anchor_id": "COMPONENT:3",
+      "text": "FY2017 short- and long-term borrowings total RMB 972.56 million in the located balance-sheet summary; pledged fixed and intangible assets and restricted funds are disclosed, and FY2017 borrowing cash receipts exceeded debt repayments. The supplied source does not allocate the liabilities, collateral or debt service burden by operating component. 因此，Treat financing as an active condition on ordinary-share owner cash and the recurring-earnings route rather than infer that reported profit is freely distributable. 需要重估这一处理的条件是：Resolve with disclosed debt maturity, interest, covenant, collateral-release and component cash-coverage information demonstrating that financing needs do not absorb the residual owner cash. 该组件的权威经济去向为：正常盈利不适用；普通股现金只进入条件范围；增加融资压力；永久损失进入基准永久损失路径；估值只作为条件性主要估值输入。晋级检验：Disclosed maturity, collateral and cash-coverage information demonstrates that financing does not consume the residual owner cash after the business's economic capital requirements. 失效检验：Borrowings, pledged assets or refinancing needs rise without cash coverage, or financing constraints prevent the consumer-products base from converting its economics into owner cash."
+    },
+    {
+      "anchor_id": "COMPONENT:4",
+      "text": "The source identifies new robotics, logistics and new-energy entities and named equity investments or an acquisition, but provides no component revenue, operating cash flow, long-lived-asset spending, borrowings, receivables, inventory or return-on-growth-capital evidence. 因此，Leave this expansion out of the base recurring-earnings and owner-cash route and retain an unresolved permanent-loss path instead of assigning a growth contribution or a zero impact. 需要重估这一处理的条件是：Resolve only with responsibility-matched component disclosures of capital employed, operating earnings, operating cash, total capital absorption, financing and subsequent return on growth capital. 该组件的权威经济去向为：正常盈利不适用；普通股现金尚未形成可承保范围；对融资压力的影响取决于条件；永久损失尚未形成可承保范围；估值尚未形成可承保范围。晋级检验：Component-level evidence shows a responsibility-matched return on growth capital, operating cash conversion and financing burden that can be separated from the mature consumer-products base. 失效检验：Official disclosure shows continued material capital retention or financing demand without component returns and cash conversion sufficient to support the expansion."
+    }
+  ],
+  "economic_section_anchors": [
+    {
+      "anchor_id": "正常盈利组件桥:1",
+      "heading": "正常盈利组件桥",
+      "text": "口径：FY2017 attributable net profit excluding non-recurring gains and losses；Reported consolidated company; no segment allocation is asserted.；截至 2017-12-31；单位 RMB。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:2",
+      "heading": "正常盈利组件桥",
+      "text": "This is the supplied FY2017 after-tax consolidated profit measure excluding non-recurring gains and losses; it is a reference earnings observation, not an owner-cash calculation or a component-return claim.；带符号范围 1.42556e+08–1.42556e+08 RMB；组件权限：进入基准范围。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:3",
+      "heading": "正常盈利组件桥",
+      "text": "基准范围勾稽为 1.42556e+08–1.42556e+08 RMB。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:4",
+      "heading": "正常盈利组件桥",
+      "text": "含条件项范围勾稽为 1.42556e+08–1.42556e+08 RMB。"
+    },
+    {
+      "anchor_id": "关键敏感性与翻转条件:1",
+      "heading": "关键敏感性与翻转条件",
+      "text": "驱动：Consolidated revenue（FY2015-FY2017 historical observations，单位 RMB）；低 2.24202e+09（FY2015 reported consolidated revenue, used as the low observation rather than a forecast.），基准 2.54754e+09（FY2016 reported consolidated revenue, used as the base historical observation rather than a forecast.），高 3.07155e+09（FY2017 reported consolidated revenue, used as the high historical observation rather than a forecast.）。正常盈利传导（权限：进入基准范围）：影响未知：Revenue observations alone do not identify the earnings contribution of the cookware base versus the newer components.；保守处理：Do not extrapolate the reported revenue range into a normal-earnings adjustment.。普通股现金传导（权限：不适用）：影响未知：No responsibility-matched revenue-to-owner-cash conversion is disclosed.；保守处理：Do not infer an owner-cash delta from consolidated revenue movement.。价值路线权限：进入基准价值路线；不在此生成价值、回报或行动数值。翻转证据：Post-cutoff official annual reports show that the cookware-heavy consumer-products base sustains recurring earnings and cash conversion despite the named domestic cookware rival."
+    },
+    {
+      "anchor_id": "关键敏感性与翻转条件:2",
+      "heading": "关键敏感性与翻转条件",
+      "text": "驱动：Consolidated operating cash flow less purchases of fixed, intangible and other long-lived assets（FY2015-FY2017 historical observations，单位 RMB）；低 -8.02064e+07（FY2017 operating cash flow of RMB 107,125,052.73 less all disclosed long-lived-asset spending of RMB 187,331,471.04; this is a total-spending pressure observation, not maintenance capital.），基准 7.41411e+06（FY2015 operating cash flow less all disclosed long-lived-asset spending, used as a historical middle observation rather than an owner-cash estimate.），高 1.59121e+08（FY2016 operating cash flow less all disclosed long-lived-asset spending, used as the high historical observation rather than an owner-cash estimate.）。正常盈利传导（权限：不适用）：影响未知：The necessary capital-spending classification and return evidence are absent.；保守处理：Leave the normal-earnings reference unchanged and do not use this cash-pressure observation as a normalization adjustment.。普通股现金传导（权限：只进入条件范围）：影响未知：All-spending cash pressure is not maintenance capital and component cash, financing and growth-return data are not supplied.；保守处理：Use this as conditional financing and capital-allocation pressure; do not create a negative owner-cash point estimate.。价值路线权限：只进入条件性价值路线；不在此生成价值、回报或行动数值。翻转证据：Post-cutoff official annual reports show operating cash flow, receivables, inventory, all long-lived-asset spending and borrowings moving in a way that establishes or refutes ordinary-share owner-cash conversion after financing needs."
+    },
+    {
+      "anchor_id": "关键敏感性与翻转条件:3",
+      "heading": "关键敏感性与翻转条件",
+      "text": "驱动：FY2017 disclosed named equity investments and acquisition amounts for robotics, new energy and logistics-related entities（FY2017 disclosed commitment observation，单位 RMB）；范围 125100000–125100000（Sum of the listed RMB 50m, RMB 10m, RMB 50m, RMB 10m and RMB 5.1m named investments or acquisition; it is a disclosed commitment observation, not total capital employed or an economics forecast.）。正常盈利传导（权限：不适用）：影响未知：The disclosed investment amounts are not matched to component earnings or returns.；保守处理：Do not add a growth contribution to the normal-earnings reference.。普通股现金传导（权限：尚未形成可承保范围）：影响未知：The disclosed commitment amounts cannot be transformed into a supported owner-cash effect.；保守处理：Retain an unresolved expansion cash path and do not set its owner-cash contribution to zero.。价值路线权限：价值路线影响未决；不在此生成价值、回报或行动数值。翻转证据：Post-cutoff official disclosures provide component-level revenue, operating cash, capital employed, financing and return evidence for robotics, logistics or new-energy investments."
+    }
+  ],
+  "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_03/A10/enterprise_underwriting_episode.json",
+  "identity": {
+    "company_id": "CN:002403",
+    "cutoff_at": "2018-12-31T23:59:59+08:00",
+    "episode_id": "UWTRAIN:APPLIANCE:002403:20181231:STAGE5:A10:V2",
+    "underwriting_thesis_id": "THESIS:CN002403:PRE_OUTCOME_CONDITIONAL_RECURRING_EARNINGS"
+  },
+  "reader_requirements": {
+    "all_anchors_must_appear_once": true,
+    "requirement": "The existing report writer must retain every supplied reader-safe anchor once. It may add company-specific explanation but may not promote conditional, excluded, scenario-only, or unresolved component treatment.",
+    "technical_and_reader_surface": true
+  },
+  "schema_version": "enterprise-underwriting-component-reader-bridge.v1",
+  "use_policy": {
+    "cannot_establish": [
+      "NEW_COMPANY_FACT",
+      "VALUATION_PARAMETER",
+      "PRICE",
+      "INVESTMENT_ACTION"
+    ],
+    "episode_remains_authoritative": true,
+    "mode": "READER_REPORT_COMPONENT_ECONOMIC_CONSTRAINT"
+  }
+}

@@ -1,0 +1,942 @@
+{
+  "adaptation_case": "Channel breadth and the declared move into robot, new-energy and logistics entities are adaptation attempts. Their operating success is not inferred from implementation or funding because the package provides no component-level customer acceptance, earnings, cash, working-capital or return bridge.",
+  "business_position": "Cookware is the stated product emphasis; the company reports domestic-brand leadership alongside 苏泊尔 in domestic cookware, domestic marketing coverage, overseas distributors, OEM relationships and online-platform coverage. Those facts establish position and channel exposure, not a product-level margin or collection advantage.",
+  "company_id": "CN:002403",
+  "company_name": "浙江爱仕达电器股份有限公司",
+  "component_decision_summary": {
+    "financing_pressure": {
+      "active_effects": [
+        "NEUTRAL",
+        "INCREASES",
+        "UNRESOLVED"
+      ],
+      "components_by_effect": {
+        "CONDITIONAL": [],
+        "INCREASES": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "NEUTRAL": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "NOT_APPLICABLE": [],
+        "REDUCES": [],
+        "UNRESOLVED": [
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ]
+      }
+    },
+    "normal_earnings": {
+      "components_by_use": {
+        "BASE_RANGE": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "CONDITIONAL_RANGE": [],
+        "EXCLUDED": [],
+        "NOT_APPLICABLE": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING",
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ],
+        "SCENARIO_ONLY": [],
+        "UNRESOLVED": []
+      },
+      "range_authority": "BASE_RANGE"
+    },
+    "owner_cash": {
+      "components_by_use": {
+        "BASE_RANGE": [],
+        "CONDITIONAL_RANGE": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "EXCLUDED": [],
+        "NOT_APPLICABLE": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "SCENARIO_ONLY": [],
+        "UNRESOLVED": [
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ]
+      },
+      "range_authority": "CONDITIONAL_RANGE"
+    },
+    "permanent_loss": {
+      "components_by_use": {
+        "BASE_PATH": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "CONDITIONAL_PATH": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "EXCLUDED": [],
+        "NOT_APPLICABLE": [],
+        "STRESS_ONLY": [],
+        "UNRESOLVED": [
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ]
+      },
+      "path_authority": "BASE_PATH"
+    },
+    "schema_version": "enterprise-underwriting-component-decision-summary.v1",
+    "valuation": {
+      "components_by_use": {
+        "CONDITIONAL_PRIMARY_INPUT": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "CORROBORATIVE_INPUT": [],
+        "EXCLUDED": [],
+        "NOT_APPLICABLE": [],
+        "PRIMARY_INPUT": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "SCENARIO_ONLY": [],
+        "STRESS_ONLY": [],
+        "UNRESOLVED": [
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ]
+      },
+      "route_authority": "PRIMARY_INPUT",
+      "route_component_bindings": [
+        {
+          "components_by_use": {
+            "CONDITIONAL_PRIMARY_INPUT": [
+              "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS",
+              "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+            ],
+            "CORROBORATIVE_INPUT": [],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "PRIMARY_INPUT": [],
+            "SCENARIO_ONLY": [],
+            "STRESS_ONLY": [],
+            "UNRESOLVED": []
+          },
+          "route_id": "ROUTE:CONDITIONAL_OWNER_CASH"
+        },
+        {
+          "components_by_use": {
+            "CONDITIONAL_PRIMARY_INPUT": [],
+            "CORROBORATIVE_INPUT": [],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "PRIMARY_INPUT": [],
+            "SCENARIO_ONLY": [],
+            "STRESS_ONLY": [
+              "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+            ],
+            "UNRESOLVED": []
+          },
+          "route_id": "ROUTE:FINANCING_PRESSURE_STRESS"
+        },
+        {
+          "components_by_use": {
+            "CONDITIONAL_PRIMARY_INPUT": [],
+            "CORROBORATIVE_INPUT": [],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "PRIMARY_INPUT": [
+              "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+            ],
+            "SCENARIO_ONLY": [],
+            "STRESS_ONLY": [],
+            "UNRESOLVED": []
+          },
+          "route_id": "ROUTE:INCUMBENT_EARNING_POWER"
+        },
+        {
+          "components_by_use": {
+            "CONDITIONAL_PRIMARY_INPUT": [],
+            "CORROBORATIVE_INPUT": [],
+            "EXCLUDED": [],
+            "NOT_APPLICABLE": [],
+            "PRIMARY_INPUT": [],
+            "SCENARIO_ONLY": [],
+            "STRESS_ONLY": [],
+            "UNRESOLVED": [
+              "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+            ]
+          },
+          "route_id": "ROUTE:ROBOTICS_NEW_ENERGY_LOGISTICS_UNRESOLVED"
+        }
+      ]
+    }
+  },
+  "component_decisions": [
+    {
+      "component_id": "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS",
+      "economic_scope": "MATURE_CORE_NORMAL_EARNINGS",
+      "financing_pressure_effect": "NEUTRAL",
+      "invalidation_test": "Like-for-like disclosure shows that the cookware-weighted incumbent business loses earnings power or that the consolidated reference is dominated by a non-incumbent component.",
+      "normal_earnings_use": "BASE_RANGE",
+      "owner_cash_use": "NOT_APPLICABLE",
+      "permanent_loss_use": "BASE_PATH",
+      "promotion_test": "Disclose a consistent product- and channel-level bridge showing that the incumbent earnings reference is supported by durable margin and collection economics.",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:INCUMBENT_EARNING_POWER",
+          "use": "PRIMARY_INPUT"
+        },
+        {
+          "route_id": "ROUTE:CONDITIONAL_OWNER_CASH",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        }
+      ],
+      "valuation_use": "PRIMARY_INPUT"
+    },
+    {
+      "component_id": "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING",
+      "economic_scope": "SURVIVAL_FINANCING",
+      "financing_pressure_effect": "INCREASES",
+      "invalidation_test": "The reconciliation shows that cash conversion and funding needs are materially weaker than implied by the reported aggregate deterioration, or that financing pressure is greater and cannot be sustained.",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "CONDITIONAL_RANGE",
+      "permanent_loss_use": "CONDITIONAL_PATH",
+      "promotion_test": "A common-boundary reconciliation separates operating cash, economic maintenance capital, growth capital, working-capital absorption, debt and restricted assets.",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:CONDITIONAL_OWNER_CASH",
+          "use": "CONDITIONAL_PRIMARY_INPUT"
+        },
+        {
+          "route_id": "ROUTE:FINANCING_PRESSURE_STRESS",
+          "use": "STRESS_ONLY"
+        }
+      ],
+      "valuation_use": "CONDITIONAL_PRIMARY_INPUT"
+    },
+    {
+      "component_id": "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION",
+      "economic_scope": "GROWTH_CAPITAL_RETURN",
+      "financing_pressure_effect": "UNRESOLVED",
+      "invalidation_test": "Component disclosure establishes continuing cash absorption or inadequate return on the committed capital, or establishes that the activity is immaterial.",
+      "normal_earnings_use": "NOT_APPLICABLE",
+      "owner_cash_use": "UNRESOLVED",
+      "permanent_loss_use": "UNRESOLVED",
+      "promotion_test": "For each material activity, provide responsibility-matched evidence of customer acceptance, revenue, cost, working capital, cumulative cash and return on capital.",
+      "valuation_route_bindings": [
+        {
+          "route_id": "ROUTE:ROBOTICS_NEW_ENERGY_LOGISTICS_UNRESOLVED",
+          "use": "UNRESOLVED"
+        }
+      ],
+      "valuation_use": "UNRESOLVED"
+    }
+  ],
+  "component_treatments": [
+    {
+      "component_id": "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS",
+      "evidence_ids": [
+        "E_PRODUCT_AND_POSITION",
+        "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+      ],
+      "investment_consequence": "Eligible only for the incumbent earning-power route; no separate growth increment, product-line profit allocation or channel premium is supplied.",
+      "promotion_or_resolution_condition": "Maintain the treatment only if subsequent like-for-like disclosure continues to connect the cookware-weighted incumbent business to earnings without a conflicting component boundary.",
+      "reason": "FY2017 identifies cookware as the product emphasis, and reported revenue and adjusted profit attributable to shareholders increased in each of FY2015-FY2017. The disclosed figures are consolidated, so the treatment is an incumbent enterprise reference rather than a product-level allocation.",
+      "treatment": "UNDERWRITE"
+    },
+    {
+      "component_id": "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING",
+      "evidence_ids": [
+        "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING",
+        "E_WORKING_CAPITAL_AND_DEBT",
+        "E_RESTRICTED_ASSETS"
+      ],
+      "investment_consequence": "Owner cash remains a conditional range and financing pressure is active; all long-lived-asset spending is treated as current capital-allocation and financing pressure, not as an asserted maintenance-capital amount.",
+      "promotion_or_resolution_condition": "Reconcile operating cash, maintenance spending, growth spending, working capital, debt and restricted assets on a common responsible-business boundary.",
+      "reason": "Aggregate FY2017 operating cash flow declined from FY2016 while payments for long-lived assets increased; receivables, inventory and borrowings also increased. The package does not separate maintenance capital from growth capital or allocate these facts among components.",
+      "treatment": "CONDITIONALLY_UNDERWRITE"
+    },
+    {
+      "component_id": "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION",
+      "evidence_ids": [
+        "E_NEW_PROJECT_INVESTMENTS",
+        "E_COMPONENT_ALLOCATION_UNKNOWN"
+      ],
+      "investment_consequence": "Do not credit incremental normal earnings, owner cash or capital return from these activities; retain an unresolved route so their possible financing and permanent-loss effects remain visible.",
+      "promotion_or_resolution_condition": "Obtain a matched project or component bridge from customer acceptance through revenue, cost, working capital, cumulative cash and return on all committed capital.",
+      "reason": "The source identifies robot, new-energy and logistics investments, but supplies no component-level revenue, customer acceptance, cost, operating cash, working capital, financing or return on the disclosed capital.",
+      "treatment": "CANNOT_BOUND"
+    }
+  ],
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "decision_frame": "Pre-cutoff, price-free enterprise underwriting of the consolidated incumbent consumer-durables business, its cash-conversion and financing burden, and unproven expansion capital.",
+  "economic_derivation": {
+    "driver_sensitivity_specs": [
+      {
+        "component_ids": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "driver_binding": {
+          "enterprise_variable_id": "enterprise_consolidated_revenue",
+          "financial_driver_id": "reported_revenue"
+        },
+        "horizon": "FY2015-FY2017 reported history",
+        "input_cases": {
+          "base": {
+            "basis": "FY2016 reported consolidated revenue",
+            "evidence_ids": [
+              "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+            ],
+            "value_or_range": {
+              "value": 2547537745.54
+            }
+          },
+          "high": {
+            "basis": "FY2017 reported consolidated revenue",
+            "evidence_ids": [
+              "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+            ],
+            "value_or_range": {
+              "value": 3071545489.41
+            }
+          },
+          "low": {
+            "basis": "FY2015 reported consolidated revenue",
+            "evidence_ids": [
+              "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+            ],
+            "value_or_range": {
+              "value": 2242019425.13
+            }
+          },
+          "mode": "LOW_BASE_HIGH"
+        },
+        "metric": "Consolidated revenue",
+        "responsibility_boundary": "Consolidated reported revenue across all products and channels; it is not a cookware, customer, channel or project cohort.",
+        "reversal_observation_refs": [
+          "#/reversal_observations/0"
+        ],
+        "sensitivity_id": "SENS:CONSOLIDATED_REVENUE_TRANSLATION",
+        "transmission": {
+          "normal_earnings": {
+            "basis": "The package reports consolidated revenue and adjusted profit but no common-boundary product or channel margin bridge.",
+            "delta": {
+              "conservative_treatment": "Retain the historical adjusted-profit reference without attributing a revenue-driven increment.",
+              "reason": "No disclosed margin, product mix, price, unit cost or component allocation converts a revenue case into a normal-earnings delta.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "owner_cash": {
+            "basis": "The package does not connect revenue changes to receivable collection, inventory or component cash flow on the same responsibility boundary.",
+            "delta": {
+              "conservative_treatment": "Do not infer an owner-cash delta from reported revenue growth.",
+              "reason": "No responsibility-matched cash-conversion bridge is disclosed.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "valuation_route_ids": [
+            "ROUTE:INCUMBENT_EARNING_POWER"
+          ]
+        },
+        "unit": "RMB"
+      },
+      {
+        "component_ids": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "driver_binding": {
+          "enterprise_variable_id": "enterprise_operating_cash_flow",
+          "financial_driver_id": "cash_conversion"
+        },
+        "horizon": "FY2015-FY2017 reported history",
+        "input_cases": {
+          "base": {
+            "basis": "FY2015 reported operating cash flow",
+            "evidence_ids": [
+              "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ],
+            "value_or_range": {
+              "value": 130113342.94
+            }
+          },
+          "high": {
+            "basis": "FY2016 reported operating cash flow",
+            "evidence_ids": [
+              "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ],
+            "value_or_range": {
+              "value": 314547059.28
+            }
+          },
+          "low": {
+            "basis": "FY2017 reported operating cash flow",
+            "evidence_ids": [
+              "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ],
+            "value_or_range": {
+              "value": 107125052.73
+            }
+          },
+          "mode": "LOW_BASE_HIGH"
+        },
+        "metric": "Operating cash flow",
+        "responsibility_boundary": "Consolidated operating cash flow and long-lived-asset payments; no product, project, working-capital or debt allocation is disclosed.",
+        "reversal_observation_refs": [
+          "#/reversal_observations/1"
+        ],
+        "sensitivity_id": "SENS:OPERATING_CASH_CONVERSION",
+        "transmission": {
+          "normal_earnings": {
+            "basis": "A reported operating-cash case does not mechanically restate the historical adjusted-profit reference.",
+            "delta": {
+              "range_high": 0,
+              "range_low": 0,
+              "status": "BOUNDED",
+              "unit": "RMB"
+            },
+            "status": "PRESERVED"
+          },
+          "owner_cash": {
+            "basis": "Operating cash cannot be converted to owner cash without identifying economic maintenance capital, growth capital, working-capital absorption and financing by responsibility boundary.",
+            "delta": {
+              "conservative_treatment": "Keep owner cash conditional and do not subtract all long-lived-asset spending as maintenance capital.",
+              "reason": "The aggregate cash-flow statement does not make the required maintenance-versus-growth and component allocation separation.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "valuation_route_ids": [
+            "ROUTE:CONDITIONAL_OWNER_CASH"
+          ]
+        },
+        "unit": "RMB"
+      },
+      {
+        "component_ids": [
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ],
+        "driver_binding": {
+          "enterprise_variable_id": "named_new_project_equity_investment",
+          "financial_driver_id": "growth_capital_return"
+        },
+        "horizon": "FY2017 disclosed investment items",
+        "input_cases": {
+          "mode": "BOUNDED_RANGE",
+          "range": {
+            "basis": "Sum of the disclosed 50 million, 10 million, 50 million, 10 million and 5.1 million RMB named equity-investment items.",
+            "evidence_ids": [
+              "E_NEW_PROJECT_INVESTMENTS"
+            ],
+            "value_or_range": {
+              "range_high": 125100000,
+              "range_low": 125100000
+            }
+          }
+        },
+        "metric": "FY2017 disclosed named robot, new-energy and logistics equity-investment amount",
+        "responsibility_boundary": "FY2017 disclosed named robot, new-energy and logistics equity-investment items only; excludes unreported commitments and established operations.",
+        "reversal_observation_refs": [
+          "#/reversal_observations/2"
+        ],
+        "sensitivity_id": "SENS:NEW_PROJECT_CAPITAL_RETURN",
+        "transmission": {
+          "normal_earnings": {
+            "basis": "The disclosed investment amounts identify capital commitment but provide no component revenue, margin or return bridge.",
+            "delta": {
+              "conservative_treatment": "Do not credit new-project normal earnings.",
+              "reason": "No responsibility-matched incremental earnings evidence is disclosed.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "owner_cash": {
+            "basis": "No project-level operating cash, working-capital or financing allocation is disclosed.",
+            "delta": {
+              "conservative_treatment": "Retain the expansion route as unresolved and do not credit owner cash.",
+              "reason": "The return and cash absorption of the named investments are not reported on a common responsibility boundary.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "valuation_route_ids": [
+            "ROUTE:ROBOTICS_NEW_ENERGY_LOGISTICS_UNRESOLVED"
+          ]
+        },
+        "unit": "RMB"
+      }
+    ],
+    "normal_earnings_bridge": {
+      "basis": {
+        "as_of": "2017-12-31",
+        "currency": "RMB",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "metric": "Adjusted profit attributable to ordinary shareholders",
+        "operating_perimeter": "Consolidated reported incumbent operations; no product, channel or project allocation is asserted.",
+        "tax_basis": "AFTER_TAX",
+        "unit": "RMB"
+      },
+      "rows": [
+        {
+          "component_id": "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS",
+          "direction": "ADD",
+          "economic_reason": "The full FY2015-FY2017 reported adjusted-profit range is the bounded incumbent reference; it excludes reported non-recurring items but is not allocated to individual product lines or new projects.",
+          "evidence_ids": [
+            "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+          ],
+          "quantification": {
+            "range_high": 142556215.23,
+            "range_low": 79983717.35,
+            "status": "BOUNDED"
+          },
+          "row_id": "NEB:REFERENCE_ADJUSTED_CONSOLIDATED_EARNINGS",
+          "row_role": "REFERENCE_EARNINGS"
+        }
+      ]
+    },
+    "schema_version": "enterprise-underwriting-economic-derivation.v1"
+  },
+  "economic_derivation_summary": {
+    "driver_sensitivities": [
+      {
+        "component_ids": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "horizon": "FY2015-FY2017 reported history",
+        "input_cases": {
+          "base": {
+            "basis": "FY2016 reported consolidated revenue",
+            "evidence_ids": [
+              "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+            ],
+            "value_or_range": {
+              "value": 2547537745.54
+            }
+          },
+          "high": {
+            "basis": "FY2017 reported consolidated revenue",
+            "evidence_ids": [
+              "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+            ],
+            "value_or_range": {
+              "value": 3071545489.41
+            }
+          },
+          "low": {
+            "basis": "FY2015 reported consolidated revenue",
+            "evidence_ids": [
+              "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+            ],
+            "value_or_range": {
+              "value": 2242019425.13
+            }
+          },
+          "mode": "LOW_BASE_HIGH"
+        },
+        "metric": "Consolidated revenue",
+        "normal_earnings_uses": {
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS": "BASE_RANGE"
+        },
+        "owner_cash_uses": {
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS": "NOT_APPLICABLE"
+        },
+        "reversal_observations": [
+          "后续同口径披露显示炊具或消费耐用品的收入、利润或现金转化没有随已披露销售增长改善，或者产品和渠道组合与当前判断不同。"
+        ],
+        "sensitivity_id": "SENS:CONSOLIDATED_REVENUE_TRANSLATION",
+        "transmission": {
+          "normal_earnings": {
+            "basis": "The package reports consolidated revenue and adjusted profit but no common-boundary product or channel margin bridge.",
+            "delta": {
+              "conservative_treatment": "Retain the historical adjusted-profit reference without attributing a revenue-driven increment.",
+              "reason": "No disclosed margin, product mix, price, unit cost or component allocation converts a revenue case into a normal-earnings delta.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "owner_cash": {
+            "basis": "The package does not connect revenue changes to receivable collection, inventory or component cash flow on the same responsibility boundary.",
+            "delta": {
+              "conservative_treatment": "Do not infer an owner-cash delta from reported revenue growth.",
+              "reason": "No responsibility-matched cash-conversion bridge is disclosed.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "valuation_route_ids": [
+            "ROUTE:INCUMBENT_EARNING_POWER"
+          ]
+        },
+        "unit": "RMB",
+        "valuation_route_attributions": [
+          {
+            "component_valuation_uses": {
+              "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS": "PRIMARY_INPUT"
+            },
+            "route_id": "ROUTE:INCUMBENT_EARNING_POWER",
+            "route_role": "PRIMARY"
+          }
+        ]
+      },
+      {
+        "component_ids": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "horizon": "FY2015-FY2017 reported history",
+        "input_cases": {
+          "base": {
+            "basis": "FY2015 reported operating cash flow",
+            "evidence_ids": [
+              "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ],
+            "value_or_range": {
+              "value": 130113342.94
+            }
+          },
+          "high": {
+            "basis": "FY2016 reported operating cash flow",
+            "evidence_ids": [
+              "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ],
+            "value_or_range": {
+              "value": 314547059.28
+            }
+          },
+          "low": {
+            "basis": "FY2017 reported operating cash flow",
+            "evidence_ids": [
+              "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING"
+            ],
+            "value_or_range": {
+              "value": 107125052.73
+            }
+          },
+          "mode": "LOW_BASE_HIGH"
+        },
+        "metric": "Operating cash flow",
+        "normal_earnings_uses": {
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING": "NOT_APPLICABLE"
+        },
+        "owner_cash_uses": {
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING": "CONDITIONAL_RANGE"
+        },
+        "reversal_observations": [
+          "后续披露能在同一责任边界内对经营现金、维持性支出、增长性长期资产投入、应收和存货以及借款进行对账，并显著改变当前的现金与融资压力判断。"
+        ],
+        "sensitivity_id": "SENS:OPERATING_CASH_CONVERSION",
+        "transmission": {
+          "normal_earnings": {
+            "basis": "A reported operating-cash case does not mechanically restate the historical adjusted-profit reference.",
+            "delta": {
+              "range_high": 0,
+              "range_low": 0,
+              "status": "BOUNDED",
+              "unit": "RMB"
+            },
+            "status": "PRESERVED"
+          },
+          "owner_cash": {
+            "basis": "Operating cash cannot be converted to owner cash without identifying economic maintenance capital, growth capital, working-capital absorption and financing by responsibility boundary.",
+            "delta": {
+              "conservative_treatment": "Keep owner cash conditional and do not subtract all long-lived-asset spending as maintenance capital.",
+              "reason": "The aggregate cash-flow statement does not make the required maintenance-versus-growth and component allocation separation.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "valuation_route_ids": [
+            "ROUTE:CONDITIONAL_OWNER_CASH"
+          ]
+        },
+        "unit": "RMB",
+        "valuation_route_attributions": [
+          {
+            "component_valuation_uses": {
+              "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING": "CONDITIONAL_PRIMARY_INPUT"
+            },
+            "route_id": "ROUTE:CONDITIONAL_OWNER_CASH",
+            "route_role": "PRIMARY"
+          }
+        ]
+      },
+      {
+        "component_ids": [
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ],
+        "horizon": "FY2017 disclosed investment items",
+        "input_cases": {
+          "mode": "BOUNDED_RANGE",
+          "range": {
+            "basis": "Sum of the disclosed 50 million, 10 million, 50 million, 10 million and 5.1 million RMB named equity-investment items.",
+            "evidence_ids": [
+              "E_NEW_PROJECT_INVESTMENTS"
+            ],
+            "value_or_range": {
+              "range_high": 125100000,
+              "range_low": 125100000
+            }
+          }
+        },
+        "metric": "FY2017 disclosed named robot, new-energy and logistics equity-investment amount",
+        "normal_earnings_uses": {
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION": "NOT_APPLICABLE"
+        },
+        "owner_cash_uses": {
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION": "UNRESOLVED"
+        },
+        "reversal_observations": [
+          "后续按机器人、新能源或物流项目披露客户接受、收入、成本、营运资本、累计现金和投入回报，证明该项目可或不可从未决路线晋升。"
+        ],
+        "sensitivity_id": "SENS:NEW_PROJECT_CAPITAL_RETURN",
+        "transmission": {
+          "normal_earnings": {
+            "basis": "The disclosed investment amounts identify capital commitment but provide no component revenue, margin or return bridge.",
+            "delta": {
+              "conservative_treatment": "Do not credit new-project normal earnings.",
+              "reason": "No responsibility-matched incremental earnings evidence is disclosed.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "owner_cash": {
+            "basis": "No project-level operating cash, working-capital or financing allocation is disclosed.",
+            "delta": {
+              "conservative_treatment": "Retain the expansion route as unresolved and do not credit owner cash.",
+              "reason": "The return and cash absorption of the named investments are not reported on a common responsibility boundary.",
+              "status": "UNKNOWN"
+            },
+            "status": "UNKNOWN"
+          },
+          "valuation_route_ids": [
+            "ROUTE:ROBOTICS_NEW_ENERGY_LOGISTICS_UNRESOLVED"
+          ]
+        },
+        "unit": "RMB",
+        "valuation_route_attributions": [
+          {
+            "component_valuation_uses": {
+              "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION": "UNRESOLVED"
+            },
+            "route_id": "ROUTE:ROBOTICS_NEW_ENERGY_LOGISTICS_UNRESOLVED",
+            "route_role": "EXCLUDED"
+          }
+        ]
+      }
+    ],
+    "normal_earnings_bridge": {
+      "base_range": {
+        "range_high": 142556215.23,
+        "range_low": 79983717.35,
+        "status": "BOUNDED"
+      },
+      "basis": {
+        "as_of": "2017-12-31",
+        "currency": "RMB",
+        "earnings_claim_scope": "ORDINARY_COMMON_EQUITY",
+        "metric": "Adjusted profit attributable to ordinary shareholders",
+        "operating_perimeter": "Consolidated reported incumbent operations; no product, channel or project allocation is asserted.",
+        "tax_basis": "AFTER_TAX",
+        "unit": "RMB"
+      },
+      "conditional_range": {
+        "range_high": 142556215.23,
+        "range_low": 79983717.35,
+        "status": "BOUNDED"
+      },
+      "rows": [
+        {
+          "component_id": "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS",
+          "direction": "ADD",
+          "economic_reason": "The full FY2015-FY2017 reported adjusted-profit range is the bounded incumbent reference; it excludes reported non-recurring items but is not allocated to individual product lines or new projects.",
+          "evidence_ids": [
+            "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY"
+          ],
+          "normal_earnings_use": "BASE_RANGE",
+          "quantification": {
+            "range_high": 142556215.23,
+            "range_low": 79983717.35,
+            "status": "BOUNDED"
+          },
+          "row_id": "NEB:REFERENCE_ADJUSTED_CONSOLIDATED_EARNINGS",
+          "row_role": "REFERENCE_EARNINGS",
+          "signed_range": {
+            "range_high": 142556215.23,
+            "range_low": 79983717.35
+          }
+        }
+      ],
+      "totals_by_use": {
+        "BASE_RANGE": {
+          "range_high": 142556215.23,
+          "range_low": 79983717.35,
+          "status": "BOUNDED"
+        },
+        "CONDITIONAL_RANGE": null,
+        "EXCLUDED": null,
+        "NOT_APPLICABLE": null,
+        "SCENARIO_ONLY": null,
+        "UNRESOLVED": null
+      }
+    },
+    "schema_version": "enterprise-underwriting-economic-derivation-summary.v1"
+  },
+  "episode_id": "UWEP:CN002403:20181231:A11:V2",
+  "evidence_trace": [
+    {
+      "evidence_id": "E_PRODUCT_AND_POSITION",
+      "locator": "FY2017 年报，PDF p. 9",
+      "scope": "Products, product emphasis, domestic cookware position, domestic brand, OEM and overseas branded sales",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Incumbent component identity, business position and strongest-rival framing"
+    },
+    {
+      "evidence_id": "E_CHANNEL_NETWORK",
+      "locator": "FY2017 年报，PDF p. 10",
+      "scope": "Domestic marketing network, overseas distributors, named online platforms and international-retailer quality relationships",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Channel exposure and adaptation facts"
+    },
+    {
+      "evidence_id": "E_REVENUE_AND_ADJUSTED_PROFIT_HISTORY",
+      "locator": "FY2017 年报，PDF p. 6",
+      "scope": "FY2015-FY2017 consolidated revenue, net profit attributable to shareholders and adjusted net profit attributable to shareholders",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Incumbent normal-earnings reference and revenue sensitivity input cases"
+    },
+    {
+      "evidence_id": "E_NONRECURRING_ITEMS",
+      "locator": "FY2017 年报，PDF p. 7 and p. 18",
+      "scope": "FY2017 government subsidies, financial instrument and disposal items, investment income and relocation expense",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Choice of reported adjusted profit rather than unadjusted net profit as the reference"
+    },
+    {
+      "evidence_id": "E_OPERATING_CASH_AND_LONG_LIVED_SPENDING",
+      "locator": "FY2015 年报 p. 70; FY2016 年报 p. 77; FY2017 年报 p. 85",
+      "scope": "FY2015-FY2017 operating cash flow and cash paid for fixed assets, intangible assets and other long-lived assets",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Conditional owner-cash treatment, financing-pressure analysis and operating-cash sensitivity input cases"
+    },
+    {
+      "evidence_id": "E_WORKING_CAPITAL_AND_DEBT",
+      "locator": "FY2016 年报 p. 18; FY2017 年报 p. 19",
+      "scope": "Year-end receivables, inventory, short-term borrowings and FY2017 long-term borrowings",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Working-capital absorption and survival-financing analysis"
+    },
+    {
+      "evidence_id": "E_RESTRICTED_ASSETS",
+      "locator": "FY2017 年报，PDF p. 20",
+      "scope": "Restricted cash, notes receivable, fixed assets and intangible assets pledged for borrowing",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Financing boundary and promotion test"
+    },
+    {
+      "evidence_id": "E_NEW_PROJECT_INVESTMENTS",
+      "locator": "FY2017 年报，PDF p. 20-21",
+      "scope": "Named robot, new-energy and logistics equity investments, including the 51% logistics acquisition",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Unresolved expansion component and new-project capital sensitivity input"
+    },
+    {
+      "evidence_id": "E_COMPONENT_ALLOCATION_UNKNOWN",
+      "locator": "明确 UNKNOWN section",
+      "scope": "No component-level operating cash flow, long-lived-asset spending, borrowings, receivables or inventory for cookware, small appliances, household goods or robots",
+      "source_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "used_for": "Component boundaries, unresolved expansion treatment and limits on owner-cash attribution"
+    }
+  ],
+  "existing_object_refs": [
+    {
+      "kind": "PRE_CUTOFF_PRIMARY_SOURCE_PACKAGE",
+      "ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231/sources/01_CN002403_PRE_CUTOFF_SOURCE_PACKAGE.md",
+      "role": "CUTOFF_ONLY_TARGET_COMPANY_FACTS"
+    }
+  ],
+  "investment_treatment": "Research-only, price-free route classification: no price, return, outcome or trade instruction is emitted.",
+  "normalization_case": "Reference normal earnings to the FY2015-FY2017 range of reported adjusted profit attributable to shareholders. Government subsidies, investment/foreign-exchange gains and relocation expense show why unadjusted FY2017 net profit is not the reference; no segment disclosure permits assigning the reference range to individual products or projects.",
+  "permanent_loss_map": "A durable loss need not be a solvency event: receivable and inventory growth, higher long-lived-asset spending and debt can absorb owner cash, while unmeasured returns on robot, new-energy and logistics capital can turn retained capital into slow value erosion. The counterweight is the established cookware franchise and the disclosed channel network, whose normalized cash conversion must still be demonstrated.",
+  "reversal_observations": [
+    "后续同口径披露显示炊具或消费耐用品的收入、利润或现金转化没有随已披露销售增长改善，或者产品和渠道组合与当前判断不同。",
+    "后续披露能在同一责任边界内对经营现金、维持性支出、增长性长期资产投入、应收和存货以及借款进行对账，并显著改变当前的现金与融资压力判断。",
+    "后续按机器人、新能源或物流项目披露客户接受、收入、成本、营运资本、累计现金和投入回报，证明该项目可或不可从未决路线晋升。"
+  ],
+  "sample_identity": "BLIND_REPLAY",
+  "schema_version": "enterprise-underwriting-episode.v2",
+  "situation_model": {
+    "industry_future_thesis": {
+      "adaptation": "The disclosed marketing network, online-platform coverage and international-retailer quality relationships show channel access, while the record does not establish product- or channel-level price, margin, collection or return economics.",
+      "company_exposure": "The company is cookware-weighted, uses domestic branded sales, international OEM and overseas branded sales, and reaches both traditional retailers and named online platforms; its consolidated data do not allocate cash, working capital or financing to those channels or products.",
+      "horizon": "Post-FY2017 operating normalization",
+      "most_likely_regime": "A mature, channel-diverse consumer-durables core in which reported sales growth is useful only when it converts through margins and working capital; separately funded expansion must earn its way into the enterprise case.",
+      "normal_economics": "The FY2015-FY2017 adjusted-profit record is usable as a bounded incumbent consolidated reference, not as proof that every product line or new project has the same economics.",
+      "permanent_loss": "The principal slow-loss path is retaining or borrowing capital for working-capital absorption and new projects whose matched cash return is undisclosed, while a rival can contest the cookware profit pool through brand and channel execution.",
+      "profit_pool_transmission": "The disclosed revenue and adjusted-profit increase can support incumbent earning power, but receivables, inventory, long-lived-asset spending and borrowing determine whether the same growth reaches ordinary-share cash rather than absorbing financing capacity.",
+      "reversal_observations": [
+        "后续同口径披露显示炊具或消费耐用品的收入、利润或现金转化没有随已披露销售增长改善，或者产品和渠道组合与当前判断不同。",
+        "后续披露能在同一责任边界内对经营现金、维持性支出、增长性长期资产投入、应收和存货以及借款进行对账，并显著改变当前的现金与融资压力判断。",
+        "后续按机器人、新能源或物流项目披露客户接受、收入、成本、营运资本、累计现金和投入回报，证明该项目可或不可从未决路线晋升。"
+      ],
+      "strongest_rival": "苏泊尔；FY2017 披露将其与爱仕达同列为炊具内销领导品牌，并称爱仕达在商超渠道有品牌优势。",
+      "valuation_treatment": "Keep incumbent earning power distinct from the conditional owner-cash route and exclude unmeasured robot, new-energy and logistics incremental returns from any resolved route."
+    },
+    "summary": "The reported business is cookware-weighted, sold through domestic branding, overseas distributors and expanding online channels. Consolidated revenue and adjusted profit rose through FY2017, but cash conversion and financing pressure weakened while new robot, new-energy and logistics investments lack responsibility-matched operating evidence."
+  },
+  "strongest_rival": "苏泊尔；FY2017 披露将其与爱仕达同列为炊具内销领导品牌，并称爱仕达在商超渠道有品牌优势。",
+  "survival_case": "FY2017 ended with short-term borrowings of RMB 694.0 million, long-term borrowings of RMB 278.56 million and pledged assets, after reported operating cash flow fell from FY2016 while receivables and inventory increased. This is a financing-pressure case rather than evidence that the mature core has ceased operating; allocation by component and maintenance-versus-growth spending remain unobserved.",
+  "underwriting_route": "Use disclosed adjusted consolidated earnings only as incumbent earning-power evidence; keep owner cash conditional and leave the new-project return route unresolved.",
+  "underwriting_thesis": {
+    "central_path": "The cookware-weighted incumbent has a usable three-year adjusted consolidated earnings record and channel reach, but the cash route is weaker and conditional because working capital, long-lived-asset spending and debt rose or deteriorated in aggregate. New robot, new-energy and logistics capital receives no incremental return credit until its economics are evidenced.",
+    "economic_directions": {
+      "normal_earnings": "MIXED",
+      "owner_cash": "DETERIORATES",
+      "permanent_loss": "DETERIORATES"
+    },
+    "monitoring": "Monitor the three copied reversal observations: like-for-like incumbent economics, a responsibility-matched cash and capital reconciliation, and project-level customer-to-cash-to-return disclosure for expansion activities.",
+    "normal_earnings_treatment": "Use only the bounded FY2015-FY2017 adjusted-profit reference for incumbent consolidated earning power; do not convert revenue growth, unadjusted net profit or disclosed new-project funding into an additional normal-earnings claim.",
+    "owner_cash_treatment": "Operating cash less economic maintenance capital is unknown. Operating cash less all disclosed long-lived-asset spending is retained solely as current capital-allocation and financing-pressure evidence, while the subsequent return on growth capital is unresolved.",
+    "permanent_loss_treatment": "Treat low-return retention, working-capital absorption, debt dependence and an unproven expansion return as conditional slow-erosion paths; do not confuse continued operations or consolidated cash flow with established ordinary-share owner cash.",
+    "strongest_rival": "苏泊尔；FY2017 披露将其与爱仕达同列为炊具内销领导品牌，并称爱仕达在商超渠道有品牌优势。",
+    "thesis_id": "THESIS:CONSOLIDATED_INCUMBENT_WITH_CONDITIONAL_CASH",
+    "value_route_treatment": "Retain the incumbent earning-power route and a separate conditional owner-cash route; the financing route is stress-only and the robot, new-energy and logistics route is unresolved rather than blended into incumbent economics."
+  },
+  "value_route": {
+    "excluded_routes": [
+      "ROUTE:ROBOTICS_NEW_ENERGY_LOGISTICS_UNRESOLVED"
+    ],
+    "primary_routes": [
+      "ROUTE:INCUMBENT_EARNING_POWER",
+      "ROUTE:CONDITIONAL_OWNER_CASH"
+    ],
+    "route_component_requirements": [
+      {
+        "optional_component_ids": [],
+        "required_component_ids": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS"
+        ],
+        "route_id": "ROUTE:INCUMBENT_EARNING_POWER"
+      },
+      {
+        "optional_component_ids": [],
+        "required_component_ids": [
+          "COMP:CONSOLIDATED_INCUMBENT_CONSUMER_DURABLES_EARNINGS",
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "route_id": "ROUTE:CONDITIONAL_OWNER_CASH"
+      },
+      {
+        "optional_component_ids": [],
+        "required_component_ids": [
+          "COMP:CONSOLIDATED_CASH_CONVERSION_AND_FINANCING"
+        ],
+        "route_id": "ROUTE:FINANCING_PRESSURE_STRESS"
+      },
+      {
+        "optional_component_ids": [],
+        "required_component_ids": [
+          "COMP:ROBOTICS_NEW_ENERGY_LOGISTICS_EXPANSION"
+        ],
+        "route_id": "ROUTE:ROBOTICS_NEW_ENERGY_LOGISTICS_UNRESOLVED"
+      }
+    ],
+    "route_reasoning": "The incumbent route is limited to the disclosed adjusted consolidated earnings history. The owner-cash route is conditional because operating cash, all long-lived-asset spending, working capital and borrowing are disclosed only in aggregate and do not distinguish economic maintenance from growth capital. The financing-pressure route is stress-only, and the new-project route remains unresolved rather than being blended into incumbent economics.",
+    "valuation_model_roles": {
+      "primary": [
+        "ROUTE:INCUMBENT_EARNING_POWER",
+        "ROUTE:CONDITIONAL_OWNER_CASH"
+      ],
+      "stress": [
+        "ROUTE:FINANCING_PRESSURE_STRESS"
+      ]
+    }
+  }
+}

@@ -51,7 +51,8 @@ _VIEW_PROJECTION_KEYS = {
     },
     "JUDGMENT_SYNTHESIS": {
         "ledger_states", "claims", "financial_drivers", "allocation_events", "thesis",
-        "insights", "adversarial_review",
+        "insights", "adversarial_review", "report_admitted_industry_evidence",
+        "enterprise_underwriting_component_reader_bridge",
     },
     "INVESTMENT_ENRICHMENT": {
         "company_judgment_predecessor", "valuation_route",
@@ -70,6 +71,7 @@ _USAGE_CONTRACT_TRUE_FIELDS = {
 CANONICAL_JUDGMENT_REFS_FIELD = "canonical_judgment_refs"
 _CANONICAL_JUDGMENT_REF_FIELDS = {
     "frozen_cjo_ref", "investment_overlay_ref", "current_company_cjo_admission_ref",
+    "enterprise_underwriting_component_reader_bridge_ref",
 }
 
 
@@ -881,9 +883,98 @@ def _thesis_projection(payload: dict[str, Any]) -> dict[str, Any]:
     return _safe_projection({key: payload.get(key) for key in keys if key in payload})
 
 
+def _project_component_reader_bridge(
+    output: Path,
+    bridge_ref: str | None,
+    identity: dict[str, str],
+    invalid: list[str],
+    incomplete: list[str],
+    sources: list[dict[str, Any]],
+    *,
+    frozen_cjo: dict[str, Any] | None = None,
+    current_company_admission: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Expose an explicitly bound Episode component contract to the writer.
+
+    No bridge is optional for legacy reports.  Once a report contract binds
+    one, however, it must be readable, be an exact Episode derivation and
+    match the company/cutoff currently being written.
+    """
+    if not str(bridge_ref or "").strip():
+        return {"state": "NOT_BOUND", "bridge": {}}
+    path = _resolve_explicit_ref(output, bridge_ref)
+    payload = _read_json(path)
+    if not path.is_file():
+        incomplete.append("artifact_missing:enterprise_underwriting_component_reader_bridge")
+        return {"state": "MISSING", "bridge": {}}
+    if not payload:
+        invalid.append("artifact_invalid_json_or_object:enterprise_underwriting_component_reader_bridge")
+        return {"state": "INVALID", "bridge": {}}
+    episode_ref = str(payload.get("episode_ref") or "").strip()
+    episode_path = _resolve_explicit_ref(output, episode_ref)
+    episode = _read_json(episode_path)
+    if not episode_path.is_file():
+        incomplete.append("component_reader_bridge_episode_missing")
+        return {"state": "INCOMPLETE", "bridge": {}}
+    try:
+        from scripts.report_autonomy_bridge import (
+            validate_component_reader_bridge,
+            validate_component_reader_bridge_cjo_binding,
+        )
+    except ModuleNotFoundError:  # pragma: no cover - direct script execution
+        from report_autonomy_bridge import (  # type: ignore[no-redef]
+            validate_component_reader_bridge,
+            validate_component_reader_bridge_cjo_binding,
+        )
+    validation = validate_component_reader_bridge(payload, episode, episode_ref=episode_ref)
+    if validation.get("state") != "REVIEWABLE":
+        invalid.extend(
+            "component_reader_bridge_invalid:" + str(item)
+            for item in validation.get("findings") or []
+        )
+        return {"state": "INVALID", "bridge": {}}
+    bridge_findings: list[str] = []
+    bridge_identity = payload.get("identity") if isinstance(payload.get("identity"), dict) else {}
+    for field in ("company_id", "cutoff_at"):
+        observed = bridge_identity.get(field)
+        expected = identity["company_id"] if field == "company_id" else identity["information_cutoff"]
+        if field == "company_id":
+            if not _same_company(observed, expected):
+                bridge_findings.append("identity_mismatch:component_reader_bridge.company_id")
+        elif str(observed or "")[:10] != str(expected or "")[:10]:
+            bridge_findings.append("identity_mismatch:component_reader_bridge.information_cutoff")
+    if frozen_cjo is not None or current_company_admission is not None:
+        if frozen_cjo is None or current_company_admission is None:
+            bridge_findings.append("component_reader_bridge_cjo_authority_incomplete")
+        else:
+            authority = validate_component_reader_bridge_cjo_binding(
+                payload,
+                frozen_cjo=frozen_cjo,
+                current_company_admission=current_company_admission,
+            )
+            bridge_findings.extend(
+                "component_reader_bridge_cjo_binding:" + str(item)
+                for item in authority.get("findings") or []
+            )
+    if bridge_findings:
+        invalid.extend(bridge_findings)
+        return {"state": "INVALID", "bridge": {}}
+    sources.extend([
+        _source_ref(
+            "ENTERPRISE_UNDERWRITING_COMPONENT_READER_BRIDGE", str(path), "",
+            "Read-only component economics anchors for the existing report writer; they cannot establish new facts, valuation parameters, price, or an investment action.",
+        ),
+        _source_ref(
+            "ENTERPRISE_UNDERWRITING_EPISODE", str(episode_path), "",
+            "Canonical Episode remains the source of component decisions and their evidence; the bridge is only its reader-safe exact projection.",
+        ),
+    ])
+    return {"state": "READY", "bridge": _safe_projection(payload)}
+
+
 def _build_judgment_synthesis(
     output: Path, identity: dict[str, str], invalid: list[str], incomplete: list[str],
-    sources: list[dict[str, Any]],
+    sources: list[dict[str, Any]], bridge_ref: str | None = None,
 ) -> tuple[dict[str, Any], dict[str, str]]:
     claim, claim_state = _ledger_state(
         output, "claim_evidence.json", "claim_evidence_validation.json", invalid, incomplete,
@@ -908,6 +999,15 @@ def _build_judgment_synthesis(
         _identity_match(name + ".report_id", payload.get("report_id"), identity["report_id"], invalid)
         _identity_match(name + ".analysis_purpose", payload.get("analysis_purpose"), identity["analysis_purpose"], invalid)
 
+    industry_evidence, industry_state = _project_industry_evidence_acquisition(
+        output, identity, [], sources,
+    )
+    report_admission = industry_evidence.get("report_admission") if isinstance(
+        industry_evidence.get("report_admission"), dict
+    ) else {}
+    component_reader_bridge = _project_component_reader_bridge(
+        output, bridge_ref, identity, invalid, incomplete, sources,
+    )
     return {
         "ledger_states": {
             "claim_evidence": claim_state,
@@ -921,19 +1021,31 @@ def _build_judgment_synthesis(
         "thesis": _thesis_projection(thesis),
         "insights": _safe_projection(insight.get("insights") or []),
         "adversarial_review": _safe_projection(insight.get("adversarial_review") or {}),
+        "report_admitted_industry_evidence": _safe_projection({
+            "state": report_admission.get("state") or "NOT_RECORDED",
+            "observations": report_admission.get("report_admitted_observations") or [],
+            "instruction": (
+                "Only these source-bound observations may be used as external industry evidence "
+                "in the final report. Each remains limited to the named target-company transmission task."
+            ),
+        }),
+        "enterprise_underwriting_component_reader_bridge": component_reader_bridge,
     }, {
         "industry_priors": "NOT_APPLICABLE_TO_VIEW",
         "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        "report_admitted_industry_evidence": industry_state,
+        "enterprise_underwriting_component_reader_bridge": component_reader_bridge["state"],
     }
 
 
 def _build_frozen_cjo_judgment_synthesis(
     output: Path,
     frozen_cjo_path: str | Path,
+    current_company_admission_path: str | Path | None,
     identity: dict[str, str],
     invalid: list[str],
     incomplete: list[str],
-    sources: list[dict[str, Any]],
+    sources: list[dict[str, Any]], bridge_ref: str | None = None,
 ) -> tuple[dict[str, Any], dict[str, str]]:
     """Read the independently frozen canonical CJO instead of report-local ledgers."""
     path = _resolve_explicit_ref(output, frozen_cjo_path)
@@ -973,9 +1085,39 @@ def _build_frozen_cjo_judgment_synthesis(
     except enterprise_core.EnterpriseJudgmentCoreError as exc:
         invalid.append("frozen_cjo_projection_failed:" + str(exc))
         projection = {}
+    industry_evidence, industry_state = _project_industry_evidence_acquisition(
+        output, identity, [], sources,
+    )
+    report_admission = industry_evidence.get("report_admission") if isinstance(
+        industry_evidence.get("report_admission"), dict
+    ) else {}
+    admission_path = (
+        _resolve_explicit_ref(output, current_company_admission_path)
+        if current_company_admission_path is not None else None
+    )
+    current_company_admission = (
+        _read_json(admission_path)
+        if admission_path is not None and admission_path.is_file() else None
+    )
+    component_reader_bridge = _project_component_reader_bridge(
+        output, bridge_ref, identity, invalid, incomplete, sources,
+        frozen_cjo=payload,
+        current_company_admission=current_company_admission,
+    )
+    projection["report_admitted_industry_evidence"] = _safe_projection({
+        "state": report_admission.get("state") or "NOT_RECORDED",
+        "observations": report_admission.get("report_admitted_observations") or [],
+        "instruction": (
+            "Only these source-bound observations may be used as external industry evidence "
+            "in the final report. Each remains limited to the named target-company transmission task."
+        ),
+    })
+    projection["enterprise_underwriting_component_reader_bridge"] = component_reader_bridge
     return projection, {
         "industry_priors": "NOT_APPLICABLE_TO_VIEW",
         "learning_prompts": "NOT_APPLICABLE_TO_VIEW",
+        "report_admitted_industry_evidence": industry_state,
+        "enterprise_underwriting_component_reader_bridge": component_reader_bridge["state"],
     }
 
 
@@ -1509,6 +1651,9 @@ def build_judgment_generation_handoff(
     bound_frozen_cjo = canonical_judgment_refs.get("frozen_cjo_ref")
     bound_overlay = canonical_judgment_refs.get("investment_overlay_ref")
     bound_current_company_admission = canonical_judgment_refs.get("current_company_cjo_admission_ref")
+    bound_component_reader_bridge = canonical_judgment_refs.get(
+        "enterprise_underwriting_component_reader_bridge_ref"
+    )
     if frozen_cjo_path is not None:
         if bound_frozen_cjo is None:
             invalid.append("frozen_cjo_must_be_bound_in_analysis_contract")
@@ -1539,11 +1684,13 @@ def build_judgment_generation_handoff(
     elif normalized_view == "JUDGMENT_SYNTHESIS":
         if bound_frozen_cjo is not None:
             projection, empty_states = _build_frozen_cjo_judgment_synthesis(
-                output, bound_frozen_cjo, identity, invalid, incomplete, sources,
+                output, bound_frozen_cjo, bound_current_company_admission,
+                identity, invalid, incomplete, sources,
+                bound_component_reader_bridge,
             )
         else:
             projection, empty_states = _build_judgment_synthesis(
-                output, identity, invalid, incomplete, sources,
+                output, identity, invalid, incomplete, sources, bound_component_reader_bridge,
             )
     elif normalized_view == "INVESTMENT_ENRICHMENT":
         if (

@@ -24,6 +24,7 @@ from scripts.phase10_acquisition import (
     enumerate_official_web_releases,
 )
 from scripts.turtle_agent.tools import read_tools, write_tools
+from scripts.report_completion import _evaluate_report_industry_evidence_admission
 from tests import test_enterprise_judgment_core as episode_fixture
 
 
@@ -168,7 +169,7 @@ def _episode_for_report_admission(receipt: dict) -> dict:
             "source_ref": "DOC:TARGET:TEST:PRE_CUTOFF",
             "locator": "p. 12",
             "scope": "Target-company primary disclosure on customer exposure.",
-            "used_for": "Tests the company transmission of the external industry observation.",
+            "used_for": "Tests the company transmission of IEAT:CN:TEST:DEMAND:1.",
         },
     ])
     episode["existing_object_refs"].append({
@@ -380,6 +381,8 @@ def test_report_admission_requires_a_separate_target_company_primary_trace(tmp_p
     episode = _episode_for_report_admission(receipt)
     pair = {
         "observation_id": "IEAO:CN:TEST:DEMAND:1",
+        "task_id": "IEAT:CN:TEST:DEMAND:1",
+        "transmission_requirement_id": "IETR:IEAT:CN:TEST:DEMAND:1",
         "industry_evidence_id": "IEA:IEAO:CN:TEST:DEMAND:1",
         "target_company_evidence_id": "EVIDENCE:TARGET:DEMAND_TRANSMISSION",
         "target_company_source_ref": "DOC:TARGET:TEST:PRE_CUTOFF",
@@ -427,6 +430,8 @@ def test_reader_exposes_only_episode_paired_industry_observations_to_report_cons
     (tmp_path / "episode.json").write_text(json.dumps(episode), encoding="utf-8")
     pair = {
         "observation_id": "IEAO:CN:TEST:DEMAND:1",
+        "task_id": "IEAT:CN:TEST:DEMAND:1",
+        "transmission_requirement_id": "IETR:IEAT:CN:TEST:DEMAND:1",
         "industry_evidence_id": "IEA:IEAO:CN:TEST:DEMAND:1",
         "target_company_evidence_id": "EVIDENCE:TARGET:DEMAND_TRANSMISSION",
         "target_company_source_ref": "DOC:TARGET:TEST:PRE_CUTOFF",
@@ -439,6 +444,8 @@ def test_reader_exposes_only_episode_paired_industry_observations_to_report_cons
     assert payload["report_admission"]["state"] == "READY"
     assert payload["report_admission"]["report_admitted_observations"] == [{
         "observation_id": "IEAO:CN:TEST:DEMAND:1",
+        "task_id": "IEAT:CN:TEST:DEMAND:1",
+        "transmission_requirement_id": "IETR:IEAT:CN:TEST:DEMAND:1",
         "industry_evidence_id": "IEA:IEAO:CN:TEST:DEMAND:1",
         "target_company_evidence_id": "EVIDENCE:TARGET:DEMAND_TRANSMISSION",
         "transmission_status": "SUPPORTED",
@@ -446,3 +453,76 @@ def test_reader_exposes_only_episode_paired_industry_observations_to_report_cons
         "metric": "Demand direction",
         "evidence_use": "INDUSTRY_FUTURE_THESIS",
     }]
+
+    def write_industry_claim_record(
+        industry_evidence_id: str,
+        task_id: str,
+        transmission_requirement_id: str,
+    ) -> None:
+        (tmp_path / "claim_evidence.json").write_text(json.dumps({
+            "claims": [{
+                "claim_id": "CLAIM:INDUSTRY:DEMAND",
+                "raw_facts": [{
+                    "industry_evidence_id": industry_evidence_id,
+                    "industry_task_id": task_id,
+                    "transmission_requirement_id": transmission_requirement_id,
+                }],
+            }],
+        }), encoding="utf-8")
+
+    write_industry_claim_record(
+        "IEA:IEAO:CN:TEST:DEMAND:1",
+        "IEAT:CN:TEST:DEMAND:1",
+        "IETR:IEAT:CN:TEST:DEMAND:1",
+    )
+
+    admitted = _evaluate_report_industry_evidence_admission(
+        output_dir=str(tmp_path),
+        technical_text=(
+            "需求资料只作为行业条件，目标公司的披露另行验证传导。 "
+            "IEA:IEAO:CN:TEST:DEMAND:1"
+        ),
+    )
+    assert admitted["state"] == "DECISION_READY"
+
+    write_industry_claim_record(
+        "IEA:IEAO:CN:TEST:UNBOUND:1",
+        "IEAT:CN:TEST:DEMAND:1",
+        "IETR:IEAT:CN:TEST:DEMAND:1",
+    )
+    unadmitted = _evaluate_report_industry_evidence_admission(
+        output_dir=str(tmp_path), technical_text="IEA:IEAO:CN:TEST:UNBOUND:1",
+    )
+    assert unadmitted["state"] == "INVALID"
+    assert unadmitted["findings"] == [
+        "unadmitted_external_industry_evidence:IEA:IEAO:CN:TEST:UNBOUND:1"
+    ]
+
+    (tmp_path / "claim_evidence.json").unlink()
+    unrecorded = _evaluate_report_industry_evidence_admission(
+        output_dir=str(tmp_path),
+        technical_text="不加展示标记也不能绕过 IEA:IEAO:CN:TEST:DEMAND:1。",
+    )
+    assert unrecorded["state"] == "INVALID"
+    assert unrecorded["findings"] == [
+        "external_industry_evidence_requires_readable_claim_ledger"
+    ]
+
+    write_industry_claim_record(
+        "IEA:IEAO:CN:TEST:DEMAND:1",
+        "IEAT:CN:TEST:WRONG:1",
+        "IETR:IEAT:CN:TEST:WRONG:1",
+    )
+    task_mismatch = _evaluate_report_industry_evidence_admission(
+        output_dir=str(tmp_path), technical_text="IEA:IEAO:CN:TEST:DEMAND:1",
+    )
+    assert task_mismatch["state"] == "INVALID"
+    assert task_mismatch["findings"] == [
+        "industry_evidence_use_record:CLAIM:INDUSTRY:DEMAND:0:task_id_mismatch",
+        "industry_evidence_use_record:CLAIM:INDUSTRY:DEMAND:0:transmission_requirement_id_mismatch",
+    ]
+
+    (tmp_path / "claim_evidence.json").unlink()
+    assert _evaluate_report_industry_evidence_admission(
+        output_dir=str(tmp_path), technical_text="本段不使用外部行业观察。",
+    )["state"] == "SKIP"

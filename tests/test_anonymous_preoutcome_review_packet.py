@@ -15,7 +15,12 @@ def test_packet_hides_every_known_arm_identifier(tmp_path: Path) -> None:
     source.write_text("cutoff-only fact", encoding="utf-8")
     arms = []
     for label, arm in zip(
-        ("ANON_COBALT", "ANON_FERN", "ANON_IVORY", "ANON_TOPAZ"),
+        (
+            "ANON_BCDFGHJKLMNP",
+            "ANON_QRSTVWXYZBCD",
+            "ANON_ZYXWVTSRQPNM",
+            "ANON_SRQPNMLKJHGF",
+        ),
         ("A00_BASELINE", "A10_EXPERT_ONLY", "A01_INDUSTRY_ONLY", "A11_COMBINED"),
         strict=True,
     ):
@@ -53,7 +58,7 @@ def test_packet_rejects_not_exactly_four_arms(tmp_path: Path) -> None:
         raise AssertionError("expected exact-four-arm failure")
 
 
-def test_packet_rejects_anonymous_label_that_contains_an_arm_identifier(
+def test_packet_rejects_semantic_or_non_opaque_anonymous_label(
     tmp_path: Path,
 ) -> None:
     source = tmp_path / "source.md"
@@ -63,16 +68,16 @@ def test_packet_rejects_anonymous_label_that_contains_an_arm_identifier(
     episode.write_text(json.dumps(_episode("clean")), encoding="utf-8")
     report.write_text("report", encoding="utf-8")
     arms = [
-        ("ANON_A00", episode, report),
-        ("ANON_FERN", episode, report),
-        ("ANON_IVORY", episode, report),
-        ("ANON_TOPAZ", episode, report),
+        ("ANON_BASELINEABCD", episode, report),
+        ("ANON_QRSTVWXYZBCD", episode, report),
+        ("ANON_ZYXWVTSRQPNM", episode, report),
+        ("ANON_SRQPNMLKJHGF", episode, report),
     ]
 
     try:
         build_packet(source_paths=[source], anonymous_arms=arms)
     except ValueError as exc:
-        assert str(exc) == "anonymous_packet_label_contains_arm_identifier"
+        assert str(exc) == "anonymous_packet_labels_invalid"
     else:  # pragma: no cover
         raise AssertionError("expected anonymous-label leak failure")
 
@@ -85,10 +90,10 @@ def test_packet_rejects_arm_identifier_in_shared_source_content(tmp_path: Path) 
     episode.write_text(json.dumps(_episode("clean")), encoding="utf-8")
     report.write_text("report", encoding="utf-8")
     arms = [
-        ("ANON_COBALT", episode, report),
-        ("ANON_FERN", episode, report),
-        ("ANON_IVORY", episode, report),
-        ("ANON_TOPAZ", episode, report),
+        ("ANON_BCDFGHJKLMNP", episode, report),
+        ("ANON_QRSTVWXYZBCD", episode, report),
+        ("ANON_ZYXWVTSRQPNM", episode, report),
+        ("ANON_SRQPNMLKJHGF", episode, report),
     ]
 
     try:

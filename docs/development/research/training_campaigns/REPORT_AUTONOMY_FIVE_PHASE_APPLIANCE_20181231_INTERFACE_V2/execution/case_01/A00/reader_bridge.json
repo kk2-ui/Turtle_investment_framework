@@ -1,0 +1,104 @@
+{
+  "bridge_id": "EUCRB:UWTRAIN:APPLIANCE:000016:20181231:STAGE5:A00:V2:EPISODE",
+  "component_anchors": [
+    {
+      "anchor_id": "COMPONENT:1",
+      "text": "FY2015--FY2017 consolidated revenue and attributable profit are disclosed, but the source identifies a material FY2017 nonrecurring disposal contribution and does not supply the reconciliation or component economics needed to call the reported amount normal. 因此，The reported result is a conditional reference baseline only and cannot by itself establish recurring enterprise earnings. 需要重估这一处理的条件是：Promote only when official disclosure reconciles recurring consolidated earnings after removal of the disposal effect and identifies the material operating contributors. 该组件的权威经济去向为：正常盈利只进入条件范围；普通股现金不适用；不适用；永久损失进入条件性永久损失路径；估值只作为条件性主要估值输入。晋级检验：An official recurring-earnings reconciliation removes the identified disposal and identifies material operating contributors. 失效检验：The reported baseline cannot support the route if a reconciliation shows that its recurring contributors are not comparable or remain materially unallocated."
+    },
+    {
+      "anchor_id": "COMPONENT:2",
+      "text": "The FY2017 report attributes RMB 6.5878 billion of investment income to the 70% disposal of 康侨佳城 and labels it non-continuing; disposal cash is also separately disclosed. 因此，The disposal is excluded from ongoing earnings and normal owner-cash characterization. 需要重估这一处理的条件是：No promotion to ordinary operations: only a separately evidenced recurring operating income stream could enter an ordinary route. 该组件的权威经济去向为：正常盈利排除；普通股现金排除；对融资压力的影响取决于条件；永久损失排除；估值排除。晋级检验：No promotion to an ordinary route; any recurring replacement economics require separate official evidence. 失效检验：This exclusion would be invalid only if the source-supported disposal classification were shown to be an ordinary recurring operating stream."
+    },
+    {
+      "anchor_id": "COMPONENT:3",
+      "text": "Multimedia is described as a core television/display business with domestic and export channels and a FY2017 organizational integration, but no separate profitability, operating cash, working-capital, capital-spending, or financing figures are disclosed. 因此，It can inform the conditional ordinary route but cannot supply an independently bounded normal-earnings or owner-cash contribution. 需要重估这一处理的条件是：Promote when official disclosures provide a consistent post-integration multimedia profit, operating-cash, working-capital, and capital-commitment series. 该组件的权威经济去向为：正常盈利只进入条件范围；普通股现金尚未形成可承保范围；对融资压力的影响取决于条件；永久损失进入条件性永久损失路径；估值只作为条件性主要估值输入。晋级检验：Official post-integration disclosures show a comparable multimedia profit, operating-cash, working-capital, and capital-commitment series. 失效检验：The conditional route is invalidated for multimedia if official segment disclosure shows recurring losses or cash absorption inconsistent with the reconciled group baseline."
+    },
+    {
+      "anchor_id": "COMPONENT:4",
+      "text": "FY2017 supply-chain revenue of RMB 13.652 billion is disclosed, but the source provides no component profit, operating cash flow, working-capital balances, capital spending, borrowing balance, or customer concentration economics. 因此，Its normal earnings, owner cash, financing effect, and loss contribution remain unresolved and cannot enter the conditional ordinary route. 需要重估这一处理的条件是：Resolve only with official component-level margin, cash-conversion, working-capital, and financing disclosures over a comparable period. 该组件的权威经济去向为：正常盈利尚未形成可承保范围；普通股现金尚未形成可承保范围；尚未形成可承保范围；永久损失尚未形成可承保范围；估值尚未形成可承保范围。晋级检验：Official component disclosures provide comparable margins, cash conversion, working-capital balances, and financing responsibility. 失效检验：The unresolved treatment persists if component-level disclosures remain unavailable or are not reconcilable to the consolidated accounts."
+    },
+    {
+      "anchor_id": "COMPONENT:5",
+      "text": "FY2017 group operating cash flow was negative, the report points to increased receivables and unexpired notes, receivables and inventories rose across the period, and borrowings were material. The disclosures do not allocate these facts to components or distinguish economic maintenance capital from all long-lived-asset spending. 因此，This component raises conditional financing pressure and makes normal owner cash unresolved; operating cash less all long-lived-asset spending is a current cash-allocation pressure measure, not a maintenance-capital owner-cash point estimate. 需要重估这一处理的条件是：Promote when official disclosures reconcile operating cash conversion, maintenance versus growth commitments, debt service, and component-level working-capital responsibility. 该组件的权威经济去向为：正常盈利不适用；普通股现金只进入条件范围；增加融资压力；永久损失进入条件性永久损失路径；估值只作为条件性主要估值输入。晋级检验：Official disclosure reconciles cash conversion, maintenance versus growth commitments, and debt-service capacity at the responsible component level. 失效检验：The conditional owner-cash treatment is invalidated if recurring cash conversion remains negative or financing needs rise without a supported maintenance-capital reconciliation."
+    },
+    {
+      "anchor_id": "COMPONENT:6",
+      "text": "The FY2017 report identifies project investments and project preparation, but does not attribute cash commitments, financing, invested capital, or returns to television/display or other economic components. 因此，Project spending and any later growth return remain scenario inputs only; they cannot be relabeled as maintenance capital or used to set normal owner cash. 需要重估这一处理的条件是：Promote when official disclosures establish project-level cash commitments, funding, completed invested capital, and subsequent operating returns. 该组件的权威经济去向为：正常盈利不适用；普通股现金只进入情景；对融资压力的影响取决于条件；永久损失只进入压力情景；估值只进入情景。晋级检验：Official project disclosures show attributable funding, completed invested capital, and subsequent operating returns. 失效检验：The scenario treatment is invalidated as a growth proposition if disclosed projects consume capital without supported operating return or require incremental financing pressure."
+    }
+  ],
+  "economic_section_anchors": [
+    {
+      "anchor_id": "正常盈利组件桥:1",
+      "heading": "正常盈利组件桥",
+      "text": "口径：Reported consolidated profit attributable to owners, reconciled only for identified nonrecurring items；Consolidated group; not a component-level operating earnings perimeter；截至 2017-12-31；单位 RMB。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:2",
+      "heading": "正常盈利组件桥",
+      "text": "FY2017 reported attributable profit is the disclosed consolidated reference only; its conditional authority reflects the separately identified nonrecurring disposal contribution.；带符号范围 5.05703e+09–5.05703e+09 RMB；组件权限：只进入条件范围。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:3",
+      "heading": "正常盈利组件桥",
+      "text": "该组件未获授权进入读者正常盈利数值桥；组件权限：排除。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:4",
+      "heading": "正常盈利组件桥",
+      "text": "The business is a material described operating component, but its recurring contribution cannot be isolated from the consolidated accounts.；数值未知：No separate multimedia profitability, operating cash flow, working-capital, capital-spending, or financing series is supplied.；保守处理：Retain multimedia only as a conditional contributor and do not assign a standalone earnings amount.；组件权限：只进入条件范围。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:5",
+      "heading": "正常盈利组件桥",
+      "text": "该组件未获授权进入读者正常盈利数值桥；组件权限：尚未形成可承保范围。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:6",
+      "heading": "正常盈利组件桥",
+      "text": "基准范围没有获授权的组件。"
+    },
+    {
+      "anchor_id": "正常盈利组件桥:7",
+      "heading": "正常盈利组件桥",
+      "text": "含条件项范围仍为未知，因为至少一个纳入项尚不能界定；不得按零补齐。"
+    },
+    {
+      "anchor_id": "关键敏感性与翻转条件:1",
+      "heading": "关键敏感性与翻转条件",
+      "text": "驱动：Consolidated operating cash flow（FY2015--FY2017，单位 RMB）；低 -4.31426e+09（FY2017 consolidated operating cash flow），基准 -9.72136e+08（FY2016 consolidated operating cash flow），高 1.2896e+09（FY2015 consolidated operating cash flow）。正常盈利传导（权限：不适用）：影响未知：The supplied source lacks the component and maintenance-capital reconciliation required to translate cash-flow variation into normalized earnings.；保守处理：Do not attribute a normal-earnings delta.。普通股现金传导（权限：只进入条件范围）：影响未知：All long-lived-asset spending cannot be renamed maintenance capital, and component cash commitments are unavailable.；保守处理：Treat the negative cash-flow observation as financing pressure rather than a normal owner-cash point estimate.。价值路线权限：只进入条件性价值路线；不在此生成价值、回报或行动数值。翻转证据：A post-cutoff official annual report shows sustained positive operating cash flow without a matching rise in receivables or inventories and explains the associated debt-service capacity."
+    },
+    {
+      "anchor_id": "关键敏感性与翻转条件:2",
+      "heading": "关键敏感性与翻转条件",
+      "text": "驱动：Year-end receivables plus inventories（FY2015--FY2017，单位 RMB）；范围 4.93133e+09–8.13346e+09（FY2015 and FY2017 year-end sums of disclosed receivables and inventories）。正常盈利传导（权限：不适用）：影响未知：The supplied source gives no component-level attribution or margin/cash conversion needed to quantify earnings transmission.；保守处理：Do not assign a normal-earnings delta.。普通股现金传导（权限：只进入条件范围）：影响未知：Receivables and inventory balances alone do not establish maintenance capital, component cash responsibility, or a sustainable cash-conversion rate.；保守处理：Use the observation only to preserve conditional financing pressure.。价值路线权限：只进入条件性价值路线；不在此生成价值、回报或行动数值。翻转证据：A post-cutoff official annual report discloses separate profitability, operating cash flow, working-capital balances, and capital spending for the multimedia and supply-chain components.；A post-cutoff official annual report shows sustained positive operating cash flow without a matching rise in receivables or inventories and explains the associated debt-service capacity."
+    },
+    {
+      "anchor_id": "关键敏感性与翻转条件:3",
+      "heading": "关键敏感性与翻转条件",
+      "text": "驱动：Supply-chain management revenue（FY2017，单位 RMB）；范围 13652000000–13652000000（FY2017 disclosed supply-chain management revenue）。正常盈利传导（权限：尚未形成可承保范围）：影响未知：No supply-chain margin or earnings history is supplied.；保守处理：Keep supply-chain normal earnings unresolved.。普通股现金传导（权限：尚未形成可承保范围）：影响未知：No supply-chain cash-conversion or financing evidence is supplied.；保守处理：Keep supply-chain owner cash unresolved.。价值路线权限：价值路线影响未决；不在此生成价值、回报或行动数值。翻转证据：A post-cutoff official annual report discloses separate profitability, operating cash flow, working-capital balances, and capital spending for the multimedia and supply-chain components."
+    }
+  ],
+  "episode_ref": "docs/development/research/training_campaigns/REPORT_AUTONOMY_FIVE_PHASE_APPLIANCE_20181231_INTERFACE_V2/execution/case_01/A00/enterprise_underwriting_episode.json",
+  "identity": {
+    "company_id": "CN:000016",
+    "cutoff_at": "2018-12-31T23:59:59+08:00",
+    "episode_id": "UWTRAIN:APPLIANCE:000016:20181231:STAGE5:A00:V2:EPISODE",
+    "underwriting_thesis_id": "THESIS:CN000016:PRE_CUTOFF_CONDITIONAL"
+  },
+  "reader_requirements": {
+    "all_anchors_must_appear_once": true,
+    "requirement": "The existing report writer must retain every supplied reader-safe anchor once. It may add company-specific explanation but may not promote conditional, excluded, scenario-only, or unresolved component treatment.",
+    "technical_and_reader_surface": true
+  },
+  "schema_version": "enterprise-underwriting-component-reader-bridge.v1",
+  "use_policy": {
+    "cannot_establish": [
+      "NEW_COMPANY_FACT",
+      "VALUATION_PARAMETER",
+      "PRICE",
+      "INVESTMENT_ACTION"
+    ],
+    "episode_remains_authoritative": true,
+    "mode": "READER_REPORT_COMPONENT_ECONOMIC_CONSTRAINT"
+  }
+}

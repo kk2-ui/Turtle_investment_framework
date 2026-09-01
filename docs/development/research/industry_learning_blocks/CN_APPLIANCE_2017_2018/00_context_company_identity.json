@@ -1,0 +1,11 @@
+{
+  "company_id": "CN:000333",
+  "company_name": "美的集团",
+  "industry_keys": ["CN_APPLIANCE_CONSUMER_DURABLES"],
+  "cutoff_at": "2018-12-31T23:59:59+08:00",
+  "knowledge_cutoff_at": "2018-12-31T23:59:59+08:00",
+  "context_id": "IUC:CN:APPLIANCE:PACK:2018-12-31:V1",
+  "pit_mode": true,
+  "responsibility_boundary": "LISTED_CONSOLIDATED_ISSUER_WITH_PRODUCT_AND_PERIMETER_BRIDGE_REQUIRED",
+  "archetype_id": "ARCHETYPE:MULTI_CATEGORY_CHANNEL_AND_SUPPLY_CHAIN_SYSTEM"
+}

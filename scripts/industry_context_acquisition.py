@@ -30,6 +30,9 @@ OFFICIAL_CONTEXT_SOURCE_TYPE = "OFFICIAL_INDUSTRY_CONTEXT"
 CONTEXT_ONLY = "CONTEXT_ONLY"
 ALLOWED_REPRESENTATIONS = {"ORIGINAL_HTML", "ORIGINAL_PDF", "ORIGINAL_DATA_EXPORT"}
 ALLOWED_DRIVER_TYPES = {"demand", "supply", "competition", "regulation"}
+_NORMALIZED_UNIT_FACTORS = {
+    ("RMB_100M", "RMB_BN"): 0.1,
+}
 CATALOG_SOURCE_FIELDS = (
     "source_id", "source_version", "source_type", "official", "title", "source_url",
     "official_host", "published_at", "data_as_of", "content_representation", "package_path",
@@ -39,6 +42,44 @@ CATALOG_SOURCE_FIELDS = (
 
 def _failure(code: str, source_id: str | None = None) -> str:
     return f"{source_id}:{code}" if source_id else code
+
+
+def _validate_quantity_provenance(observation: dict[str, Any], observation_id: str) -> list[str]:
+    """Check an explicitly supplied official-unit conversion before admission.
+
+    The ledger remains deliberately open because official context observations
+    can be qualitative.  When an observation carries a numeric conversion,
+    though, retain the published unit and reject a normalized value that does
+    not follow the named conversion.  This prevents silently treating ``亿元``
+    as ``RMB bn`` at a one-to-one ratio.
+    """
+    records = observation.get("quantity_provenance")
+    if records is None:
+        return []
+    if not isinstance(records, list) or not records:
+        return [_failure("quantity_provenance_invalid", observation_id)]
+    findings: list[str] = []
+    for index, raw in enumerate(records):
+        prefix = f"quantity_provenance[{index}]"
+        if not isinstance(raw, dict):
+            findings.append(_failure(prefix + "_not_object", observation_id))
+            continue
+        try:
+            native_value = float(raw["native_value"])
+            normalized_value = float(raw["normalized_value"])
+        except (KeyError, TypeError, ValueError):
+            findings.append(_failure(prefix + "_values_invalid", observation_id))
+            continue
+        native_unit = str(raw.get("native_unit") or "").strip()
+        normalized_unit = str(raw.get("normalized_unit") or "").strip()
+        factor = _NORMALIZED_UNIT_FACTORS.get((native_unit, normalized_unit))
+        if factor is None:
+            findings.append(_failure(prefix + "_unit_conversion_unsupported", observation_id))
+        elif abs(normalized_value - native_value * factor) > 1e-9:
+            findings.append(_failure(prefix + "_conversion_mismatch", observation_id))
+        if not str(raw.get("native_locator") or "").strip():
+            findings.append(_failure(prefix + "_native_locator_missing", observation_id))
+    return findings
 
 
 def validate_official_context_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
@@ -323,6 +364,7 @@ def validate_official_context_observation_ledger(
                 incomplete.append(_failure(f"{field}_missing", observation_id))
         if not isinstance(observation.get("prohibited_inference"), list) or not observation["prohibited_inference"]:
             incomplete.append(_failure("prohibited_inference_missing", observation_id))
+        invalid.extend(_validate_quantity_provenance(observation, observation_id))
         locators = observation.get("source_locators")
         if not isinstance(locators, list) or not locators:
             incomplete.append(_failure("source_locators_missing", observation_id))
