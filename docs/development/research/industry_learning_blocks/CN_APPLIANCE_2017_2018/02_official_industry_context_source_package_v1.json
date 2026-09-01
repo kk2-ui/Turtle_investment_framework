@@ -33,7 +33,8 @@
         "company_owner_cash",
         "company_valuation"
       ],
-      "materialization_status": "ALREADY_MATERIALIZED"
+      "materialization_status": "MATERIALIZED",
+      "local_path": "raw/nbs_2017_national_bulletin.html"
     },
     {
       "source_id": "INDCTX:MIIT:2018_1_9_APPLIANCE_OPERATION",
@@ -61,7 +62,8 @@
         "company_owner_cash",
         "company_valuation"
       ],
-      "materialization_status": "ALREADY_MATERIALIZED"
+      "materialization_status": "MATERIALIZED",
+      "local_path": "raw/miit_2018_1_9_appliance_operation.html"
     },
     {
       "source_id": "INDCTX:NBS:2018_11_RETAIL",
@@ -88,7 +90,8 @@
         "company_price_realization",
         "company_profitability"
       ],
-      "materialization_status": "ALREADY_MATERIALIZED"
+      "materialization_status": "MATERIALIZED",
+      "local_path": "raw/nbs_2018_11_retail.html"
     },
     {
       "source_id": "INDCTX:NDRC:2016_ENERGY_EFFICIENCY_LABEL_CATALOG",
