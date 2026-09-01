@@ -1,0 +1,889 @@
+{
+  "assessment_anchors": [
+    {
+      "assessment_id": "ASSESS:INDUSTRY_REGIME",
+      "assessment_mode": "NOT_MEASURABLE_BY_DESIGN",
+      "boundary_id": "NOT_APPLICABLE",
+      "claim_domain": "INDUSTRY_SITUATION",
+      "claim_scope": "INDUSTRY_REGIME",
+      "eligible_measurement_field_ids": [],
+      "limitations": "Issuer annual-report carriers cannot settle an industry-wide regime claim.",
+      "minimum_observed_period_slots": [],
+      "predicate_disposition": {
+        "not_measurable_status": "NON_DISCRIMINATING",
+        "otherwise_status": "NON_DISCRIMINATING",
+        "rules": [],
+        "unknown_or_mismatch_status": "INCONCLUSIVE_DATA"
+      },
+      "predicates": []
+    },
+    {
+      "assessment_id": "ASSESS:NORMAL_EARNINGS_CARRIER",
+      "assessment_mode": "CLOSED_CARRIER_PREDICATE",
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "claim_domain": "NORMAL_EARNINGS",
+      "claim_scope": "LISTED_ISSUER_CONSOLIDATED_RECURRING_PROFIT_CARRIER",
+      "eligible_measurement_field_ids": [
+        "FIELD:CASE:01:RECURRING_PROFIT:P1",
+        "FIELD:CASE:01:RECURRING_PROFIT:P2",
+        "FIELD:CASE:01:RECURRING_PROFIT:P3"
+      ],
+      "limitations": "Settles only the declared recurring-profit carrier; it does not create a new normalization adjustment.",
+      "minimum_observed_period_slots": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "predicate_disposition": {
+        "not_measurable_status": "NON_DISCRIMINATING",
+        "otherwise_status": "NON_DISCRIMINATING",
+        "rules": [
+          {
+            "assessment_status": "SUPPORTED",
+            "expected_direction": "IMPROVES",
+            "predicate_id": "PRED:ALL_NON_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+          },
+          {
+            "assessment_status": "WEAKENED_OR_FALSIFIED",
+            "expected_direction": "DETERIORATES",
+            "predicate_id": "PRED:ALL_NON_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+          },
+          {
+            "assessment_status": "WEAKENED_OR_FALSIFIED",
+            "expected_direction": "IMPROVES",
+            "predicate_id": "PRED:ANY_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+          },
+          {
+            "assessment_status": "SUPPORTED",
+            "expected_direction": "DETERIORATES",
+            "predicate_id": "PRED:ANY_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+          }
+        ],
+        "unknown_or_mismatch_status": "INCONCLUSIVE_DATA"
+      },
+      "predicates": [
+        {
+          "field_ids": [
+            "FIELD:CASE:01:RECURRING_PROFIT:P1",
+            "FIELD:CASE:01:RECURRING_PROFIT:P2",
+            "FIELD:CASE:01:RECURRING_PROFIT:P3"
+          ],
+          "operator": "ALL_NON_NEGATIVE",
+          "predicate_id": "PRED:ALL_NON_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+        },
+        {
+          "field_ids": [
+            "FIELD:CASE:01:RECURRING_PROFIT:P1",
+            "FIELD:CASE:01:RECURRING_PROFIT:P2",
+            "FIELD:CASE:01:RECURRING_PROFIT:P3"
+          ],
+          "operator": "ANY_NEGATIVE",
+          "predicate_id": "PRED:ANY_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+        }
+      ]
+    },
+    {
+      "assessment_id": "ASSESS:OWNER_CASH_LIMITATION",
+      "assessment_mode": "CLOSED_CARRIER_PREDICATE",
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "claim_domain": "OWNER_CASH",
+      "claim_scope": "LISTED_ISSUER_CONSOLIDATED_CASH_ABSORPTION_CARRIER",
+      "eligible_measurement_field_ids": [
+        "FIELD:CASE:01:OPERATING_CASH_FLOW:P1",
+        "FIELD:CASE:01:OPERATING_CASH_FLOW:P2",
+        "FIELD:CASE:01:OPERATING_CASH_FLOW:P3",
+        "FIELD:CASE:01:LONG_LIVED_ASSET_CASH:P1",
+        "FIELD:CASE:01:LONG_LIVED_ASSET_CASH:P2",
+        "FIELD:CASE:01:LONG_LIVED_ASSET_CASH:P3"
+      ],
+      "limitations": "Operating cash and total long-lived-asset cash remain distinct. Total capex cannot be renamed maintenance capital and cannot by itself support ordinary-shareholder owner cash.",
+      "minimum_observed_period_slots": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "predicate_disposition": {
+        "not_measurable_status": "NON_DISCRIMINATING",
+        "otherwise_status": "NON_DISCRIMINATING",
+        "rules": [
+          {
+            "assessment_status": "SUPPORTED",
+            "expected_direction": "DETERIORATES",
+            "predicate_id": "PRED:ANY_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+          },
+          {
+            "assessment_status": "WEAKENED_OR_FALSIFIED",
+            "expected_direction": "IMPROVES",
+            "predicate_id": "PRED:ANY_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+          },
+          {
+            "assessment_status": "WEAKENED_OR_FALSIFIED",
+            "expected_direction": "DETERIORATES",
+            "predicate_id": "PRED:ALL_NON_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+          },
+          {
+            "assessment_status": "NON_DISCRIMINATING",
+            "expected_direction": "IMPROVES",
+            "predicate_id": "PRED:ALL_NON_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+          }
+        ],
+        "unknown_or_mismatch_status": "INCONCLUSIVE_DATA"
+      },
+      "predicates": [
+        {
+          "field_ids": [
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P1",
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P2",
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P3"
+          ],
+          "operator": "ALL_NON_NEGATIVE",
+          "predicate_id": "PRED:ALL_NON_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+        },
+        {
+          "field_ids": [
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P1",
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P2",
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P3"
+          ],
+          "operator": "ANY_NEGATIVE",
+          "predicate_id": "PRED:ANY_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+        }
+      ]
+    },
+    {
+      "assessment_id": "ASSESS:PERMANENT_LOSS_STRESS_CARRIER",
+      "assessment_mode": "CLOSED_CARRIER_PREDICATE",
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "claim_domain": "PERMANENT_LOSS",
+      "claim_scope": "LISTED_ISSUER_CONSOLIDATED_EROSION_OR_FINANCING_STRESS_CARRIER",
+      "eligible_measurement_field_ids": [
+        "FIELD:CASE:01:RECURRING_PROFIT:P1",
+        "FIELD:CASE:01:RECURRING_PROFIT:P2",
+        "FIELD:CASE:01:RECURRING_PROFIT:P3",
+        "FIELD:CASE:01:OPERATING_CASH_FLOW:P1",
+        "FIELD:CASE:01:OPERATING_CASH_FLOW:P2",
+        "FIELD:CASE:01:OPERATING_CASH_FLOW:P3",
+        "FIELD:CASE:01:SHORT_TERM_DEBT:P1",
+        "FIELD:CASE:01:SHORT_TERM_DEBT:P2",
+        "FIELD:CASE:01:SHORT_TERM_DEBT:P3",
+        "FIELD:CASE:01:LONG_TERM_DEBT:P1",
+        "FIELD:CASE:01:LONG_TERM_DEBT:P2",
+        "FIELD:CASE:01:LONG_TERM_DEBT:P3"
+      ],
+      "limitations": "Absence of bankruptcy, impairment, price movement, or a single survival observation cannot support low permanent-loss risk.",
+      "minimum_observed_period_slots": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "predicate_disposition": {
+        "not_measurable_status": "NON_DISCRIMINATING",
+        "otherwise_status": "NON_DISCRIMINATING",
+        "rules": [
+          {
+            "assessment_status": "SUPPORTED",
+            "expected_direction": "DETERIORATES",
+            "predicate_id": "PRED:ALL_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+          },
+          {
+            "assessment_status": "WEAKENED_OR_FALSIFIED",
+            "expected_direction": "IMPROVES",
+            "predicate_id": "PRED:ALL_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+          },
+          {
+            "assessment_status": "SUPPORTED",
+            "expected_direction": "DETERIORATES",
+            "predicate_id": "PRED:ALL_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+          },
+          {
+            "assessment_status": "WEAKENED_OR_FALSIFIED",
+            "expected_direction": "IMPROVES",
+            "predicate_id": "PRED:ALL_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+          },
+          {
+            "assessment_status": "SUPPORTED",
+            "expected_direction": "DETERIORATES",
+            "predicate_id": "PRED:NET_DEBT_CARRIER_RISES_FROM_P1_TO_P3:FIELD:CASE:01:SHORT_TERM_DEBT"
+          },
+          {
+            "assessment_status": "WEAKENED_OR_FALSIFIED",
+            "expected_direction": "IMPROVES",
+            "predicate_id": "PRED:NET_DEBT_CARRIER_RISES_FROM_P1_TO_P3:FIELD:CASE:01:SHORT_TERM_DEBT"
+          }
+        ],
+        "unknown_or_mismatch_status": "INCONCLUSIVE_DATA"
+      },
+      "predicates": [
+        {
+          "field_ids": [
+            "FIELD:CASE:01:RECURRING_PROFIT:P1",
+            "FIELD:CASE:01:RECURRING_PROFIT:P2",
+            "FIELD:CASE:01:RECURRING_PROFIT:P3"
+          ],
+          "operator": "ALL_NEGATIVE",
+          "predicate_id": "PRED:ALL_NEGATIVE:FIELD:CASE:01:RECURRING_PROFIT"
+        },
+        {
+          "field_ids": [
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P1",
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P2",
+            "FIELD:CASE:01:OPERATING_CASH_FLOW:P3"
+          ],
+          "operator": "ALL_NEGATIVE",
+          "predicate_id": "PRED:ALL_NEGATIVE:FIELD:CASE:01:OPERATING_CASH_FLOW"
+        },
+        {
+          "field_ids": [
+            "FIELD:CASE:01:SHORT_TERM_DEBT:P1",
+            "FIELD:CASE:01:SHORT_TERM_DEBT:P2",
+            "FIELD:CASE:01:SHORT_TERM_DEBT:P3",
+            "FIELD:CASE:01:LONG_TERM_DEBT:P1",
+            "FIELD:CASE:01:LONG_TERM_DEBT:P2",
+            "FIELD:CASE:01:LONG_TERM_DEBT:P3"
+          ],
+          "operator": "NET_DEBT_CARRIER_RISES_FROM_P1_TO_P3",
+          "predicate_id": "PRED:NET_DEBT_CARRIER_RISES_FROM_P1_TO_P3:FIELD:CASE:01:SHORT_TERM_DEBT"
+        }
+      ]
+    },
+    {
+      "assessment_id": "ASSESS:VALUE_ROUTE_GENERIC",
+      "assessment_mode": "NOT_MEASURABLE_BY_DESIGN",
+      "boundary_id": "NOT_APPLICABLE",
+      "claim_domain": "VALUE_ROUTE",
+      "claim_scope": "UNSPECIFIED_ROUTE",
+      "eligible_measurement_field_ids": [],
+      "limitations": "A generic route cannot be validated from issuer results, stock price, or return. A later route-specific contract amendment is prohibited after arm execution starts.",
+      "minimum_observed_period_slots": [],
+      "predicate_disposition": {
+        "not_measurable_status": "NON_DISCRIMINATING",
+        "otherwise_status": "NON_DISCRIMINATING",
+        "rules": [],
+        "unknown_or_mismatch_status": "INCONCLUSIVE_DATA"
+      },
+      "predicates": []
+    }
+  ],
+  "contract_id": "RAOMC:REPORT_AUTONOMY:APPLIANCE:20181231:STAGE5:REPLICATION_20260901:CASE:01",
+  "custody": {
+    "allowed_output": "VALUE_FREE_FIELD_RECEIPTS_ONLY",
+    "authorized_inputs": [
+      "FROZEN_CONTRACT",
+      "OFFICIAL_AUDITED_ANNUAL_REPORT"
+    ],
+    "outcome_access": "SEALED",
+    "prohibited_inputs": [
+      "ARM_OUTPUT",
+      "ARM_MAPPING",
+      "PRICE",
+      "RETURN",
+      "VALUATION",
+      "INVESTMENT_ACTION"
+    ]
+  },
+  "identity": {
+    "case_id": "CASE:01",
+    "company_id": "CN:000016",
+    "cutoff_at": "2018-12-31T23:59:59+08:00",
+    "legal_issuer_id": "ISSUER:CN:000016",
+    "preregistration_id": "REPORT_AUTONOMY:APPLIANCE:20181231:STAGE5:REPLICATION_20260901"
+  },
+  "measurement_fields": [
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "INDUSTRY_SITUATION_CARRIER",
+      "field_id": "FIELD:CASE:01:REVENUE:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "营业收入",
+        "table_or_note": "利润表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "INDUSTRY_SITUATION_CARRIER",
+      "field_id": "FIELD:CASE:01:REVENUE:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "营业收入",
+        "table_or_note": "利润表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "INDUSTRY_SITUATION_CARRIER",
+      "field_id": "FIELD:CASE:01:REVENUE:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "营业收入",
+        "table_or_note": "利润表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "NORMAL_EARNINGS_CARRIER",
+      "field_id": "FIELD:CASE:01:RECURRING_PROFIT:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "归属于上市公司股东的扣除非经常性损益的净利润",
+        "table_or_note": "财务摘要"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "NORMAL_EARNINGS_CARRIER",
+      "field_id": "FIELD:CASE:01:RECURRING_PROFIT:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "归属于上市公司股东的扣除非经常性损益的净利润",
+        "table_or_note": "财务摘要"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "NORMAL_EARNINGS_CARRIER",
+      "field_id": "FIELD:CASE:01:RECURRING_PROFIT:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "归属于上市公司股东的扣除非经常性损益的净利润",
+        "table_or_note": "财务摘要"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:OPERATING_CASH_FLOW:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "经营活动产生的现金流量净额",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:OPERATING_CASH_FLOW:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "经营活动产生的现金流量净额",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:OPERATING_CASH_FLOW:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "经营活动产生的现金流量净额",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:LONG_LIVED_ASSET_CASH:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "购建固定资产、无形资产和其他长期资产支付的现金",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:LONG_LIVED_ASSET_CASH:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "购建固定资产、无形资产和其他长期资产支付的现金",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:LONG_LIVED_ASSET_CASH:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "购建固定资产、无形资产和其他长期资产支付的现金",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:CASH_DIVIDENDS_PAID:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "分配股利、利润或偿付利息支付的现金",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:CASH_DIVIDENDS_PAID:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "分配股利、利润或偿付利息支付的现金",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "OWNER_CASH_CARRIER",
+      "field_id": "FIELD:CASE:01:CASH_DIVIDENDS_PAID:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "分配股利、利润或偿付利息支付的现金",
+        "table_or_note": "现金流量表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:SHORT_TERM_DEBT:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "短期借款",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:SHORT_TERM_DEBT:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "短期借款",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:SHORT_TERM_DEBT:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "短期借款",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:LONG_TERM_DEBT:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "长期借款",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:LONG_TERM_DEBT:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "长期借款",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:LONG_TERM_DEBT:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "长期借款",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:ASSET_IMPAIRMENT:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "资产减值损失或减值准备",
+        "table_or_note": "利润表或附注"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:ASSET_IMPAIRMENT:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "资产减值损失或减值准备",
+        "table_or_note": "利润表或附注"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:ASSET_IMPAIRMENT:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "资产减值损失或减值准备",
+        "table_or_note": "利润表或附注"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "RMB"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:SHARE_CAPITAL:P1",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "股本",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "SHARES"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:SHARE_CAPITAL:P2",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "股本",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "SHARES"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "PERMANENT_LOSS_CARRIER",
+      "field_id": "FIELD:CASE:01:SHARE_CAPITAL:P3",
+      "observation_kind": "DIRECT_NUMERIC",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "股本",
+        "table_or_note": "资产负债表"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "SHARES"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "VALUE_ROUTE_CONDITION",
+      "field_id": "FIELD:CASE:01:ROUTE_REALIZATION_EVENT:P1",
+      "observation_kind": "DIRECT_EVENT",
+      "period_slot": "P1",
+      "source_field_identity": {
+        "line_item": "已披露的资产实现、处置或向普通股东分配事件",
+        "table_or_note": "重要事项或附注"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "BOOLEAN_EVENT"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "VALUE_ROUTE_CONDITION",
+      "field_id": "FIELD:CASE:01:ROUTE_REALIZATION_EVENT:P2",
+      "observation_kind": "DIRECT_EVENT",
+      "period_slot": "P2",
+      "source_field_identity": {
+        "line_item": "已披露的资产实现、处置或向普通股东分配事件",
+        "table_or_note": "重要事项或附注"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "BOOLEAN_EVENT"
+    },
+    {
+      "allowed_observation_statuses": [
+        "MEASUREMENT_MISMATCH",
+        "OBSERVED",
+        "UNKNOWN"
+      ],
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "field_group": "VALUE_ROUTE_CONDITION",
+      "field_id": "FIELD:CASE:01:ROUTE_REALIZATION_EVENT:P3",
+      "observation_kind": "DIRECT_EVENT",
+      "period_slot": "P3",
+      "source_field_identity": {
+        "line_item": "已披露的资产实现、处置或向普通股东分配事件",
+        "table_or_note": "重要事项或附注"
+      },
+      "source_role": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+      "unit": "BOOLEAN_EVENT"
+    }
+  ],
+  "observation_calendar": [
+    {
+      "fiscal_period": "FY2018",
+      "period_end": "2018-12-31",
+      "period_start": "2018-01-01",
+      "slot_id": "P1",
+      "source_selection_rule": "FIRST_ORIGINAL_AUDITED_ANNUAL_REPORT_PUBLISHED_AFTER_CUTOFF"
+    },
+    {
+      "fiscal_period": "FY2019",
+      "period_end": "2019-12-31",
+      "period_start": "2019-01-01",
+      "slot_id": "P2",
+      "source_selection_rule": "FIRST_ORIGINAL_AUDITED_ANNUAL_REPORT_PUBLISHED_AFTER_CUTOFF"
+    },
+    {
+      "fiscal_period": "FY2020",
+      "period_end": "2020-12-31",
+      "period_start": "2020-01-01",
+      "slot_id": "P3",
+      "source_selection_rule": "FIRST_ORIGINAL_AUDITED_ANNUAL_REPORT_PUBLISHED_AFTER_CUTOFF"
+    }
+  ],
+  "outcome_status_policy": {
+    "acquisition_statuses": [
+      "MEASUREMENT_MISMATCH",
+      "NOT_MEASURABLE_BY_DESIGN",
+      "OBSERVED",
+      "UNKNOWN"
+    ],
+    "assessment_statuses": [
+      "INCONCLUSIVE_DATA",
+      "NON_DISCRIMINATING",
+      "SUPPORTED",
+      "WEAKENED_OR_FALSIFIED"
+    ],
+    "assessor_cannot_add_field_or_predicate": true,
+    "not_measurable_assessment": "NON_DISCRIMINATING",
+    "unknown_or_mismatch_assessment": "INCONCLUSIVE_DATA"
+  },
+  "responsibility_boundaries": [
+    {
+      "accounting_scope": "LISTED_ISSUER_CONSOLIDATED",
+      "boundary_id": "BOUNDARY:ISSUER_CONSOLIDATED",
+      "continuity_rule": "UNRECONCILED_DISPOSAL_REORGANIZATION_OR_RESTATEMENT_IS_MEASUREMENT_MISMATCH",
+      "ordinary_shareholder_claim_coverage": "CONSOLIDATED_CASH_IS_NOT_AUTOMATICALLY_ORDINARY_SHAREHOLDER_CASH"
+    }
+  ],
+  "schema_version": "report-autonomy-outcome-measurement-contract.v1",
+  "source_policy": {
+    "amendment_rule": "PRESERVE_ORIGINAL_AND_EMIT_MEASUREMENT_MISMATCH_UNLESS_PREDECLARED_RESTATEMENT_BRIDGE_EXISTS",
+    "issuer_boundary_rule": "DECLARED_LISTED_ISSUER_ONLY",
+    "official_source_category": "OFFICIAL_AUDITED_ANNUAL_REPORT",
+    "source_selection_rule": "FIRST_ORIGINAL_AUDITED_ANNUAL_REPORT_FOR_DECLARED_FISCAL_PERIOD"
+  },
+  "state": "PREOUTCOME_FROZEN"
+}
